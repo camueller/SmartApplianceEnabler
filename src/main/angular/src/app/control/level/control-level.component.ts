@@ -32,7 +32,16 @@ import {
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import {ControlContainer, FormArray, FormBuilder, FormControl, FormGroup, FormGroupDirective} from '@angular/forms';
+import {
+  AbstractControl,
+  ControlContainer,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormGroupDirective,
+  ValidatorFn, Validators
+} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {LevelSwitch} from './level-switch';
 import {Switch} from '../switch/switch';
@@ -133,6 +142,16 @@ export class ControlLevelComponent implements OnChanges, OnInit {
     this.form.addControl('powerLevels', this.fb.array([]));
     this.powerLevelFormArray?.clear();
     this.levelSwitch.powerLevels?.forEach(powerlevel => this.addPowerLevel(powerlevel));
+    this.form.setValidators(this.isFormValid());
+  }
+
+  isFormValid(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      if (this.controlsFormArray?.length > 0 && this.powerLevelFormArray?.length > 0) {
+        return null;
+      }
+      return {['custom']: true};
+    };
   }
 
   realControlTypeChanged(newType?: string | undefined) {
@@ -184,7 +203,7 @@ export class ControlLevelComponent implements OnChanges, OnInit {
     this.controlIds.push(nextId.toString());
     this.controlsFormArray.push(new FormGroup({}))
     for(let i=0; i<this.powerLevelFormArray?.length ?? 0; i++) {
-      (this.powerLevelFormArray.at(i) as FormGroup).addControl(nextId.toString(), new FormControl());
+      this.formHandler.addFormControlToFormArray(this.powerLevelFormArray, i, nextId.toString(), [Validators.required]);
     }
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
@@ -217,9 +236,8 @@ export class ControlLevelComponent implements OnChanges, OnInit {
   }
 
   public addPowerLevel(powerLevel?: PowerLevel) {
-    const powerLevelFormGroup = new FormGroup({
-      power: new FormControl(powerLevel?.power),
-    });
+    const powerLevelFormGroup = new FormGroup({});
+    this.formHandler.addFormControl(powerLevelFormGroup, 'power', powerLevel?.power, [Validators.required]);
     this.controlIds.forEach(controlId => powerLevelFormGroup
       .addControl(controlId, new FormControl(powerLevel?.switchStatuses.find(status => status.idref === controlId)?.on ?? false)))
     this.powerLevelFormArray.push(powerLevelFormGroup);

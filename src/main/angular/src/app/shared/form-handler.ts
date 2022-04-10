@@ -14,13 +14,7 @@ export class FormHandler {
   public addFormControl(formGroup: FormGroup, formControlName: string, formState?: any,
                         validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null,
                         asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null) {
-    if (Array.isArray(validatorOrOpts)) {
-      (validatorOrOpts as []).forEach((validatorFn: ValidatorFn) => {
-        this.registerRequiredValidator(validatorFn, formControlName);
-      });
-    } else {
-      this.registerRequiredValidator(validatorOrOpts, formControlName);
-    }
+    this.registerValidators(formControlName, validatorOrOpts);
     const control = new FormControl(formState, validatorOrOpts, asyncValidator);
     formGroup.addControl(formControlName, control);
   }
@@ -42,12 +36,27 @@ export class FormHandler {
     form.setControl(formControlName, this.buildFormArrayWithEmptyFormGroups(items));
   }
 
+  public addFormControlToFormArray(formArray: FormArray, formArrayIndex: number, formControlName: string, validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null) {
+    (formArray.at(formArrayIndex) as FormGroup).addControl(formControlName, new FormControl(undefined, validatorOrOpts));
+    this.registerValidators(formControlName, validatorOrOpts);
+  }
+
   private buildFormArrayWithEmptyFormGroups(items: Array<any>): FormArray {
     const formArray = new FormArray([]);
     if (items) {
       items.forEach(() => formArray.push(new FormGroup({})));
     }
     return formArray;
+  }
+
+  registerValidators(formControlName: string, validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null) {
+    if (Array.isArray(validatorOrOpts)) {
+      (validatorOrOpts as []).forEach((validatorFn: ValidatorFn) => {
+        this.registerRequiredValidator(validatorFn, formControlName);
+      });
+    } else {
+      this.registerRequiredValidator(validatorOrOpts, formControlName);
+    }
   }
 
   registerRequiredValidator(validatorFn: any, formControlName: string) {
