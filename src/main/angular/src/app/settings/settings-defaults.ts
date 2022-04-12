@@ -1,6 +1,6 @@
 export class SettingsDefaults {
-  mqttBrokerHost: string;
-  mqttBrokerPort: number;
+  mqttHost: string;
+  mqttPort: number;
   nodeRedDashboardUrl: string;
   holidaysUrl: string;
   modbusTcpHost: string;

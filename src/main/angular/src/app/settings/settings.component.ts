@@ -70,8 +70,8 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     this.errorMessages = new ErrorMessages('SettingsComponent.error.', [
       new ErrorMessage('nodeRedDashboardUrl', ValidatorType.pattern),
       new ErrorMessage('holidaysUrl', ValidatorType.pattern),
-      new ErrorMessage('mqttBrokerHost', ValidatorType.pattern),
-      new ErrorMessage('mqttBrokerPort', ValidatorType.pattern),
+      new ErrorMessage('mqttHost', ValidatorType.pattern),
+      new ErrorMessage('mqttPort', ValidatorType.pattern),
     ], this.translate);
     this.translate.get('dialog.candeactivate').subscribe(translated => this.discardChangesMessage = translated);
     this.route.data.subscribe((data: { settings: Settings, settingsDefaults: SettingsDefaults }) => {
@@ -86,12 +86,14 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
 
   buildForm() {
     this.form = new FormGroup({});
-    this.formHandler.addFormControl(this.form, 'mqttBrokerHost', this.settings.mqttSettings?.mqttBrokerHost,
+    this.formHandler.addFormControl(this.form, 'mqttHost', this.settings.mqttSettings?.host,
       Validators.pattern(InputValidatorPatterns.HOSTNAME)),
-    this.formHandler.addFormControl(this.form, 'mqttBrokerPort', this.settings.mqttSettings?.mqttBrokerPort,
+    this.formHandler.addFormControl(this.form, 'mqttPort', this.settings.mqttSettings?.port,
       Validators.pattern(InputValidatorPatterns.INTEGER)),
       this.formHandler.addFormControl(this.form, 'nodeRedDashboardUrl', this.settings.nodeRedDashboardUrl,
         [Validators.pattern(InputValidatorPatterns.URL)]);
+    this.formHandler.addFormControl(this.form, 'mqttUsername', this.settings.mqttSettings?.username);
+    this.formHandler.addFormControl(this.form, 'mqttPassword', this.settings.mqttSettings?.password),
     this.formHandler.addFormControl(this.form, 'holidaysEnabled', this.settings.holidaysEnabled);
     this.formHandler.addFormControl(this.form, 'holidaysUrl', this.settings.holidaysUrl,
       [Validators.pattern(InputValidatorPatterns.URL)]);
@@ -147,10 +149,12 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   }
 
   updateModelFromForm() {
-    const mqttBrokerHost = getValidString(this.form.controls.mqttBrokerHost.value);
-    const mqttBrokerPort = getValidInt(this.form.controls.mqttBrokerPort.value);
-    if (mqttBrokerHost) {
-      this.settings.mqttSettings = {mqttBrokerHost, mqttBrokerPort};
+    const mqttHost = getValidString(this.form.controls.mqttHost.value);
+    const mqttPort = getValidInt(this.form.controls.mqttPort.value);
+    const mqttUsername = getValidString(this.form.controls.mqttUsername.value);
+    const mqttPassword = getValidString(this.form.controls.mqttPassword.value);
+    if (mqttHost) {
+      this.settings.mqttSettings = {host: mqttHost, port: mqttPort, username: mqttUsername, password: mqttPassword};
     }
     this.settings.nodeRedDashboardUrl = getValidString(this.form.controls.nodeRedDashboardUrl.value);
     this.settings.holidaysEnabled = this.form.controls.holidaysEnabled.value;

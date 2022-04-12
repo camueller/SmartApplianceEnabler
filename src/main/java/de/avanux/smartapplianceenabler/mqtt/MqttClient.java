@@ -94,8 +94,14 @@ public class MqttClient {
         }
     }
 
-    private static MqttConnectOptions getOptions() {
+    private static MqttConnectOptions getOptions(String username, String password) {
         MqttConnectOptions options = new MqttConnectOptions();
+        if(username != null) {
+            options.setUserName(username);
+        }
+        if(password != null) {
+            options.setPassword(password.toCharArray());
+        }
         options.setAutomaticReconnect(true);
         options.setCleanSession(true);
         options.setConnectionTimeout(1000);
@@ -143,7 +149,7 @@ public class MqttClient {
         if(! shutdownInProgress) {
             try {
                 if(! client.isConnected()) {
-                    client.connect(getOptions());
+                    client.connect(getOptions(mqttBroker.getUsername(), mqttBroker.getPassword()));
                 }
                 boolean connectResult = client.isConnected();
                 if(! connectResult) {
@@ -173,7 +179,7 @@ public class MqttClient {
         }
     }
 
-    public static boolean isMqttBrokerAvailable(String host, Integer port) {
+    public static boolean isMqttBrokerAvailable(String host, Integer port, String username, String password) {
         var brokerUri = buildBrokerUri(host, port);
         var loggerId = MqttClient.class.getSimpleName();
         try {
@@ -181,7 +187,7 @@ public class MqttClient {
                 instance = createClient(MqttClient.class.getSimpleName(), brokerUri, loggerId);
             }
             if(! instance.isConnected()) {
-                instance.connect(getOptions());
+                instance.connect(getOptions(username, password));
             }
             var connected = instance.isConnected();
             logger.debug("{}: MQTT connection available: {}", loggerId, connected);

@@ -62,7 +62,7 @@ export class StatusComponent implements OnInit, OnDestroy {
     this.route.data.subscribe((data: { settings: Settings, settingsDefaults: SettingsDefaults }) => {
       this.mqttSettings = data.settings.mqttSettings;
       this.nodeRedDashboardUrl = data.settings.nodeRedDashboardUrl ?? data.settingsDefaults.nodeRedDashboardUrl;
-      this.mqttBrokerAvailable = data.settings.mqttSettings.mqttBrokerAvailable;
+      this.mqttBrokerAvailable = data.settings.mqttSettings.brokerAvailable;
     });
     this.startRefreshStatus();
   }

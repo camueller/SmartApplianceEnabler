@@ -42,22 +42,22 @@ export class SettingsPage {
   private static async setMqttBroker(t: TestController, mqttSettings: MqttSettings) {
     if(mqttSettings) {
       await inputText(t, selectorInputByFormControlName('mqttBrokerHost'), undefined);
-      if (mqttSettings.mqttBrokerHost) {
-        await inputText(t, selectorInputByFormControlName('mqttBrokerHost'), mqttSettings.mqttBrokerHost);
+      if (mqttSettings.host) {
+        await inputText(t, selectorInputByFormControlName('mqttBrokerHost'), mqttSettings.host);
       }
       await inputText(t, selectorInputByFormControlName('mqttBrokerPort'), undefined);
-      if (mqttSettings.mqttBrokerPort) {
-        await inputText(t, selectorInputByFormControlName('mqttBrokerPort'), mqttSettings.mqttBrokerPort.toString());
+      if (mqttSettings.port) {
+        await inputText(t, selectorInputByFormControlName('mqttBrokerPort'), mqttSettings.port.toString());
       }
     }
   }
   private static async assertMqttBroker(t: TestController, mqttSettings: MqttSettings) {
     if(mqttSettings) {
-      if (mqttSettings.mqttBrokerHost) {
-        await assertInput(t, selectorInputByFormControlName('mqttBrokerHost'), mqttSettings.mqttBrokerHost);
+      if (mqttSettings.host) {
+        await assertInput(t, selectorInputByFormControlName('mqttBrokerHost'), mqttSettings.host);
       }
-      if (mqttSettings.mqttBrokerPort) {
-        await assertInput(t, selectorInputByFormControlName('mqttBrokerPort'), mqttSettings.mqttBrokerPort.toString());
+      if (mqttSettings.port) {
+        await assertInput(t, selectorInputByFormControlName('mqttBrokerPort'), mqttSettings.port.toString());
       }
     }
   }

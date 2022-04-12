@@ -751,11 +751,15 @@ public class SaeController {
             }
             var mqttBrokerHost = mqttBroker.getResolvedHost();
             var mqttBrokerPort = mqttBroker.getResolvedPort();
+            var mqttBrokerUsername = mqttBroker.getUsername();
+            var mqttBrokerPassword = mqttBroker.getPassword();
             MqttSettings mqttSettings = new MqttSettings();
-            mqttSettings.setMqttBrokerHost(mqttBrokerHost);
-            mqttSettings.setMqttBrokerPort(mqttBrokerPort);
+            mqttSettings.setHost(mqttBrokerHost);
+            mqttSettings.setPort(mqttBrokerPort);
+            mqttSettings.setUsername(mqttBrokerUsername);
+            mqttSettings.setPassword(mqttBrokerPassword);
             settings.setMqttSettings(mqttSettings);
-            mqttSettings.setMqttBrokerAvailable(MqttClient.isMqttBrokerAvailable(mqttBrokerHost, mqttBrokerPort));
+            mqttSettings.setBrokerAvailable(MqttClient.isMqttBrokerAvailable(mqttBrokerHost, mqttBrokerPort, mqttBrokerUsername, mqttBrokerPassword));
 
             String nodeRedDashboardUrl = appliances.getConfigurationValue(ConfigurationParam.NODERED_DASHBOARD_URL.getVal());
             settings.setNodeRedDashboardUrl(nodeRedDashboardUrl);
@@ -798,8 +802,10 @@ public class SaeController {
             MqttBroker mqttBroker = null;
             if(mqttSettings != null) {
                 mqttBroker = new MqttBroker();
-                mqttBroker.setHost(mqttSettings.getMqttBrokerHost());
-                mqttBroker.setPort(mqttSettings.getMqttBrokerPort());
+                mqttBroker.setHost(mqttSettings.getHost());
+                mqttBroker.setPort(mqttSettings.getPort());
+                mqttBroker.setUsername(mqttSettings.getUsername());
+                mqttBroker.setPassword(mqttSettings.getPassword());
             }
 
             List<ModbusTcp> modbusTCPs = null;

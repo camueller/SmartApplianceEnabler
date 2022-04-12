@@ -26,19 +26,19 @@ public class SettingsDefaults {
     private static SettingsDefaults instance = new SettingsDefaults();
 
     // static members won't be serialized but we need those values on the client
-    private String mqttBrokerHost = MqttBroker.DEFAULT_HOST;
-    private Integer mqttBrokerPort = MqttBroker.DEFAULT_PORT;
+    private String mqttHost = MqttBroker.DEFAULT_HOST;
+    private Integer mqttPort = MqttBroker.DEFAULT_PORT;
     private String nodeRedDashboardUrl = MqttBroker.DEFAULT_NODERED_DASHBOARD_URL;
     private String holidaysUrl = HolidaysDownloader.DEFAULT_URL;
     private String modbusTcpHost = ModbusTcp.DEFAULT_HOST;
     private Integer modbusTcpPort = ModbusTcp.DEFAULT_PORT;
 
-    public String getMqttBrokerHost() {
-        return mqttBrokerHost;
+    public String getMqttHost() {
+        return mqttHost;
     }
 
-    public Integer getMqttBrokerPort() {
-        return mqttBrokerPort;
+    public Integer getMqttPort() {
+        return mqttPort;
     }
 
     public String getNodeRedDashboardUrl() {

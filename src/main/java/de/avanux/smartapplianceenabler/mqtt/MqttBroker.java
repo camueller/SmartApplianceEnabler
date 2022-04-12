@@ -31,6 +31,10 @@ public class MqttBroker {
     public transient static final int DEFAULT_PORT = 1883;
     @XmlAttribute
     private Integer port;
+    @XmlAttribute
+    private String username;
+    @XmlAttribute
+    private String password;
 
     public String getHost() {
         return host;
@@ -56,8 +60,27 @@ public class MqttBroker {
         this.port = port;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
+        if(getUsername() != null) {
+            return getUsername()+ "@" + getResolvedHost() + ":" + getResolvedPort();
+        }
         return getResolvedHost() + ":" + getResolvedPort();
     }
 }

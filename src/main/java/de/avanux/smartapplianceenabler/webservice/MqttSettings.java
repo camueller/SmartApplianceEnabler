@@ -19,40 +19,60 @@
 package de.avanux.smartapplianceenabler.webservice;
 
 public class MqttSettings {
-    String mqttBrokerHost;
-    Integer mqttBrokerPort;
-    Boolean mqttBrokerAvailable;
+    String host;
+    Integer port;
+    String username;
+    String password;
+    Boolean brokerAvailable;
 
-    public String getMqttBrokerHost() {
-        return mqttBrokerHost;
+    public String getHost() {
+        return host;
     }
 
-    public void setMqttBrokerHost(String mqttBrokerHost) {
-        this.mqttBrokerHost = mqttBrokerHost;
+    public void setHost(String host) {
+        this.host = host;
     }
 
-    public Integer getMqttBrokerPort() {
-        return mqttBrokerPort;
+    public Integer getPort() {
+        return port;
     }
 
-    public void setMqttBrokerPort(Integer mqttBrokerPort) {
-        this.mqttBrokerPort = mqttBrokerPort;
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
-    public Boolean getMqttBrokerAvailable() {
-        return mqttBrokerAvailable;
+    public String getUsername() {
+        return username;
     }
 
-    public void setMqttBrokerAvailable(Boolean mqttBrokerAvailable) {
-        this.mqttBrokerAvailable = mqttBrokerAvailable;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Boolean getBrokerAvailable() {
+        return brokerAvailable;
+    }
+
+    public void setBrokerAvailable(Boolean brokerAvailable) {
+        this.brokerAvailable = brokerAvailable;
     }
 
     @Override
     public String toString() {
         return "MqttSettings{" +
-                "mqttBrokerHost='" + mqttBrokerHost + '\'' +
-                ", mqttBrokerPort=" + mqttBrokerPort +
-                ", mqttBrokerAvailable=" + mqttBrokerAvailable +
+                "brokerHost='" + host + '\'' +
+                ", brokerPort=" + port +
+                ", brokerUsername=" + username +
+                ", brokerPasswort=" + (password != null ? "length(" + password.length() + ")" : "null" ) +
+                ", brokerAvailable=" + brokerAvailable +
                 '}';
     }
 }

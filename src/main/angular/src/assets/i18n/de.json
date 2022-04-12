@@ -456,8 +456,10 @@
   "StatusEvchargerEditComponent.error.chargeEndTime_pattern": "Die Uhrzeit muss in 'Stunden:Minuten' angegeben werden",
 
   "SettingsComponent.mqttBroker": "MQTT Broker",
-  "SettingsComponent.mqttBrokerHost": "Host",
-  "SettingsComponent.mqttBrokerPort": "Port",
+  "SettingsComponent.mqttHost": "Host",
+  "SettingsComponent.mqttPort": "Port",
+  "SettingsComponent.mqttUsername": "Benutzername",
+  "SettingsComponent.mqttPassword": "Passwort",
   "SettingsComponent.nodeRed": "Node-RED",
   "SettingsComponent.nodeRedDashboardUrl": "Dashboard URL",
   "SettingsComponent.holidays": "Feiertage",

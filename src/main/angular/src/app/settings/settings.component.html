@@ -22,18 +22,28 @@
       <app-help [helpfile]="'Settings'" [anchor]="'mqttBroker'"></app-help></h2>
     <div class="sae__fields">
       <mat-form-field class="sae__hostname">
-        <mat-label>{{'SettingsComponent.mqttBrokerHost' | translate}}</mat-label>
-        <input matInput type="text" formControlName="mqttBrokerHost"
-               placeholder="{{settingsDefaults.mqttBrokerHost}}"
-               required="{{formHandler.isRequired('mqttBrokerHost')}}">
-        <mat-error *ngIf="errors.mqttBrokerHost">{{errors.mqttBrokerHost}}</mat-error>
+        <mat-label>{{'SettingsComponent.mqttHost' | translate}}</mat-label>
+        <input matInput type="text" formControlName="mqttHost"
+               placeholder="{{settingsDefaults.mqttHost}}"
+               required="{{formHandler.isRequired('mqttHost')}}">
+        <mat-error *ngIf="errors.mqttHost">{{errors.mqttHost}}</mat-error>
       </mat-form-field>
       <mat-form-field class="sae__port">
-        <mat-label>{{'SettingsComponent.mqttBrokerPort' | translate}}</mat-label>
-        <input matInput type="text" formControlName="mqttBrokerPort"
-               placeholder="{{settingsDefaults.mqttBrokerPort}}"
-               required="{{formHandler.isRequired('mqttBrokerPort')}}">
-        <mat-error *ngIf="errors.mqttBrokerPort">{{errors.mqttBrokerPort}}</mat-error>
+        <mat-label>{{'SettingsComponent.mqttPort' | translate}}</mat-label>
+        <input matInput type="text" formControlName="mqttPort"
+               placeholder="{{settingsDefaults.mqttPort}}"
+               required="{{formHandler.isRequired('mqttPort')}}">
+        <mat-error *ngIf="errors.mqttPort">{{errors.mqttPort}}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{'SettingsComponent.mqttUsername' | translate}}</mat-label>
+        <input matInput type="text" formControlName="mqttUsername"
+               required="{{formHandler.isRequired('mqttUsername')}}">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{'SettingsComponent.mqttPassword' | translate}}</mat-label>
+        <input matInput type="password" formControlName="mqttPassword"
+               required="{{formHandler.isRequired('mqttPassword')}}">
       </mat-form-field>
     </div>
   </section>

@@ -542,6 +542,8 @@
     <xs:complexType name="MqttBrokerType">
         <xs:attribute name="host" type="xs:string" use="required"/>
         <xs:attribute name="port" type="xs:int" />
+        <xs:attribute name="username" type="xs:string"/>
+        <xs:attribute name="password" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="ModbusTCPType">
