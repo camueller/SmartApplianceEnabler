@@ -12,6 +12,17 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [2.0.4](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.4) - 13.04.2022
+
+### Gefixt
+- Master-Zähler wurde nicht richtig initialisiert - siehe [#206](https://github.com/camueller/SmartApplianceEnabler/issues/206)
+- Wallbox: Wenn beim Laden mit Überschuss-Energie das Ladeziel erreicht wird, bleibt dieser Zustand bestehen, solange das Fahrzeug nicht getrennt wird 
+
+### Neu
+- [neuer Schalter-Typ Stufenschalter](https://github.com/camueller/SmartApplianceEnabler/issues/223)
+- [neuer Schalter-Typ PWM-Schalter](https://github.com/camueller/SmartApplianceEnabler/issues/222)
+- Unterstützung für Authentifizierung am MQTT-Broker
+
 ## [2.0.3](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.3) - 20.03.2022
 
 ### Gefixt
