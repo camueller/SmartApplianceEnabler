@@ -95,6 +95,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
 
     @Override
     public void init() {
+        logger.debug("{}: Initializing ...", getApplianceId());
         mqttClient = new MqttClient(getApplianceId(), getClass());
     }
 
@@ -151,7 +152,10 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
 
     @Override
     public void stop(LocalDateTime now) {
-
+        logger.debug("{}: Stopping ...", getApplianceId());
+        if(mqttClient != null) {
+            mqttClient.disconnect();
+        }
     }
 
     @Override
