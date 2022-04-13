@@ -115,6 +115,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
 
     @Override
     public void init() {
+        logger.debug("{}: Initializing ...", getApplianceId());
         mqttClient = new MqttClient(getApplianceId(), getClass());
         pulsePowerMeter.setImpulsesPerKwh(impulsesPerKwh);
         pulseEnergyMeter.setImpulsesPerKwh(impulsesPerKwh);

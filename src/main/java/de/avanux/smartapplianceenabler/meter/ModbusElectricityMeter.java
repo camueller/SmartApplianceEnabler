@@ -133,6 +133,7 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
 
     @Override
     public void init() {
+        logger.debug("{}: Initializing ...", getApplianceId());
         mqttClient = new MqttClient(getApplianceId(), getClass());
         if(ModbusRead.getFirstRegisterRead(MeterValueName.Power.name(), modbusReads) != null) {
             pollPowerMeter = new PollPowerMeter();

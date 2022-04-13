@@ -83,6 +83,7 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
 
     @Override
     public void init() {
+        logger.debug("{}: Initializing ...", getApplianceId());
         mqttClient = new MqttClient(getApplianceId(), getClass());
     }
 

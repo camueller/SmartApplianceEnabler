@@ -123,6 +123,7 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
 
     @Override
     public void init() {
+        logger.debug("{}: Initializing ...", this.applianceId);
         mqttClient = new MqttClient(applianceId, getClass());
         for(int i=0; i<this.controls.size(); i++) {
             String topic = getWrappedControlTopic(this.controls.get(i).getId());

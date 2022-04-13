@@ -173,6 +173,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
 
     @Override
     public void init() {
+        logger.debug("{}: Initializing ...", applianceId);
         mqttClient = new MqttClient(applianceId, getClass());
         if(this.control != null) {
             this.control.setMqttTopic(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC);

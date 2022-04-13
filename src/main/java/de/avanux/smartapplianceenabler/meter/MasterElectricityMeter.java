@@ -79,6 +79,7 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
 
     @Override
     public void init() {
+        logger.debug("{}: Initializing ...", this.applianceId);
         mqttClient = new MqttClient(applianceId, getClass());
         if(this.meter != null) {
             this.meter.init();

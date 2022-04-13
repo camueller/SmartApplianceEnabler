@@ -61,14 +61,17 @@ public class SlaveElectricityMeter implements ApplianceIdConsumer, Meter, Valida
 
     @Override
     public void init() {
+        logger.debug("{}: Initializing ...", this.applianceId);
     }
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
+        logger.debug("{}: Starting ...", this.applianceId);
     }
 
     @Override
     public void stop(LocalDateTime now) {
+        logger.debug("{}: Stopping ...", this.applianceId);
     }
 
     @Override

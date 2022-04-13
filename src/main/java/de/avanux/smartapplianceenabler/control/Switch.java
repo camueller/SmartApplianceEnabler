@@ -85,6 +85,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
     @Override
     public void init() {
+        logger.debug("{}: Initializing ...", getApplianceId());
         mqttClient = new MqttClient(getApplianceId(), getClass());
     }
 

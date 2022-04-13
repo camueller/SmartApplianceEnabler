@@ -129,6 +129,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     @Override
     public void init() {
+        logger.debug("{}: Initializing ...", applianceId);
         mqttClient = new MqttClient(applianceId, getClass());
         if(this.httpConfiguration != null) {
             this.httpTransactionExecutor.setConfiguration(this.httpConfiguration);

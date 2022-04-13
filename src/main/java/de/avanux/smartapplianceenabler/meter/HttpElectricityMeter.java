@@ -162,6 +162,7 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
 
     @Override
     public void init() {
+        logger.debug("{}: Initializing ...", this.applianceId);
         mqttClient = new MqttClient(applianceId, getClass());
         if(HttpRead.getFirstHttpRead(MeterValueName.Power.name(), this.httpReads) != null) {
             pollPowerMeter = new PollPowerMeter();
