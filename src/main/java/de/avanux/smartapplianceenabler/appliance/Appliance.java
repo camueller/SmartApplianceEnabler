@@ -22,6 +22,7 @@ import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.control.*;
 import de.avanux.smartapplianceenabler.control.ev.*;
 import de.avanux.smartapplianceenabler.gpio.GpioControllable;
+import de.avanux.smartapplianceenabler.gpio.GpioAccessProvider;
 import de.avanux.smartapplianceenabler.meter.*;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
 import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
@@ -36,7 +37,6 @@ import de.avanux.smartapplianceenabler.semp.webservice.Characteristics;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.pigpioj.PigpioInterface;
 
 import javax.xml.bind.annotation.*;
 import java.time.LocalDate;
@@ -181,7 +181,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         this.timeframeIntervalHandler.addTimeframeIntervalChangedListener(this);
     }
 
-    public void init(PigpioInterface pigpioInterface, Map<String, ModbusTcp> modbusIdWithModbusTcp, String notificationCommand) {
+    public void init(Map<String, ModbusTcp> modbusIdWithModbusTcp, String notificationCommand) {
         logger.debug("{}: Initializing appliance", id);
         mqttClient = new MqttClient(id, getClass());
         if(getTimeframeIntervalHandler() == null) {
@@ -266,6 +266,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         control.init();
 
         if(getGpioControllables().size() > 0) {
+            var pigpioInterface = GpioAccessProvider.getPigpioInterface();
             if(pigpioInterface != null) {
                 for(GpioControllable gpioControllable : getGpioControllables()) {
                     logger.info("{}: Configuring GPIO for {}", id, gpioControllable.getClass().getSimpleName());

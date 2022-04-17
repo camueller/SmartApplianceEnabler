@@ -93,22 +93,6 @@ public class ApplianceManager implements Runnable {
         return instance;
     }
 
-    private PigpioInterface getPigpioInterface() {
-        if(System.getProperty("os.arch").equals("arm")) {
-            try {
-                return PigpioJ.autoDetectedImplementation();
-            }
-            catch(Error e) {
-                // warning will be logged later on only if GPIO access is required
-                logger.error("Error creating PigpioInterface.", e);
-            }
-        }
-        else {
-            logger.warn("GPIO access disabled - not running on Raspberry Pi.");
-        }
-        return null;
-    }
-
     public void run() {
         try {
             MqttClient.start();
@@ -282,7 +266,7 @@ public class ApplianceManager implements Runnable {
             }
             logger.debug("{}: Initializing appliance ...", appliance.getId());
             try {
-                appliance.init(getPigpioInterface(), modbusIdWithModbusTcp,
+                appliance.init(modbusIdWithModbusTcp,
                         appliances.getConfigurationValue(ConfigurationParam.NOTIFICATION_COMMAND.getVal()));
             }
             catch (Exception e) {
