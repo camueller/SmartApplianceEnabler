@@ -121,7 +121,7 @@ Angesichts dieser Probleme stoppe ich hier erstmal den Versuch, das Testen der a
 7. Kopieren des Build-Artefakts vom Server auf den lokalen Rechner: 
   `scp server:/tmp/SmartApplianceEnabler-2.0.2.war /tmp`
 8. Erstellen eines neuen Releases auf Github unter Verwendung des bereits angelegten Tags
-9. Bekanntmachen des neuen Releases auf Gihub-Discussions
+9. Bekanntmachen des neuen Releases auf Gihub-Discussions und Sperren des Themas zur Vermeidung von Diskussionen innerhalb der Bekanntmachung
 
 ## Lokales Entwickeln
 ### Source-Download
