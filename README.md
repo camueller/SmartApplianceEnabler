@@ -114,7 +114,6 @@ Das Projekt *Smart Appliance Enabler* wurde **von [SMA](http://www.sma.de) unter
 Der *Smart Appliance Enabler* würde so nicht existieren ohne folgende Tools und Frameworks, deren Entwicklern ich Dank und Anerkennung zolle:
 * [Angular](https://angular.io) für das Web-Frontend
 * [Angular Material](https://material.angular.io/) für die Material-Design-Komponenten des Web-Frontends
-* [Amazon AWS](https://aws.amazon.com/de) für die Bereitstellung einer leistungsfähigen Cloud-Platform
 * [Browserstack](https://www.browserstack.com) für automatisierte Multi-Browser-Tests und kostenlose Lizenz für Open-Source-Projekte
 * [Cling](http://4thline.org/projects/cling) für UPnP (SEMP-Protokoll)
 * [Docker](https://www.docker.com/) für die Entwicklung einer Container-Platform
