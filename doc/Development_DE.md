@@ -5,9 +5,16 @@ Beim *Smart Appliance Enabler* handelt es sich um eine [Spring Boot](http://proj
 ## Continuous Integration (CI)
 Für den *Smart Appliance Enabler* existiert eine [Continuous Integration](https://de.wikipedia.org/wiki/Kontinuierliche_Integration)-Umgebung, in der die Anwendung vollständig automatisiert gebaut und getestet wird:
 
-... Bild aktualiseren
+![Continuous Integration](../pics/CI.png)
 
-Als Automatisierungswerkzeug wird [Jenkins](https://www.jenkins.io/) eingesetzt, der aktuell aus Kostengründen auf meinem 24x7-Server läuft und nicht aus dem Internet erreichbar ist. Er läuft als Docker-Container und wird wie folgt gestartet:
+Als Automatisierungswerkzeug wird [Jenkins](https://www.jenkins.io/) eingesetzt, der aktuell aus Kostengründen auf **meinem 24x7-Server** läuft und nicht aus dem Internet erreichbar ist. Sobald dieser Änderungen am [*Smart Appliance Enabler*-Github-Repository](https://github.com/camueller/SmartApplianceEnabler) erkennt started er die [Build-Pipline](https://github.com/camueller/SmartApplianceEnabler/blob/master/Jenkinsfile). Darin wird zunächst das Java-Backend kompiliert und die Unit-Tests ausgeführt. Dann wird die Web-Anwendung gebaut und die zugehörigen Unit-Tests ausgeführt. Beides wird in einer `war`-Datei paketiert die von einer **Java-Runtime** als Web-Anwendung ausgeführt werden kann.
+
+Unter Verwendung der `war`-Datei wird ein amd64-Docker-Image speziell für die nachfolgenden Browser-Tests erstellt und ein Container davon gestartet. Anschliessend werden die **Browser-basierten Tests** gestartet, d.h. ausgehend von einem nicht konfigurierten *Smart Appliance Enabler* erfolgt browser-basiert die Konfiguration, das Anlegen von Geräten, Zählern, Schaltern und Schaltplänen. Diese Test werden mittels [BrowserStack](https://www.browserstack.com/) nacheinander in verschiedenen Browsern (Chrome, Firefox, Safari) ausgeführt, wobei der Docker-Container mit *Smart Appliance Enabler* und das Docker-Volume für jeden Browser neu erzeugt werden.
+
+Wenn die Pipeline mit dem Flag "push to dockerhub" ausgeführt wird, wird ein amd64-Docker-Image für das Release gebaut und zu [Docker-Hub](https://hub.docker.com/) gepusht. Ausserdem wird auf einem Raspberry, auf dem ein Jenkins-Slave läuft, ein arm32-Docker-Image gebaut und ebenfalls zu Docker-Hub gepusht. 
+
+### Jenkins
+Jenkins läuft als Docker-Container und wird wie folgt gestartet:
 ```console
 sudo docker run --name jenkins --rm --publish 8080:8080 --volume jenkins-docker-certs:/certs/client --volume jenkins-data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):$(which docker) -e PATH=/var/jenkins_home/.local/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin -e TZ=Europe/Berlin jenkins/jenkins:alpine
 ```
@@ -142,6 +149,28 @@ Die Installation funktioniert zwar prinzipiell, aber
 - wenn man das Java-Binary direkt aufruft, kommt ein Hinweis, dass die VM nur unter `v7l` läuft, nicht unter `v6l`. In `qemu-system-arm` scheint zwar Support für anderer ARM-Prozesssoren (z.B. cortex-v7) enthalten zu sein, aber ich konnte mit keinem (außer `versatilepb`) ein Raspbian erfolgreich booten. `versatilepb` untersützt nur `v6l` und ist auf 256 MB begrenzt. 
 
 Angesichts dieser Probleme stoppe ich hier erstmal den Versuch, das Testen der automatische Installation automatisiert zu testen.
+
+## Erstellen eines neuen Releases
+
+1. `CHANGELOG.md` aktualisieren
+2. Version in `pom.xml` erhöhen
+3. Tag mit neuer Version erstellen, z.B. `2.0.2`
+4. Änderungen inkl. Tags zu Github pushen
+5. Jenkins-Build manuell starten und Docker-Push aktivieren (dauert inkl. Browserstack-Tests aktuell ca. 50 Minuten)
+   1. compiliert Source-Files und baut Java-Backend und Angular-Webanwendung
+   2. führt Unit-Tests aus
+   3. führt Browserstack-Tests in verschiedenen Browsern aus
+      1. baut Docker-Image des *Smart Appliance Enabler* für Browserstack-Tests
+      2. startet gebauten Docker-Container, wobei HTTP/Modbus-Aufrufe der während der Tests erstellten Schalter/Zähler unterdrückt werden
+      3. führt Browserstack-Tests in verschiedenen Browser aus
+   4. erstellt Docker-Image für amd64 und pusht es zu Dockerhub
+   5. erstellt Docker-Image für arm32 und pusht es zu Dockerhub
+6. Kopieren des Build-Artefakts aus dem Jenkins-Docker-Container auf den Host:
+  `docker cp jenkins:/var/jenkins_home/workspace/SmartApplianceEnabler2/target/SmartApplianceEnabler-2.0.2.war /tmp`
+7. Kopieren des Build-Artefakts vom Server auf den lokalen Rechner: 
+  `scp server:/tmp/SmartApplianceEnabler-2.0.2.war /tmp`
+8. Erstellen eines neuen Releases auf Github unter Verwendung des bereits angelegten Tags
+9. Bekanntmachen des neuen Releases auf Gihub-Discussions und Sperren des Themas zur Vermeidung von Diskussionen innerhalb der Bekanntmachung
 
 ## Lokales Entwickeln
 ### Source-Download
