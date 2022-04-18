@@ -14,7 +14,7 @@ Für die Verwendung als Stromzähler sind folgende Einstellungen notwendig (IP-A
 
 ## Verwendung als Schalter
 
-Für die Verwendung als Stromzähler sind folgende Einstellungen notwendig (IP-Adresse bzw. Hostname ist anzupassen):
+Für die Verwendung als Schalter sind folgende Einstellungen notwendig (IP-Adresse bzw. Hostname ist anzupassen):
 
 
 | Feld                  | Wert                                   |
@@ -50,7 +50,7 @@ Für die Verwendung als Stromzähler sind folgende Einstellungen notwendig (# is
 
 ## Verwendung als Schalter
 
-Für die Verwendung als Stromzähler sind folgende Einstellungen notwendig (# ist durch die die Nummer des Kanals [0,1,2,3] zu ersetzen;IP-Adresse bzw. Hostname ist anzupassen):
+Für die Verwendung als Schalter sind folgende Einstellungen notwendig (# ist durch die die Nummer des Kanals [0,1,2,3] zu ersetzen;IP-Adresse bzw. Hostname ist anzupassen):
 
 | Feld                                            | Wert                               |
 | ----------------------------------------------- |------------------------------------|
