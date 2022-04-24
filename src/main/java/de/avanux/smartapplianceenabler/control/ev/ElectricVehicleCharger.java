@@ -461,7 +461,8 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         boolean wasInStateVehicleConnected = wasInState(EVChargerState.VEHICLE_CONNECTED);
         boolean activeTimeframeIntervalRequestIsUsingOptionalEnergy = false;
         if(appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval() != null) {
-            appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval().getRequest().isUsingOptionalEnergy(now);
+            activeTimeframeIntervalRequestIsUsingOptionalEnergy = appliance.getTimeframeIntervalHandler()
+                    .getActiveTimeframeInterval().getRequest().isUsingOptionalEnergy(now);
         }
         logger.debug("{}: currentState={} startChargingRequested={} stopChargingRequested={} vehicleNotConnected={} " +
                         "vehicleConnected={} charging={} errorState={} wasInStateVehicleConnected={} " +
@@ -507,6 +508,9 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             }
         }
         else if(vehicleConnected && !charging) {
+            if(currenState == EVChargerState.CHARGING && activeTimeframeIntervalRequestIsUsingOptionalEnergy) {
+                return EVChargerState.CHARGING_COMPLETED;
+            }
             return EVChargerState.VEHICLE_CONNECTED;
         }
         return currenState;
