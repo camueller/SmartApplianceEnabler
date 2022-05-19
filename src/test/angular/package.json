@@ -15,7 +15,9 @@
   },
   "private": true,
   "dependencies": {
-    "testcafe": "~1.18.3",
-    "testcafe-browser-provider-browserstack": "^1.12.0"
+    "testcafe": "~1.18.6",
+    "testcafe-browser-provider-browserstack": "^1.12.0",
+    "ts-node": "~10.7.0",
+    "typescript": "~4.6.4"
   }
 }
