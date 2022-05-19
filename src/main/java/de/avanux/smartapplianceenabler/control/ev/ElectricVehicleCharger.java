@@ -477,6 +477,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             }
         }
         else if(vehicleConnected && !charging) {
+            if(currenState == EVChargerState.CHARGING && activeTimeframeIntervalRequestIsUsingOptionalEnergy) {
+                return EVChargerState.CHARGING_COMPLETED;
+            }
             return EVChargerState.VEHICLE_CONNECTED;
         }
         return currenState;
