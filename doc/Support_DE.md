@@ -1,10 +1,35 @@
-# Support
-## Anwender-Forum
+# Kostenpflichtiger Support
 
-Fragen zur Verwendung des *Smart Appliance Enabler* sollten im [Forum](https://github.com/camueller/SmartApplianceEnabler/discussions) gestellt werden.
+Die Nutzung des *Smart Appliance Enabler* ist kostenlos und in [Github Discussions](https://github.com/camueller/SmartApplianceEnabler/discussions) werden Fragen (auch von mir) kostenlos beantwortet. Trotzdem kann es sein, dass man sich durch die Komplexität der Technik, Abläufe und Abhängigkeiten überfordert fühlt. Oder dass man sich mit Linux nicht auskennt und deshalb zögert, den *Smart Appliance Enabler* einzusetzen. Um diese User zu unterstützen, biete ich kostenpflichtigen Support.
 
-**Bitte keine Fragen direkt per Email an mich stellen!** Wenn die Fragen im Forum gestellt werden, haben alle was davon und die Chance auf Antworten ist deutlich größer.
+## Vorgespräch (kostenlos)
 
-## Fehler melden
+Das Vorgespräch läuft als Video-Chat, bei dem ich durch Teilen meines Bildschirms auch relevante Seiten der *Smart Appliance Enabler*-Dokumentation oder *Smart Appliance Enabler*-Web-Oberfläche präsentieren kann. Zu Beginn erzählt der User, was er eigentlich erreichen will (meist weiss ich dass schon aus den Posts im Forum) und ich bereits erste Antworten oder Empfehlungen geben kann. Als Entwickler des *Smart Appliance Enabler* kenne ich natürlich die interne Funktionsweise und auch die Interaktion mit der SMA-Welt. Außerdem nutze ich dabei natürlich Informationen, die ich beim Support anderer User gewonnen habe.
 
-Der *Smart Appliance Enabler* integriert verschieden Systeme und ist dementsprechend relativ komplex. Trotz grosser Sorgfalt gibt es natürlich auch Fehler in der Software selbst. Erfahrungsgemäss liegen die Probleme aber oft woanders. Bei Problemen sollte deshalb zuerst in [Fragen / Probleme und Antworten](QA_DE.md) nachgesehen werden. Falls sich damit das Problem nicht lösen lässt, sollte im [Anwender-Forum](#anwender-forum) gefragt werden, bevor ein [Issue](https://github.com/camueller/SmartApplianceEnabler/issues) erstellt wird.
+Am Ende des Vorgesprächs besprechen wir die konkrete weitere Vorgehensweise.
+
+## Software-Installation (kostenpflichtig)
+
+Die minimale Voraussetzung für Support über das Internet ist ein gemäß Dokumentation installierter Raspberry Pi. Falls gewünscht, kann ich diese übernehmen, nachdem mir eine SD-Karte und eine frankierter Rückumschlag zugesandt worden ist.
+
+## Schaffung der Voraussetzung für Support über das Internet
+
+Für den Support über das Internet muss der User dazu in seinem Router eine Port-Weiterleitung eines beliebigen Ports auf Port 22 des Raspberry Pi einrichten, damit ich per SSH (Secure Shell) darauf zugreifen kann. Das kann ich nur, wenn ich die öffentliche IP-Adresse des Router zu diesem Zeitpunkt kenne. Der User kann mir diese mitteilen oder einen DynDNS-Dienst auf seinem Router einrichten, damit seine IP-Adresse darüber ermittelt werden kann.
+
+## Support (kostenpflichtig)
+
+Wenn die Voraussetzungen (installierter Raspbery Pi und funktionierende Port-Weiterleitung) erfüllt sind, kann der eigentliche Support beginnen. Dieser läuft wiederum als Video-Chat, wobei ich meinen Bildschirm teile, während ich mich per SSH mit dem Raspberry Pi des Users verbinde. Der User kann dadurch sehen, welche Befehle ich verwende um die Konfiguration des Raspberry Pi, des *Smart Appliance Enabler* oder von diesem verwendeter Dienste zu ändern, diese Dienste zu stoppen oder zu starten. Natürlich auch das Analysieren von Log-Dateien um mögliche Fehler zu identifizieren.
+
+Diese Herangehensweise hat sich insbesondere bewährt für User, die bisher keine oder nur wenig Erfahrung mit Linux haben.
+
+Auf diese Weise kommt der User schnellstmöglich zu einer funktionierenden *Smart Appliance Enabler*-Installation.
+
+## Kosten
+
+Der kostenpflichtige Support wird von mir mit
+
+**65 Euro/Stunde inkl. MwSt.**
+
+in Rechnung gestellt, also in etwa der Betrag, den auch jeder Sanitär-/Heizungstechniker in Rechnung stellt. Da ich bei Installation und Konfiguration rund um den *Smart Appliance Enabler* genau weiss, was zu tun ist, ist mit ein oder zwei Stunden in den meisten Fällen schon alles erreicht.
+
+Von der Rechnung können 20 Prozent bei der Einkommensteuererklärung als **haushaltsnahe Dienstleistung** abgerechnet werden, solange die Gesamtsumme aller Rechnungen den Betrag von 4.000 Euro/Jahr nicht übersteigt.

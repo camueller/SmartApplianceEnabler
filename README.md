@@ -89,19 +89,22 @@ Der eigentliche Zweck des *Smart Appliance Enabler* besteht in der Integration v
 
 ![Verbraucherbilanz](pics/shm/Verbraucherbilanz.png)
 
-## [Fragen und Antworten](doc/QA_DE.md)
+## Fragen und Antworten
 <a href="doc/QA_DE.md"><img align="left" src="pics/fragen_antworten.jpeg"></a>[Diese Seite führt bei Problemen hoffentlich zur Lösung](doc/QA_DE.md). Ausgehend von häufig gestellten Fragen werden Antworten gegeben sowie Verweise zu relevanten Teilen der Dokumentation.
-<br><br><br><br>
+<br><br><br><br><br>
 
-## [Unterstützung](doc/Support_DE.md)
-<a href="doc/Support_DE.md"><img align="left" src="pics/support.jpeg"></a>[Hier finden sich Informationen zur Unterstützung bei Fragen und Problemen](doc/Support_DE.md), falls die Informationen in [Fragen und Antworten](doc/QA_DE.md) nicht zum Erfolg geführt haben.
-<br><br><br><br>
+## Unterstützung
+<a href="doc/Support_DE.md"><img align="left" src="pics/support.jpeg"></a>
+Diskussionen und Fragen rund um den *Smart Appliance Enabler* sind in [Github Diskussion](https://github.com/camueller/SmartApplianceEnabler/discussions) richtig platziert.
 
-## [Mitmachen](doc/Contribute_DE.md)
+Darüber hinaus biete ich einen [persönlichen, individuellen, kostenpflichtigen Support mit Beratung](doc/Support_DE.md) an - quasi das "Rundum-sorglos Paket".
+<br><br><br>
+
+## Mitmachen
 <a href="doc/Contribute_DE.md"><img align="left" src="pics/IWantYou.png"></a>Zum [Mitmachen](doc/Contribute_DE.md) muss man **kein Programmierer** sein! [Mitmachen](doc/Contribute_DE.md) kann **jeder** auf vielfältige Weise! [Eure Anwendunsszenarien für den *Smart Appliance Enabler*](doc/ApplicationScenarios_DE.md) helfen Anderen weiter!
 <br><br><br><br><br>
 
-## [Entwicklung](doc/Development_DE.md)
+## Entwicklung
 Alle Informationen rund um die [Entwicklung](doc/Development_DE.md) des *Smart Appliance Enabler* einschliesslich der Dokumentation der Build- und Testumgebungen.
 
 ## Dank und Anerkennung
