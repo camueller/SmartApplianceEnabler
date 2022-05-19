@@ -432,7 +432,11 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         boolean errorState = control.isInErrorState();
         boolean hasOnlyEmptyRequestsBeforeTimeGap = hasOnlyEmptyRequestsBeforeTimeGap(now);
         boolean wasInStateVehicleConnected = wasInState(EVChargerState.VEHICLE_CONNECTED);
-        boolean activeTimeframeIntervalRequestIsUsingOptionalEnergy = appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval().getRequest().isUsingOptionalEnergy(now);
+        boolean activeTimeframeIntervalRequestIsUsingOptionalEnergy = false;
+        if(appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval() != null) {
+            activeTimeframeIntervalRequestIsUsingOptionalEnergy = appliance.getTimeframeIntervalHandler()
+                    .getActiveTimeframeInterval().getRequest().isUsingOptionalEnergy(now);
+        }
         logger.debug("{}: currentState={} startChargingRequested={} stopChargingRequested={} vehicleNotConnected={} " +
                         "vehicleConnected={} charging={} errorState={} wasInStateVehicleConnected={} " +
                         "firstInvocationAfterSkip={} hasOnlyEmptyRequestsBeforeTimeGap={} activeTimeframeIntervalRequestIsUsingOptionalEnergy={}",
