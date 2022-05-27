@@ -28,7 +28,17 @@ public class StringValueTransformer extends ValueTransformerBase implements Valu
     public void setByteValues(Integer[] byteValues) {
         StringBuilder stringValue = new StringBuilder();
         for(Integer byteValue : byteValues) {
-            stringValue.append(Character.valueOf((char) byteValue.intValue()));
+            if(byteValue > 255) {
+                // 16-bit Modbus register contains two 8-bit ASCII chars
+                var hex = Integer.toHexString(byteValue);
+                var hex1 = hex.substring(0, 2);
+                var hex2 = hex.substring(2);
+                stringValue.append(Character.valueOf((char) Integer.parseInt(hex1, 16)));
+                stringValue.append(Character.valueOf((char) Integer.parseInt(hex2, 16)));
+            }
+            else {
+                stringValue.append(Character.valueOf((char) byteValue.intValue()));
+            }
         }
         value = stringValue.toString();
         logger.debug("{}: transformed value={}", applianceId, value);

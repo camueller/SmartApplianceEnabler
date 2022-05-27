@@ -31,10 +31,40 @@ public class FloatValueTransformer extends ValueTransformerBase implements Value
                 value = Float.valueOf(Float.intBitsToFloat(byteValues[0] << 16 | byteValues[1])).doubleValue();
                 logger.debug("{}: transformed value={}", applianceId, value);
             }
+            else if(byteValues.length == 4) {
+                // source: https://community.openhab.org/t/modbus-configuration-for-wallbox-access/119383/20
+                var hex_komplett = toHexStringLen4(byteValues[0]) + toHexStringLen4(byteValues[1])
+                        + toHexStringLen4(byteValues[2]) + toHexStringLen4(byteValues[3]);
+                var hex_vorzexp = hex_komplett.substring(0, 3);
+                var hex_sig = hex_komplett.substring(3);
+                var dec_vorzexp = Integer.parseInt(hex_vorzexp, 16);
+                var dec_sig = Long.valueOf(hex_sig, 16);
+
+                var bin_vorzexp = Integer.toBinaryString(dec_vorzexp);
+                var vorz = 0;
+                double dec_exp = 0;
+                if (bin_vorzexp.charAt(0) == '1' && bin_vorzexp.length() == 12) {
+                    vorz = -1;
+                    dec_exp = (dec_vorzexp - Math.pow(2, bin_vorzexp.length() - 1));
+                }
+                else {
+                    vorz = 1;
+                    dec_exp = dec_vorzexp;
+                }
+                var sig = (1 + (dec_sig / Math.pow(2,52)));
+                double exp = dec_exp - 1023;
+                value = vorz * sig * Math.pow(2, exp);
+                logger.debug("{}: transformed value={}", applianceId, value);
+            }
             else {
                 logger.error("{}: Cannot handle response composed of {} bytes", applianceId, byteValues.length);
             }
         }
+    }
+
+    private String toHexStringLen4(Integer intValue) {
+        var hex = Integer.toHexString(intValue);
+        return hex.equals("0") ? "0000" : hex;
     }
 
     @Override
