@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2022 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,39 +21,30 @@ package de.avanux.smartapplianceenabler.modbus.transformer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FloatValueTransformerTest {
-    private FloatValueTransformer sut;
+public class StringValueTransformerTest {
+
+    private StringValueTransformer sut;
 
     @BeforeEach
     public void setup() throws Exception {
-        sut = new FloatValueTransformer();
+        sut = new StringValueTransformer();
     }
 
     @Test
-    public void getValue_2Words() {
-        Integer[] byteValues = {17676, 21823};
+    public void getValue_OneCharacterPerWord() {
+        // 1 data word as hex: "0041"
+        Integer[] byteValues = {65};
         sut.setByteValues(byteValues);
-        assertEquals(2245.328, sut.getValue(), 0.001);
+        assertEquals("A", sut.getValue());
     }
 
     @Test
-    public void getValue_4Words() {
-        // 4 data words as hex: "4147 7507 0000 0000"
-        Integer[] byteValues = {16711, 29959, 0, 0};
+    public void getValue_TwoCharactersPerWord() {
+        // 1 data word as hex: "4332"
+        Integer[] byteValues = {17202};
         sut.setByteValues(byteValues);
-        assertEquals(3074574, sut.getValue(), 0.001);
-    }
-
-    @Test
-    public void getValue_4Words_2() {
-        Integer[] byteValues = {16711, 30408, 32768, 0};
-        sut.setByteValues(byteValues);
-        assertEquals(3075473, sut.getValue(), 0.001);
+        assertEquals("C2", sut.getValue());
     }
 }
