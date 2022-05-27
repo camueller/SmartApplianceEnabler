@@ -73,17 +73,17 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         return new GuardedTimerTask(this.applianceId, "PollEnergyMeter", Meter.AVERAGING_INTERVAL * 1000) {
             @Override
             public void runTask() {
-                LocalDateTime now = LocalDateTime.now();
                 if(pollEnergyExecutor != null) {
-                    Double polledEnergy = pollEnergyExecutor.pollEnergy(now);
-                    if(polledEnergy != null) {
+                    LocalDateTime now = LocalDateTime.now();
+                    Double energy = pollEnergyExecutor.pollEnergy(now);
+                    if(energy != null) {
                         previousEnergyCounter = currentEnergyCounter;
                         previousEnergyCounterTimestamp = currentEnergyCounterTimestamp;
-                        currentEnergyCounter = polledEnergy;
+                        currentEnergyCounter = energy;
                         currentEnergyCounterTimestamp = now;
                     }
+                    meterUpdateListeners.forEach(listener -> listener.onMeterUpdate(now, getAveragePower(), getEnergy()));
                 }
-                meterUpdateListeners.forEach(listener -> listener.onMeterUpdate(now, getAveragePower(), getEnergy()));
             }
         };
     }

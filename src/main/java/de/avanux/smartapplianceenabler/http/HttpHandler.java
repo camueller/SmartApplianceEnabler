@@ -43,7 +43,7 @@ public class HttpHandler implements ApplianceIdConsumer {
 
     public Double getDoubleValue(ParentWithChild<HttpRead, HttpReadValue> read,
                                  ContentProtocolHandler contentProtocolHandler,
-                                 double defaultValue) {
+                                 Double defaultValue) {
         if(Environment.isHttpDisabled()) {
             return defaultValue;
         }
