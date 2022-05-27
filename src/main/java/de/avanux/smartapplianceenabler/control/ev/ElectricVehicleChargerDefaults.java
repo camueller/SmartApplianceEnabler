@@ -24,7 +24,7 @@ public class ElectricVehicleChargerDefaults {
     private Integer phases = 1;
     private Integer chargeLoss = 10;
     private Integer pollInterval = 20; // seconds
-    private Integer startChargingStateDetectionDelay = 300;
+    private Integer startChargingStateDetectionDelay = 30;
     private Boolean forceInitialCharging = false;
     private Integer updateSocAfterIncrease = 20;
     private static ElectricVehicleChargerDefaults instance = new ElectricVehicleChargerDefaults();
