@@ -40,7 +40,7 @@ public class HttpHandler implements ApplianceIdConsumer {
         this.httpTransactionExecutor = httpTransactionExecutor;
     }
 
-    public double getDoubleValue(ParentWithChild<HttpRead, HttpReadValue> read,
+    public Double getDoubleValue(ParentWithChild<HttpRead, HttpReadValue> read,
                                ContentProtocolHandler contentProtocolHandler) {
         String protocolHandlerValue = getValue(read, contentProtocolHandler);
         if(protocolHandlerValue != null) {
@@ -63,7 +63,7 @@ public class HttpHandler implements ApplianceIdConsumer {
                     applianceId, value, protocolHandlerValue, valueExtractionRegex, extractedValue, factorToValue);
             return value;
         }
-        return 0.0;
+        return null;
     }
 
     public boolean getBooleanValue(ParentWithChild<HttpRead, HttpReadValue> read,

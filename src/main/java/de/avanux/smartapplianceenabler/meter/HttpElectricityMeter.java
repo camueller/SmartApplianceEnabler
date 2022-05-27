@@ -280,12 +280,12 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         return pollEnergy();
     }
 
-    protected double pollEnergy() {
+    protected Double pollEnergy() {
         ParentWithChild<HttpRead, HttpReadValue> energyRead = HttpRead.getFirstHttpRead(MeterValueName.Energy.name(), this.httpReads);
         return getValue(energyRead);
     }
 
-    private double getValue(ParentWithChild<HttpRead, HttpReadValue> read) {
+    private Double getValue(ParentWithChild<HttpRead, HttpReadValue> read) {
         return this.httpHandler.getDoubleValue(read, getContentContentProtocolHandler());
     }
 
