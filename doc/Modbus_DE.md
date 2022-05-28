@@ -1,4 +1,46 @@
 # Modbus
+
+Vor der Einbindung von Modbus-Geräten in den *Smart Appliance Enabler* sollte geprüft werden, ob
+- mit dem Gerät via Modbus/TCP kommuniziert werden kann
+- die relevanten Register die erwarteten Daten liefern
+
+Dazu eignet sich das Windows-Programm [Simply Modbus TCP Client](https://www.simplymodbus.ca/TCPclient.htm), dessen Demo-Version zwar funtional nicht eingeschränkt ist aber nach 6 Modbus-Nachrichten einen Neustart des Programms erfodert.
+
+Folgende Angaben müssen dabei der Modbus-Beschreibung des jeweiligen Geätes entnommen werden:
+- Slave ID bzw. Slave-Adresse
+- Register-Adresse
+- Anzahl der Register bzw. Datenwörter
+- Function code
+- Register-Grösse
+- Byte-Reihenfolge
+- Datenwort-Reihenfolge
+
+Verbindung herstellen: 
+- Mode sollte auf `TCP` stehen
+- IP-Adresse des Modbus-Gerätes eingeben
+- Port sollte immer auf 502 gesetzt bleiben
+- nach Klick auf `CONNECT` sollte der Status mit `CONNECTED` angezeigt werden
+
+Als nächstes die `Slave ID` eingeben - sie ist spezifisch für das Modbus-Gerät und bleibt für alle Anfragen an dieses Gerät gleich. 
+
+Register auslesen:
+- `First Register` ist die Register-Adresse als Dezimalwert (ggf. [umrechnen](https://www.rapidtables.com/convert/number/hex-to-decimal.html), falls in der Geräte-Beschreibung die Hexadezimalwerte angegeben sind)
+- `No. of Regs` ist die Anzahl der Register bzw. Datenwörter und meist 1, max. 4
+- `2 byte ID` nicht selektieren
+- `Function code` auswählen
+- `minus offset` muss immer auf 0 stehen!
+- `register size` auswählen
+- nach Klick auf `Send` sollte keine Fehlermeldung kommen, sondern eine Response angezeigt werden
+
+Durch Variation von
+- `High byte first`
+- `High word first`
+- Response data type (erste Spalte in der Tabelle rechts) 
+muss erreicht werden, dass in Spalte `results` der korrekte Wert angezeigt wird.
+
+![SimplyModbusTCPClient](../pics/SimplyModbusTCPClient.png)
+
+# Modbus im Smart Appliance Enabler
 ## Allgemein
 Für jeden Zähler/Schalter/Wallbox muss ein konfigurierter [Modbus/TCP](Settings_DE.md#user-content-modbus) ausgewählt werden.
 
@@ -6,11 +48,11 @@ Ausserdem muss die **Slave-Adresse** des Modbus-Gerätes angegeben werden.
 
 Grundsätzlich ist die Angabe von Slave-Adresse oder Register-Adressen als Hexadezimalzahl (mit "0x" am Anfang) oder als Dezimalzahl (ohne "0x" am Anfang) möglich.
 
-Für jedes Modbus-Register sind folgende Angaben erforderlich, welche sich der Modbus-Beschreibung des jeweiligen Geätes entnehmen lassen:
+Für jedes Modbus-Register sind folgende Angaben erforderlich:
 - Register-Adresse
 - Register-Typ bzw. Function-Code
 - Wert-Typ: legt fest, welches Format der Wert im Register hat
-Zahlenwerte mit hoher Genauigkeit benötigen manchmal 2 Datenwörter. In diesen Fällen kann auch die Byte-Reihenfolge (Big Endian / Little Endian) konfiguriert werden.
+Zahlenwerte mit hoher Genauigkeit benötigen manchmal 2 oder 4 Datenwörter. In diesen Fällen kann auch die Byte-Reihenfolge (Big Endian / Little Endian) konfiguriert werden.
 
 Außerdem kann ein Umrechnungsfaktor angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um ihn in die benötigte Einheit umzurechnen.
 
