@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "typescript": {
+      "options": {
+        "resolveJsonModule": true,
+        "esModuleInterop": true
+      }
+    }
+  }
+}

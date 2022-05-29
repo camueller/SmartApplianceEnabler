@@ -47,6 +47,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -75,6 +76,7 @@ public class SaeController {
     private static final String CONTROLRECOMMENDATIONS_URL = BASE_URL + "/controlrecommendations";
     private static final String EV_URL = BASE_URL + "/ev";
     private static final String EVCHARGE_URL = BASE_URL + "/evcharge";
+    private static final String EVCHARGER_TEMPLATES_URL = BASE_URL + "/evcharger-templates";
     private static final String FILE_URL = BASE_URL + "/file";
     private static final String INFO_URL = BASE_URL + "/info";
     private static final String TASMOTA_COMMAND_URL = "/cm";
@@ -593,6 +595,24 @@ public class SaeController {
     public boolean setRuntimeDemand(LocalDateTime now, String applianceId, Integer runtime, Integer latestEnd) {
         logger.debug("{}: Received request to set runtime to {}s", applianceId, runtime);
         return activateTimeframe(now, applianceId, runtime, latestEnd, false);
+    }
+
+    @RequestMapping(value = EVCHARGER_TEMPLATES_URL, method = RequestMethod.GET, produces = "application/json")
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public String getEVChargerTemplates(HttpServletResponse response) {
+        synchronized (lock) {
+            try {
+                logger.debug("Received request for ev charger templates");
+                FileHandler fileHandler = new FileHandler();
+                return fileHandler.loadEVChargerTemplates();
+            } catch (IOException e) {
+                logger.error("File not found", e);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
+            }
+        }
+        return null;
     }
 
     @RequestMapping(value = EV_URL, method = RequestMethod.GET, produces = "application/json")

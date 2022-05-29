@@ -1,5 +1,4 @@
-import * as moment from 'moment';
-import {Moment} from 'moment';
+import moment, { Moment } from 'moment';
 import {TimeOfDay} from '../schedule/time-of-day';
 import {DayOfWeek} from '../schedule/day-of-week';
 import { TimeOfDayOfWeek } from '../schedule/time-of-day-of-week';

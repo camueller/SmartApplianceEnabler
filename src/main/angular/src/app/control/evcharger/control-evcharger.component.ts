@@ -1,6 +1,5 @@
 import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
 import {EvCharger} from './ev-charger';
-import {EvChargerTemplates} from './ev-charger-templates';
 import {Settings} from '../../settings/settings';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {TranslateService} from '@ngx-translate/core';
@@ -26,6 +25,7 @@ import {ListItem} from '../../shared/list-item';
 import {MeterDefaults} from '../../meter/meter-defaults';
 import {EvReadValueName} from './ev-read-value-name';
 import {EvWriteValueName} from './ev-write-value-name';
+import {EvChargerTemplate} from './ev-charger-template';
 
 @Component({
   selector: 'app-control-evcharger',
@@ -48,6 +48,8 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   settings: Settings;
   @Input()
   settingsDefaults: SettingsDefaults;
+  @Input()
+  templates: EvChargerTemplate[];
   @ViewChild(ControlEvchargerModbusComponent)
   evChargerModbusComp: ControlEvchargerModbusComponent;
   @ViewChild(ControlEvchargerHttpComponent)
@@ -56,8 +58,6 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   electricVehicleComps: QueryList<ElectricVehicleComponent>;
   form: FormGroup;
   formHandler: FormHandler;
-  templates: { [name: string]: EvCharger };
-  templateNames: string[];
   translatedStrings: { [key: string]: string } = {};
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -101,12 +101,14 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
         this.protocols.push({value: key.split('.')[2], viewValue: translatedStrings[key]});
       });
     });
-    this.templates = EvChargerTemplates.getTemplates();
-    this.templateNames = Object.keys(this.templates);
     this.expandParentForm();
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
+  }
+
+  get templateNames(): string[] {
+    return this.templates.map(template => template.name);
   }
 
   getTemplateNameSelected(): string {
@@ -115,8 +117,9 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
 
   useTemplate() {
     const templateName = this.getTemplateNameSelected();
+    const evChargerFromTemplate = this.templates.find(template => template.name === templateName)?.template;
     this.updateModelFromForm(); // preserve configured but unsaved vehicles
-    this.evCharger = new EvCharger({...this.templates[templateName], vehicles: this.evCharger.vehicles});
+    this.evCharger = new EvCharger({...evChargerFromTemplate, vehicles: this.evCharger.vehicles});
     this.setProtocol(this.evCharger.protocol);
     this.updateForm();
     this.changeDetectorRef.detectChanges();

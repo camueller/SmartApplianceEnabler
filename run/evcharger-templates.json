@@ -1,0 +1,458 @@
+[
+  {
+    "name": "go-eCharger",
+    "template": {
+      "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",
+      "voltage": null,
+      "phases": null,
+      "pollInterval": null,
+      "startChargingStateDetectionDelay": 15,
+      "forceInitialCharging": null,
+      "vehicles": [],
+      "httpControl": {
+        "@class": "de.avanux.smartapplianceenabler.http.EVHttpControl",
+        "contentProtocol": "JSON",
+        "httpConfiguration": null,
+        "httpReads": [
+          {
+            "@class": "de.avanux.smartapplianceenabler.http.HttpRead",
+            "readValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",
+                "data": null,
+                "extractionRegex": "(1)",
+                "factorToValue": null,
+                "name": "VehicleNotConnected",
+                "path": "$.car"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",
+                "data": null,
+                "extractionRegex": "(3|4)",
+                "factorToValue": null,
+                "name": "VehicleConnected",
+                "path": "$.car"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",
+                "data": null,
+                "extractionRegex": "(2)",
+                "factorToValue": null,
+                "name": "Charging",
+                "path": "$.car"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",
+                "data": null,
+                "extractionRegex": "([^0])",
+                "factorToValue": null,
+                "name": "Error",
+                "path": "$.err"
+              }
+            ],
+            "url": "http://192.168.1.1/status"
+          }
+        ],
+        "httpWrites": [
+          {
+            "@class": "de.avanux.smartapplianceenabler.http.HttpWrite",
+            "url": "http://192.168.1.1/mqtt?payload=",
+            "writeValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",
+                "factorToValue": null,
+                "method": "GET",
+                "name": "ChargingCurrent",
+                "value": "amx={0}"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",
+                "factorToValue": null,
+                "method": "GET",
+                "name": "StartCharging",
+                "value": "alw=1"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",
+                "factorToValue": null,
+                "method": "GET",
+                "name": "StopCharging",
+                "value": "alw=0"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "Keba P30 c-series >3.10.16 / x-series >1.11",
+    "template": {
+      "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",
+      "voltage": null,
+      "phases": null,
+      "pollInterval": null,
+      "startChargingStateDetectionDelay": 60,
+      "forceInitialCharging": null,
+      "vehicles": [],
+      "modbusControl": {
+        "@class": "de.avanux.smartapplianceenabler.modbus.EVModbusControl",
+        "modbusReads": [
+          {
+            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusRead",
+            "address": "1000",
+            "type": "Holding",
+            "valueType": "Integer",
+            "byteOrder": null,
+            "words": null,
+            "factorToValue": null,
+            "readValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",
+                "extractionRegex": "(2|5)",
+                "name": "VehicleConnected"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",
+                "extractionRegex": "(3)",
+                "name": "Charging"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",
+                "extractionRegex": "(4)",
+                "name": "Error"
+              }
+            ]
+          },
+          {
+            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusRead",
+            "address": "1004",
+            "type": "Holding",
+            "valueType": "Integer",
+            "byteOrder": null,
+            "words": null,
+            "factorToValue": null,
+            "readValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",
+                "extractionRegex": "(0|1|3)",
+                "name": "VehicleNotConnected"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",
+                "extractionRegex": "(7|5)",
+                "name": "VehicleConnected"
+              }
+            ]
+          }
+        ],
+        "modbusWrites": [
+          {
+            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",
+            "address": "5014",
+            "type": "Holding",
+            "valueType": "Integer",
+            "factorToValue": null,
+            "writeValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",
+                "name": "StartCharging",
+                "value": "1"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",
+                "name": "StopCharging",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",
+            "address": "5004",
+            "type": "Holding",
+            "valueType": "Integer",
+            "factorToValue": 1000.0,
+            "writeValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",
+                "name": "ChargingCurrent",
+                "value": "0"
+              }
+            ]
+          }
+        ],
+        "slaveAddress": 255
+      }
+    }
+  },
+  {
+    "name": "Phoenix Contact EM-CP-PP-ETH",
+    "template": {
+      "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",
+      "voltage": null,
+      "phases": null,
+      "pollInterval": null,
+      "startChargingStateDetectionDelay": 300,
+      "forceInitialCharging": null,
+      "vehicles": [],
+      "modbusControl": {
+        "@class": "de.avanux.smartapplianceenabler.modbus.EVModbusControl",
+        "modbusReads": [
+          {
+            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusRead",
+            "address": "100",
+            "type": "Input",
+            "valueType": "String",
+            "byteOrder": null,
+            "words": null,
+            "factorToValue": null,
+            "readValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",
+                "extractionRegex": "(A)",
+                "name": "VehicleNotConnected"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",
+                "extractionRegex": "(B)",
+                "name": "VehicleConnected"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",
+                "extractionRegex": "(C|D)",
+                "name": "Charging"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",
+                "extractionRegex": "(E|F)",
+                "name": "Error"
+              }
+            ]
+          }
+        ],
+        "modbusWrites": [
+          {
+            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",
+            "address": "400",
+            "factorToValue": null,
+            "type": "Coil",
+            "writeValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",
+                "name": "StartCharging",
+                "value": "1"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",
+                "name": "StopCharging",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",
+            "address": "300",
+            "type": "Holding",
+            "valueType": "Integer",
+            "factorToValue": null,
+            "writeValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",
+                "name": "ChargingCurrent",
+                "value": "0"
+              }
+            ]
+          }
+        ],
+        "slaveAddress": 180
+      }
+    }
+  },
+  {
+    "name": "wallbe (neuer Controller)",
+    "template": {
+      "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",
+      "voltage": null,
+      "phases": null,
+      "pollInterval": null,
+      "startChargingStateDetectionDelay": 300,
+      "forceInitialCharging": null,
+      "vehicles": [],
+      "modbusControl": {
+        "@class": "de.avanux.smartapplianceenabler.modbus.EVModbusControl",
+        "modbusReads": [
+          {
+            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusRead",
+            "address": "100",
+            "type": "Input",
+            "valueType": "String",
+            "byteOrder": null,
+            "words": null,
+            "factorToValue": null,
+            "readValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",
+                "extractionRegex": "(A)",
+                "name": "VehicleNotConnected"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",
+                "extractionRegex": "(B)",
+                "name": "VehicleConnected"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",
+                "extractionRegex": "(C|D)",
+                "name": "Charging"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusReadValue",
+                "extractionRegex": "(E|F)",
+                "name": "Error"
+              }
+            ]
+          }
+        ],
+        "modbusWrites": [
+          {
+            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",
+            "address": "400",
+            "factorToValue": null,
+            "type": "Coil",
+            "writeValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",
+                "name": "StartCharging",
+                "value": "1"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",
+                "name": "StopCharging",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWrite",
+            "address": "528",
+            "type": "Holding",
+            "valueType": "Integer",
+            "factorToValue": 10,
+            "writeValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.modbus.ModbusWriteValue",
+                "name": "ChargingCurrent",
+                "value": "0"
+              }
+            ]
+          }
+        ],
+        "slaveAddress": 255
+      }
+    }
+  },
+  {
+    "name": "WARP Charger",
+    "template": {
+      "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",
+      "httpControl": {
+        "@class": "de.avanux.smartapplianceenabler.http.EVHttpControl",
+        "contentProtocol": "JSON",
+        "httpConfiguration": {
+          "@class": "de.avanux.smartapplianceenabler.http.HttpConfiguration",
+          "contentType": "application/json",
+          "password": null,
+          "username": null
+        },
+        "httpReads": [
+          {
+            "@class": "de.avanux.smartapplianceenabler.http.HttpRead",
+            "readValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",
+                "data": null,
+                "extractionRegex": "(0)",
+                "factorToValue": null,
+                "name": "VehicleNotConnected",
+                "path": "$.vehicle_state"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",
+                "data": null,
+                "extractionRegex": "(1)",
+                "factorToValue": null,
+                "name": "VehicleConnected",
+                "path": "$.vehicle_state"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",
+                "data": null,
+                "extractionRegex": "(2)",
+                "factorToValue": null,
+                "name": "Charging",
+                "path": "$.vehicle_state"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",
+                "data": null,
+                "extractionRegex": "(3)",
+                "factorToValue": null,
+                "name": "Error",
+                "path": "$.vehicle_state"
+              }
+            ],
+            "url": "http://192.168.1.1/evse/state"
+          }
+        ],
+        "httpWrites": [
+          {
+            "@class": "de.avanux.smartapplianceenabler.http.HttpWrite",
+            "url": "http://192.168.1.1/evse/stop_charging",
+            "writeValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",
+                "factorToValue": null,
+                "method": "POST",
+                "name": "StopCharging",
+                "value": "null"
+              }
+            ]
+          },
+          {
+            "@class": "de.avanux.smartapplianceenabler.http.HttpWrite",
+            "url": "http://192.168.1.1/evse/start_charging",
+            "writeValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",
+                "factorToValue": null,
+                "method": "POST",
+                "name": "StartCharging",
+                "value": "null"
+              }
+            ]
+          },
+          {
+            "@class": "de.avanux.smartapplianceenabler.http.HttpWrite",
+            "url": "http://192.168.1.1/evse/current_limit",
+            "writeValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",
+                "factorToValue": 1000.0,
+                "method": "POST",
+                "name": "ChargingCurrent",
+                "value": "'{'current:{0,number,#}'}'"
+              }
+            ]
+          }
+        ]
+      },
+      "forceInitialCharging": null,
+      "notifications": null,
+      "phases": null,
+      "pollInterval": null,
+      "startChargingStateDetectionDelay": 40,
+      "vehicles": null,
+      "voltage": null
+    }
+  }
+]

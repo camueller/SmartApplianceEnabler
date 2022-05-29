@@ -19,22 +19,19 @@ package de.avanux.smartapplianceenabler;
 
 import com.owlike.genson.Genson;
 import com.owlike.genson.GensonBuilder;
-import java.time.LocalDate;
+import de.avanux.smartapplianceenabler.util.Downloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.*;
-import java.io.*;
-import java.net.URL;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
+import java.io.Reader;
+import java.io.StringReader;
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Scanner;
 
-public class HolidaysDownloader {
+public class HolidaysDownloader extends Downloader {
     private Logger logger = LoggerFactory.getLogger(HolidaysDownloader.class);
     public transient static final String DEFAULT_URL = "https://feiertage-api.de/api/?jahr={0}&nur_land=NATIONAL";
     private String url;
@@ -58,33 +55,11 @@ public class HolidaysDownloader {
     public Map<LocalDate, String> downloadHolidays() {
         Map<LocalDate, String> holidayWithName = new LinkedHashMap<>();
         try {
-            /**
-             * Avoid
-             *
-             * javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException:
-             * PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException:
-             * unable to find valid certification path to requested target
-             *
-             * temporary replacing the trust manager with an all-trusting one
-             */
-            // Create a trust manager that does not validate certificate chains
-            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager(){
-                public X509Certificate[] getAcceptedIssuers(){return null;}
-                public void checkClientTrusted(X509Certificate[] certs, String authType){}
-                public void checkServerTrusted(X509Certificate[] certs, String authType){}
-            }};
-            // Install SSLSocketFactory with all-trusting trust manager
-            SSLSocketFactory originalSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
-            SSLContext sc = SSLContext.getInstance("TLS");
-            sc.init(null, trustAllCerts, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-
             String resolvedUrl = getResolvedUrl();
             logger.debug("Will download holidays from " + resolvedUrl);
             Genson genson = new GensonBuilder().useRuntimeType(true).create();
 
-            String out = new Scanner(new URL(resolvedUrl).openStream(), "UTF-8").useDelimiter("\\A").next();
+            String out = downloadAsString(resolvedUrl);
             logger.debug("Holidays JSON: " + out);
             Reader reader = new StringReader(out);
 
@@ -95,9 +70,6 @@ public class HolidaysDownloader {
                 LocalDate datum = LocalDate.parse(datumString, dateFormatter);
                 holidayWithName.put(datum, holidayName);
             }
-
-            // Restore original SSLSocketFactory
-            HttpsURLConnection.setDefaultSSLSocketFactory(originalSSLSocketFactory);
         }
         catch(Exception e) {
             logger.error("Error downloading holidays", e);

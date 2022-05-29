@@ -28,6 +28,7 @@ import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -151,7 +152,7 @@ public class FileHandler {
                     logger.debug("Loaded holiday: " + holiday);
                 }
             } catch (IOException e) {
-                logger.debug("Error reading holidays file " + holidayFile.getAbsolutePath(), e);
+                logger.error("Error reading holidays file " + holidayFile.getAbsolutePath(), e);
             }
             return holidays;
         }
@@ -166,6 +167,27 @@ public class FileHandler {
         int year = LocalDate.now().getYear();
         return new File(getHomeDir(), "Holidays-" + year + ".txt");
     }
+
+    public String loadEVChargerTemplates() throws IOException {
+        Path filePath = Path.of(getEVChargerTemplatesFilePath());
+        return Files.readString(filePath);
+    }
+
+    public void saveEVChargerTemplates(String evChargerTemplates) {
+        Path filePath = Path.of(getEVChargerTemplatesFilePath());
+        try {
+            Files.writeString(filePath, evChargerTemplates);
+            logger.debug("ev charger templates written to {}", filePath);
+        }
+        catch(IOException e) {
+            logger.error("Error saving ev charger templates to {}" + filePath.toString(), e);
+        }
+    }
+
+    private String getEVChargerTemplatesFilePath() {
+        return new File(getHomeDir(), "evcharger-templates.json").getAbsolutePath();
+    }
+
 
     public int getFileAttributes(String pathname) {
         int mode = -1;

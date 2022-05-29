@@ -24,6 +24,7 @@ import {NotificationModule} from '../notification/notification.module';
 import { ControlMeterreportingComponent } from './meterreporting/control-meterreporting.component';
 import {ControlPwmComponent} from './pwm/control-pwm.component';
 import {ControlLevelComponent} from './level/control-level.component';
+import {EvChargerTemplateResolver} from './evcharger/ev-charger-template-resolver.service';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import {ControlLevelComponent} from './level/control-level.component';
     ControlResolver,
     ControlDefaultsResolver,
     ElectricVehicleResolver,
+    EvChargerTemplateResolver,
   ]
 })
 export class ControlModule { }

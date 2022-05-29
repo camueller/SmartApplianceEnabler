@@ -10,7 +10,6 @@ import {
 } from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
 import {EvCharger} from '../../../main/angular/src/app/control/evcharger/ev-charger';
-import {EvChargerTemplates} from '../../../main/angular/src/app/control/evcharger/ev-charger-templates';
 import {evchargerGoe} from './fixture/appliance/evcharger-goe';
 import {httpMeter_goeCharger} from './fixture/meter/goe-meter';
 import {HttpElectricityMeter} from '../../../main/angular/src/app/meter/http/http-electricity-meter';
@@ -18,14 +17,16 @@ import {nissan_leaf} from './fixture/control/electricvehicle/nissan_leaf';
 import {generateApplianceId} from './shared/appliance-id-generator';
 import {tesla_model3} from './fixture/control/electricvehicle/tesla_model3';
 import {socRequest_consecutiveDaysTimeframe} from './fixture/schedule/socRequest_consecutiveDaysTimeframe';
+import evChargerTemplates from '../../../../run/evcharger-templates.json';
 
 fixture('Wallbox go-eCharger').page(baseUrl());
 
 function createApplianceConfiguration(): ApplianceConfiguration {
+  const goECharger = evChargerTemplates.find(template => template.name === 'go-eCharger').template as unknown as EvCharger;
   const configuration = new ApplianceConfiguration({
     appliance: {...evchargerGoe, id: generateApplianceId()},
     meter: {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter_goeCharger},
-    control: {type: EvCharger.TYPE, evCharger: new EvCharger(EvChargerTemplates.getTemplates()['go-eCharger'])},
+    control: {type: EvCharger.TYPE, evCharger: goECharger},
     controlTemplate: 'go-eCharger',
     schedules: socRequest_consecutiveDaysTimeframe,
   });

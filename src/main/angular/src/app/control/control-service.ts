@@ -1,13 +1,14 @@
 import {Injectable} from '@angular/core';
 import {ControlFactory} from './control-factory';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {Control} from './control';
 import {ControlDefaults} from './control-defaults';
 import {SaeService} from '../shared/sae-service';
 import {HttpClient} from '@angular/common/http';
 import {Logger} from '../log/logger';
-import {map} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 import {ElectricVehicle} from './evcharger/electric-vehicle/electric-vehicle';
+import {EvChargerTemplate} from './evcharger/ev-charger-template';
 
 @Injectable()
 export class ControlService extends SaeService {
@@ -43,6 +44,12 @@ export class ControlService extends SaeService {
         }
         return evs.map(ev => this.controlFactory.toElectricVehicle(ev));
       }));
+  }
+
+  getEVChargerTemplates(): Observable<EvChargerTemplate[]> {
+    return this.http.get(`${SaeService.API}/evcharger-templates`)
+      .pipe(catchError(() => of('[]')))
+      .pipe(map((response: string) => JSON.parse(response)));
   }
 
   updateControl(control: Control, id: string): Observable<any> {
