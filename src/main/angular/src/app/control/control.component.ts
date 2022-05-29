@@ -51,6 +51,7 @@ import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 import {NotificationComponent} from '../notification/notification.component';
 import {NotificationType} from '../notification/notification-type';
 import {ControlMeterreportingComponent} from './meterreporting/control-meterreporting.component';
+import {EvChargerTemplate} from './evcharger/ev-charger-template';
 
 @Component({
   selector: 'app-control',
@@ -82,6 +83,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   appliance: Appliance;
   settingsDefaults: SettingsDefaults;
   settings: Settings;
+  evChargerTemplates: EvChargerTemplate[];
   discardChangesMessage: string;
   confirmDeleteMessage: string;
   controlTypes: ListItem[] = [];
@@ -107,7 +109,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       meterDefaults: MeterDefaults,
       appliance: Appliance,
       settings: Settings,
-      settingsDefaults: SettingsDefaults
+      settingsDefaults: SettingsDefaults,
+      evChargerTemplates: EvChargerTemplate[]
     }) => {
       this.control = data.control;
       this.controlDefaults = data.controlDefaults;
@@ -115,6 +118,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.appliance = data.appliance;
       this.settings = data.settings;
       this.settingsDefaults = data.settingsDefaults;
+      this.evChargerTemplates = data.evChargerTemplates;
       if (this.appliance.type === 'EVCharger') {
         this.control.type = EvCharger.TYPE;
       }

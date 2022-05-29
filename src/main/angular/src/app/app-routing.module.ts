@@ -35,6 +35,7 @@ import {SettingsDefaultsResolver} from './settings/settings-defaults-resolver.se
 import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
 import {SchedulesComponent} from './schedule/schedules/schedules.component';
 import {ApplianceIdsResolver} from './appliance/appliance-ids-resolver';
+import {EvChargerTemplateResolver} from './control/evcharger/ev-charger-template-resolver.service';
 
 const routes: Routes = [
   {
@@ -81,7 +82,8 @@ const routes: Routes = [
       meterDefaults: MeterDefaultsResolver,
       appliance: ApplianceResolver,
       settings: SettingsResolver,
-      settingsDefaults: SettingsDefaultsResolver
+      settingsDefaults: SettingsDefaultsResolver,
+      evChargerTemplates: EvChargerTemplateResolver
     },
     canDeactivate: [CanDeactivateGuard]
   },

@@ -87,11 +87,6 @@ import {ApplianceIdsResolver} from './appliance/appliance-ids-resolver';
     })
   ],
   providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: ErrorInterceptor,
-      multi: true,
-    },
     ApplianceService,
     AppliancesReloadService,
     ApplianceResolver,

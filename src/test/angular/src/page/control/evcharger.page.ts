@@ -1,4 +1,6 @@
 import {EvCharger} from '../../../../../main/angular/src/app/control/evcharger/ev-charger';
+import {EvHttpControl} from '../../../../../main/angular/src/app/control/evcharger/http/ev-http-control';
+import {EvModbusControl} from '../../../../../main/angular/src/app/control/evcharger/modbus/ev-modbus-control';
 import {
   assertCheckbox,
   assertInput,
@@ -35,14 +37,19 @@ export class EvchargerPage extends ControlPage {
   public static async setEvChargerFromTemplate(t: TestController, evCharger: EvCharger, templateName: string) {
     await this.waitForPage(t);
     await selectOption(t, selectorSelectByFormControlName('template'), templateName);
-    if (evCharger.protocol === EvChargerProtocol.MODBUS) {
+    if (this.isModbusControl(evCharger)) {
       await EvchargerModbusPage.setIdRef(t, settings.modbusSettings[0].modbusTcpId);
     }
   }
 
   public static async assertEvCharger(t: TestController, evCharger: EvCharger) {
     await this.waitForPage(t);
-    await EvchargerPage.assertProtocol(t, evCharger.protocol);
+    if(this.isModbusControl(evCharger)) {
+      await EvchargerPage.assertProtocol(t, EvChargerProtocol.MODBUS.toString());
+    }
+    else if(this.isHttpControl(evCharger)) {
+      await EvchargerPage.assertProtocol(t, EvChargerProtocol.HTTP.toString());
+    }
     await EvchargerPage.assertVoltage(t, evCharger.voltage && evCharger.voltage.toString());
     await EvchargerPage.assertPhases(t, evCharger.phases && evCharger.phases.toString());
     await EvchargerPage.assertPollInterval(t, evCharger.pollInterval && evCharger.pollInterval.toString());
@@ -55,6 +62,14 @@ export class EvchargerPage extends ControlPage {
     if (evCharger.protocol === EvChargerProtocol.HTTP) {
       await EvchargerHttpPage.assertEvChargerHttp(t, evCharger.httpControl);
     }
+  }
+
+  private static isModbusControl(evCharger: EvCharger): boolean {
+    return evCharger.modbusControl && evCharger.modbusControl['@class'] === EvModbusControl.TYPE;
+  }
+
+  private static isHttpControl(evCharger: EvCharger): boolean {
+    return evCharger.httpControl && evCharger.httpControl['@class'] === EvHttpControl.TYPE;
   }
 
   public static async setElectricVehicles(t: TestController, applianceId: string, electricVehicles: ElectricVehicle[]) {

@@ -24,6 +24,7 @@ import de.avanux.smartapplianceenabler.configuration.Configuration;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.control.ev.EvChargerTemplatesDownloader;
 import de.avanux.smartapplianceenabler.http.HttpRead;
 import de.avanux.smartapplianceenabler.meter.HttpElectricityMeter;
 import de.avanux.smartapplianceenabler.meter.Meter;
@@ -41,6 +42,7 @@ import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -293,6 +295,21 @@ public class ApplianceManager implements Runnable {
         else {
             logger.debug("Holidays are NOT used.");
         }
+
+        var evChargerTemplatesDownloaderTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                var evChargerTemplates = new EvChargerTemplatesDownloader().download();
+                if(evChargerTemplates != null) {
+                    FileHandler fileHandler = new FileHandler();
+                    fileHandler.saveEVChargerTemplates(evChargerTemplates);
+                }
+            }
+        };
+        if(timer != null) {
+            timer.schedule(evChargerTemplatesDownloaderTimerTask, 0);
+        }
+
         initializationCompleted = true;
     }
 
