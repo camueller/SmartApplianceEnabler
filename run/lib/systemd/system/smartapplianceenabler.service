@@ -1,6 +1,6 @@
 [Unit]
 Description=Smart Appliance Enabler
-Requires=network.target
+Requires=mosquitto.service
 
 [Service]
 Type=forking
