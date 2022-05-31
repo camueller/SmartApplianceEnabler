@@ -9,12 +9,14 @@ Der *Smart Appliance Enabler* **errechnet die an der Wallbox einzustellende Stro
 
 ## Konfiguration
 
-Momentan stellt der *Smart Appliance Enabler* Konfigurationen für die folgende Wallboxen bereit:
+Momentan stellt der *Smart Appliance Enabler* Vorlagen bzw. Konfigurationen für die folgende Wallboxen bereit:
 * [go-eCharger](GoeCharger_DE.md)
 * [Keba KeContact P30 c-series / x-series](Keba_DE.md)  
 * [Phoenix Contact EM-CP-PP-ETH-Controller](PhoenixContactEMCPPPETH_DE.md) wie z.B. Walli, wallbe mit altem Controller
 * wallbe mit neuem Controller
 * [Warp Charger Smart / Pro](WarpCharger_DE.md)
+
+Diese Konfigurationen sind in der Datei `evcharger-templates.json` enthalten, welche bei jedem Start des *Smart Appliance Enabler* von https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/run/evcharger-templates.json heruntergeladen wird in das Verzeichnis, auf das die Variable `SAE_HOME` verweist (normalerweise `/opt/sae`). Falls der *Smart Appliance Enabler* die Datei nicht herunterladen kann/darf, muss die Datei manuell heruntergeladen und dort platziert werden.
 
 Darüber hinaus sollte auch die Verwendung von anderen Wallboxen möglich sein, solange diese über ein unterstütztes Protokoll angebunden werden:
 * [Modbus/TCP](EVChargerModbus_DE.md)
