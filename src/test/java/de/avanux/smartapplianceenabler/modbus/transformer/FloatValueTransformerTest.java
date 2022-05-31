@@ -32,7 +32,7 @@ public class FloatValueTransformerTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        sut = new FloatValueTransformer();
+        sut = new FloatValueTransformer(null);
     }
 
     @Test
@@ -40,6 +40,14 @@ public class FloatValueTransformerTest {
         Integer[] byteValues = {17676, 21823};
         sut.setByteValues(byteValues);
         assertEquals(2245.328, sut.getValue(), 0.001);
+    }
+
+    @Test
+    public void getValue_2Words_FactorToValue() {
+        Integer[] byteValues = {17676, 21823};
+        sut = new FloatValueTransformer(0.1);
+        sut.setByteValues(byteValues);
+        assertEquals(224.5328, sut.getValue(), 0.001);
     }
 
     @Test
@@ -55,5 +63,14 @@ public class FloatValueTransformerTest {
         Integer[] byteValues = {16711, 30408, 32768, 0};
         sut.setByteValues(byteValues);
         assertEquals(3075473, sut.getValue(), 0.001);
+    }
+
+    @Test
+    public void getValue_4Words_FactorToValue() {
+        // 4 data words as hex: "4147 7507 0000 0000"
+        Integer[] byteValues = {16711, 29959, 0, 0};
+        sut = new FloatValueTransformer(0.001);
+        sut.setByteValues(byteValues);
+        assertEquals(3074.574, sut.getValue(), 0.001);
     }
 }

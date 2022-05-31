@@ -125,7 +125,7 @@ public class ModbusExecutorFactory {
         ValueTransformer<?> transformer = null;
         switch (registerValueType) {
             case Float:
-                transformer = new FloatValueTransformer();
+                transformer = new FloatValueTransformer(factorToValue);
                 break;
             case Integer2Float:
                 transformer = new Integer2FloatValueTransformer(byteOrder, factorToValue);
