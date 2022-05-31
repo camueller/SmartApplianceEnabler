@@ -24,11 +24,18 @@ import org.slf4j.LoggerFactory;
 public class FloatValueTransformer extends ValueTransformerBase implements ValueTransformer<Double> {
     private Logger logger = LoggerFactory.getLogger(FloatValueTransformer.class);
     private Double value = null;
+    private Double factorToValue = 1.0;
+
+    public FloatValueTransformer(Double factorToValue) {
+        if(factorToValue != null) {
+            this.factorToValue = factorToValue;
+        }
+    }
 
     public void setByteValues(Integer[] byteValues) {
         if(byteValues != null) {
             if(byteValues.length == 2) {
-                value = Float.valueOf(Float.intBitsToFloat(byteValues[0] << 16 | byteValues[1])).doubleValue();
+                value = Float.valueOf(Float.intBitsToFloat(byteValues[0] << 16 | byteValues[1])).doubleValue() * factorToValue;
                 logger.debug("{}: transformed value={}", applianceId, value);
             }
             else if(byteValues.length == 4) {
@@ -53,7 +60,7 @@ public class FloatValueTransformer extends ValueTransformerBase implements Value
                 }
                 var sig = (1 + (dec_sig / Math.pow(2,52)));
                 double exp = dec_exp - 1023;
-                value = vorz * sig * Math.pow(2, exp);
+                value = vorz * sig * Math.pow(2, exp) * factorToValue;
                 logger.debug("{}: transformed value={}", applianceId, value);
             }
             else {
