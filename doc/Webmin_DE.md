@@ -32,3 +32,8 @@ In die Dienstverwaltung gelangt man im Seitenmenü über den Punkt `System` und 
 Um den *Smart Appliance Enabler* zu starten/stoppen/restarten muss in der Listen mit den Diensten die Checkbox vor `smartapplianceenabler.service` aktiviert werden und dann die entsprechende Schaltfläche unterhalb der Listen mit den Diensten angeklickt werden.
 
 ![Bootup and Shutdown](../pics/webmin/bootup_and_shutdown.png)
+
+## Ausschalten (Shutdown) / Neustart (Reboot)
+Um das Risiko einer beschädigten SD-Karte zu minimieren, sollte der Raspberry Pi zum Ausschalten/Neustart nicht einfach vom Strom getrennt werden. Stattdessen sollte im im Seitenmenü über den Punkt `System` und den Unterpunkt `Bootup and Shutdown` auf eine Seite navigiert werden, auf der sich ganz unten die Schaltflächen `Reboot System` und `Shutdown System` befinden. Durch Klick auf einer dieser beiden Schaltfläche wird die entsprechende Aktion so ausgeführt, dass das Dateisystem auf der SD-Karte geschont wird.
+
+![Reboot and Shutdown](../pics/webmin/reboot_and_shutdown.png)
