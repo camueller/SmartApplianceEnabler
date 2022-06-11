@@ -75,7 +75,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                 EVChargerStateChangedEvent event = (EVChargerStateChangedEvent) message;
                 if(event.newState == EVChargerState.VEHICLE_CONNECTED) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
-                    ElectricVehicle ev = evCharger.getVehicle(event.evId);
+                    ElectricVehicle ev = evCharger.getElectricVehicleHandler().getVehicle(event.evId);
                     if(ev != null) {
                         queue.stream()
                                 .filter(timeframeInterval -> timeframeInterval.getRequest() instanceof SocRequest)
@@ -228,7 +228,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                     if(control instanceof ElectricVehicleCharger
                             && !(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest)
                             && queue.size() == 0) {
-                        ElectricVehicle connectedVehicle = ((ElectricVehicleCharger) control).getConnectedVehicle();
+                        ElectricVehicle connectedVehicle = ((ElectricVehicleCharger) control).getElectricVehicleHandler().getConnectedVehicle();
                         TimeframeInterval optionalEnergyTimeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(
                                 now, connectedVehicle.getId(), applianceId);
                         if(optionalEnergyTimeframeInterval != null) {
@@ -339,9 +339,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         Request request = timeframeInterval.getRequest();
         request.init();
         if(request instanceof EnergyRequest) {
-            ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
-            if(evCharger.getConnectedVehicle() != null) {
-                ((EnergyRequest) request).setSocScript(evCharger.getConnectedVehicle().getSocScript() != null);
+            var evHandler = ((ElectricVehicleCharger) control).getElectricVehicleHandler();
+            if(evHandler.getConnectedVehicle() != null) {
+                ((EnergyRequest) request).setSocScript(evHandler.getConnectedVehicle().getSocScript() != null);
             }
         }
         addTimeframeIntervalChangedListener(request);

@@ -1,58 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v2.0">
-    <Configuration param="NodeRED.Dashboard.Url" value="http://localhost:1880"/>
+<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.6">
     <Appliance id="F-00000001-000000000002-00">
-        <LevelSwitch>
-            <!--HttpSwitch id="1">
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
-                    <HttpWriteValue name="On" method="GET"/>
-                </HttpWrite>
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
-                    <HttpWriteValue name="Off" method="GET"/>
-                </HttpWrite>
-                <HttpRead url="http://tasmota/cm?cmnd=status">
-                    <HttpReadValue name="On"/>
-                </HttpRead>
-                <Notifications/>
-            </HttpSwitch>
-            <HttpSwitch id="2">
-                <HttpWrite url="http://tasmota2/cm?cmnd=Power%20On">
-                    <HttpWriteValue name="On" method="GET"/>
-                </HttpWrite>
-                <HttpWrite url="http://tasmota2/cm?cmnd=Power%20Off">
-                    <HttpWriteValue name="Off" method="GET"/>
-                </HttpWrite>
-                <Notifications/>
-            </HttpSwitch-->
-            <ModbusSwitch id="1" idref="modbus" slaveAddress="1">
-                <ModbusWrite address="2" type="Coil">
-                    <ModbusWriteValue name="On" value="1"/>
-                    <ModbusWriteValue name="Off" value="0"/>
-                </ModbusWrite>
-            </ModbusSwitch>
-            <ModbusSwitch id="2" idref="modbus" slaveAddress="2">
-                <ModbusWrite address="3" type="Coil">
-                    <ModbusWriteValue name="On" value="1"/>
-                    <ModbusWriteValue name="Off" value="0"/>
-                </ModbusWrite>
-            </ModbusSwitch>
-            <!--
-            <Switch id="1" gpio="1" reverseStates="true" />
-            <Switch id="2" gpio="3" />
-            -->
-            <PowerLevel power="500">
-                <SwitchStatus idref="1" on="true"/>
-                <SwitchStatus idref="2" on="false"/>
-            </PowerLevel>
-            <PowerLevel power="1000">
-                <SwitchStatus idref="1" on="false"/>
-                <SwitchStatus idref="2" on="true"/>
-            </PowerLevel>
-            <PowerLevel power="1500">
-                <SwitchStatus idref="1" on="true"/>
-                <SwitchStatus idref="2" on="true"/>
-            </PowerLevel>
-        </LevelSwitch>
+        <HttpSwitch>
+            <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
+                <HttpWriteValue name="On" method="GET"/>
+            </HttpWrite>
+            <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
+                <HttpWriteValue name="Off" method="GET"/>
+            </HttpWrite>
+            <Notifications/>
+        </HttpSwitch>
         <HttpElectricityMeter contentProtocol="JSON">
             <HttpRead url="http://tasmota/cm?cmnd=Status%208">
                 <HttpReadValue name="Energy" method="GET" path="$.StatusSNS.ENERGY.Total"/>
@@ -67,8 +24,41 @@
             </DayTimeframe>
         </Schedule>
     </Appliance>
+    <Appliance id="F-00000001-000000000019-00">
+        <ElectricVehicleCharger startChargingStateDetectionDelay="60" latitude="50.293448956647715" longitude="8.982373236258528">
+            <EVModbusControl idref="wallbox" slaveAddress="180">
+                <ModbusRead address="100" type="Input" valueType="String">
+                    <ModbusReadValue name="VehicleNotConnected" extractionRegex="(A)"/>
+                    <ModbusReadValue name="VehicleConnected" extractionRegex="(B)"/>
+                    <ModbusReadValue name="Charging" extractionRegex="(C|D)"/>
+                    <ModbusReadValue name="Error" extractionRegex="(E|F)"/>
+                </ModbusRead>
+                <ModbusWrite address="400" type="Coil">
+                    <ModbusWriteValue name="StartCharging" value="1"/>
+                    <ModbusWriteValue name="StopCharging" value="0"/>
+                </ModbusWrite>
+                <ModbusWrite address="300" type="Holding">
+                    <ModbusWriteValue name="ChargingCurrent" value="0"/>
+                </ModbusWrite>
+            </EVModbusControl>
+            <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="36000" phases="1" maxChargePower="6600" chargeLoss="11">
+                <SocScript script="/data/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh"
+                           updateAfterIncrease="4"
+                           extractionRegex=".*state_of_charge (\d+)"
+                           pluginStatusExtractionRegex=".*PluginState': '(CONNECTED).*"
+                           pluginTimeExtractionRegex=".*TargetDate': '[0-9/]+ ([0-9:]+).*"
+                           latitudeExtractionRegex=".*lat (true)"
+                           longitudeExtractionRegex=".*lon (true)"
+                />
+            </ElectricVehicle>
+        </ElectricVehicleCharger>
+        <ModbusElectricityMeter idref="modbus" slaveAddress="1">
+            <ModbusRead address="0x0156" type="Input" valueType="Float" words="2">
+                <ModbusReadValue name="Energy"/>
+            </ModbusRead>
+        </ModbusElectricityMeter>
+    </Appliance>
     <Connectivity>
-        <MqttBroker host="localhost" port="1883"/>
         <ModbusTCP id="modbus" host="raspi2" port="502"/>
         <ModbusTCP id="wallbox" host="wallbox" port="502"/>
     </Connectivity>

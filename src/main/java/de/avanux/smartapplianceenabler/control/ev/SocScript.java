@@ -19,6 +19,7 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,14 @@ public class SocScript implements ApplianceIdConsumer {
     private Integer updateAfterSeconds;
     @XmlAttribute
     private String extractionRegex;
+    @XmlAttribute
+    private String pluginStatusExtractionRegex;
+    @XmlAttribute
+    private String plugInTimeExtractionRegex;
+    @XmlAttribute
+    private String latitudeExtractionRegex;
+    @XmlAttribute
+    private String longitudeExtractionRegex;
     private transient Pattern socValueExtractionPattern;
     private transient String applianceId;
 
@@ -75,17 +84,36 @@ public class SocScript implements ApplianceIdConsumer {
         this.applianceId = applianceId;
     }
 
-    public Double getStateOfCharge() {
+    public SocScriptExecutionResult getResult() {
         if(this.script != null) {
             File scriptFile = new File(this.script);
             if(scriptFile.exists()) {
                 if(scriptFile.canExecute()) {
                     String output = getScriptOutput(this.script);
                     if(output != null && output.length() > 0) {
-                        String socValueString = extractSoCValue(output, this.extractionRegex);
-                        Double soc = Double.parseDouble(socValueString.replace(',', '.'));
-                        logger.debug("{}: SoC: {}", applianceId, soc);
-                        return soc;
+                        var result = new SocScriptExecutionResult();
+
+                        String socValueString = extractValue(output, this.extractionRegex);
+                        result.soc = parseDouble(socValueString);
+
+                        if(this.pluginStatusExtractionRegex != null) {
+                            result.pluggedIn = output.matches(this.pluginStatusExtractionRegex);
+                        }
+
+                        if(this.plugInTimeExtractionRegex != null) {
+                            result.plugInTime = extractValue(output, this.plugInTimeExtractionRegex);
+                        }
+
+                        if(this.latitudeExtractionRegex != null && this.longitudeExtractionRegex != null) {
+                            String latitudeValueString = extractValue(output, this.latitudeExtractionRegex);
+                            String longitudeValueString = extractValue(output, this.longitudeExtractionRegex);
+                            result.location = new ImmutablePair<Double, Double>(
+                                    parseDouble(latitudeValueString),
+                                    parseDouble(longitudeValueString)
+                            );
+                        }
+
+                        return result;
                     }
                 }
                 else {
@@ -100,6 +128,10 @@ public class SocScript implements ApplianceIdConsumer {
             logger.warn("{}: No SoC script configured.", applianceId);
         }
         return null;
+    }
+
+    private Double parseDouble(String input) {
+        return Double.parseDouble(input.replace(',', '.'));
     }
 
     private String getScriptOutput(String scriptToExecute) {
@@ -134,17 +166,17 @@ public class SocScript implements ApplianceIdConsumer {
     }
 
     /**
-     * Extract the SoC value from the the response using a regular expression.
-     * The regular expression has contain a capture group containing the SOC value.
-     * @param text the text containing the SOC value
-     * @param regex the regular expression to be used to extract the SOC value
-     * @return the SOC value extracted or the full text if the regular expression is null or could not be matched
+     * Extract the value from the the response using a regular expression.
+     * The regular expression has contain a capture group containing the value.
+     * @param text the text containing the value
+     * @param regex the regular expression to be used to extract the value
+     * @return the value extracted or the full text if the regular expression is null or could not be matched
      */
-    protected String extractSoCValue(String text, String regex)  {
+    protected String extractValue(String text, String regex)  {
         if(regex == null || regex.length() == 0) {
             return text;
         }
-        logger.debug("{}: SoC extraction regex: {}", applianceId, regex);
+        logger.debug("{}: Value extraction regex: {}", applianceId, regex);
         if( this.socValueExtractionPattern == null) {
             this.socValueExtractionPattern = Pattern.compile(regex, Pattern.DOTALL);
         }
@@ -162,6 +194,10 @@ public class SocScript implements ApplianceIdConsumer {
                 ", updateAfterIncrease=" + updateAfterIncrease +
                 ", updateAfterSeconds=" + updateAfterSeconds +
                 ", extractionRegex='" + extractionRegex + '\'' +
+                ", pluginStatusExtractionRegex='" + pluginStatusExtractionRegex + '\'' +
+                ", plugInTimeExtractionRegex='" + plugInTimeExtractionRegex + '\'' +
+                ", latitudeExtractionRegex='" + latitudeExtractionRegex + '\'' +
+                ", longitudeExtractionRegex='" + longitudeExtractionRegex + '\'' +
                 '}';
     }
 }

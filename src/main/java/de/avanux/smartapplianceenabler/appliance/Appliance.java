@@ -442,10 +442,11 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             }
             else {
                 logger.debug("{}: will do ev charger configuration", id);
-                evCharger.setConnectedVehicleId(evId);
-                evCharger.setSocInitial(socCurrent);
-                evCharger.setSocCurrent(socCurrent);
-                evCharger.setSocInitialTimestamp(now);
+                var evHandler = evCharger.getElectricVehicleHandler();
+                evHandler.setConnectedVehicleId(evId);
+                evHandler.setSocInitial(socCurrent);
+                evHandler.setSocCurrent(socCurrent);
+                evHandler.setSocInitialTimestamp(now);
             }
 
             TimeframeInterval timeframeInterval =
@@ -467,7 +468,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     public void updateSoc(LocalDateTime now,  Integer socCurrent, Integer socRequested) {
         if (control instanceof ElectricVehicleCharger) {
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
-            ElectricVehicle ev = evCharger.getConnectedVehicle();
+            ElectricVehicle ev = evCharger.getElectricVehicleHandler().getConnectedVehicle();
             if(ev != null) {
                 if(!evCharger.isOn() && !isAcceptControlRecommendations()) {
                     logger.debug("{}: Removing timeframe interval of stopped charging process", id);
@@ -478,9 +479,10 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                 }
                 timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
                         ev.getId(), ev.getBatteryCapacity(), socCurrent, socRequested);
-                evCharger.setSocInitial(socCurrent);
-                evCharger.setSocInitialTimestamp(now);
-                evCharger.setSocCurrent(socCurrent);
+                var evHandler = evCharger.getElectricVehicleHandler();
+                evHandler.setSocInitial(socCurrent);
+                evHandler.setSocInitialTimestamp(now);
+                evHandler.setSocCurrent(socCurrent);
                 evCharger.resetChargingCompletedToVehicleConnected(now);
             }
             else {
