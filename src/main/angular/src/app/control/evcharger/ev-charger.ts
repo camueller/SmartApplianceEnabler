@@ -19,6 +19,8 @@ export class EvCharger {
   startChargingStateDetectionDelay: number;
   forceInitialCharging: boolean;
   vehicles: ElectricVehicle[];
+  latitude: number;
+  longitude: number;
 
   public constructor(init?: Partial<EvCharger>) {
     Object.assign(this, init);

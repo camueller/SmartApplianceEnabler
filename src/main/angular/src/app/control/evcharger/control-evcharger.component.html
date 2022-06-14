@@ -56,6 +56,22 @@
                     matTooltip="{{'ControlEvchargerComponent.forceInitialCharging.tooltip' | translate}}"
       >{{'ControlEvchargerComponent.forceInitialCharging' | translate}}</mat-checkbox>
     </div>
+    <div class="sae__fields">
+      <mat-form-field class="ControlEvchargerComponent__XXX">
+        <mat-label>{{'ControlEvchargerComponent.latitude' | translate}}</mat-label>
+        <input matInput type="text" formControlName="latitude"
+               matTooltip="{{'ControlEvchargerComponent.latitude.tooltip' | translate}}"
+               required="{{formHandler.isRequired('latitude')}}">
+        <mat-error *ngIf="errors.latitude">{{errors.latitude}}</mat-error>
+      </mat-form-field>
+      <mat-form-field class="ControlEvchargerComponent__XXX">
+        <mat-label>{{'ControlEvchargerComponent.longitude' | translate}}</mat-label>
+        <input matInput type="text" formControlName="longitude"
+               matTooltip="{{'ControlEvchargerComponent.longitude.tooltip' | translate}}"
+               required="{{formHandler.isRequired('longitude')}}">
+        <mat-error *ngIf="errors.longitude">{{errors.longitude}}</mat-error>
+      </mat-form-field>
+    </div>
   </div>
 </div>
 <div class="sae-block">
