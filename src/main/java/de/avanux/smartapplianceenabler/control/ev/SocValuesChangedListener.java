@@ -18,8 +18,6 @@
 
 package de.avanux.smartapplianceenabler.control.ev;
 
-import java.time.LocalDateTime;
-
-public interface SocScriptExecutionResultListener {
-    void handleSocScriptExecutionResult(LocalDateTime now, int evId, SocScriptExecutionResult result);
+public interface SocValuesChangedListener {
+    void onSocValuesChanged(SocValues socValues);
 }

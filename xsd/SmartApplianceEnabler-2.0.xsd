@@ -176,6 +176,8 @@
         <xs:attribute name="pollInterval" type="xs:int" />
         <xs:attribute name="startChargingStateDetectionDelay" type="xs:int" />
         <xs:attribute name="forceInitialCharging" type="xs:boolean" />
+        <xs:attribute name="latitude" type="xs:double" />
+        <xs:attribute name="longitude" type="xs:double" />
     </xs:complexType>
 
     <xs:complexType name="EVModbusControlType">
@@ -221,6 +223,10 @@
         <xs:attribute name="extractionRegex" type="xs:string" />
         <xs:attribute name="updateAfterIncrease" type="xs:int" />
         <xs:attribute name="updateAfterSeconds" type="xs:int" />
+        <xs:attribute name="pluginStatusExtractionRegex" type="xs:string" />
+        <xs:attribute name="pluginTimeExtractionRegex" type="xs:string" />
+        <xs:attribute name="latitudeExtractionRegex" type="xs:string" />
+        <xs:attribute name="longitudeExtractionRegex" type="xs:string" />
     </xs:complexType>
 
     <xs:complexType name="ModbusReadType">

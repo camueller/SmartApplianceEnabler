@@ -22,9 +22,12 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
 import de.avanux.smartapplianceenabler.schedule.Request;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.lucene.util.SloppyMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
@@ -35,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExecutionResultListener {
 
     private transient Logger logger = LoggerFactory.getLogger(ElectricVehicleHandler.class);
@@ -46,13 +50,17 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
      * Is only set if connected vehicle has been identified
      */
     private Integer connectedVehicleId;
+    private Pair<Double, Double> evChargerLocation;
+    private SocScriptExecutionResult previousSocScriptExecutionResult;
     private double socRetrievalEnergyMeterValue = 0.0f;
     private SocValues socValues = new SocValues();
+    private SocValuesChangedListener socValuesChangedListener;
     private boolean socCalculationRequired;
     private double chargeLoss = 0.0;
     private MeterMessage meterMessage;
     private boolean socRetrievalForChargingAlmostCompleted;
     private boolean chargingAlmostCompleted;
+    private boolean socScriptAsync = true;
 
     public ElectricVehicleHandler() {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
@@ -65,13 +73,34 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         this.applianceId = applianceId;
     }
 
+    public void setSocScriptAsync(boolean socScriptAsync) {
+        this.socScriptAsync = socScriptAsync;
+    }
+
+    protected Map<Integer, SocScriptExecutor> getEvIdWithSocScriptExecutor() {
+        return evIdWithSocScriptExecutor;
+    }
+
     public void setVehicles(List<ElectricVehicle> vehicles) {
         this.vehicles = vehicles;
-        this.vehicles.forEach(vehicle -> {
-            SocScriptExecutor executor = new SocScriptExecutor(vehicle.getId(), vehicle.getSocScript());
-            executor.setApplianceId(this.applianceId);
-            this.evIdWithSocScriptExecutor.put(vehicle.getId(), executor);
-        });
+
+        if(this.vehicles != null) {
+            for(ElectricVehicle vehicle: this.vehicles) {
+                vehicle.setApplianceId(applianceId);
+            }
+            for(ElectricVehicle vehicle: this.vehicles) {
+                logger.debug("{}: {}", this.applianceId, vehicle);
+            }
+            this.vehicles.forEach(vehicle -> {
+                SocScriptExecutor executor = new SocScriptExecutor(vehicle.getId(), vehicle.getSocScript());
+                executor.setApplianceId(this.applianceId);
+                this.evIdWithSocScriptExecutor.put(vehicle.getId(), executor);
+            });
+        }
+    }
+
+    public void setEvChargerLocation(Pair<Double, Double> evChargerLocation) {
+        this.evChargerLocation = evChargerLocation;
     }
 
     public void setMeterMessage(MeterMessage meterMessage) {
@@ -122,6 +151,10 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         return null;
     }
 
+    public void setSocValuesChangedListener(SocValuesChangedListener socValuesChangedListener) {
+        this.socValuesChangedListener = socValuesChangedListener;
+    }
+
     public SocValues getSocValues() {
         return socValues;
     }
@@ -157,7 +190,7 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         this.socCalculationRequired = socCalculationRequired;
     }
 
-    public boolean updateSoc(LocalDateTime now, Request request) {
+    public void updateSoc(LocalDateTime now, Request request) {
         boolean socChanged = false;
         if(this.socCalculationRequired) {
             int calculatedCurrentSoc = calculateCurrentSoc();
@@ -170,7 +203,6 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
                         chargingAlmostCompleted = true;
                     }
                 }
-
             }
             this.socCalculationRequired = false;
         }
@@ -197,7 +229,10 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
                 logger.debug("{}: SOC retrieval is NOT required: {}", applianceId, this.socValues);
             }
         }
-        return socChanged;
+
+        if(socChanged) {
+            this.socValuesChangedListener.onSocValuesChanged(this.socValues);
+        }
     }
 
     private int calculateCurrentSoc() {
@@ -218,30 +253,51 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
     }
 
     public void triggerSocScriptExecution() {
-       this.evIdWithSocScriptExecutor.values().forEach(executor -> executor.triggerExecution(this));
+       this.evIdWithSocScriptExecutor.values().forEach(executor -> executor.triggerExecution(this, socScriptAsync));
     }
 
     public void triggerSocScriptExecution(Integer evId) {
         var executor = evIdWithSocScriptExecutor.get(evId);
         if(executor != null) {
-            executor.triggerExecution(this);
+            executor.triggerExecution(this, socScriptAsync);
         }
     }
 
     @Override
-    public void socRetrieved(int evId, SocScriptExecutionResult result) {
-        // TODO use location/plugin time to identify ev if multiple evs may be connected at the same time
-        // https://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude
+    public void handleSocScriptExecutionResult(LocalDateTime now, int evId, SocScriptExecutionResult result) {
+        logger.debug("{}: Handling SOC script execution result: result={} previousSocScriptExecutionResult={}",
+                applianceId, result, previousSocScriptExecutionResult);
 
-        if(this.connectedVehicleId == null && result.pluggedIn) {
+        var betterPluginStatus = isBetterPluginStatus(result, previousSocScriptExecutionResult);
+        var pluginTimeJustNow = isPluginTimeJustNow(now, getPluginTime(result.pluginTime));
+        var matchingLocation = isMatchingLocation(result.location);
+        logger.debug("{}: evId={} betterPluginStatus={} pluginTimeJustNow={} matchingLocation={}",
+                applianceId, evId, betterPluginStatus, pluginTimeJustNow, matchingLocation);
+
+        if(previousSocScriptExecutionResult == null || (
+               betterPluginStatus
+            || pluginTimeJustNow
+            || matchingLocation
+        )) {
+            if(this.connectedVehicleId == null) {
+                logger.debug("{}: Identified connected vehicle: id={}", applianceId, evId);
+            }
+            else if(this.connectedVehicleId != evId) {
+                logger.debug("{}: Changing connected vehicle to: id={}", applianceId, evId);
+            }
             this.connectedVehicleId = evId;
         }
-        if(result.pluggedIn == null || result.pluggedIn) {
+        if(this.connectedVehicleId != null) {
+            if(this.connectedVehicleId != evId) {
+                logger.debug("{}: Ignore SOC script execution result for vehicle: id={}", applianceId, evId);
+                return;
+            }
+            logger.debug("{}: Using SOC script execution result", applianceId);
             Integer socLastRetrieved = socValues.retrieved != null ? socValues.retrieved : socValues.initial;
             if(socValues.initial == null) {
                 socValues.initial = result.soc.intValue();
                 socValues.current = result.soc.intValue();
-                socValues.batteryCapacity = getVehicle(evId).getBatteryCapacity();
+                socValues.batteryCapacity = getVehicle(this.connectedVehicleId).getBatteryCapacity();
             }
             socValues.retrieved = result.soc.intValue();
             if(socLastRetrieved != null) {
@@ -255,7 +311,36 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
             if(this.chargingAlmostCompleted) {
                 socRetrievalForChargingAlmostCompleted = true;
             }
+            this.socValuesChangedListener.onSocValuesChanged(this.socValues);
         }
+        this.previousSocScriptExecutionResult = result;
+    }
+
+    protected boolean isBetterPluginStatus(SocScriptExecutionResult result, SocScriptExecutionResult previousResult) {
+        return result.pluggedIn != null && result.pluggedIn && (previousResult == null || previousResult.pluggedIn == null || !previousResult.pluggedIn);
+    }
+
+    protected boolean isPluginTimeJustNow(LocalDateTime now, LocalDateTime pluginTime) {
+        if(pluginTime == null) {
+            return false;
+        }
+        return pluginTime.plusMinutes(5).isAfter(now);
+    }
+
+    protected LocalDateTime getPluginTime(String pluginTime) {
+        if(pluginTime == null) {
+            return null;
+        }
+        var fields = pluginTime.split(":");
+        return LocalDateTime.now().withHour(Integer.parseInt(fields[0])).withMinute(Integer.parseInt(fields[1]));
+    }
+
+    protected boolean isMatchingLocation(Pair<Double, Double> evLocation) {
+        if(this.evChargerLocation == null || evLocation == null) {
+            return false;
+        }
+        var meters = SloppyMath.haversinMeters(evChargerLocation.getKey(), evChargerLocation.getValue(), evLocation.getKey(), evLocation.getValue());
+        return meters < 100;
     }
 
     private int getEnergyMeteredSinceLastSocScriptExecution() {
@@ -273,7 +358,7 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
 
     public Double calculateChargeLoss(int energyMeteredSinceLastSocScriptExecution) {
         var evId = getConnectedOrFirstVehicleId();
-        var batteryCapacity = evId != null ? this.vehicles.get(evId).getBatteryCapacity() : null;
+        var batteryCapacity = evId != null ? getVehicle(evId).getBatteryCapacity() : null;
         if (batteryCapacity != null && energyMeteredSinceLastSocScriptExecution > 0) {
             double energyReceivedByEv = (this.socValues.current - this.socValues.retrieved)/100.0 * batteryCapacity;
             double chargeLoss = energyMeteredSinceLastSocScriptExecution * 100.0 / energyReceivedByEv - 100.0;

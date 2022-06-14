@@ -46,12 +46,11 @@ public class SocScript implements ApplianceIdConsumer {
     @XmlAttribute
     private String pluginStatusExtractionRegex;
     @XmlAttribute
-    private String plugInTimeExtractionRegex;
+    private String pluginTimeExtractionRegex;
     @XmlAttribute
     private String latitudeExtractionRegex;
     @XmlAttribute
     private String longitudeExtractionRegex;
-    private transient Pattern socValueExtractionPattern;
     private transient String applianceId;
 
 
@@ -93,24 +92,33 @@ public class SocScript implements ApplianceIdConsumer {
                     if(output != null && output.length() > 0) {
                         var result = new SocScriptExecutionResult();
 
-                        String socValueString = extractValue(output, this.extractionRegex);
-                        result.soc = parseDouble(socValueString);
+                        try {
+                            String socValueString = extractValue(output, this.extractionRegex);
+                            if(socValueString != null) {
+                                result.soc = parseDouble(socValueString).intValue();
+                            }
 
-                        if(this.pluginStatusExtractionRegex != null) {
-                            result.pluggedIn = output.matches(this.pluginStatusExtractionRegex);
+                            if(this.pluginStatusExtractionRegex != null) {
+                                result.pluggedIn = matchValue(output, this.pluginStatusExtractionRegex);
+                            }
+
+                            if(this.pluginTimeExtractionRegex != null) {
+                                result.pluginTime = extractValue(output, this.pluginTimeExtractionRegex);
+                            }
+
+                            if(this.latitudeExtractionRegex != null && this.longitudeExtractionRegex != null) {
+                                String latitudeValueString = extractValue(output, this.latitudeExtractionRegex);
+                                String longitudeValueString = extractValue(output, this.longitudeExtractionRegex);
+                                if(latitudeValueString != null && longitudeValueString != null) {
+                                    result.location = new ImmutablePair<>(
+                                            parseDouble(latitudeValueString),
+                                            parseDouble(longitudeValueString)
+                                    );
+                                }
+                            }
                         }
-
-                        if(this.plugInTimeExtractionRegex != null) {
-                            result.plugInTime = extractValue(output, this.plugInTimeExtractionRegex);
-                        }
-
-                        if(this.latitudeExtractionRegex != null && this.longitudeExtractionRegex != null) {
-                            String latitudeValueString = extractValue(output, this.latitudeExtractionRegex);
-                            String longitudeValueString = extractValue(output, this.longitudeExtractionRegex);
-                            result.location = new ImmutablePair<Double, Double>(
-                                    parseDouble(latitudeValueString),
-                                    parseDouble(longitudeValueString)
-                            );
+                        catch(Exception e) {
+                            logger.error("{}: Error parsing SoC script output", applianceId, e);
                         }
 
                         return result;
@@ -147,7 +155,7 @@ public class SocScript implements ApplianceIdConsumer {
             while ((c = inputStream.read()) != -1) {
                 scriptOutput.append((char) c);
             }
-            logger.debug("{}: SoC script output: {}", applianceId, scriptOutput.toString());
+            logger.debug("{}: SoC script output: {}", applianceId, scriptOutput);
             int rc = p.waitFor();
             logger.debug("{}: SoC script exited with return code {}", applianceId, rc);
             if(rc == 0) {
@@ -177,14 +185,19 @@ public class SocScript implements ApplianceIdConsumer {
             return text;
         }
         logger.debug("{}: Value extraction regex: {}", applianceId, regex);
-        if( this.socValueExtractionPattern == null) {
-            this.socValueExtractionPattern = Pattern.compile(regex, Pattern.DOTALL);
-        }
-        Matcher regexMatcher = this.socValueExtractionPattern.matcher(text);
+        Matcher regexMatcher = Pattern.compile(regex, Pattern.DOTALL).matcher(text.trim());
         if (regexMatcher.find()) {
             return regexMatcher.group(1);
         }
         return text;
+    }
+
+    protected boolean matchValue(String text, String regex) {
+        if(regex == null || regex.length() == 0) {
+            return false;
+        }
+        logger.debug("{}: Value match regex: {}", applianceId, regex);
+        return text.trim().matches(regex);
     }
 
     @Override
@@ -195,7 +208,7 @@ public class SocScript implements ApplianceIdConsumer {
                 ", updateAfterSeconds=" + updateAfterSeconds +
                 ", extractionRegex='" + extractionRegex + '\'' +
                 ", pluginStatusExtractionRegex='" + pluginStatusExtractionRegex + '\'' +
-                ", plugInTimeExtractionRegex='" + plugInTimeExtractionRegex + '\'' +
+                ", pluginTimeExtractionRegex='" + pluginTimeExtractionRegex + '\'' +
                 ", latitudeExtractionRegex='" + latitudeExtractionRegex + '\'' +
                 ", longitudeExtractionRegex='" + longitudeExtractionRegex + '\'' +
                 '}';

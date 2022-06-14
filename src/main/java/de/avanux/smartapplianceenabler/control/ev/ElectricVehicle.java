@@ -123,27 +123,27 @@ public class ElectricVehicle implements ApplianceIdConsumer {
         this.socScript = socScript;
     }
 
-    public Double getStateOfCharge() {
-        if(socScript != null) {
-            socScript.setApplianceId(this.applianceId);
-            return socScript.getStateOfCharge();
-        }
-        return null;
-    }
+//    public Double getStateOfCharge() {
+//        if(socScript != null) {
+//            socScript.setApplianceId(this.applianceId);
+//            return socScript.getStateOfCharge();
+//        }
+//        return null;
+//    }
 
-    public Integer getUpdateAfterIncrease() {
-        if(socScript != null) {
-            return socScript.getUpdateAfterIncrease();
-        }
-        return null;
-    }
-
-    public Integer getUpdateAfterSeconds() {
-        if(socScript != null) {
-            return socScript.getUpdateAfterSeconds();
-        }
-        return null;
-    }
+//    public Integer getUpdateAfterIncrease() {
+//        if(socScript != null) {
+//            return socScript.getUpdateAfterIncrease();
+//        }
+//        return null;
+//    }
+//
+//    public Integer getUpdateAfterSeconds() {
+//        if(socScript != null) {
+//            return socScript.getUpdateAfterSeconds();
+//        }
+//        return null;
+//    }
 
     @Override
     public String toString() {

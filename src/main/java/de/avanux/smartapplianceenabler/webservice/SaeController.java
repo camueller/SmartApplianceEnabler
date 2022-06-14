@@ -707,13 +707,18 @@ public class SaeController {
             if (appliance != null) {
                 if (appliance.getControl() instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-                    Integer soc = evCharger.getElectricVehicleHandler().getSocCurrent();
-                    if (soc != null) {
-                        logger.debug("{}: Return SOC={}", applianceId, soc);
-                        return Integer.valueOf(soc).floatValue();
+                    if(evCharger.getElectricVehicleHandler().getConnectedOrFirstVehicleId().intValue() == evId.intValue()) {
+                        Integer soc = evCharger.getElectricVehicleHandler().getSocCurrent();
+                        if (soc != null) {
+                            logger.debug("{}: Return SOC={}", applianceId, soc);
+                            return Integer.valueOf(soc).floatValue();
+                        } else {
+                            logger.error("{}: SOC not available", applianceId);
+                            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        }
                     } else {
-                        logger.error("{}: SOC not available", applianceId);
-                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        logger.debug("{}: Return SOC=0 for alternate ev", applianceId);
+                        return 0.0f;
                     }
                 } else {
                     logger.error("{}: Appliance has no electric vehicle charger", applianceId);

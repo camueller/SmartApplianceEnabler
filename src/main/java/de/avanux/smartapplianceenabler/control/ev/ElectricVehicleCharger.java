@@ -34,6 +34,7 @@ import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.DeviceInfo;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ import java.util.Vector;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceLifeCycle, Validateable, ApplianceIdConsumer,
-        TimeframeIntervalChangedListener, NotificationProvider {
+        TimeframeIntervalChangedListener, SocValuesChangedListener, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(ElectricVehicleCharger.class);
     @XmlAttribute
@@ -65,6 +66,10 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
     protected Integer startChargingStateDetectionDelay;
     @XmlAttribute
     protected Boolean forceInitialCharging;
+    @XmlAttribute
+    private Double latitude;
+    @XmlAttribute
+    private Double longitude;
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     @XmlElements({
@@ -106,9 +111,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
         percentageFormat = (DecimalFormat) nf;
         percentageFormat.applyPattern("#'%'");
-
-        this.evHandler = new ElectricVehicleHandler();
-        this.evHandler.setVehicles(vehicles);
     }
 
     public void setAppliance(Appliance appliance) {
@@ -128,12 +130,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
         control.setApplianceId(applianceId);
-        this.evHandler.setApplianceId(applianceId);
-        if(this.vehicles != null) {
-            for(ElectricVehicle vehicle: this.vehicles) {
-                vehicle.setApplianceId(applianceId);
-            }
-        }
     }
 
     @Override
@@ -316,11 +312,15 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         }
         logger.debug("{}: voltage={} phases={} startChargingStateDetectionDelay={}",
                 this.applianceId, getVoltage(), getPhases(), getStartChargingStateDetectionDelay());
-        if(this.vehicles != null) {
-            for(ElectricVehicle vehicle: this.vehicles) {
-                logger.debug("{}: {}", this.applianceId, vehicle);
-            }
+
+        this.evHandler = new ElectricVehicleHandler();
+        this.evHandler.setSocValuesChangedListener(this);
+        this.evHandler.setApplianceId(applianceId);
+        this.evHandler.setVehicles(vehicles);
+        if(this.latitude != null && this.longitude != null) {
+            this.evHandler.setEvChargerLocation(new ImmutablePair<Double, Double>(latitude, longitude));
         }
+
         initStateHistory();
         control.setPollInterval(getPollInterval());
         control.init();
@@ -871,15 +871,13 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
 //            }
 //            logger.debug( "{}: SOC retrieval: socCalculationRequired={} socChanged={} chargingAlmostCompleted={} socRetrievalForChargingAlmostCompleted={}",
 //                    applianceId, socCalculationRequired, socChanged, chargingAlmostCompleted, socRetrievalForChargingAlmostCompleted);
+
             if(isCharging()) {
                 var request = appliance.getTimeframeIntervalHandler() != null
                         && appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval() != null
                         ? appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval().getRequest()
                         : null;
-                boolean socChanged = this.evHandler.updateSoc(now, request);
-                if(socChanged) {
-                    publishEVChargerSocChangedEvent(now, this.evHandler.getSocValues());
-                }
+                this.evHandler.updateSoc(now, request);
             }
 
 //            ElectricVehicle electricVehicle = getConnectedVehicle();
@@ -917,6 +915,11 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
 //                }
 //            }
         }
+    }
+
+    @Override
+    public void onSocValuesChanged(SocValues socValues) {
+        publishEVChargerSocChangedEvent(LocalDateTime.now(), socValues);
     }
 
     private void publishControlMessage(boolean on) {

@@ -1,29 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.6">
-    <Appliance id="F-00000001-000000000002-00">
-        <HttpSwitch>
-            <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
-                <HttpWriteValue name="On" method="GET"/>
-            </HttpWrite>
-            <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
-                <HttpWriteValue name="Off" method="GET"/>
-            </HttpWrite>
-            <Notifications/>
-        </HttpSwitch>
-        <HttpElectricityMeter contentProtocol="JSON">
-            <HttpRead url="http://tasmota/cm?cmnd=Status%208">
-                <HttpReadValue name="Energy" method="GET" path="$.StatusSNS.ENERGY.Total"/>
-            </HttpRead>
-            <Notifications/>
-        </HttpElectricityMeter>
-        <Schedule enabled="true">
-            <RuntimeRequest min="60" max="300"/>
-            <DayTimeframe>
-                <Start hour="8" minute="0" second="0"/>
-                <End hour="16" minute="0" second="0"/>
-            </DayTimeframe>
-        </Schedule>
-    </Appliance>
+<Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v2.0">
     <Appliance id="F-00000001-000000000019-00">
         <ElectricVehicleCharger startChargingStateDetectionDelay="60" latitude="50.293448956647715" longitude="8.982373236258528">
             <EVModbusControl idref="wallbox" slaveAddress="180">
@@ -44,12 +20,14 @@
             <ElectricVehicle id="1" name="Nissan Leaf" batteryCapacity="36000" phases="1" maxChargePower="6600" chargeLoss="11">
                 <SocScript script="/data/IdeaProjects/SmartApplianceEnabler/src/test/soc.sh"
                            updateAfterIncrease="4"
-                           extractionRegex=".*state_of_charge (\d+)"
+                           extractionRegex=".*state_of_charge': '(\d+)"
                            pluginStatusExtractionRegex=".*PluginState': '(CONNECTED).*"
                            pluginTimeExtractionRegex=".*TargetDate': '[0-9/]+ ([0-9:]+).*"
-                           latitudeExtractionRegex=".*lat (true)"
-                           longitudeExtractionRegex=".*lon (true)"
+                           latitudeExtractionRegex=".*ADDED_FOR_TEST_Latitude': '([0-9.]+)"
+                           longitudeExtractionRegex=".*ADDED_FOR_TEST_Longitude': '([0-9.]+)"
                 />
+            </ElectricVehicle>
+            <ElectricVehicle id="2" name="VW ID5" batteryCapacity="72000" phases="3" maxChargePower="7200" chargeLoss="15">
             </ElectricVehicle>
         </ElectricVehicleCharger>
         <ModbusElectricityMeter idref="modbus" slaveAddress="1">
@@ -59,6 +37,7 @@
         </ModbusElectricityMeter>
     </Appliance>
     <Connectivity>
+        <MqttBroker host="localhost" port="1883"/>
         <ModbusTCP id="modbus" host="raspi2" port="502"/>
         <ModbusTCP id="wallbox" host="wallbox" port="502"/>
     </Connectivity>

@@ -19,22 +19,18 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
-import de.avanux.smartapplianceenabler.control.AlwaysOnSwitch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.time.LocalDateTime;
-import java.util.Locale;
 
 public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
     private transient Logger logger = LoggerFactory.getLogger(SocScriptExecutor.class);
     private transient String applianceId;
 
     private boolean socScriptRunning;
+    private LocalDateTime nowForTesting;
     private SocScript socScript;
-    private boolean socScriptAsync = true;
     private int evId;
     private SocScriptExecutionResultListener listener;
 
@@ -52,11 +48,11 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
         }
     }
 
-    public void setSocScriptAsync(boolean socScriptAsync) {
-        this.socScriptAsync = socScriptAsync;
+    public void setNowForTesting(LocalDateTime nowForTesting) {
+        this.nowForTesting = nowForTesting;
     }
 
-    public void triggerExecution(SocScriptExecutionResultListener listener) {
+    public void triggerExecution(SocScriptExecutionResultListener listener, boolean socScriptAsync) {
         this.listener = listener;
         if(!this.socScriptRunning) {
             logger.debug( "{}: Trigger SOC retrieval", applianceId);
@@ -80,7 +76,8 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
         if(socScript.getScript() != null) {
             var result = socScript.getResult();
             logger.debug("{}: SOC script execution result: {}", applianceId, result);
-            this.listener.socRetrieved(this.evId, result);
+            this.listener.handleSocScriptExecutionResult(
+                    this.nowForTesting != null ? this.nowForTesting : LocalDateTime.now(), this.evId, result);
         }
         socScriptRunning = false;
     }

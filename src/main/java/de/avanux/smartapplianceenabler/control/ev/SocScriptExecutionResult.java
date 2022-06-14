@@ -20,29 +20,28 @@ package de.avanux.smartapplianceenabler.control.ev;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Locale;
-
 public class SocScriptExecutionResult {
-    private DecimalFormat percentageFormat;
-    public Double soc;
+    public Integer soc;
     public Boolean pluggedIn;
-    public String plugInTime;
+    public String pluginTime;
     Pair<Double, Double> location;
 
     public SocScriptExecutionResult() {
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
-        percentageFormat = (DecimalFormat) nf;
-        percentageFormat.applyPattern("#'%'");
+    }
+
+    public SocScriptExecutionResult(Integer soc, Boolean pluggedIn, String pluginTime, Pair<Double, Double> location) {
+        this.soc = soc;
+        this.pluggedIn = pluggedIn;
+        this.pluginTime = pluginTime;
+        this.location = location;
     }
 
     @Override
     public String toString() {
         return "SocScriptExecutionResult{" +
-                "soc=" + soc != null ? percentageFormat.format(soc) : "null" +
+                "soc=" + soc +
                 ", pluggedIn=" + pluggedIn +
-                ", pluggedInTime='" + plugInTime + '\'' +
+                ", pluginTime=" + pluginTime +
                 ", location=" + location +
                 '}';
     }

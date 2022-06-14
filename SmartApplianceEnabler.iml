@@ -71,6 +71,9 @@
     <orderEntry type="library" name="Maven: com.sun.xml.fastinfoset:FastInfoset:1.2.16" level="project" />
     <orderEntry type="library" name="Maven: jakarta.activation:jakarta.activation-api:1.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.fourthline.cling.local:cling-core:2.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.seamless.local:seamless-util:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.seamless.local:seamless-http:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.seamless.local:seamless-xml:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.10" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.12" level="project" />
@@ -90,6 +93,8 @@
     <orderEntry type="library" name="Maven: net.minidev:accessors-smart:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.asm:asm:5.0.4" level="project" />
     <orderEntry type="library" name="Maven: com.owlike:genson:1.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-spatial:8.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:8.4.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-api:5.5.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apiguardian:apiguardian-api:1.1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.opentest4j:opentest4j:1.2.0" level="project" />
