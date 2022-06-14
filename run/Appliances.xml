@@ -13,7 +13,7 @@
                     <ModbusWriteValue name="StartCharging" value="1"/>
                     <ModbusWriteValue name="StopCharging" value="0"/>
                 </ModbusWrite>
-                <ModbusWrite address="300" type="Holding">
+                <ModbusWrite address="300" type="Holding" valueType="Integer">
                     <ModbusWriteValue name="ChargingCurrent" value="0"/>
                 </ModbusWrite>
             </EVModbusControl>
