@@ -33,10 +33,7 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExecutionResultListener {

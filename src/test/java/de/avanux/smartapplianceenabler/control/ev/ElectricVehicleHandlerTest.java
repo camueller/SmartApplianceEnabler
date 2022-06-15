@@ -33,7 +33,6 @@ import static org.mockito.Mockito.when;
 public class ElectricVehicleHandlerTest implements SocValuesChangedListener {
     private ElectricVehicleHandler sut;
     private SocValues socValues;
-    private Integer soc1 = 45;
 
     @BeforeEach
     public void beforeEach() throws Exception {
@@ -49,6 +48,32 @@ public class ElectricVehicleHandlerTest implements SocValuesChangedListener {
     public void triggerSocScriptExecution_1ev_onlySoc() {
         var soc = 45;
         sut.setVehicles(Arrays.asList(configureEV(1, soc, null, null, null)));
+
+        sut.triggerSocScriptExecution();
+
+        assertEquals(soc, socValues.current);
+    }
+
+    @Test
+    public void triggerSocScriptExecution_2ev_onlyEv1HasSocScript() {
+        var soc = 45;
+        sut.setVehicles(Arrays.asList(
+                configureEV(1, soc, true, null, null),
+                configureEV(2, null, null, null, null)
+        ));
+
+        sut.triggerSocScriptExecution();
+
+        assertEquals(soc, socValues.current);
+    }
+
+    @Test
+    public void triggerSocScriptExecution_2ev_onlyEv2HasSocScript() {
+        var soc = 45;
+        sut.setVehicles(Arrays.asList(
+                configureEV(1, null, true, null, null),
+                configureEV(2, soc, null, null, null)
+        ));
 
         sut.triggerSocScriptExecution();
 
@@ -154,7 +179,9 @@ public class ElectricVehicleHandlerTest implements SocValuesChangedListener {
 
         var ev = new ElectricVehicle();
         ev.setId(id);
-        ev.setSocScript(socScript);
+        if(soc != null) {
+            ev.setSocScript(socScript);
+        }
         return ev;
     }
 

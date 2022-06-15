@@ -53,9 +53,13 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
     }
 
     public void triggerExecution(SocScriptExecutionResultListener listener, boolean socScriptAsync) {
+        if(this.socScript == null) {
+            logger.debug( "{}: No SOC script configured: evId={}", applianceId, evId);
+            return;
+        }
         this.listener = listener;
         if(!this.socScriptRunning) {
-            logger.debug( "{}: Trigger SOC retrieval", applianceId);
+            logger.debug( "{}: Trigger SOC retrieval: evId={}", applianceId, evId);
             this.socScriptRunning = true;
             if(socScriptAsync) {
                 Thread managerThread = new Thread(this);
@@ -67,7 +71,7 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
             }
         }
         else {
-            logger.debug("{}: SOC retrieval already running", applianceId);
+            logger.debug("{}: SOC retrieval already running: evId={}", applianceId, evId);
         }
     }
 
