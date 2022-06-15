@@ -137,11 +137,13 @@ Login...
 {'answer': {'status': 200, 'VoltLabel': {'HighVolt': '240', 'LowVolt': '120'}, 'BatteryStatusRecords': {'OperationResult': 'START', 'OperationDateAndTime': '09.Jun 2022 16:05', 'BatteryStatus': {'BatteryChargingStatus': 'NOT_CHARGING', 'BatteryCapacity': '240', 'BatteryRemainingAmount': '168', 'BatteryRemainingAmountWH': '25680', 'BatteryRemainingAmountkWH': '', 'SOC': {'Value': '70'}}, 'PluginState': 'CONNECTED', 'CruisingRangeAcOn': '168000', 'CruisingRangeAcOff': '171000', 'TimeRequiredToFull': {'HourRequiredToFull': '13', 'MinutesRequiredToFull': '30'}, 'TimeRequiredToFull200': {'HourRequiredToFull': '9', 'MinutesRequiredToFull': '30'}, 'TimeRequiredToFull200_6kW': {'HourRequiredToFull': '4', 'MinutesRequiredToFull': '0'}, 'NotificationDateAndTime': '2022/06/09 14:05', 'TargetDate': '2022/06/09 14:05'}}, 'battery_capacity': '240', 'battery_remaining_amount': '168', 'charging_status': 'NOT_CHARGING', 'is_charging': False, 'is_quick_charging': False, 'plugin_state': 'CONNECTED', 'is_connected': True, 'is_connected_to_quick_charger': False, 'cruising_range_ac_off_km': 171.0, 'cruising_range_ac_on_km': 168.0, 'time_to_full_trickle': datetime.timedelta(seconds=48600), 'time_to_full_l2': datetime.timedelta(seconds=34200), 'time_to_full_l2_6kw': datetime.timedelta(seconds=14400), 'battery_percent': 70.0, 'state_of_charge': '70'}
 ```
 
-Im *Smart Appliance Enabler* wird als SOC-Script angegeben: `/opt/sae/soc/soc.sh`.
-Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
-```
-.*state_of_charge (\d+)
-```
+Im *Smart Appliance Enabler* wird das SOC-Script wie folgt konfiguriert:
+
+| Feld                                | Wert                             |
+|-------------------------------------|----------------------------------|
+| Dateiname mit Pfad                  | `/opt/sae/soc/soc.sh`            |
+| Regex für SOC-Extraktion            | `.*state_of_charge': '(\d+)`     |
+| Regex für Verbindungsstatus-Prüfung | `.*PluginState': '(CONNECTED).*` |
 
 ### Hinweis
 In der Datei `~/.local/lib/python3.5/site-packages/pycarwings2/pycarwings2.py` muss ggf. die Carwings-URL angepasst werden, da diese sich von Zeit zu Zeit ändert. Diese kann man ggf. von der "My Leaf"-App abschauen: https://gitlab.com/tobiaswkjeldsen/carwingsflutter/blob/master/android/app/src/main/java/dk/kjeldsen/carwingsflutter/CarwingsSession.java 
