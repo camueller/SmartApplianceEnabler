@@ -27,31 +27,52 @@ cd /opt/sae/soc
 ```  
 Das eigentliche SOC-Python-Script sollte mit dem Namen [`Skoda_soc.py`](Skoda_soc.py) und folgendem Inhalt angelegt werden (Username und Password noch anpassen!):
 ```console
-#!/usr/bin/env python
-#coding: utf8
-
+#!/usr/bin/env python3
+import pprint
 import asyncio
 import logging
-
+import inspect
+import time
+import sys
+import os
 from aiohttp import ClientSession
-from skodaconnect import Connection
+from datetime import datetime
+
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+
+try:
+    from skodaconnect import Connection
+except ModuleNotFoundError as e:
+    print(f"Unable to import library: {e}")
+    sys.exit(1)
 
 logging.basicConfig(level=logging.ERROR)
 
-USERNAME = 'XXX'
-PASSWORD = 'YYY'
+USERNAME = '####'
+PASSWORD = '####'
 PRINTRESPONSE = False
-
+INTERVAL = 20
 
 async def main():
     """Main method."""
     async with ClientSession(headers={'Connection': 'keep-alive'}) as session:
         print(f"Initiating new session to Skoda Connect with {USERNAME} as username")
         connection = Connection(session, USERNAME, PASSWORD, PRINTRESPONSE)
-        if await connection._login():
-            vehicle = connection.vehicles[0]
-            print("state_of_charge %s" % str(vehicle.battery_level))
-
+        print("Attempting to login to the Skoda Connect service")
+        print(datetime.now())
+        if await connection.doLogin():
+            print('Login success!')
+            print(datetime.now())
+            print('Fetching vehicles associated with account.')
+            await connection.get_vehicles()
+         
+            for vehicle in connection.vehicles:
+                print("state_of_charge %s" % int(vehicle.battery_level))
+                
+        else:
+            return False
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -76,6 +97,8 @@ Um zu testen, ob alles korrekt ist, kann folgender Aufruf ausgeführt werden:
 Initiating new session to Skoda Connect with XXX as username
 state_of_charge 66
 ```
+
+Falls es nicht klappt, könnte es evtl. daran liegen, dass Zeilenumbrüche im Skoda_soc.sh auf einem Windows-Rechner angelegt wurden. Also unbedingt darauf achten, dass das File in Linux (am einfachsten direkt im Webmin) editiert wird.
 
 Im *Smart Appliance Enabler* wird das SOC-Script `/opt/sae/soc/Skoda_soc.sh` angegeben.
 Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
