@@ -75,6 +75,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                 EVChargerStateChangedEvent event = (EVChargerStateChangedEvent) message;
                 if(event.newState == EVChargerState.VEHICLE_CONNECTED) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
+                    if(evCharger == null || evCharger.getElectricVehicleHandler() == null) {
+                        return;
+                    }
                     ElectricVehicle ev = evCharger.getElectricVehicleHandler().getVehicle(event.evId);
                     if(ev != null) {
                         queue.stream()
