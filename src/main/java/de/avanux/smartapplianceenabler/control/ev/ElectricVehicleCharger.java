@@ -81,14 +81,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             @XmlElement(name = "ElectricVehicle", type = ElectricVehicle.class),
     })
     private List<ElectricVehicle> vehicles;
-//    private transient Integer connectedVehicleId;
-//    private transient SocValues socValues = new SocValues();;
-//    private transient boolean socScriptAsync = true;
-//    private transient boolean socScriptRunning;
-//    private transient boolean socCalculationRequired;
-//    private transient double socRetrievalEnergyMeterValue = 0.0;
-//    private transient boolean socRetrievalForChargingAlmostCompleted;
-//    private transient double chargeLoss = 0.0;
     private transient ElectricVehicleHandler evHandler;
     private transient Appliance appliance;
     private transient String applianceId;
@@ -197,102 +189,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
 
     public void setMaxPower(int maxPower) {
     }
-
-//    public void setSocScriptAsync(boolean socScriptAsync) {
-//        this.socScriptAsync = socScriptAsync;
-//    }
-//
-//    public Integer getSocInitial() {
-//        return this.socValues.initial != null ? this.socValues.initial : 0;
-//    }
-
-//    public void setSocInitial(Integer socInitial) {
-//        this.socValues.initial = socInitial;
-//    }
-//
-//    public Integer getSocCurrent() {
-//        return this.socValues.current != null ? this.socValues.current : 0;
-//    }
-//
-//    public void setSocCurrent(Integer socCurrent) {
-//        this.socValues.current = socCurrent;
-//    }
-//
-//    public SocValues getSocValues() {
-//        return socValues;
-//    }
-//
-//    private int calculateCurrentSoc() {
-//        ElectricVehicle vehicle = getConnectedVehicle();
-//        if (vehicle != null) {
-//            int energyMeteredSinceLastSocScriptExecution = getEnergyMeteredSinceLastSocScriptExecution();
-//            int socRetrievedOrInitial = this.socValues.retrieved != null ? this.socValues.retrieved : getSocInitial();
-//            int soc = Long.valueOf(Math.round(
-//                    socRetrievedOrInitial + energyMeteredSinceLastSocScriptExecution / (vehicle.getBatteryCapacity() *  (1 + chargeLoss/100)) * 100
-//            )).intValue();
-//            int socCurrent = Math.min(soc, 100);
-//            logger.debug("{}: SOC calculation: socCurrent={} socRetrievedOrInitial={} batteryCapacity={}Wh energyMeteredSinceLastSocScriptExecution={}Wh chargeLoss={}",
-//                    applianceId, percentageFormat.format(socCurrent), percentageFormat.format(socRetrievedOrInitial),
-//                    vehicle.getBatteryCapacity(),  energyMeteredSinceLastSocScriptExecution, percentageFormat.format(chargeLoss));
-//            return socCurrent;
-//        }
-//        return 0;
-//    }
-//
-//    public double getChargeLoss() {
-//        return chargeLoss;
-//    }
-//
-//    private Double calculateChargeLoss(int energyMeteredSinceLastSocScriptExecution, int socCurrent, int socLastRetrieval) {
-//        ElectricVehicle vehicle = getConnectedVehicle();
-//        if (vehicle != null && energyMeteredSinceLastSocScriptExecution > 0) {
-//            double energyReceivedByEv = (socCurrent - socLastRetrieval)/100.0 * vehicle.getBatteryCapacity();
-//            double chargeLoss = energyMeteredSinceLastSocScriptExecution * 100.0 / energyReceivedByEv - 100.0;
-//            logger.debug("{}: charge loss calculation: chargeLoss={} socCurrent={} socLastRetrieval={} batteryCapacity={}Wh energyMeteredSinceLastSocScriptExecution={}Wh energyReceivedByEv={}Wh",
-//                    applianceId, percentageFormat.format(chargeLoss), percentageFormat.format(socCurrent), percentageFormat.format(socLastRetrieval),
-//                    vehicle.getBatteryCapacity(), energyMeteredSinceLastSocScriptExecution, (int) energyReceivedByEv);
-//            return chargeLoss;
-//        }
-//        return null;
-//    }
-//
-//    public Long getSocInitialTimestamp() {
-//        ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset(LocalDateTime.now());
-//        return socValues.initialTimestamp != null ? socValues.initialTimestamp.toEpochSecond(zoneOffset) * 1000 : null;
-//    }
-//
-//    public void setSocInitialTimestamp(LocalDateTime socInitialTimestamp) {
-//        if(this.socValues.initialTimestamp == null) {
-//            this.socValues.initialTimestamp = socInitialTimestamp;
-//        }
-//    }
-//
-//    public ElectricVehicle getConnectedVehicle() {
-//        Integer evId = getConnectedVehicleId();
-//        if(evId != null) {
-//            return getVehicle(evId);
-//        }
-//        return null;
-//    }
-//
-//    public Integer getConnectedVehicleId() {
-//        return connectedVehicleId;
-//    }
-//
-//    public void setConnectedVehicleId(Integer connectedVehicleId) {
-//        this.connectedVehicleId = connectedVehicleId;
-//    }
-//
-//    public ElectricVehicle getVehicle(int evId) {
-//        if(this.vehicles != null) {
-//            for(ElectricVehicle electricVehicle : this.vehicles) {
-//                if(electricVehicle.getId() == evId) {
-//                    return electricVehicle;
-//                }
-//            }
-//        }
-//        return null;
-//    }
 
     public List<ElectricVehicle> getVehicles() {
         return vehicles;
@@ -416,7 +312,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             logger.debug("{}: Vehicle state changed: previousState={} newState={}", applianceId, previousState, currentState);
             stateHistory.add(currentState);
             stateLastChangedTimestamp = now;
-//            socCalculationRequired = true;
             this.evHandler.setSocCalculationRequired(true);
             onEVChargerStateChanged(now, previousState, currentState);
         }
@@ -596,14 +491,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             this.notificationHandler.sendNotification(notificationType);
         }
         if(newState == EVChargerState.VEHICLE_CONNECTED) {
-//            if (this.vehicles != null && this.vehicles.size() > 0) {
-//                // sadly, we don't know, which ev has been connected, so we will assume the first one if any
-//                ElectricVehicle firstVehicle = this.vehicles.get(0);
-//                if (getConnectedVehicleId() == null) {
-//                    setConnectedVehicleId(firstVehicle.getId());
-//                }
-//                socValues.batteryCapacity = firstVehicle.getBatteryCapacity();
-//            }
             if(getForceInitialCharging() && wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED)) {
                 setPowerToMinimum();
                 startCharging();
@@ -620,7 +507,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         }
         if(newState == EVChargerState.CHARGING_COMPLETED) {
             stopCharging();
-//            this.socRetrievalForChargingAlmostCompleted = false;
             this.evHandler.onChargingCompleted();
         }
         if(newState == EVChargerState.VEHICLE_NOT_CONNECTED) {
@@ -631,10 +517,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             if(meter != null) {
                 meter.resetEnergyMeter();
             }
-//            setConnectedVehicleId(null);
-//            this.socValues = new SocValues();
-//            this.socRetrievalForChargingAlmostCompleted = false;
-//            this.socRetrievalEnergyMeterValue = 0.0f;
             this.evHandler.onVehicleDisconnected();
             this.appliance.getTimeframeIntervalHandler().clearQueue();
             initStateHistory();
@@ -646,10 +528,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
 
         // SOC has to be retrieved after listener notification in order to allow for new listeners interested in SOC
         if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED && newState == EVChargerState.VEHICLE_CONNECTED) {
-//            this.socValues.batteryCapacity = getConnectedVehicle().getBatteryCapacity();
-//            this.chargeLoss = getConnectedVehicle().getChargeLoss() != null
-//                    ? getConnectedVehicle().getChargeLoss().floatValue() : 0.0f;
-//            updateSoc(now);
             this.evHandler.triggerSocScriptExecution();
         }
     }
@@ -759,18 +637,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         return chargeSeconds;
     }
 
-//    private int getEnergyMeteredSinceLastSocScriptExecution() {
-//        int energyMeteredSinceLastSocScriptExecution = 0; // in Wh
-//        Double energyMetered = null;
-//        if(appliance.getMeter() != null) {
-//            energyMetered = meterMessage != null ? meterMessage.energy : 0.0;
-//            energyMeteredSinceLastSocScriptExecution = Double.valueOf((energyMetered - socRetrievalEnergyMeterValue) * 1000.0f).intValue();
-//        }
-//        logger.trace("{}: Calculate energyMeteredSinceLastSocScriptExecution={} applianceHasMeter={} energyMetered={} socRetrievalEnergyMeterValue={}",
-//                applianceId, energyMeteredSinceLastSocScriptExecution, appliance.getMeter() != null, energyMetered, socRetrievalEnergyMeterValue);
-//        return energyMeteredSinceLastSocScriptExecution;
-//    }
-
     public void setPowerToMinimum() {
         logger.debug("{}: Set minimum charge power", applianceId);
         if(this.minPowerConsumption != null && this.minPowerConsumption > 0) {
@@ -851,67 +717,11 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
 
     public synchronized void updateSoc(LocalDateTime now) {
         if(! isVehicleNotConnected()) {
-//            boolean chargingAlmostCompleted = false;
-//            boolean socChanged = false;
-//            if(this.socCalculationRequired || isCharging()) {
-//                int calculatedCurrentSoc = calculateCurrentSoc();
-//                socChanged = this.socValues.current != null && this.socValues.current != calculatedCurrentSoc;
-//                this.socValues.current = calculatedCurrentSoc;
-//                if(socChanged) {
-//                    publishEVChargerSocChangedEvent(now, this.socValues);
-//                    if(appliance.getTimeframeIntervalHandler() != null && appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval() != null) {
-//                        Integer max = appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval().getRequest().getMax(now);
-//                        if(max < 1000) {
-//                            chargingAlmostCompleted = true;
-//                        }
-//                    }
-//
-//                }
-//                this.socCalculationRequired = false;
-//            }
-//            logger.debug( "{}: SOC retrieval: socCalculationRequired={} socChanged={} chargingAlmostCompleted={} socRetrievalForChargingAlmostCompleted={}",
-//                    applianceId, socCalculationRequired, socChanged, chargingAlmostCompleted, socRetrievalForChargingAlmostCompleted);
-
             var request = appliance.getTimeframeIntervalHandler() != null
                     && appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval() != null
                     ? appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval().getRequest()
                     : null;
             this.evHandler.updateSoc(now, request, isCharging());
-
-//            ElectricVehicle electricVehicle = getConnectedVehicle();
-//            if(electricVehicle != null && electricVehicle.getSocScript() != null) {
-//                Integer updateAfterIncrease = electricVehicle.getSocScript().getUpdateAfterIncrease();
-//                if(updateAfterIncrease == null) {
-//                    updateAfterIncrease = ElectricVehicleChargerDefaults.getUpdateSocAfterIncrease();
-//                }
-//                Integer updateAfterSeconds = electricVehicle.getSocScript().getUpdateAfterSeconds();
-//                if(this.socValues.initial == null
-//                        || this.socValues.retrieved == null
-//                        || (chargingAlmostCompleted && !socRetrievalForChargingAlmostCompleted)
-//                        || ((this.socValues.retrieved + updateAfterIncrease <= this.socValues.current)
-//                            && (updateAfterSeconds == null || now.minusSeconds(updateAfterSeconds).isAfter(this.socValues.retrievedTimestamp)))
-//                ) {
-//                    if(!this.socScriptRunning) {
-//                        logger.debug( "{}: SOC retrieval is required: {}", applianceId, this.socValues);
-//                        this.socScriptRunning = true;
-//                        SocRetriever socRetriever = new SocRetriever(now, electricVehicle, chargingAlmostCompleted);
-//                        if(socScriptAsync) {
-//                            Thread managerThread = new Thread(socRetriever);
-//                            managerThread.start();
-//                        }
-//                        else {
-//                            // for unit tests
-//                            socRetriever.run();
-//                        }
-//                    }
-//                    else {
-//                        logger.debug("{}: SOC retrieval already running: {}", applianceId, this.socValues);
-//                    }
-//                }
-//                else {
-//                    logger.debug("{}: SOC retrieval is NOT required: {}", applianceId, this.socValues);
-//                }
-//            }
         }
     }
 
@@ -940,58 +750,4 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         EVChargerSocChangedEvent event = new EVChargerSocChangedEvent(now, socValues, this.evHandler.getChargeLoss());
         mqttClient.publish(MqttEventName.EVChargerSocChanged, event, true);
     }
-
-//    private class SocRetriever implements Runnable {
-//        private LocalDateTime now;
-//        private ElectricVehicle electricVehicle;
-//        private boolean chargingAlmostCompleted;
-//
-//        public SocRetriever(LocalDateTime now, ElectricVehicle electricVehicle, boolean chargingAlmostCompleted) {
-//            this.now = now;
-//            this.electricVehicle = electricVehicle;
-//            this.chargingAlmostCompleted = chargingAlmostCompleted;
-//        }
-//
-//        @Override
-//        public void run() {
-//            Double soc = getStateOfCharge(now, electricVehicle);
-//            if(soc != null) {
-//                logger.debug("{}: Retrieved SOC={}", applianceId, percentageFormat.format(soc));
-//                Integer socLastRetrieved = socValues.retrieved != null ? socValues.retrieved : socValues.initial;
-//                if(socValues.initial == null) {
-//                    socValues.initial = soc.intValue();
-//                    socValues.current = soc.intValue();
-//                }
-//                socValues.retrieved = soc.intValue();
-//                if(socLastRetrieved != null) {
-//                    Double chargeLossCalculated = calculateChargeLoss(getEnergyMeteredSinceLastSocScriptExecution(),
-//                            socValues.retrieved, socLastRetrieved);
-//                    if(chargeLossCalculated != null) {
-//                        chargeLoss = chargeLossCalculated > 0 ? chargeLossCalculated : 0.0 ;
-//                    }
-//                }
-//                socValues.current = soc.intValue();
-//                socRetrievalEnergyMeterValue = meterMessage != null ? meterMessage.energy : 0.0;
-//                publishEVChargerSocChangedEvent(now, socValues);
-//                if(this.chargingAlmostCompleted) {
-//                    socRetrievalForChargingAlmostCompleted = true;
-//                }
-//            }
-//            socScriptRunning = false;
-//        }
-//    }
-//
-//    /**
-//     * This method is extracted only for mocking which should also disable any time limits.
-//     * @param electricVehicle
-//     * @return
-//     */
-//    public Double getStateOfCharge(LocalDateTime now, ElectricVehicle electricVehicle) {
-//        Double soc = electricVehicle.getStateOfCharge();
-//        this.socValues.retrievedTimestamp = now;
-//        if(this.socValues.initialTimestamp == null) {
-//            this.socValues.initialTimestamp = this.socValues.retrievedTimestamp;
-//        }
-//        return soc;
-//    }
 }
