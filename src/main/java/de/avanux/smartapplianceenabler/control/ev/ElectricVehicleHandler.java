@@ -293,6 +293,7 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
             Integer socLastRetrieved = socValues.retrieved != null ? socValues.retrieved : socValues.initial;
             if(socValues.initial == null) {
                 socValues.initial = result.soc.intValue();
+                socValues.initialTimestamp = now;
                 socValues.current = result.soc.intValue();
                 socValues.batteryCapacity = getVehicle(this.connectedVehicleId).getBatteryCapacity();
             }
