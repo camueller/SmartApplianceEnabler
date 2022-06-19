@@ -369,6 +369,10 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
             logger.debug("{}: charge loss calculation: chargeLoss={} socCurrent={} socLastRetrieval={} batteryCapacity={}Wh energyMeteredSinceLastSocScriptExecution={}Wh energyReceivedByEv={}Wh",
                     applianceId, percentageFormat.format(chargeLoss), percentageFormat.format(socValues.current), percentageFormat.format(socValues.retrieved),
                     batteryCapacity, energyMeteredSinceLastSocScriptExecution, (int) energyReceivedByEv);
+            if(chargeLoss > 50) {
+                chargeLoss = 50.0;
+                logger.debug("{}: Limit charge loss to {}", applianceId, chargeLoss);
+            }
             return chargeLoss;
         }
         return null;
