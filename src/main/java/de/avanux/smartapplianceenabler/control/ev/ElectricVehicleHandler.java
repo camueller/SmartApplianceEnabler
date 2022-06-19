@@ -93,6 +93,9 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
                 executor.setApplianceId(this.applianceId);
                 this.evIdWithSocScriptExecutor.put(vehicle.getId(), executor);
             });
+            this.chargeLoss = getConnectedVehicle().getChargeLoss() != null
+                    ? getConnectedVehicle().getChargeLoss().floatValue() : 0.0f;
+
         }
     }
 
@@ -187,9 +190,9 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         this.socCalculationRequired = socCalculationRequired;
     }
 
-    public void updateSoc(LocalDateTime now, Request request) {
+    public void updateSoc(LocalDateTime now, Request request, boolean isCharging) {
         boolean socChanged = false;
-        if(this.socCalculationRequired) {
+        if(this.socCalculationRequired || isCharging) {
             int calculatedCurrentSoc = calculateCurrentSoc();
             socChanged = this.socValues.current != null && this.socValues.current != calculatedCurrentSoc;
             this.socValues.current = calculatedCurrentSoc;
@@ -283,6 +286,9 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
                 logger.debug("{}: Changing connected vehicle to: id={}", applianceId, evId);
             }
             this.connectedVehicleId = evId;
+
+            var chargeLoss = getVehicle(evId).getChargeLoss();
+            this.chargeLoss = chargeLoss != null ? chargeLoss.floatValue() : 0.0f;
         }
         if(this.connectedVehicleId != null) {
             if(this.connectedVehicleId != evId) {

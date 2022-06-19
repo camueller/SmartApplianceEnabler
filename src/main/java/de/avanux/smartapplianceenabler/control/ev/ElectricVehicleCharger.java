@@ -872,13 +872,11 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
 //            logger.debug( "{}: SOC retrieval: socCalculationRequired={} socChanged={} chargingAlmostCompleted={} socRetrievalForChargingAlmostCompleted={}",
 //                    applianceId, socCalculationRequired, socChanged, chargingAlmostCompleted, socRetrievalForChargingAlmostCompleted);
 
-            if(isCharging()) {
-                var request = appliance.getTimeframeIntervalHandler() != null
-                        && appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval() != null
-                        ? appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval().getRequest()
-                        : null;
-                this.evHandler.updateSoc(now, request);
-            }
+            var request = appliance.getTimeframeIntervalHandler() != null
+                    && appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval() != null
+                    ? appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval().getRequest()
+                    : null;
+            this.evHandler.updateSoc(now, request, isCharging());
 
 //            ElectricVehicle electricVehicle = getConnectedVehicle();
 //            if(electricVehicle != null && electricVehicle.getSocScript() != null) {
