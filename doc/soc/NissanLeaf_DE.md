@@ -142,7 +142,7 @@ Im *Smart Appliance Enabler* wird das SOC-Script wie folgt konfiguriert:
 | Feld                                | Wert                             |
 |-------------------------------------|----------------------------------|
 | Dateiname mit Pfad                  | `/opt/sae/soc/soc.sh`            |
-| Regex für SOC-Extraktion            | `.*state_of_charge': '(\d+)`     |
+| Regex für SOC-Extraktion            | `.*state_of_charge': '(\d+).*`   |
 | Regex für Verbindungsstatus-Prüfung | `.*PluginState': '(CONNECTED).*` |
 
 ### Hinweis

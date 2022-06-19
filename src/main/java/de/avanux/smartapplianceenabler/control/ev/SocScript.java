@@ -197,7 +197,8 @@ public class SocScript implements ApplianceIdConsumer {
             return false;
         }
         logger.debug("{}: Value match regex: {}", applianceId, regex);
-        return text.trim().matches(regex);
+        Matcher regexMatcher = Pattern.compile(regex, Pattern.DOTALL).matcher(text.trim());
+        return regexMatcher.matches();
     }
 
     @Override
