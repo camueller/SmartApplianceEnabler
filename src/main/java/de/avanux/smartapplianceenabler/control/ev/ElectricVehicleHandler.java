@@ -49,11 +49,11 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
     private Integer connectedVehicleId;
     private Pair<Double, Double> evChargerLocation;
     private SocScriptExecutionResult previousSocScriptExecutionResult;
-    private double socRetrievalEnergyMeterValue = 0.0f;
-    private SocValues socValues = new SocValues();
+    private double socRetrievalEnergyMeterValue;
+    private SocValues socValues;
     private SocValuesChangedListener socValuesChangedListener;
     private boolean socCalculationRequired;
-    private double chargeLoss = 0.0;
+    private double chargeLoss;
     private MeterMessage meterMessage;
     private boolean socRetrievalForChargingAlmostCompleted;
     private boolean chargingAlmostCompleted;
@@ -63,6 +63,8 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
         percentageFormat = (DecimalFormat) nf;
         percentageFormat.applyPattern("#'%'");
+
+        onVehicleDisconnected();
     }
 
     @Override
@@ -112,6 +114,9 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         this.socValues = new SocValues();
         this.socRetrievalForChargingAlmostCompleted = false;
         this.socRetrievalEnergyMeterValue = 0.0f;
+        this.previousSocScriptExecutionResult = null;
+        this.chargeLoss = 0.0;
+        this.chargingAlmostCompleted = false;
     }
 
     public void onChargingCompleted() {
