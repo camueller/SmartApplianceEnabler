@@ -310,9 +310,19 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
             }
             socValues.retrieved = result.soc.intValue();
             if(socLastRetrieved != null) {
-                Double chargeLossCalculated = calculateChargeLoss(getEnergyMeteredSinceLastSocScriptExecution());
+                Double chargeLossCalculated = calculateChargeLoss(getEnergyMeteredSinceLastSocScriptExecution(), socValues.retrieved, socLastRetrieved);
                 if(chargeLossCalculated != null) {
-                    chargeLoss = chargeLossCalculated > 0 ? chargeLossCalculated : 0.0 ;
+                    if(chargeLossCalculated > 50) {
+                        chargeLoss = 50.0;
+                        logger.debug("{}: Ignoring calculated charge loss. Limit charge loss to {}", applianceId, chargeLoss);
+                    }
+                    else if(chargeLossCalculated < 0) {
+                        chargeLoss = getVehicle(evId).getChargeLoss();
+                        logger.debug("{}: Ignoring calculated charge loss. Using vehicle default value of {}", applianceId, chargeLoss);
+                    }
+                    else {
+                        chargeLoss = chargeLossCalculated;
+                    }
                 }
             }
             socValues.current = result.soc.intValue();
@@ -365,19 +375,15 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         return chargeLoss;
     }
 
-    public Double calculateChargeLoss(int energyMeteredSinceLastSocScriptExecution) {
+    public Double calculateChargeLoss(int energyMeteredSinceLastSocScriptExecution, int socCurrent, int socLastRetrieval) {
         var evId = getConnectedOrFirstVehicleId();
         var batteryCapacity = evId != null ? getVehicle(evId).getBatteryCapacity() : null;
         if (batteryCapacity != null && energyMeteredSinceLastSocScriptExecution > 0) {
-            double energyReceivedByEv = (this.socValues.current - this.socValues.retrieved)/100.0 * batteryCapacity;
+            double energyReceivedByEv = (socCurrent - socLastRetrieval)/100.0 * batteryCapacity;
             double chargeLoss = energyMeteredSinceLastSocScriptExecution * 100.0 / energyReceivedByEv - 100.0;
             logger.debug("{}: charge loss calculation: chargeLoss={} socCurrent={} socLastRetrieval={} batteryCapacity={}Wh energyMeteredSinceLastSocScriptExecution={}Wh energyReceivedByEv={}Wh",
-                    applianceId, percentageFormat.format(chargeLoss), percentageFormat.format(socValues.current), percentageFormat.format(socValues.retrieved),
+                    applianceId, percentageFormat.format(chargeLoss), percentageFormat.format(socCurrent), percentageFormat.format(socLastRetrieval),
                     batteryCapacity, energyMeteredSinceLastSocScriptExecution, (int) energyReceivedByEv);
-            if(chargeLoss > 50) {
-                chargeLoss = 50.0;
-                logger.debug("{}: Limit charge loss to {}", applianceId, chargeLoss);
-            }
             return chargeLoss;
         }
         return null;
