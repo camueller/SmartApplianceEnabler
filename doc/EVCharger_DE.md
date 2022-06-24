@@ -44,6 +44,8 @@ Unabhängig von der spezifischen Wallbox gibt folgende Einstellungen, die für a
 - `Abfrage-Intervall`: in diesen Zeitabständen wird der Status der Wallbox abgefragt (Standardwert: 10s)
 - `Statuserkennung-Unterbrechung`: Nach dem Ein-/Ausschalten wird der Ladestatus für die angegebene Dauer nicht abgefragt um der Wallbox Zeit zu geben, den gewünschten Status herbeizuführen
 - `Ladestatuserkennung abwarten`: Nachdem ein angeschlosses Fahrzeug erkannt wird erfolgt ein sofortiger Ladestart bis die Wallbox den Status 'Laden' zurückmeldet. Danach wird das Laden wieder gestoppt bis ein Einschaltbefehl empfangen wird. Erforderlich Für Renault Zoe!
+- `Geo. Breite`: Die geografische Breite der Wallbox dient bei mehrenden konfigurierten Fahrzeugen zur Identifikation des Fahrzeugs, welches sich in der Nähe der Wallbox befindet.
+- `Geo. Länge`: Die geografische Länge der Wallbox dient bei mehrenden konfigurierten Fahrzeugen zur Identifikation des Fahrzeugs, welches sich in der Nähe der Wallbox befindet.
  
 ### Fahrzeuge
 <a name="ev">
@@ -58,9 +60,15 @@ Der *Standardwert für manuelles Laden* beinhaltet lediglich die Vorbelegung des
 
 Wird ein *Standardwert für Überschussenergie* gesetzt, wird nach dem Verbinden des Fahrzeugs nur bis zu diesem Wert mit Überschussenergie geladen und danach der Ladevorgang gestoppt.
 
-Die vom *Smart Appliance Enabler* unterstützten Wechselstrom-Wallboxen können nicht den aktuellen Ist-Ladezustand vom Fahrzeug ermitteln und an den *Smart Appliance Enabler* kommunizieren! Für eine möglichst genaue Ermittlung des Energiebedarfs muss dieser Wert aber bekannt sein. Der *Smart Appliance Enabler* bietet deshalb die Möglichkeit der Einbindung eines [Scripts zum automatisierten Abfragen des SOC](soc/SOC_DE.md), sofern dies vom Fahrzeug-Hersteller unterstützt wird. 
+Die vom *Smart Appliance Enabler* unterstützten Wechselstrom-Wallboxen können nicht den aktuellen Ist-Ladezustand vom Fahrzeug ermitteln und an den *Smart Appliance Enabler* kommunizieren! Für eine möglichst genaue Ermittlung des Energiebedarfs muss dieser Wert aber bekannt sein. Der *Smart Appliance Enabler* bietet deshalb die Möglichkeit der Einbindung eines [Scripts zum automatisierten Abfragen des SOC](soc/SOC_DE.md), sofern dies vom Fahrzeug-Hersteller unterstützt wird.
 
-Wenn vom SOC-Script nicht nur eine Zahl ohne weitere Zeichen geliefert wird, sondern der Verbrauchswert irgendwo in einem Text (XML, JSON, ...) enthalten ist, muss ein [Regulärer Ausdruck/Regex](WertExtraktion_DE.md) zum Extrahieren der Leistung mit angegeben werden.
+Wenn mehrere Fahrzeuge konfiguriert werden, ist eine automatische Erkennung des Fahrzeugs nur möglich, wenn das [Scripts zum automatisierten Abfragen des SOC](soc/SOC_DE.md) neben dem SOC auch mindestens einen der folgenden Werte liefern kann:
+
+- Verbindungsstatus des Ladekabels
+- Zeitpunkt des Einsteckens des Ladekabels
+- Geo. Breite/Länge des Fahrzeugs
+
+Falls vorhanden, müssen diese Werte zusätzlich zum eigentlichen SOC mit [Regulären Ausdrücken(Regex)](WertExtraktion_DE.md) aus der Ausgabe des [Scripts zum automatisierten Abfragen des SOC](soc/SOC_DE.md) extrahiert werden.
 
 ![Fahrzeugkonfiguration](../pics/fe/EV.png)
 

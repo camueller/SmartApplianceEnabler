@@ -107,8 +107,18 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
     this.formHandler.addFormControl(this.form, 'defaultSocOptionalEnergy',
       this.electricVehicle && this.electricVehicle.defaultSocOptionalEnergy,
       [Validators.pattern(InputValidatorPatterns.PERCENTAGE)]);
+
     this.formHandler.addFormControl(this.form, 'scriptExtractionRegex',
       this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.extractionRegex);
+    this.formHandler.addFormControl(this.form, 'pluginStatusExtractionRegex',
+      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.pluginStatusExtractionRegex);
+    this.formHandler.addFormControl(this.form, 'pluginTimeExtractionRegex',
+      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.pluginTimeExtractionRegex);
+    this.formHandler.addFormControl(this.form, 'latitudeExtractionRegex',
+      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.latitudeExtractionRegex);
+    this.formHandler.addFormControl(this.form, 'longitudeExtractionRegex',
+      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.longitudeExtractionRegex);
+
     this.formHandler.addFormControl(this.form, 'scriptUpdateSocAfterIncrease',
       this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.updateAfterIncrease,
       Validators.pattern(InputValidatorPatterns.PERCENTAGE));
@@ -127,6 +137,11 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       this.electricVehicle.defaultSocOptionalEnergy);
     if (this.electricVehicle && this.electricVehicle.socScript) {
       this.formHandler.setFormControlValue(this.form, 'scriptExtractionRegex', this.electricVehicle.socScript.extractionRegex);
+      this.formHandler.setFormControlValue(this.form, 'pluginStatusExtractionRegex', this.electricVehicle.socScript.pluginStatusExtractionRegex);
+      this.formHandler.setFormControlValue(this.form, 'pluginTimeExtractionRegex', this.electricVehicle.socScript.pluginTimeExtractionRegex);
+      this.formHandler.setFormControlValue(this.form, 'latitudeExtractionRegex', this.electricVehicle.socScript.latitudeExtractionRegex);
+      this.formHandler.setFormControlValue(this.form, 'longitudeExtractionRegex', this.electricVehicle.socScript.longitudeExtractionRegex);
+
       this.formHandler.setFormControlValue(this.form, 'scriptUpdateSocAfterIncrease', this.electricVehicle.socScript.updateAfterIncrease);
       this.formHandler.setFormControlValue(this.form, 'scriptUpdateSocAfterSeconds', this.electricVehicle.socScript.updateAfterSeconds);
     }
@@ -142,6 +157,10 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
     const defaultSocOptionalEnergy = getValidInt(this.form.controls.defaultSocOptionalEnergy.value);
     const scriptFilename = this.socScriptFilenameInput.updateModelFromForm();
     const extractionRegex = getValidString(this.form.controls.scriptExtractionRegex.value);
+    const pluginStatusExtractionRegex = getValidString(this.form.controls.pluginStatusExtractionRegex.value);
+    const pluginTimeExtractionRegex = getValidString(this.form.controls.pluginTimeExtractionRegex.value);
+    const latitudeExtractionRegex = getValidString(this.form.controls.latitudeExtractionRegex.value);
+    const longitudeExtractionRegex = getValidString(this.form.controls.longitudeExtractionRegex.value);
     const updateSocAfterIncrease = this.form.controls.scriptUpdateSocAfterIncrease.value;
     const updateSocAfterTime = this.updateAfterSecondsComponent.updateModelFromForm();
 
@@ -161,6 +180,10 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       }
       this.electricVehicle.socScript.script = scriptFilename;
       this.electricVehicle.socScript.extractionRegex = extractionRegex;
+      this.electricVehicle.socScript.pluginStatusExtractionRegex = pluginStatusExtractionRegex;
+      this.electricVehicle.socScript.pluginTimeExtractionRegex = pluginTimeExtractionRegex;
+      this.electricVehicle.socScript.latitudeExtractionRegex = latitudeExtractionRegex;
+      this.electricVehicle.socScript.longitudeExtractionRegex = longitudeExtractionRegex;
       this.electricVehicle.socScript.updateAfterIncrease = updateSocAfterIncrease;
       this.electricVehicle.socScript.updateAfterSeconds = updateSocAfterTime
         && updateSocAfterTime.length > 0 ? TimeUtil.toSeconds(updateSocAfterTime) : undefined;

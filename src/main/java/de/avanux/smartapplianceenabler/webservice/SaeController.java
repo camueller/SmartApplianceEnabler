@@ -707,13 +707,18 @@ public class SaeController {
             if (appliance != null) {
                 if (appliance.getControl() instanceof ElectricVehicleCharger) {
                     ElectricVehicleCharger evCharger = (ElectricVehicleCharger) appliance.getControl();
-                    Integer soc = evCharger.getSocCurrent();
-                    if (soc != null) {
-                        logger.debug("{}: Return SOC={}", applianceId, soc);
-                        return Integer.valueOf(soc).floatValue();
+                    if(evCharger.getElectricVehicleHandler().getConnectedOrFirstVehicleId().intValue() == evId.intValue()) {
+                        Integer soc = evCharger.getElectricVehicleHandler().getSocCurrent();
+                        if (soc != null) {
+                            logger.debug("{}: Return SOC={}", applianceId, soc);
+                            return Integer.valueOf(soc).floatValue();
+                        } else {
+                            logger.error("{}: SOC not available", applianceId);
+                            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        }
                     } else {
-                        logger.error("{}: SOC not available", applianceId);
-                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        logger.debug("{}: Return SOC=0 for alternate ev", applianceId);
+                        return 0.0f;
                     }
                 } else {
                     logger.error("{}: Appliance has no electric vehicle charger", applianceId);
@@ -935,12 +940,13 @@ public class SaeController {
                         ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
                         applianceStatus.setState(evCharger.getState().name());
                         if(!evCharger.isVehicleNotConnected()) {
-                            applianceStatus.setEvIdCharging(evCharger.getConnectedVehicleId());
+                            var evHandler = evCharger.getElectricVehicleHandler();
+                            applianceStatus.setEvIdCharging(evHandler.getConnectedOrFirstVehicleId());
                             ZonedDateTime zdt = ZonedDateTime.of(evCharger.getStateLastChangedTimestamp(), ZoneId.systemDefault());
                             applianceStatus.setStateLastChangedTimestamp(zdt.toInstant().toEpochMilli());
-                            applianceStatus.setSocInitial(evCharger.getSocInitial());
-                            applianceStatus.setSocInitialTimestamp(evCharger.getSocInitialTimestamp());
-                            applianceStatus.setSoc(evCharger.getSocCurrent());
+                            applianceStatus.setSocInitial(evHandler.getSocInitial());
+                            applianceStatus.setSocInitialTimestamp(evHandler.getSocInitialTimestamp());
+                            applianceStatus.setSoc(evHandler.getSocCurrent());
 
                             int whAlreadyCharged = 0;
                             int chargePower = 0;

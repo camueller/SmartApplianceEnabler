@@ -87,6 +87,11 @@
 			<artifactId>genson</artifactId>
 			<version>1.4</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-spatial</artifactId>
+			<version>8.4.1</version>
+		</dependency>
 		<!-- Junit 5 -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

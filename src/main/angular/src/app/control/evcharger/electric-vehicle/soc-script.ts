@@ -7,6 +7,10 @@ export class SocScript {
 
   script: string;
   extractionRegex: string;
+  pluginStatusExtractionRegex: string;
+  pluginTimeExtractionRegex: string;
+  latitudeExtractionRegex: string;
+  longitudeExtractionRegex: string;
   updateAfterIncrease: number;
   updateAfterSeconds: number;
 

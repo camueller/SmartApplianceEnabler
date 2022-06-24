@@ -19,6 +19,7 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,14 @@ public class SocScript implements ApplianceIdConsumer {
     private Integer updateAfterSeconds;
     @XmlAttribute
     private String extractionRegex;
-    private transient Pattern socValueExtractionPattern;
+    @XmlAttribute
+    private String pluginStatusExtractionRegex;
+    @XmlAttribute
+    private String pluginTimeExtractionRegex;
+    @XmlAttribute
+    private String latitudeExtractionRegex;
+    @XmlAttribute
+    private String longitudeExtractionRegex;
     private transient String applianceId;
 
 
@@ -75,17 +83,45 @@ public class SocScript implements ApplianceIdConsumer {
         this.applianceId = applianceId;
     }
 
-    public Double getStateOfCharge() {
+    public SocScriptExecutionResult getResult() {
         if(this.script != null) {
             File scriptFile = new File(this.script);
             if(scriptFile.exists()) {
                 if(scriptFile.canExecute()) {
                     String output = getScriptOutput(this.script);
                     if(output != null && output.length() > 0) {
-                        String socValueString = extractSoCValue(output, this.extractionRegex);
-                        Double soc = Double.parseDouble(socValueString.replace(',', '.'));
-                        logger.debug("{}: SoC: {}", applianceId, soc);
-                        return soc;
+                        var result = new SocScriptExecutionResult();
+
+                        try {
+                            String socValueString = extractValue(output, this.extractionRegex);
+                            if(socValueString != null) {
+                                result.soc = parseDouble(socValueString).intValue();
+                            }
+
+                            if(this.pluginStatusExtractionRegex != null) {
+                                result.pluggedIn = matchValue(output, this.pluginStatusExtractionRegex);
+                            }
+
+                            if(this.pluginTimeExtractionRegex != null) {
+                                result.pluginTime = extractValue(output, this.pluginTimeExtractionRegex);
+                            }
+
+                            if(this.latitudeExtractionRegex != null && this.longitudeExtractionRegex != null) {
+                                String latitudeValueString = extractValue(output, this.latitudeExtractionRegex);
+                                String longitudeValueString = extractValue(output, this.longitudeExtractionRegex);
+                                if(latitudeValueString != null && longitudeValueString != null) {
+                                    result.location = new ImmutablePair<>(
+                                            parseDouble(latitudeValueString),
+                                            parseDouble(longitudeValueString)
+                                    );
+                                }
+                            }
+                        }
+                        catch(Exception e) {
+                            logger.error("{}: Error parsing SoC script output", applianceId, e);
+                        }
+
+                        return result;
                     }
                 }
                 else {
@@ -102,6 +138,10 @@ public class SocScript implements ApplianceIdConsumer {
         return null;
     }
 
+    private Double parseDouble(String input) {
+        return Double.parseDouble(input.replace(',', '.'));
+    }
+
     private String getScriptOutput(String scriptToExecute) {
         InputStream inputStream = null;
         try {
@@ -115,7 +155,7 @@ public class SocScript implements ApplianceIdConsumer {
             while ((c = inputStream.read()) != -1) {
                 scriptOutput.append((char) c);
             }
-            logger.debug("{}: SoC script output: {}", applianceId, scriptOutput.toString());
+            logger.debug("{}: SoC script output: {}", applianceId, scriptOutput);
             int rc = p.waitFor();
             logger.debug("{}: SoC script exited with return code {}", applianceId, rc);
             if(rc == 0) {
@@ -134,25 +174,31 @@ public class SocScript implements ApplianceIdConsumer {
     }
 
     /**
-     * Extract the SoC value from the the response using a regular expression.
-     * The regular expression has contain a capture group containing the SOC value.
-     * @param text the text containing the SOC value
-     * @param regex the regular expression to be used to extract the SOC value
-     * @return the SOC value extracted or the full text if the regular expression is null or could not be matched
+     * Extract the value from the the response using a regular expression.
+     * The regular expression has contain a capture group containing the value.
+     * @param text the text containing the value
+     * @param regex the regular expression to be used to extract the value
+     * @return the value extracted or the full text if the regular expression is null or could not be matched
      */
-    protected String extractSoCValue(String text, String regex)  {
+    protected String extractValue(String text, String regex)  {
         if(regex == null || regex.length() == 0) {
             return text;
         }
-        logger.debug("{}: SoC extraction regex: {}", applianceId, regex);
-        if( this.socValueExtractionPattern == null) {
-            this.socValueExtractionPattern = Pattern.compile(regex, Pattern.DOTALL);
-        }
-        Matcher regexMatcher = this.socValueExtractionPattern.matcher(text);
+        logger.debug("{}: Value extraction regex: {}", applianceId, regex);
+        Matcher regexMatcher = Pattern.compile(regex, Pattern.DOTALL).matcher(text.trim());
         if (regexMatcher.find()) {
             return regexMatcher.group(1);
         }
         return text;
+    }
+
+    protected boolean matchValue(String text, String regex) {
+        if(regex == null || regex.length() == 0) {
+            return false;
+        }
+        logger.debug("{}: Value match regex: {}", applianceId, regex);
+        Matcher regexMatcher = Pattern.compile(regex, Pattern.DOTALL).matcher(text.trim());
+        return regexMatcher.matches();
     }
 
     @Override
@@ -162,6 +208,10 @@ public class SocScript implements ApplianceIdConsumer {
                 ", updateAfterIncrease=" + updateAfterIncrease +
                 ", updateAfterSeconds=" + updateAfterSeconds +
                 ", extractionRegex='" + extractionRegex + '\'' +
+                ", pluginStatusExtractionRegex='" + pluginStatusExtractionRegex + '\'' +
+                ", pluginTimeExtractionRegex='" + pluginTimeExtractionRegex + '\'' +
+                ", latitudeExtractionRegex='" + latitudeExtractionRegex + '\'' +
+                ", longitudeExtractionRegex='" + longitudeExtractionRegex + '\'' +
                 '}';
     }
 }
