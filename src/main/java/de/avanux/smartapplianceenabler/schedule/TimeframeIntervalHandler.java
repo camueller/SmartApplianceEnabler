@@ -196,6 +196,19 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         logger.debug("{}: Current Queue{}", applianceId, queue.size() > 0 ? ":" : " is empty");
         logQueue(now);
 
+        if(control instanceof StartingCurrentSwitch) {
+            var activeTimeframeInterval = getActiveTimeframeInterval();
+            if(activeTimeframeInterval != null && activeTimeframeInterval.getRequest().isEnabled()
+                    && !activeTimeframeInterval.isIntervalSufficient(now)) {
+                logger.debug("{}: Handling insufficient timeframe interval with request enabled for starting current switch", applianceId);
+                // if starting current has been detected the request was enabled but the timeframe interval might
+                // be insufficient. Therefore we have to remove the timeframe interval an create and fill the queue again.
+                removeTimeframeInterval(now, activeTimeframeInterval);
+                fillQueue(now);
+                getFirstTimeframeInterval().getRequest().setEnabled(true);
+            }
+        }
+
         Optional<TimeframeInterval> prolongableTimeframeInterval = getProlongableTimeframeInterval(now);
         prolongableTimeframeInterval.ifPresent(timeframeInterval -> {
             int indexProlongableTimeframeInterval = queue.indexOf(timeframeInterval);
@@ -386,8 +399,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         queue.remove(timeframeInterval);
         removeTimeframeIntervalChangedListener(timeframeInterval.getRequest());
         timeframeInterval.getRequest().remove();
-        if(control instanceof StartingCurrentSwitch && timeframeInterval.getRequest() instanceof RuntimeRequest) {
-            ((RuntimeRequest) timeframeInterval.getRequest()).unsubscribeStartingCurrentEvents();
+        if(control instanceof StartingCurrentSwitch) {
             fillQueue(now);
         }
     }
