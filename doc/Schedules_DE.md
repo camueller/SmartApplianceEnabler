@@ -13,6 +13,8 @@ Dieser hat Vorrang vor anderen Tagesplänen, die entsprechend des Wochentages ge
 
 Neben dem Zeitrahmen hat ein Zeitplan auch eine `Anforderungsart`, die (außer für Wallboxen) immer `Laufzeit` ist. Dabei wird über die `Startzeit` und die `Endzeit` ein Zeitfenster definiert, innerhalb dessen der *Sunny Home Manager* die `maximale Laufzeit` unabhängig vom Vorhandensein von PV-Strom sicherstellen muss. Wird zusätzlich die (optionale) `minimale Laufzeit` angegeben, wird der *Sunny Home Manager* nur diese Laufzeit sicherstellen, aber bei Vorhandensein von *Überschussenenergie* die Laufzeit bis zur `maximalen Laufzeit` erweitern. Im Extremfall führt das Setzen einer `minimalen Laufzeit` von 0 dazu, dass das Gerät ausschliesslich mit Überschussenergie betrieben wird. Wenn diese nicht vorhanden ist, wird das Gerät nicht eingeschaltet.
 
+Das Zeitfenster sollte deutliche größer sein, als die Laufzeit, um dem *Sunny Home Manager* eine optimale Planung zu ermöglichen. Um die Einplanung überhaupt sicherzustellen muss das Zeitfenster 30 Minuten grösser sein, als die Laufzeit. Beispielsweise genügt ein Zeitplan mit `Startzeit 8:00 / Endzeit 20 Uhr/ Laufzeit 12 Stunden` dieser Minimalanforderung nicht, während der Zeitplan `Startzeit 7:00 / Endzeit 20 Uhr/ Laufzeit 12 Stunden` sie erfüllt.
+
 Es ist möglich für ein Gerät auch mehrere Zeitpläne anzulegen. Hierbei muss darauf geachtet werden, dass die Zeitpläne **nicht überlappen**, zum Beispiel muss "Zeitplan 1" um 13:59 Uhr enden, wenn "Zeitplan 2" um 14:00 Uhr beginnen soll.
 
 Beispiel für einen Tagesplan:
