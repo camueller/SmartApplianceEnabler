@@ -140,13 +140,13 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
         if(mqttClient != null) {
             for(int i=0; i<this.controls.size(); i++) {
                 String topic = getWrappedControlTopic(this.controls.get(i).getId());
-                mqttClient.subscribe(topic, true, ControlMessage.class, (receivedTopic, message) -> {
+                mqttClient.subscribe(topic, true, (receivedTopic, message) -> {
                     if(message instanceof ControlMessage) {
                         controlStates.put(getWrappedControlId(receivedTopic), ((ControlMessage) message).on);
                     }
                 });
             }
-            mqttClient.subscribe(Control.TOPIC, true, true, VariablePowerConsumerMessage.class, (topic, message) -> {
+            mqttClient.subscribe(Control.TOPIC, true, true, (topic, message) -> {
                 if(message instanceof VariablePowerConsumerMessage) {
                     VariablePowerConsumerMessage controlMessage = (VariablePowerConsumerMessage) message;
                     if (controlMessage.on) {

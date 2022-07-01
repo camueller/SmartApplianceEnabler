@@ -128,7 +128,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
                     }
                 };
                 timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
-                mqttClient.subscribe(Control.TOPIC, true, true, VariablePowerConsumerMessage.class, (topic, message) -> {
+                mqttClient.subscribe(Control.TOPIC, true, true, (topic, message) -> {
                     if(message instanceof VariablePowerConsumerMessage) {
                         VariablePowerConsumerMessage controlMessage = (VariablePowerConsumerMessage) message;
                         if(controlMessage.on) {

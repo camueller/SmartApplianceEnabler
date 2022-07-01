@@ -193,17 +193,17 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
         }
         applianceOn(now, true);
         if(mqttClient != null) {
-            mqttClient.subscribe(Meter.TOPIC, true, MeterMessage.class, (topic, message) -> {
+            mqttClient.subscribe(Meter.TOPIC, true, (topic, message) -> {
                 if(message instanceof MeterMessage) {
                     onMeterUpdate(message.getTime(), ((MeterMessage) message).power, ((MeterMessage) message).energy);
                 }
             });
-            mqttClient.subscribe(WRAPPED_CONTROL_TOPIC, true, ControlMessage.class, (topic, message) -> {
+            mqttClient.subscribe(WRAPPED_CONTROL_TOPIC, true, (topic, message) -> {
                 if(message instanceof ControlMessage) {
                     applianceOn = ((ControlMessage) message).on;
                 }
             });
-            mqttClient.subscribe(Control.TOPIC, true, true, ControlMessage.class, (topic, message) -> {
+            mqttClient.subscribe(Control.TOPIC, true, true, (topic, message) -> {
                 if(message instanceof ControlMessage) {
                     ControlMessage controlMessage = (ControlMessage) message;
                     this.on(controlMessage.getTime(), controlMessage.on);

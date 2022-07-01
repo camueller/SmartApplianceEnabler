@@ -64,12 +64,12 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
 
     public void setMqttClient(MqttClient mqttClient) {
         this.mqttClient = mqttClient;
-        mqttClient.subscribe(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC, true, ControlMessage.class, (topic, message) -> {
+        mqttClient.subscribe(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC, true, (topic, message) -> {
             if(message instanceof ControlMessage && topic.equals(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC)) {
                 wrappedControlMessage = (ControlMessage) message;
             }
         });
-        this.mqttClient.subscribe(MqttEventName.EVChargerStateChanged, EVChargerStateChangedEvent.class, (topic, message) -> {
+        this.mqttClient.subscribe(MqttEventName.EVChargerStateChanged, (topic, message) -> {
             if(message instanceof EVChargerStateChangedEvent && control instanceof ElectricVehicleCharger) {
                 logger.debug("{} Handling event EVChargerStateChanged", applianceId);
                 EVChargerStateChangedEvent event = (EVChargerStateChangedEvent) message;

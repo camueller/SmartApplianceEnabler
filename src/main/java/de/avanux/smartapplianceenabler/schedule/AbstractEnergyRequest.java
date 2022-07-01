@@ -48,7 +48,7 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
     @Override
     public void init() {
         super.init();
-        getMqttClient().subscribe(MqttEventName.EVChargerStateChanged, EVChargerStateChangedEvent.class, (topic, message) -> {
+        getMqttClient().subscribe(MqttEventName.EVChargerStateChanged, (topic, message) -> {
             if(message instanceof EVChargerStateChangedEvent) {
                 getLogger().debug("{} Handling event ControlStateChanged", getApplianceId());
                 EVChargerStateChangedEvent event = (EVChargerStateChangedEvent) message;

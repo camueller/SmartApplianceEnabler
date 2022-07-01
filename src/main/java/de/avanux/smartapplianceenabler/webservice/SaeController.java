@@ -99,12 +99,12 @@ public class SaeController {
             mqttClient = new MqttClient("", getClass());
 
             String meterTopic = mqttClient.getTopicPrefix() + "/+/" + Meter.TOPIC;
-            mqttClient.subscribe(meterTopic, false, MeterMessage.class, (topic, message) -> {
+            mqttClient.subscribe(meterTopic, false, (topic, message) -> {
                 this.meterMessages.put(topic, (MeterMessage) message);
             });
 
             String controlTopic = mqttClient.getTopicPrefix() + "/+/" + Control.TOPIC;
-            mqttClient.subscribe(controlTopic, false, ControlMessage.class, (topic, message) -> {
+            mqttClient.subscribe(controlTopic, false, (topic, message) -> {
                 this.controlMessages.put(topic, (ControlMessage) message);
             });
         }

@@ -90,7 +90,7 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
     public void start(LocalDateTime now, Timer timer) {
         if (mqttClient != null) {
             var masterControlTopic = MqttClient.getApplianceTopic(applianceId, Control.TOPIC);
-            mqttClient.subscribe(masterControlTopic, false, ControlMessage.class, (topic, message) -> {
+            mqttClient.subscribe(masterControlTopic, false, (topic, message) -> {
                 if(message instanceof ControlMessage) {
                     isMasterControlOn = ((ControlMessage) message).on;
                 }
@@ -98,14 +98,14 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
 
             if(slaveMeter != null) {
                 var slaveControlTopic = MqttClient.getApplianceTopic(slaveMeter.getApplianceId(), Control.TOPIC);
-                mqttClient.subscribe(slaveControlTopic, false, ControlMessage.class, (topic, message) -> {
+                mqttClient.subscribe(slaveControlTopic, false, (topic, message) -> {
                     if(message instanceof ControlMessage) {
                         isSlaveControlOn = ((ControlMessage) message).on;
                     }
                 });
             }
 
-            mqttClient.subscribe(WRAPPED_METER_TOPIC, true, MeterMessage.class, (topic, message) -> {
+            mqttClient.subscribe(WRAPPED_METER_TOPIC, true, (topic, message) -> {
                 publishMeterMessage((MeterMessage) message);
             });
         }

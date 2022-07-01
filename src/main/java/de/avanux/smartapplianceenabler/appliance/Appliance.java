@@ -304,7 +304,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             timeframeIntervalHandler.setTimer(timer);
         }
         if(mqttClient != null) {
-            mqttClient.subscribe(Meter.TOPIC, true, MeterMessage.class, (topic, message) -> {
+            mqttClient.subscribe(Meter.TOPIC, true, (topic, message) -> {
                 meterMessage = (MeterMessage) message;
             });
         }
@@ -344,7 +344,8 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     }
 
     private void publishControlMessage(LocalDateTime now, boolean on, Integer power) {
-        var message = power != null ?
+
+        var message = getControl() instanceof VariablePowerConsumer ?
                 new VariablePowerConsumerMessage(now, on, power, null) : new ControlMessage(now, on);
         mqttClient.publish(Control.TOPIC, message, true, true);
     }

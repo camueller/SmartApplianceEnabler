@@ -118,7 +118,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     @Override
     public void init() {
         super.init();
-        getMqttClient().subscribe(MqttEventName.EVChargerSocChanged, EVChargerSocChangedEvent.class, (topic, message) -> {
+        getMqttClient().subscribe(MqttEventName.EVChargerSocChanged, (topic, message) -> {
             if(message instanceof EVChargerSocChangedEvent) {
                 EVChargerSocChangedEvent event = (EVChargerSocChangedEvent) message;
                 getLogger().debug("{}: Using updated SOC values: {}", getApplianceId(), event.socValues);

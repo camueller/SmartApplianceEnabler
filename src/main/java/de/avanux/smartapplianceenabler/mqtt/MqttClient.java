@@ -228,6 +228,7 @@ public class MqttClient {
             executor.submit(() -> {
                 try {
                     if(connect()) {
+                        message.setType(message.getClass().getSimpleName());
                         String serializedMessage = genson.serialize(message);
                         logger.trace("{}: Publish message: topic={} payload={}", loggerId, fullTopic, serializedMessage);
                         client.publish(fullTopic, createMessage(serializedMessage.getBytes(), retained));
@@ -247,23 +248,23 @@ public class MqttClient {
         return message;
     }
 
-    public void subscribe(MqttEventName event, Class toType, MqttMessageHandler messageHandler) {
+    public void subscribe(MqttEventName event, MqttMessageHandler messageHandler) {
         String fullTopic = getEventTopic(applianceId, event);
-        subscribe(fullTopic, false, toType, messageHandler);
+        subscribe(fullTopic, false, messageHandler);
     }
 
-    public void subscribe(String topic, boolean expandTopic, Class toType, MqttMessageHandler messageHandler) {
-        subscribe(topic, expandTopic, false, toType, messageHandler);
+    public void subscribe(String topic, boolean expandTopic, MqttMessageHandler messageHandler) {
+        subscribe(topic, expandTopic, false, messageHandler);
     }
 
-    public void subscribe(String topic, boolean expandTopic, boolean set, Class toType, MqttMessageHandler messageHandler) {
+    public void subscribe(String topic, boolean expandTopic, boolean set, MqttMessageHandler messageHandler) {
         String fullTopic = expandTopic
                 ? (set ? getApplianceTopicForSet(applianceId, topic) : getApplianceTopic(applianceId, topic))
                 : topic;
         try {
             if(connect()) {
                 client.subscribe(fullTopic, (receivedTopic, receivedMessage) -> {
-                    receiveMessage(receivedTopic, receivedMessage, messageHandler, toType);
+                    receiveMessage(receivedTopic, receivedMessage, messageHandler);
                 });
                 logger.debug("{}: Messages subscribed: topic={}", loggerId, fullTopic);
             }
@@ -274,11 +275,24 @@ public class MqttClient {
     }
 
     private synchronized void receiveMessage(String receivedTopic, org.eclipse.paho.client.mqttv3.MqttMessage receivedMessage,
-                                             MqttMessageHandler messageHandler, Class toType) {
+                                             MqttMessageHandler messageHandler) {
+        String messageType = null;
         try {
             logger.trace("{}: Message received: topic={} payload={}", loggerId, receivedTopic, receivedMessage);
+            MqttMessage messageWithType = this.genson.deserialize(receivedMessage.getPayload(), MqttMessage.class);
+            messageType = messageWithType.getType();
+            String className = "de.avanux.smartapplianceenabler.mqtt." + messageType;
+            Class toType = Class.forName(className);
             MqttMessage message = (MqttMessage) this.genson.deserialize(receivedMessage.getPayload(), toType);
             messageHandler.messageArrived(receivedTopic, message);
+        }
+        catch (ClassNotFoundException e) {
+            if(messageType == null) {
+                logger.error("{}: Message type missing", loggerId, e);
+            }
+            else {
+                logger.error("{}: Unknown message type {}", loggerId, messageType, e);
+            }
         }
         catch(Exception e) {
             logger.error("{}: Error receiving message", loggerId, e);

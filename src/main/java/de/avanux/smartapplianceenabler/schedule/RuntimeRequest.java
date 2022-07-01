@@ -54,12 +54,12 @@ public class RuntimeRequest extends AbstractRequest {
     }
 
     private void subscribeStartingCurrentEvents() {
-        getMqttClient().subscribe(MqttEventName.StartingCurrentDetected, ControlMessage.class, (topic, message) -> {
+        getMqttClient().subscribe(MqttEventName.StartingCurrentDetected, (topic, message) -> {
             getLogger().debug("{} Handling event StartingCurrentDetected", getApplianceId());
             resetRuntime();
             setEnabled(true);
         });
-        getMqttClient().subscribe(MqttEventName.FinishedCurrentDetected, ControlMessage.class, (topic, message) -> {
+        getMqttClient().subscribe(MqttEventName.FinishedCurrentDetected, (topic, message) -> {
             getLogger().debug("{} Handling event FinishedCurrentDetected", getApplianceId());
             setEnabled(false);
             resetEnabledBefore();

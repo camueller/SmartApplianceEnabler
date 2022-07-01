@@ -231,12 +231,12 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
     public void start(LocalDateTime now, Timer timer) {
         logger.debug("{}: Starting ...", this.applianceId);
         if(mqttClient != null) {
-            mqttClient.subscribe(Meter.TOPIC, true, MeterMessage.class, (topic, message) -> {
+            mqttClient.subscribe(Meter.TOPIC, true, (topic, message) -> {
                 meterMessage = (MeterMessage) message;
                 evHandler.setMeterMessage(meterMessage);
             });
         }
-        mqttClient.subscribe(Control.TOPIC,true, true, VariablePowerConsumerMessage.class, (topic, message) -> {
+        mqttClient.subscribe(Control.TOPIC,true, true, (topic, message) -> {
             if(message instanceof VariablePowerConsumerMessage) {
                 VariablePowerConsumerMessage controlMessage = (VariablePowerConsumerMessage) message;
                 if(controlMessage.on) {

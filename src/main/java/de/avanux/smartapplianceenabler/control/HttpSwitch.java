@@ -170,7 +170,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
                 }
             };
             timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
-            mqttClient.subscribe(mqttTopic, true, true, ControlMessage.class, (topic, message) -> {
+            mqttClient.subscribe(mqttTopic, true, true, (topic, message) -> {
                 if(message instanceof ControlMessage) {
                     ControlMessage controlMessage = (ControlMessage) message;
                     this.on(controlMessage.getTime(), controlMessage.on);

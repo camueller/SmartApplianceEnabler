@@ -63,7 +63,7 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
-        mqttClient.subscribe(mqttTopic, true, true, ControlMessage.class, (topic, message) -> {
+        mqttClient.subscribe(mqttTopic, true, true, (topic, message) -> {
             if(message instanceof ControlMessage) {
                 ControlMessage controlMessage = (ControlMessage) message;
                 this.on(controlMessage.getTime(), controlMessage.on);

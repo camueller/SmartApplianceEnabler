@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class MqttMessage {
+    private String type;
     private String time;
 
     public MqttMessage() {
@@ -29,6 +30,14 @@ public class MqttMessage {
 
     public MqttMessage(LocalDateTime time) {
         setTime(time);
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public LocalDateTime getTime() {
