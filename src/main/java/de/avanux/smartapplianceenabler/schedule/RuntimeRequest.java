@@ -50,6 +50,10 @@ public class RuntimeRequest extends AbstractRequest {
     @Override
     public void init() {
         super.init();
+        subscribeStartingCurrentEvents();
+    }
+
+    private void subscribeStartingCurrentEvents() {
         getMqttClient().subscribe(MqttEventName.StartingCurrentDetected, ControlMessage.class, (topic, message) -> {
             getLogger().debug("{} Handling event StartingCurrentDetected", getApplianceId());
             resetRuntime();
@@ -62,9 +66,7 @@ public class RuntimeRequest extends AbstractRequest {
         });
     }
 
-    @Override
-    public void remove() {
-        super.remove();
+    public void unsubscribeStartingCurrentEvents() {
         getMqttClient().unsubscribe(MqttEventName.StartingCurrentDetected);
         getMqttClient().unsubscribe(MqttEventName.FinishedCurrentDetected);
     }
