@@ -18,7 +18,7 @@
 
 package de.avanux.smartapplianceenabler.modbus.transformer;
 
-public class ValueTransformerBase {
+abstract public class ValueTransformerBase {
     protected String applianceId;
     protected Integer[] byteValues;
 
@@ -28,5 +28,9 @@ public class ValueTransformerBase {
 
     public void setByteValues(Integer[] byteValues) {
         this.byteValues = byteValues;
+    }
+
+    public Integer[] getByteValues() {
+        return byteValues;
     }
 }

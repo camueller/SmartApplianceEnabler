@@ -19,6 +19,7 @@
 package de.avanux.smartapplianceenabler.modbus.transformer;
 
 import de.avanux.smartapplianceenabler.modbus.ByteOrder;
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,7 @@ public class Integer2FloatValueTransformer extends ValueTransformerBase implemen
     }
 
     public void setByteValues(Integer[] byteValues) {
+        // FIXME implment using ByteBuffer: https://schneide.blog/2014/08/26/bit-fiddling-is-possible-in-java/
         if(byteValues != null) {
             Integer[] bytesValuesInOrder = getByteValuesInOrder(byteValues);
             if(byteValues.length == 2) {
@@ -59,6 +61,10 @@ public class Integer2FloatValueTransformer extends ValueTransformerBase implemen
     @Override
     public Double getValue() {
         return value;
+    }
+
+    public void setValue(Double value) {
+        logger.error("{}: {}.setValue() has not yet been implemented.", applianceId, getClass().getSimpleName());
     }
 
     @Override

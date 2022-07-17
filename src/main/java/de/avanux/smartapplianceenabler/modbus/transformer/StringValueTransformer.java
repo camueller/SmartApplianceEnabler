@@ -18,6 +18,7 @@
 
 package de.avanux.smartapplianceenabler.modbus.transformer;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,10 @@ public class StringValueTransformer extends ValueTransformerBase implements Valu
     @Override
     public String getValue() {
         return value;
+    }
+
+    public void setValue(String value) {
+        logger.error("{}: {}.setValue() has not yet been implemented.", applianceId, getClass().getSimpleName());
     }
 
     @Override

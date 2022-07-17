@@ -18,7 +18,9 @@
 
 export enum ValueType {
   Float = 'Float',
+  Float64 = 'Float64',
   Integer = 'Integer',
+  Integer32 = 'Integer32',
   Integer2Float = 'Integer2Float',
   String = 'String',
 }

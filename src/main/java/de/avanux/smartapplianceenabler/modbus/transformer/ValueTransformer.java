@@ -22,6 +22,12 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 
 public interface ValueTransformer<T> extends ApplianceIdConsumer {
     void setByteValues(Integer[] byteValues);
+
+    public Integer[] getByteValues();
+
+    void setValue(T value);
+
     T getValue();
+
     boolean valueMatches(String regex);
 }

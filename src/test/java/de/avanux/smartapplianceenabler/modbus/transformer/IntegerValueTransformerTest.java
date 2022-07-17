@@ -18,9 +18,13 @@
 
 package de.avanux.smartapplianceenabler.modbus.transformer;
 
+import de.avanux.smartapplianceenabler.modbus.RegisterValueType;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IntegerValueTransformerTest {
@@ -28,13 +32,37 @@ public class IntegerValueTransformerTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        sut = new IntegerValueTransformer();
+        sut = new IntegerValueTransformer(RegisterValueType.Integer);
     }
 
-    @Test
-    public void getValue() {
-        Integer[] byteValues = {0, 3};
-        sut.setByteValues(byteValues);
-        assertEquals(3, sut.getValue());
+    @Nested
+    @DisplayName("getValue")
+    class GetValue {
+        @Test
+        public void getValue() {
+            Integer[] byteValues = {0, 3};
+            sut.setByteValues(byteValues);
+            assertEquals(3, sut.getValue());
+        }
+    }
+
+    @Nested
+    @DisplayName("getBytes")
+    class GetBytes {
+        @Test
+        public void getBytes_16bit() {
+            sut = new IntegerValueTransformer(RegisterValueType.Integer);
+            sut.setValue(38);
+            Integer byteValues[] = { 0, 38 }; // 2 words: 0026
+            assertArrayEquals(byteValues, sut.getByteValues());
+        }
+
+        @Test
+        public void getBytes_32bit() {
+            sut = new IntegerValueTransformer(RegisterValueType.Integer32);
+            sut.setValue(38);
+            Integer byteValues[] = { 0, 0, 0, 38 }; // 2 words: 0000 0026
+            assertArrayEquals(byteValues, sut.getByteValues());
+        }
     }
 }

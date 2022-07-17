@@ -202,7 +202,7 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
             ModbusWrite registerWrite = write.parent();
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
-                        registerWrite.getType(), registerWrite.getAddress(), registerWrite.getFactorToValue());
+                        registerWrite.getType(), registerWrite.getValueType(), registerWrite.getAddress(), registerWrite.getFactorToValue());
                 if(executor != null) {
                     executor.setValue(current);
                     executeTransaction(executor, true);
@@ -241,7 +241,7 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
             ModbusWrite registerWrite = write.parent();
             try {
                 ModbusWriteTransactionExecutor executor = ModbusExecutorFactory.getWriteExecutor(getApplianceId(),
-                        registerWrite.getType(), registerWrite.getAddress(), registerWrite.getFactorToValue());
+                        registerWrite.getType(), registerWrite.getValueType(), registerWrite.getAddress(), registerWrite.getFactorToValue());
                 if(executor != null) {
                     String stringValue = write.child().getValue();
                     Object value = null;
@@ -252,7 +252,7 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
                         value = Integer.valueOf(stringValue);
                     }
                     executor.setValue(value);
-                    executeTransaction(executor, true);
+//                    executeTransaction(executor, true);
                 }
             }
             catch(Exception e) {

@@ -264,7 +264,9 @@
     <xs:simpleType name="ModbusRegisterValueTypeType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Float" />
+            <xs:enumeration value="Float64" />
             <xs:enumeration value="Integer" />
+            <xs:enumeration value="Integer32" />
             <xs:enumeration value="Integer2Float" />
             <xs:enumeration value="String" />
         </xs:restriction>

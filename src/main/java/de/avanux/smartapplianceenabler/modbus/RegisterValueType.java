@@ -19,8 +19,10 @@
 package de.avanux.smartapplianceenabler.modbus;
 
 public enum RegisterValueType {
-    Float,
-    Integer,
+    Float, // 32bit
+    Float64,
+    Integer, // 16 bit
+    Integer32,
     Integer2Float,
     String
 }

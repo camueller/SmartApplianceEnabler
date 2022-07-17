@@ -18,6 +18,7 @@
 
 package de.avanux.smartapplianceenabler.modbus;
 
+//FIXME use java.nio.ByteOrder
 public enum ByteOrder {
     BigEndian,  /* most significant byte comes first */
     LittleEndian /* most significant byte comes last */
