@@ -18,12 +18,20 @@
 
 package de.avanux.smartapplianceenabler.modbus.transformer;
 
+import de.avanux.smartapplianceenabler.modbus.RegisterValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.ByteBuffer;
 
 public class IntegerValueTransformer extends ValueTransformerBase implements ValueTransformer<Integer> {
     private Logger logger = LoggerFactory.getLogger(FloatValueTransformer.class);
     private Integer value = null;
+    private RegisterValueType registerValueType;
+
+    public IntegerValueTransformer(RegisterValueType valueType) {
+        this.registerValueType = valueType;
+    }
 
     public void setByteValues(Integer[] byteValues) {
         if(byteValues != null) {
@@ -43,6 +51,27 @@ public class IntegerValueTransformer extends ValueTransformerBase implements Val
     @Override
     public Integer getValue() {
         return value;
+    }
+
+    public void setValue(Integer value) {
+        this.value = value;
+        byte[] byteArray = null;
+        if(this.registerValueType == RegisterValueType.Integer) {
+            byteArray = ByteBuffer.allocate(2).putShort(value.shortValue()).array();
+        }
+        else if(this.registerValueType == RegisterValueType.Integer32) {
+            byteArray = ByteBuffer.allocate(4).putInt(value).array();
+        }
+        else {
+            logger.error("{}: Cannot handle RegisterValueType: {}", applianceId, this.registerValueType);
+        }
+        if(byteArray != null) {
+            byteValues = new Integer[byteArray.length];
+            int i = 0;
+            for (byte byteValue : byteArray) {
+                byteValues[i++] = Byte.toUnsignedInt(byteValue);
+            }
+        }
     }
 
     @Override

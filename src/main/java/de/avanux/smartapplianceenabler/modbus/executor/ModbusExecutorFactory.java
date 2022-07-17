@@ -70,9 +70,11 @@ public class ModbusExecutorFactory {
     }
 
     public static ModbusReadTransactionExecutor getReadExecutor(String applianceId,
-                                                                String address, ReadRegisterType type,
+                                                                String address,
+                                                                ReadRegisterType type,
                                                                 RegisterValueType valueType,
-                                                                int requestWords, ByteOrder byteOrder,
+                                                                int requestWords,
+                                                                ByteOrder byteOrder,
                                                                 Double factorToValue) {
         ModbusReadTransactionExecutor executor;
         switch (type) {
@@ -101,20 +103,24 @@ public class ModbusExecutorFactory {
         return executor;
     }
 
-    public static ModbusWriteTransactionExecutor<?> getWriteExecutor(String applianceId, WriteRegisterType type,
-                                                                  String address, Double factorToValue) {
+    public static ModbusWriteTransactionExecutor<?> getWriteExecutor(String applianceId,
+                                                                     WriteRegisterType type,
+                                                                     RegisterValueType valueType,
+                                                                     String address,
+                                                                     Double factorToValue) {
         ModbusWriteTransactionExecutor<?> executor;
         switch (type) {
             case Holding:
                 executor = writeHoldingExecutor != null ? writeHoldingExecutor :
-                        new WriteHoldingRegisterExecutorImpl(address, factorToValue);
+                        new WriteHoldingRegisterExecutorImpl(address, valueType, factorToValue,
+                                getValueTransformer(applianceId, valueType, null, factorToValue));
                 break;
             case Coil:
                 executor = writeCoilExecutor != null ? writeCoilExecutor :
                         new WriteCoilExecutorImpl(address);
                 break;
             default:
-                throw new RuntimeException("Unsupported register type: " + type.name());
+                throw new RuntimeException("Unsupported register type: " + valueType.name());
         }
         executor.setApplianceId(applianceId);
         return executor;
@@ -125,13 +131,15 @@ public class ModbusExecutorFactory {
         ValueTransformer<?> transformer = null;
         switch (registerValueType) {
             case Float:
-                transformer = new FloatValueTransformer(factorToValue);
+            case Float64:
+                transformer = new FloatValueTransformer(factorToValue, registerValueType);
                 break;
             case Integer2Float:
                 transformer = new Integer2FloatValueTransformer(byteOrder, factorToValue);
                 break;
             case Integer:
-                transformer = new IntegerValueTransformer();
+            case Integer32:
+                transformer = new IntegerValueTransformer(registerValueType);
                 break;
             case String:
                 transformer = new StringValueTransformer();

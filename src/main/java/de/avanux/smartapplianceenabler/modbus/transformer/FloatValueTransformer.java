@@ -18,18 +18,23 @@
 
 package de.avanux.smartapplianceenabler.modbus.transformer;
 
+import de.avanux.smartapplianceenabler.modbus.RegisterValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.ByteBuffer;
 
 public class FloatValueTransformer extends ValueTransformerBase implements ValueTransformer<Double> {
     private Logger logger = LoggerFactory.getLogger(FloatValueTransformer.class);
     private Double value = null;
+    private RegisterValueType registerValueType;
     private Double factorToValue = 1.0;
 
-    public FloatValueTransformer(Double factorToValue) {
+    public FloatValueTransformer(Double factorToValue, RegisterValueType valueType) {
         if(factorToValue != null) {
             this.factorToValue = factorToValue;
         }
+        this.registerValueType = valueType;
     }
 
     public void setByteValues(Integer[] byteValues) {
@@ -77,6 +82,22 @@ public class FloatValueTransformer extends ValueTransformerBase implements Value
     @Override
     public Double getValue() {
         return value;
+    }
+
+    public void setValue(Double value) {
+        this.value = value;
+        if(this.registerValueType == RegisterValueType.Float) {
+            ByteBuffer buff = ByteBuffer.allocate(4);
+            buff.putFloat(value.floatValue());
+            var byteArray = buff.array();
+            byteValues = new Integer[byteArray.length];
+            int i = 0;
+            for (byte byteValue : byteArray) {
+                byteValues[i++] = Byte.toUnsignedInt(byteValue);
+            }
+        } else {
+            logger.error("{}: Cannot handle RegisterValueType: {}", applianceId, this.registerValueType);
+        }
     }
 
     @Override

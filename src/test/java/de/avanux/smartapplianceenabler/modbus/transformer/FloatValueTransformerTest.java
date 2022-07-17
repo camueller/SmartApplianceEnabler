@@ -18,13 +18,17 @@
 
 package de.avanux.smartapplianceenabler.modbus.transformer;
 
+import de.avanux.smartapplianceenabler.modbus.RegisterValueType;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FloatValueTransformerTest {
@@ -32,45 +36,60 @@ public class FloatValueTransformerTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        sut = new FloatValueTransformer(null);
+        sut = new FloatValueTransformer(null, RegisterValueType.Float);
     }
 
-    @Test
-    public void getValue_2Words() {
-        Integer[] byteValues = {17676, 21823};
-        sut.setByteValues(byteValues);
-        assertEquals(2245.328, sut.getValue(), 0.001);
+    @Nested
+    @DisplayName("getValue")
+    class GetValue {
+        @Test
+        public void getValue_2Words() {
+            Integer[] byteValues = {17676, 21823};
+            sut.setByteValues(byteValues);
+            assertEquals(2245.328, sut.getValue(), 0.001);
+        }
+
+        @Test
+        public void getValue_2Words_FactorToValue() {
+            Integer[] byteValues = {17676, 21823};
+            sut = new FloatValueTransformer(0.1, RegisterValueType.Float);
+            sut.setByteValues(byteValues);
+            assertEquals(224.5328, sut.getValue(), 0.001);
+        }
+
+        @Test
+        public void getValue_4Words() {
+            // 4 data words as hex: "4147 7507 0000 0000"
+            Integer[] byteValues = {16711, 29959, 0, 0};
+            sut.setByteValues(byteValues);
+            assertEquals(3074574, sut.getValue(), 0.001);
+        }
+
+        @Test
+        public void getValue_4Words_2() {
+            Integer[] byteValues = {16711, 30408, 32768, 0};
+            sut.setByteValues(byteValues);
+            assertEquals(3075473, sut.getValue(), 0.001);
+        }
+
+        @Test
+        public void getValue_4Words_FactorToValue() {
+            // 4 data words as hex: "4147 7507 0000 0000"
+            Integer[] byteValues = {16711, 29959, 0, 0};
+            sut = new FloatValueTransformer(0.001, RegisterValueType.Float);
+            sut.setByteValues(byteValues);
+            assertEquals(3074.574, sut.getValue(), 0.001);
+        }
     }
 
-    @Test
-    public void getValue_2Words_FactorToValue() {
-        Integer[] byteValues = {17676, 21823};
-        sut = new FloatValueTransformer(0.1);
-        sut.setByteValues(byteValues);
-        assertEquals(224.5328, sut.getValue(), 0.001);
-    }
-
-    @Test
-    public void getValue_4Words() {
-        // 4 data words as hex: "4147 7507 0000 0000"
-        Integer[] byteValues = {16711, 29959, 0, 0};
-        sut.setByteValues(byteValues);
-        assertEquals(3074574, sut.getValue(), 0.001);
-    }
-
-    @Test
-    public void getValue_4Words_2() {
-        Integer[] byteValues = {16711, 30408, 32768, 0};
-        sut.setByteValues(byteValues);
-        assertEquals(3075473, sut.getValue(), 0.001);
-    }
-
-    @Test
-    public void getValue_4Words_FactorToValue() {
-        // 4 data words as hex: "4147 7507 0000 0000"
-        Integer[] byteValues = {16711, 29959, 0, 0};
-        sut = new FloatValueTransformer(0.001);
-        sut.setByteValues(byteValues);
-        assertEquals(3074.574, sut.getValue(), 0.001);
+    @Nested
+    @DisplayName("getBytes")
+    class GetBytes {
+        @Test
+        public void getBytes_32bit() {
+            sut.setValue(14.0);
+            Integer byteValues[] = { 65, 96, 0, 0 }; // 2 words: 4160 0000
+            assertArrayEquals(byteValues, sut.getByteValues());
+        }
     }
 }
