@@ -31,7 +31,7 @@
             </ElectricVehicle>
         </ElectricVehicleCharger>
         <ModbusElectricityMeter idref="modbus" slaveAddress="1">
-            <ModbusRead address="0x0156" type="Input" valueType="Float" words="2">
+            <ModbusRead address="0x0156" words="2" type="Input" valueType="Float">
                 <ModbusReadValue name="Energy"/>
             </ModbusRead>
         </ModbusElectricityMeter>

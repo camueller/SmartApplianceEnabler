@@ -175,6 +175,7 @@
         <xs:attribute name="phases" type="xs:int" />
         <xs:attribute name="pollInterval" type="xs:int" />
         <xs:attribute name="startChargingStateDetectionDelay" type="xs:int" />
+        <xs:attribute name="chargePowerRepetition" type="xs:int" />
         <xs:attribute name="forceInitialCharging" type="xs:boolean" />
         <xs:attribute name="latitude" type="xs:double" />
         <xs:attribute name="longitude" type="xs:double" />

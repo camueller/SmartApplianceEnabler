@@ -65,6 +65,8 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
     @XmlAttribute
     protected Integer startChargingStateDetectionDelay;
     @XmlAttribute
+    protected Integer chargePowerRepetition;
+    @XmlAttribute
     protected Boolean forceInitialCharging;
     @XmlAttribute
     private Double latitude;
@@ -89,7 +91,9 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
     private transient boolean useOptionalEnergy = true;
     private transient Long switchChargingStateTimestamp;
     private transient Integer chargePower;
+    private transient Timer timer;
     private transient GuardedTimerTask updateStateTimerTask;
+    private transient GuardedTimerTask chargePowerRepetitionTimerTask;
     private transient boolean startChargingRequested;
     private transient boolean stopChargingRequested;
     private transient boolean firstInvocationAfterSkip;
@@ -206,8 +210,8 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             this.control= new EVChargerControlMock();
             this.appliance.setMeter((Meter) this.control);
         }
-        logger.debug("{}: voltage={} phases={} startChargingStateDetectionDelay={}",
-                this.applianceId, getVoltage(), getPhases(), getStartChargingStateDetectionDelay());
+        logger.debug("{}: voltage={} phases={} startChargingStateDetectionDelay={} chargePowerRepetition={}",
+                this.applianceId, getVoltage(), getPhases(), getStartChargingStateDetectionDelay(), this.chargePowerRepetition);
 
         this.evHandler = new ElectricVehicleHandler();
         this.evHandler.setSocValuesChangedListener(this);
@@ -250,6 +254,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
                 this.on(controlMessage.getTime(), controlMessage.on);
             }
         });
+        this.timer = timer;
         if(timer != null) {
             this.updateStateTimerTask = new GuardedTimerTask(this.applianceId,"UpdateState",
                     getPollInterval() * 1000) {
@@ -281,6 +286,9 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         }
         if(mqttClient != null) {
             mqttClient.disconnect();
+        }
+        if(this.chargePowerRepetitionTimerTask != null) {
+            this.chargePowerRepetitionTimerTask.cancel();
         }
     }
 
@@ -662,7 +670,19 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         logger.debug("{}: Set charge power: {}W corresponds to {}A using {} phases",
                 applianceId, adjustedPower, current, phases);
         this.chargePower = adjustedPower;
-        control.setChargeCurrent(current);
+        if(this.chargePowerRepetition != null && this.timer != null) {
+            this.chargePowerRepetitionTimerTask = new GuardedTimerTask(this.applianceId,"ChargePowerRepetition",
+                    this.chargePowerRepetition * 1000) {
+                @Override
+                public void runTask() {
+                    control.setChargeCurrent(current);
+                }
+            };
+
+            this.timer.schedule(this.chargePowerRepetitionTimerTask, 0, this.chargePowerRepetitionTimerTask.getPeriod());
+        } else {
+            control.setChargeCurrent(current);
+        }
     }
 
     public Integer getChargePower() {
@@ -694,6 +714,9 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             boolean wasInChargingAfterLastVehicleConnected = wasInStateAfterLastState(EVChargerState.CHARGING, EVChargerState.VEHICLE_CONNECTED);
             this.switchChargingStateTimestamp = wasInChargingAfterLastVehicleConnected ? System.currentTimeMillis() : null;
             this.chargePower = null;
+            if(this.chargePowerRepetitionTimerTask != null) {
+                this.chargePowerRepetitionTimerTask.cancel();
+            }
         }
     }
 
