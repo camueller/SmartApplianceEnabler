@@ -256,7 +256,7 @@ public class EVModbusControl extends ModbusSlave implements EVChargerControl {
                         value = Integer.valueOf(stringValue);
                     }
                     executor.setValue(value);
-//                    executeTransaction(executor, true);
+                    executeTransaction(executor, true);
                 }
             }
             catch(Exception e) {
