@@ -60,7 +60,7 @@ public class ModbusWrite {
     }
 
     public RegisterValueType getValueType() {
-        return RegisterValueType.valueOf(this.valueType);
+        return this.valueType != null ? RegisterValueType.valueOf(this.valueType) : null;
     }
 
     public void setValueType(String valueType) {
