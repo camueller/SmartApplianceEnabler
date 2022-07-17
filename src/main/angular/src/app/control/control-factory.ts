@@ -146,11 +146,7 @@ export class ControlFactory {
       }
 
       evCharger = new EvCharger({
-        voltage: rawEvCharger.voltage,
-        phases: rawEvCharger.phases,
-        pollInterval: rawEvCharger.pollInterval,
-        startChargingStateDetectionDelay: rawEvCharger.startChargingStateDetectionDelay,
-        forceInitialCharging: rawEvCharger.forceInitialCharging,
+        ...rawEvCharger,
         vehicles: evs
       });
 

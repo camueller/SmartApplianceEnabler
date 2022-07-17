@@ -56,6 +56,8 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     protected Integer startChargingStateDetectionDelay;
     @XmlAttribute
     protected Boolean forceInitialCharging;
+    @XmlAttribute
+    protected Integer chargePowerRepetition;
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     @XmlElements({
@@ -86,7 +88,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
     private transient Long switchChargingStateTimestamp;
     private transient Integer chargePower;
+    private transient Timer timer;
     private transient GuardedTimerTask updateStateTimerTask;
+    private transient GuardedTimerTask chargePowerRepetitionTimerTask;
     private transient boolean startChargingRequested;
     private transient boolean stopChargingRequested;
     private transient boolean firstInvocationAfterSkip;
@@ -301,8 +305,8 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             this.control= new EVChargerControlMock();
             this.appliance.setMeter((Meter) this.control);
         }
-        logger.debug("{}: voltage={} phases={} startChargingStateDetectionDelay={}",
-                this.applianceId, getVoltage(), getPhases(), getStartChargingStateDetectionDelay());
+        logger.debug("{}: voltage={} phases={} startChargingStateDetectionDelay={} chargePowerRepetition={}",
+                this.applianceId, getVoltage(), getPhases(), getStartChargingStateDetectionDelay(), this.chargePowerRepetition);
         if(this.vehicles != null) {
             for(ElectricVehicle vehicle: this.vehicles) {
                 logger.debug("{}: {}", this.applianceId, vehicle);
@@ -321,6 +325,7 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
     @Override
     public void start(LocalDateTime now, Timer timer) {
         logger.debug("{}: Starting ...", this.applianceId);
+        this.timer = timer;
         if(timer != null) {
             this.updateStateTimerTask = new GuardedTimerTask(this.applianceId,"UpdateState",
                     getPollInterval() * 1000) {
@@ -348,6 +353,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         logger.debug("{}: Stopping ...", this.applianceId);
         if(this.updateStateTimerTask != null) {
             this.updateStateTimerTask.cancel();
+        }
+        if(this.chargePowerRepetitionTimerTask != null) {
+            this.chargePowerRepetitionTimerTask.cancel();
         }
     }
 
@@ -770,7 +778,19 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
         logger.debug("{}: Set charge power: {}W corresponds to {}A using {} phases",
                 applianceId, adjustedPower, current, phases);
         this.chargePower = adjustedPower;
-        control.setChargeCurrent(current);
+        if(this.chargePowerRepetition != null && this.timer != null) {
+            this.chargePowerRepetitionTimerTask = new GuardedTimerTask(this.applianceId,"ChargePowerRepetition",
+                    this.chargePowerRepetition * 1000) {
+                @Override
+                public void runTask() {
+                    control.setChargeCurrent(current);
+                }
+            };
+
+            this.timer.schedule(this.chargePowerRepetitionTimerTask, 0, this.chargePowerRepetitionTimerTask.getPeriod());
+        } else {
+            control.setChargeCurrent(current);
+        }
     }
 
     public Integer getChargePower() {
@@ -802,6 +822,9 @@ public class ElectricVehicleCharger implements Control, ApplianceLifeCycle, Vali
             boolean wasInChargingAfterLastVehicleConnected = wasInStateAfterLastState(EVChargerState.CHARGING, EVChargerState.VEHICLE_CONNECTED);
             this.switchChargingStateTimestamp = wasInChargingAfterLastVehicleConnected ? System.currentTimeMillis() : null;
             this.chargePower = null;
+            if(this.chargePowerRepetitionTimerTask != null) {
+                this.chargePowerRepetitionTimerTask.cancel();
+            }
         }
     }
 

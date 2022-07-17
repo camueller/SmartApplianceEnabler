@@ -18,6 +18,7 @@ export class EvCharger {
   pollInterval: number;
   startChargingStateDetectionDelay: number;
   forceInitialCharging: boolean;
+  chargePowerRepetition: number;
   vehicles: ElectricVehicle[];
 
   public constructor(init?: Partial<EvCharger>) {

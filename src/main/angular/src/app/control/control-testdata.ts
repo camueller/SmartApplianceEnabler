@@ -27,18 +27,7 @@ export class ControlTestdata {
   }
 
   public static controldefaults_type(): ControlDefaults {
-    return new ControlDefaults({
-      startingCurrentSwitchDefaults_powerThreshold: 15,
-      startingCurrentSwitchDefaults_startingCurrentDetectionDuration: 30,
-      startingCurrentSwitchDefaults_finishedCurrentDetectionDuration: 300,
-      startingCurrentSwitchDefaults_minRunningTime: 600,
-      electricVehicleChargerDefaults_voltage: 230,
-      electricVehicleChargerDefaults_phases: 1,
-      electricVehicleChargerDefaults_chargeLoss: 10,
-      electricVehicleChargerDefaults_pollInterval: 10,
-      electricVehicleChargerDefaults_startChargingStateDetectionDelay: 300,
-      electricVehicleChargerDefaults_forceInitialCharging: false,
-  });
+    return new ControlDefaults();
   }
 
   public static none_type(): Control {

@@ -37,7 +37,7 @@
                     <ModbusWriteValue name="StartCharging" value="1"/>
                     <ModbusWriteValue name="StopCharging" value="0"/>
                 </ModbusWrite>
-                <ModbusWrite address="300" type="Holding">
+                <ModbusWrite address="300" type="Holding" valueType="Integer">
                     <ModbusWriteValue name="ChargingCurrent" value="0"/>
                 </ModbusWrite>
             </EVModbusControl>
@@ -47,8 +47,8 @@
                            extractionRegex=".*state_of_charge (\d+)"/>
             </ElectricVehicle>
         </ElectricVehicleCharger>
-        <ModbusElectricityMeter idref="modbus" slaveAddress="1">
-            <ModbusRead address="0x0156" type="Input" valueType="Float" words="2">
+        <ModbusElectricityMeter idref="modbus" slaveAddress="1" pollInterval="20">
+            <ModbusRead address="0x0156" words="2" type="Input" valueType="Float">
                 <ModbusReadValue name="Energy"/>
             </ModbusRead>
         </ModbusElectricityMeter>

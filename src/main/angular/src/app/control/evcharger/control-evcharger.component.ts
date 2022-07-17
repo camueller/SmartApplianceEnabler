@@ -93,6 +93,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
       new ErrorMessage('voltage', ValidatorType.pattern),
       new ErrorMessage('phases', ValidatorType.pattern),
       new ErrorMessage('pollInterval', ValidatorType.pattern),
+      new ErrorMessage('chargePowerRepetition', ValidatorType.pattern),
       new ErrorMessage('startChargingStateDetectionDelay', ValidatorType.pattern),
     ], this.translate);
     const protocolKeys = Object.keys(EvChargerProtocol).map(key => `ControlEvchargerComponent.protocol.${EvChargerProtocol[key]}`);
@@ -205,6 +206,8 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'startChargingStateDetectionDelay',
       this.evCharger.startChargingStateDetectionDelay, [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(this.form, 'chargePowerRepetition',
+      this.evCharger.chargePowerRepetition, [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'forceInitialCharging',
       this.evCharger.forceInitialCharging);
     this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'electricVehicles',
@@ -221,6 +224,8 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
     this.formHandler.setFormControlValue(this.form, 'pollInterval', this.evCharger.pollInterval);
     this.formHandler.setFormControlValue(this.form, 'startChargingStateDetectionDelay',
       this.evCharger.startChargingStateDetectionDelay);
+    this.formHandler.setFormControlValue(this.form, 'chargePowerRepetition',
+      this.evCharger.chargePowerRepetition);
     this.formHandler.setFormControlValue(this.form, 'forceInitialCharging',
       this.evCharger.forceInitialCharging);
     this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'electricVehicles',
@@ -232,6 +237,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
     const phases = getValidInt(this.form.controls.phases.value);
     const pollInterval = getValidInt(this.form.controls.pollInterval.value);
     const startChargingStateDetectionDelay = getValidInt(this.form.controls.startChargingStateDetectionDelay.value);
+    const chargePowerRepetition = getValidInt(this.form.controls.chargePowerRepetition.value);
     const forceInitialCharging = this.form.controls.forceInitialCharging.value;
     let modbusControl: EvModbusControl;
     if (this.evChargerModbusComp) {
@@ -251,7 +257,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
       }
     });
 
-    if (!(voltage || phases || pollInterval || startChargingStateDetectionDelay
+    if (!(voltage || phases || pollInterval || startChargingStateDetectionDelay || chargePowerRepetition || forceInitialCharging
       || modbusControl || httpControl || electricVehicles.length > 0)) {
       return undefined;
     }
@@ -260,6 +266,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
     this.evCharger.phases = phases;
     this.evCharger.pollInterval = pollInterval;
     this.evCharger.startChargingStateDetectionDelay = startChargingStateDetectionDelay;
+    this.evCharger.chargePowerRepetition = chargePowerRepetition;
     this.evCharger.forceInitialCharging = forceInitialCharging;
     this.evCharger.modbusControl = modbusControl;
     this.evCharger.httpControl = httpControl;
