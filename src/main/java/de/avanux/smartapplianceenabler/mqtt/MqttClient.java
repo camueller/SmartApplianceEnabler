@@ -27,6 +27,8 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,7 +39,7 @@ public class MqttClient {
     private static MqttBroker mqttBroker = new MqttBroker();
     private String loggerId;
     private String applianceId;
-    private static int counter;
+    private static Map<String, Integer> counterForClientId = new HashMap();
     public final static int MQTT_PUBLISH_PERIOD = 20;
     private IMqttClient client;
     private static org.eclipse.paho.client.mqttv3.MqttClient instance;
@@ -46,10 +48,6 @@ public class MqttClient {
     private boolean shutdownInProgress = false;
 
     public MqttClient(String applianceId, Class clazz) {
-        this(applianceId, clazz, false);
-    }
-
-    public MqttClient(String applianceId, Class clazz, boolean clientIdWithCounter) {
         this.applianceId = applianceId;
         loggerId = applianceId.length() > 0 ? applianceId + "-MQTT-" + clazz.getSimpleName() : clazz.getSimpleName();
 
@@ -65,13 +63,19 @@ public class MqttClient {
             clientIdBuilder.append(applianceId + "-");
         }
         clientIdBuilder.append(clazz.getSimpleName());
-        if(clientIdWithCounter) {
-            clientIdBuilder.append("-" + counter++);
+
+        var counter = counterForClientId.get(clientIdBuilder.toString());
+        if(counter != null) {
+            counter++;
+        } else {
+            counter = 0;
         }
-        String clientId = clientIdBuilder.toString();
+        counterForClientId.put(clientIdBuilder.toString(), counter);
+        clientIdBuilder.append("-").append(counter);
+
         var brokerUri = buildBrokerUri(mqttBroker.getResolvedHost(), mqttBroker.getResolvedPort());
         logger.info("Using MQTT broker " + brokerUri);
-        client = createClient(clientId, brokerUri, loggerId);
+        client = createClient(clientIdBuilder.toString(), brokerUri, loggerId);
     }
 
     public static void setMqttBroker(MqttBroker mqttBroker) {

@@ -54,7 +54,7 @@ abstract public class AbstractRequest implements Request {
 
     protected MqttClient getMqttClient() {
         if(mqttClient == null) {
-            mqttClient = new MqttClient(applianceId, getClass(), true);
+            mqttClient = new MqttClient(applianceId, getClass());
         }
         return mqttClient;
     }

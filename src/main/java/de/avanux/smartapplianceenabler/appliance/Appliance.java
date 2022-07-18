@@ -409,6 +409,9 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                     controllables.add((GpioControllable) wrappedControl);
                 }
             }
+            else if(control instanceof LevelSwitch) {
+                controllables.addAll(((LevelSwitch) control).getGpioControllables());
+            }
         }
         return controllables;
     }

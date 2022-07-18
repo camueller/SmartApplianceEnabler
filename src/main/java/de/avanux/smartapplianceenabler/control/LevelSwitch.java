@@ -21,6 +21,7 @@ package de.avanux.smartapplianceenabler.control;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
+import de.avanux.smartapplianceenabler.gpio.GpioControllable;
 import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, Validateable, NotificationProvider {
@@ -58,6 +60,7 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
     private transient MqttClient mqttClient;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttMessage mqttMessageSent;
+    final private static String WRAPPED_CONTROL_TOPIC_ID_SEPARATOR = "-";
 
     @Override
     public String getId() {
@@ -65,11 +68,11 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
     }
 
     private String getWrappedControlTopic(String id) {
-        return "Wrapped" + Control.TOPIC + "_" +  id;
+        return "Wrapped" + Control.TOPIC + WRAPPED_CONTROL_TOPIC_ID_SEPARATOR +  id;
     }
 
     private String getWrappedControlId(String topic) {
-        return topic.split("_")[1];
+        return topic.split(WRAPPED_CONTROL_TOPIC_ID_SEPARATOR)[1];
     }
 
     @Override
@@ -82,6 +85,16 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
                 }
             });
         }
+    }
+
+    public Set<GpioControllable> getGpioControllables() {
+        if(this.controls != null) {
+            return this.controls.stream()
+                    .filter(control -> control instanceof GpioControllable)
+                    .map(gpioControllable -> (GpioControllable) gpioControllable)
+                    .collect(Collectors.toSet());
+        }
+        return new HashSet<>();
     }
 
     public List<PowerLevel> getPowerLevels() {
