@@ -358,12 +358,7 @@
       "httpControl": {
         "@class": "de.avanux.smartapplianceenabler.http.EVHttpControl",
         "contentProtocol": "JSON",
-        "httpConfiguration": {
-          "@class": "de.avanux.smartapplianceenabler.http.HttpConfiguration",
-          "contentType": "application/json",
-          "password": null,
-          "username": null
-        },
+        "httpConfiguration": null,
         "httpReads": [
           {
             "@class": "de.avanux.smartapplianceenabler.http.HttpRead",
@@ -453,6 +448,98 @@
       "startChargingStateDetectionDelay": 40,
       "vehicles": null,
       "voltage": null
+    }
+  },
+  {
+    "name": "WARP2 Charger",
+    "template": {
+      "@class": "de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger",
+      "httpControl": {
+        "@class": "de.avanux.smartapplianceenabler.http.EVHttpControl",
+        "contentProtocol": "JSON",
+        "httpConfiguration": null,
+        "httpReads": [
+          {
+            "@class": "de.avanux.smartapplianceenabler.http.HttpRead",
+            "readValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",
+                "data": null,
+                "extractionRegex": "(0)",
+                "factorToValue": null,
+                "name": "VehicleNotConnected",
+                "path": "$.vehicle_state"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",
+                "data": null,
+                "extractionRegex": "(1)",
+                "factorToValue": null,
+                "name": "VehicleConnected",
+                "path": "$.vehicle_state"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",
+                "data": null,
+                "extractionRegex": "(2)",
+                "factorToValue": null,
+                "name": "Charging",
+                "path": "$.vehicle_state"
+              },
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpReadValue",
+                "data": null,
+                "extractionRegex": "(3)",
+                "factorToValue": null,
+                "name": "Error",
+                "path": "$.vehicle_state"
+              }
+            ],
+            "url": "http://192.168.1.1/evse/state"
+          }
+        ],
+        "httpWrites": [
+          {
+            "@class": "de.avanux.smartapplianceenabler.http.HttpWrite",
+            "url": "http://192.168.1.1/evse/stop_charging",
+            "writeValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",
+                "factorToValue": null,
+                "method": "PUT",
+                "name": "StopCharging",
+                "value": "null"
+              }
+            ]
+          },
+          {
+            "@class": "de.avanux.smartapplianceenabler.http.HttpWrite",
+            "url": "http://192.168.1.1/evse/start_charging",
+            "writeValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",
+                "factorToValue": null,
+                "method": "PUT",
+                "name": "StartCharging",
+                "value": "null"
+              }
+            ]
+          },
+          {
+            "@class": "de.avanux.smartapplianceenabler.http.HttpWrite",
+            "url": "http://192.168.1.1/evse/current_limit",
+            "writeValues": [
+              {
+                "@class": "de.avanux.smartapplianceenabler.http.HttpWriteValue",
+                "factorToValue": 1000.0,
+                "method": "PUT",
+                "name": "ChargingCurrent",
+                "value": "'{'current:{0,number,#}'}'"
+              }
+            ]
+          }
+        ]
+      }
     }
   }
 ]
