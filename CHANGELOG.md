@@ -12,6 +12,31 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [2.0.5](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.5) - 22.07.2022
+
+### Gefixt
+- pgpiod muss nur dann laufen, wenn GPIOs verwendet werden - siehe [#252](https://github.com/camueller/SmartApplianceEnabler/issues/252)
+- Wallbox: kein endloses Wechseln zwischen CHARGING_COMPLETED und VEHICLE_CONNECTED
+- bei Lesen von Float-Werten aus Modbus-Registern wird jetzt der Umrechnungsfaktor berücksichtigt
+- durch Änderungen an der Datei `smartapplianceenabler.service` sollte sichergestellt sein, dass der SAE erst nach Mosquitto gestartet wird
+- wenn zum Zeitpunkt der Anlaufstromerkennung die verbeleibende Zeit im Zeitplan nicht ausreichend war, wurde das nicht beim nächstmöglichen Zeitplan-Intervall berücksichtigt - siehe [#262](https://github.com/camueller/SmartApplianceEnabler/issues/262)
+- die Initialisierung des Stufenschalters mit GPIO-Schaltern wurde gefixt
+ 
+### Neu
+- Wallbox: die Wallbox-Vorlagen werden beim Start des SAE von Github geladen - dadurch können Vorlagen hinzugefügt/gefixt werden ohne neues SAE-Release
+- Wallbox: Identifikation des mit der Wallbox verbundenen Fahrzeugs über einen oder mehrere Parameter, sofern das SOC-Script diese liefern kann:
+  - Verbindungsstatus des Ladekabels
+  - Zeitpunkt des Einsteckens des Ladekabels
+  - Geo. Breite/Länge des Fahrzeugs
+- Wallbox: das Periodische Setzen der Ladestromstärke zur Vermeidungs des Rückfalls auf eine Standard-Stromstärke wird unterstützt (erforderlich z.B. für Alfen-Wallbox)
+- Modbus unterstützt 64bit Float
+- Modbus unterstützt 2 Zeichen pro 16bit-Wort
+- Modbus unterstützt FunctionCode 16 zum Schreiben mehrerer Holding-Register
+
+### Geändert
+- Wallbox: Der Default-Wert für die Statuserkennung-Unterbrechnung wurde von 300s auf 30s verkürzt
+- 
+
 ## [2.0.4](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.4) - 13.04.2022
 
 ### Gefixt
