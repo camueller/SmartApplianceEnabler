@@ -71,8 +71,9 @@ export class VersionService {
               prerelease: mostRecentStableRelease.prerelease
             });
           }
-          const currentVersionIsStableRelease = !orderedReleasesMostRecentFirst.find(release => this.versionTagToNumber(release.tag_name) === this.versionTagToNumber(currentVersion?.version)).prerelease ?? false;
-          if (!availableVersions.length && !currentVersionIsStableRelease && this.versionTagToNumber(mostRecentRelease.tag_name) > this.versionTagToNumber(currentVersion?.version)) {
+          const currentVersionPreRelease = orderedReleasesMostRecentFirst.find(release => this.versionTagToNumber(release.tag_name) === this.versionTagToNumber(currentVersion?.version))?.prerelease;
+          // currentVersionPreRelease is undefined if release has been deleted on Github
+          if (!availableVersions.length && (currentVersionPreRelease === undefined || currentVersionPreRelease === true) && this.versionTagToNumber(mostRecentRelease.tag_name) > this.versionTagToNumber(currentVersion?.version)) {
             availableVersions.push({
               version: orderedReleasesMostRecentFirst[0].tag_name,
               prerelease: orderedReleasesMostRecentFirst[0].prerelease
