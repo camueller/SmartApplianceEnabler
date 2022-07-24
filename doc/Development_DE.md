@@ -63,59 +63,10 @@ tar xvfz node-v14.17.0-linux-x64.tar.gz
 ln -s node-v14.17.0-linux-x64 node
 ```
 
-### travis-ci: Veraltet, da Credits aufgebraucht sind; wird gelöscht 
-![Continuous Integration](../pics/CI.png)
-
-Sobald Änderungen am [*Smart Appliance Enabler*-Github-Repository](https://github.com/camueller/SmartApplianceEnabler) erkannt werden, wird dies an [Travis-CI](https://travis-ci.org/camueller/SmartApplianceEnabler) signalisiert. Daraufhin wird dort eine virtuelle Umgebung gestartet, in welcher der *Smart Appliance Enabler* gebaut wird. Dabei werden auch die Unit-Tests ausgeführt, wobei Daten über die Testabdeckung gewonnen werden. Diese **Coverage-Daten** werden zu [codecov](https://codecov.io/gh/camueller/SmartApplianceEnabler) gepusht, wo sie visualisiert werden. Als Build-Artefakt entsteht die Datei **SmartApplianceEnabler.war**, die sich in einer **Java-Runtime** starten läßt. Um die Installation (Java, Konfigurationsdateien, ...) zu vereinfachen, wird ein **Docker-Image** speziell für CI erstellt, das den *Smart Appliance Enabler* mit allen benötigten Dateien inlusive Java-Runtime enthält. Wegen der Platformabhängigkeit der Java-Runtime ist das Docker-Image nur auf Prozessoren mit **amd64**-Architektur lauffähig (also nicht auf Raspberry Pi!). Das Docker-Image wird zu [Docker-Hub](https://hub.docker.com/) gepusht.
-
-In der [AWS](https://aws.amazon.com/de/) -Cloud läuft eine [EC2](https://aws.amazon.com/de/ec2/) -Instanz mit Amazon Linux darauf. Als einzige Software wurde Docker installiert. Im Rahmen des Build-Vorgangs auf *Travis-CI* wird ein Shell-Script auf der **EC2-Instanz** ausgeführt, welches das *Smart Appliance Enabler*-Docker-Image für CI von *Docker-Hub* pullt und einen Container damit startet. Dadurch gibt es einen **laufenden Smart Appliance Enabler**, der vom Internet aus zugreifbar ist und für Tests zur Verfügung steht. 
-
-Um die Funktionalität insgesamt (d.h. Web-Anwendung und Spring Boot-Anwendung) zu testen, wird über Web-Browser eine neue Konfiguration erstellt. Diese **Browser-basierten Tests** werden mittels [BrowserStack](https://www.browserstack.com/) mit verschieden Web-Browsern auf unterschiedlichen Betriebssystemen ausgeführt, wobei die URL des *Smart Appliance Enabler* in EC2-Instanz verwendet wird.
-
-Für den Betrieb des *Smart Appliance Enabler* als Docker-Container auf einem *Raspberry Pi* muss für jedes Release (nicht für jeden Push zu Github!) ein **Docker-Image** mit einer Java-Runtime für **arm32**-Architektur erstellt werden. Was liegt näher, als diese Aufgabe von einem meiner Raspberry Pi's automatisch erledigen zu lassen. Auch dieses Image wird zu [Docker-Hub](https://hub.docker.com/) gepusht. 
-
-#### AWS Setup
-
-- EC2 Instance anlegen:
-    - Amazon Linux 2 AMI (HVM), SSD Volume Type
-    - Type: t2.micro
-- ggf. Keypair erzeugen
-- Security Group anlegen mit Inbound Access für SSH + HTTP (Source: Anywhere)
-- Security Group zuweisen: Actions -> Networking -> Change Security Groups
-
-Falls das _EC2 Dashboard_ laufende Instanzen nicht anzeigt, stimmt möglicherweise die Region nicht mit der Region überein, in der die Instanzen angelegt wurden (z.B. us-east-2).
-
-Der Button `Verbinden` zeigt den SSH-Aufruf für die aktuelle IP-Adresse, z.B.
+### Mosquitto
+Damit der *Smart Appliance Enabler* getestet werden kann, ist ein MQTT-Broker erforderlich. Hie wird dazu Mosquitto eingesetzt, der ebenfalls als Docker-Container läuft und wie folgt gestartet wird:
 ```console
-ssh -i "aws-avanux.pem" ec2-user@ec2-3-133-83-241.us-east-2.compute.amazonaws.com
-```
-
-In der gestarteten Instanz folgende Befehle ausführen:
-```console
-sudo yum update -y
-sudo yum install docker -y
-sudo service docker start
-sudo service docker status
-```
-
-In der EC2 console wird der Link zur Instanz des *Smart Appliance Enabler* unter `Öffentlicher IPv4-DNS`. Dieser Link beinhaltet `https` als Protokoll und funktioniert aktuell nicht, weil der *Smart Appliance Enabler* nur `http` unterstützt. Beim Klick auf den Link zeigt Chrome `This site can’t be reached` an.   
-
-### Setup des Raspberry Pi zum Bauen der arm32-Docker-Images
-
-1. Docker installieren
-Siehe [Docker-Installation](Docker_DE.md)
-
-2. Git-Repositoy clonen, damit die Scripts/Dockerfiles im docker-Verzeichnis genutzt werden können:
-```console
-cd /opt/sae
-git clone https://github.com/camueller/SmartApplianceEnabler.git
-ln -s SmartApplianceEnabler/docker
-```
-
-3. Cron-Job verlinken, damit periodisch auf neue Versionen auf Github geprüft wird. Bei Vorhandensein einer neuen Version wird das Bauen des zugehörigen Images gestartet und das Image zu Docker-Hub hochgeladen:
-```console
-sae@raspi3:~ $ cd /etc/cron.hourly/
-sae@raspi3:/etc/cron.hourly $ sudo ln -s /opt/sae/docker/cronjob 
+sudo docker run -it -d --rm -p 1883:1883 --name mosquitto eclipse-mosquitto mosquitto -c /mosquitto-no-auth.conf
 ```
 
 ### Testen der automatischen Installation
