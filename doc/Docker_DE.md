@@ -223,18 +223,31 @@ Damit sieht der Befehl wie folgt aus:
 docker network create -d macvlan --subnet=192.168.0.0/24 --gateway=192.168.0.1 --ip-range 192.168.0.192/27 --aux-address 'host=192.168.0.223' -o parent=eth0 -o macvlan_mode=bridge macvlan0
 ```
 
-### Start/Stop/Status mit `docker`
+### Start des MQTT-Brokers
+Der *Smart Appliance Enabler* benötigt einen MQTT-Broker. Diesen kann man ebenfalls als Docker-Container starten, wobei man ihm eine IP-Adresse aus dem Docker-Netzwerk `macvlan0` zuweisen muss: 
+
+```console
+docker run --rm --detach --network macvlan0 --ip 192.168.0.201 --name mosquitto eclipse-mosquitto mosquitto -c /mosquitto-no-auth.conf
+```
+
+### Start des pigpiod 
+Der *Smart Appliance Enabler* benötigt `pigpiod` für den Zugriff auf die GPIOs des Raspberry Pi. Diesen kann man ebenfalls als Docker-Container starten, wobei man ihm eine IP-Adresse aus dem Docker-Netzwerk `macvlan0` zuweisen muss:
+
+```console
+docker run --rm --detach --network macvlan0 --ip 192.168.0.202 --name pigpiod --privileged --device /dev/gpiochip0 zinen2/alpine-pigpiod
+```
+
+### Start/Stop/Status des Smart Appliance Enablers
 
 #### Starten des Containers
-Beim Starten des *Smart Appliance Enabler* in einem neuen Container mit dem Namen _sae_ muss das in Docker angelegte `macvlan`-Netzwerk (Parameter `--network`) sowie die dem Docker-Container zuzuweisende IP-Adresse (Parameter `--ip`) angegeben werden.  
-Damit sieht der Befehl wie folgt aus:
+Beim Starten des *Smart Appliance Enabler* in einem neuen Container mit dem Namen _sae_ muss dem Docker-Container eine IP-Adresse aus dem Docker-Netzwerk `macvlan0` zugewiesen werden:  
 ```console
-pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --network macvlan0 --ip 192.168.0.211 --publish 8080:8080 --device /dev/mem:/dev/mem --privileged --name=sae avanux/smartapplianceenabler-arm32
+pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --network macvlan0 --ip 192.168.0.200 --publish 8080:8080 --privileged --name=sae avanux/smartapplianceenabler-arm32
 ```
 
 Dabei können über die Docker-Variable _JAVA_OPTS_ auch Properties gesetzt werden:
 ```console
-pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --network macvlan0 --ip 192.168.0.211 --publish 8080:8080 --device /dev/mem:/dev/mem --privileged --name=sae -e JAVA_OPTS="-Dserver.port=9000" avanux/smartapplianceenabler-arm32
+pi@raspberrypi:~ $ docker ... -e JAVA_OPTS="-Dserver.port=9000" avanux/smartapplianceenabler-arm32
 ```
 
 #### Stoppen des Containers
@@ -282,7 +295,7 @@ sae@raspberrypi:~/docker $ sudo systemctl status smartapplianceenabler-docker
     Tasks: 11 (limit: 2200)
    Memory: 23.0M
    CGroup: /system.slice/smartapplianceenabler-docker.service
-           └─9567 /usr/bin/docker run -v sae:/opt/sae/data --net=host --device /dev/mem:/dev/mem --privileged --name=sae avanux/smartapplianceenabler-arm32
+           └─9567 /usr/bin/docker run -v sae:/opt/sae/data --network macvlan0 --ip 192.168.0.200 --publish 8080:8080 --privileged --name=sae avanux/smartapplianceenabler-arm32
 
 Dec 25 17:19:13 raspberrypi docker[9567]: 16:19:13.925 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
 Dec 25 17:19:13 raspberrypi docker[9567]: 16:19:13.930 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
