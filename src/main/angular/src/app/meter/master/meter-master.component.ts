@@ -17,7 +17,7 @@
  */
 
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
@@ -36,7 +36,7 @@ export class MeterMasterComponent implements OnChanges, OnInit {
   @Input()
   masterMeter: MasterElectricityMeter;
   @Input()
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;

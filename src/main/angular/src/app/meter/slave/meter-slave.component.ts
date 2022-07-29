@@ -17,7 +17,7 @@
  */
 
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {FormGroup, Validators} from '@angular/forms';
+import {UntypedFormGroup, Validators} from '@angular/forms';
 import {Logger} from '../../log/logger';
 import {FormHandler} from '../../shared/form-handler';
 import {ListItem} from '../../shared/list-item';
@@ -35,7 +35,7 @@ export class MeterSlaveComponent implements OnChanges, OnInit {
   @Input()
   masterElectricityMeterApplianceIdWithApplianceName: Object;
   @Input()
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   masterMeterOptions: ListItem[] = [];
 

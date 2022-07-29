@@ -9,7 +9,7 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusRead} from '../../modbus/read/modbus-read';
 import {ModbusReadComponent} from '../../modbus/read/modbus-read.component';
@@ -52,7 +52,7 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   isEvCharger: boolean;
   @Input()
   applianceId: string;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   translatedStrings: { [key: string]: string } = {};
   errors: { [key: string]: string } = {};
@@ -131,7 +131,7 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   }
 
   get modbusReadsFormArray() {
-    return this.form.controls.modbusReads as FormArray;
+    return this.form.controls.modbusReads as UntypedFormArray;
   }
 
   getModbusReadFormGroup(index: number) {

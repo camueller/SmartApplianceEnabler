@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {ModbusSetting} from './modbus-setting';
 import {TranslateService} from '@ngx-translate/core';
-import {FormGroup, Validators} from '@angular/forms';
+import {UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {FormHandler} from '../../shared/form-handler';
 import {SettingsService} from '../settings-service';
@@ -23,7 +23,7 @@ export class SettingsModbusComponent implements OnChanges, OnInit {
   @Input()
   settingsDefaults: SettingsDefaults;
   @Input()
-  form: FormGroup;
+  form: UntypedFormGroup;
   @Output()
   remove = new EventEmitter<any>();
   formHandler: FormHandler;

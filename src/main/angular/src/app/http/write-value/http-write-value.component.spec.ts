@@ -1,5 +1,5 @@
 import {Component, DebugElement, NO_ERRORS_SCHEMA, ViewChild} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {
   createComponentAndConfigure,
@@ -29,7 +29,7 @@ import {MatInputHarness} from '@angular/material/input/testing';
 })
 class HttpWriteValueTestHostComponent {
   @ViewChild(HttpWriteValueComponent, {static: true}) testComponent;
-  form = new FormGroup({});
+  form = new UntypedFormGroup({});
   httpWriteValue = new HttpWriteValue();
   valueNames = ['On', 'Off'];
   translationPrefix = 'ControlHttpComponent.';

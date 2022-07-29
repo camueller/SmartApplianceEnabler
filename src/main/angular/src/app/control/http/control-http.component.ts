@@ -11,7 +11,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import {ControlDefaults} from '../control-defaults';
-import {ControlContainer, FormArray, FormGroup, FormGroupDirective} from '@angular/forms';
+import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
@@ -47,7 +47,7 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   httpReadComp: HttpReadComponent;
   @Input()
   controlDefaults: ControlDefaults;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -122,7 +122,7 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   set readControlState(readControlState: boolean) {
     if (readControlState) {
       if(!this.form.controls.httpRead) {
-        this.form.addControl('httpRead', new FormGroup({}));
+        this.form.addControl('httpRead', new UntypedFormGroup({}));
       }
     } else {
       if(this.form.controls.httpRead) {
@@ -133,7 +133,7 @@ export class ControlHttpComponent implements OnChanges, OnInit {
 
   addHttpWrite() {
     this.httpSwitch.httpWrites.push(HttpWrite.createWithSingleChild());
-    this.httpWritesFormArray.push(new FormGroup({}));
+    this.httpWritesFormArray.push(new UntypedFormGroup({}));
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }
@@ -145,7 +145,7 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   }
 
   get httpWritesFormArray() {
-    return this.form.controls.httpWrites as FormArray;
+    return this.form.controls.httpWrites as UntypedFormArray;
   }
 
   getHttpWriteFormGroup(index: number) {

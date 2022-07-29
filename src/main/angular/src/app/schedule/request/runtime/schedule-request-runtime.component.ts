@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {RuntimeRequest} from './runtime-request';
 import {ErrorMessages} from '../../../shared/error-messages';
@@ -29,7 +29,7 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
   minRuntimeComp: TimepickerComponent;
   @ViewChild('maxRuntimeComponent', {static: true})
   maxRuntimeComp: TimepickerComponent;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;

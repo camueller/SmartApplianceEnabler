@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Switch} from './switch';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
@@ -24,7 +24,7 @@ export class ControlSwitchComponent implements OnChanges, OnInit {
   switch_: Switch;
   @Input()
   controlDefaults: ControlDefaults;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;

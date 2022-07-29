@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {StatusService} from '../status.service';
 import {ControlService} from '../../control/control-service';
@@ -49,7 +49,7 @@ export class StatusEvchargerEditComponent implements OnInit {
   formCancelled = new EventEmitter<any>();
   @ViewChild('chargeEndTimeComponent', {static: true})
   chargeEndTimeComp: TimepickerComponent;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -91,11 +91,11 @@ export class StatusEvchargerEditComponent implements OnInit {
   }
 
   buildForm() {
-    this.form = new FormGroup({
-      chargeMode: new FormControl(this.chargeModeSelected),
-      electricVehicle: new FormControl(this.electricVehicleSelected && this.electricVehicleSelected.id),
-      stateOfChargeCurrent: new FormControl(this.socString, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
-      stateOfChargeRequested: new FormControl(this.electricVehicleSelected && this.electricVehicleSelected.defaultSocManual,
+    this.form = new UntypedFormGroup({
+      chargeMode: new UntypedFormControl(this.chargeModeSelected),
+      electricVehicle: new UntypedFormControl(this.electricVehicleSelected && this.electricVehicleSelected.id),
+      stateOfChargeCurrent: new UntypedFormControl(this.socString, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
+      stateOfChargeRequested: new UntypedFormControl(this.electricVehicleSelected && this.electricVehicleSelected.defaultSocManual,
         Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
     }, socValidator);
     if (this.chargeModeSelected === ChargeMode.OPTIMIZED) {

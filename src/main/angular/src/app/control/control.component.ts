@@ -31,7 +31,7 @@ import {Logger} from '../log/logger';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Appliance} from '../appliance/appliance';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {Switch} from './switch/switch';
 import {ControlSwitchComponent} from './switch/control-switch.component';
@@ -81,7 +81,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   controlSwitchComp: ControlSwitchComponent;
   @ViewChild(NotificationComponent)
   notificationComp: NotificationComponent;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   applianceId: string;
   controlDefaults: ControlDefaults;
@@ -147,12 +147,12 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   }
 
   buildForm() {
-    this.form = new FormGroup({});
+    this.form = new UntypedFormGroup({});
     this.formHandler.addFormControl(this.form, 'controlType', this.control && simpleControlType(this.control.type));
     this.formHandler.addFormControl(this.form, 'startingCurrentDetection',
       this.control && this.control.startingCurrentDetection);
 
-    this.form.addControl('testControlName', new FormControl('parent'))
+    this.form.addControl('testControlName', new UntypedFormControl('parent'))
 
   }
 

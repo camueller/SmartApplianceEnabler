@@ -9,7 +9,7 @@ import {
   defaultProviders,
   enterAndCheckInputValue
 } from '../../shared/test-util';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {HttpWrite} from './http-write';
 import {HttpWriteValue} from '../write-value/http-write-value';
 import {MatFormFieldHarness} from '@angular/material/form-field/testing';
@@ -37,7 +37,7 @@ class HttpWriteValueStubComponent {
 class HttpWriteTestHostComponent {
   @ViewChild(HttpWriteComponent, { static: true }) testComponent;
   onHttpWriteRemoveCalled: boolean;
-  form = new FormGroup({});
+  form = new UntypedFormGroup({});
   httpWrite = HttpWrite.createWithSingleChild();
   translationKeys = [];
 

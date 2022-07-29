@@ -4,7 +4,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {FormHandler} from '../../../shared/form-handler';
 import {ErrorMessages} from '../../../shared/error-messages';
-import {ControlContainer, FormArray, FormGroup, FormGroupDirective, ValidatorFn, Validators} from '@angular/forms';
+import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective, ValidatorFn, Validators} from '@angular/forms';
 import {Settings} from '../../../settings/settings';
 import {EvModbusControl} from './ev-modbus-control';
 import {SettingsDefaults} from '../../../settings/settings-defaults';
@@ -47,7 +47,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   modbusReadComps: QueryList<ModbusReadComponent>;
   @ViewChildren('modbusWriteComponents')
   modbusWriteComps: QueryList<ModbusWriteComponent>;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   @Input()
   translationKeys: string[];
@@ -145,7 +145,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
       this.evModbusControl.modbusReads = [];
     }
     this.evModbusControl.modbusReads.push(modbusRead);
-    this.modbusReadsFormArray.push(new FormGroup({}));
+    this.modbusReadsFormArray.push(new UntypedFormGroup({}));
     this.form.markAsDirty();
   }
 
@@ -161,7 +161,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
       this.evModbusControl.modbusWrites = [];
     }
     this.evModbusControl.modbusWrites.push(modbusWrite);
-    this.modbusWritesFormArray.push(new FormGroup({}));
+    this.modbusWritesFormArray.push(new UntypedFormGroup({}));
     this.form.markAsDirty();
   }
 
@@ -172,7 +172,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   }
 
   get modbusReadsFormArray() {
-    return this.form.controls.modbusReads as FormArray;
+    return this.form.controls.modbusReads as UntypedFormArray;
   }
 
   getModbusReadFormGroup(index: number) {
@@ -180,7 +180,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   }
 
   get modbusWritesFormArray() {
-    return this.form.controls.modbusWrites as FormArray;
+    return this.form.controls.modbusWrites as UntypedFormArray;
   }
 
   getModbusWriteFormGroup(index: number) {

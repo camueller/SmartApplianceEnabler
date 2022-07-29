@@ -17,26 +17,26 @@
  */
 
 import {ControlValueName} from './control-value-name';
-import {AbstractControl, FormArray, FormGroup, ValidatorFn} from '@angular/forms';
+import {AbstractControl, UntypedFormArray, UntypedFormGroup, ValidatorFn} from '@angular/forms';
 
-export function isControlValid(form: FormGroup, writeArrayName: string, writeValueArrayName: string): ValidatorFn {
+export function isControlValid(form: UntypedFormGroup, writeArrayName: string, writeValueArrayName: string): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
-    const writes = form.controls[writeArrayName] as FormArray;
+    const writes = form.controls[writeArrayName] as UntypedFormArray;
     if (writes.length === 1) {
-      const write = writes.at(0) as FormGroup;
-      const writeValuesArray = write.controls[writeValueArrayName] as FormArray;
+      const write = writes.at(0) as UntypedFormGroup;
+      const writeValuesArray = write.controls[writeValueArrayName] as UntypedFormArray;
       if (writeValuesArray && writeValuesArray.length === 2) {
-        if (hasOnAndOff(writeValuesArray?.at(0) as FormGroup, writeValuesArray?.at(1) as FormGroup)) {
+        if (hasOnAndOff(writeValuesArray?.at(0) as UntypedFormGroup, writeValuesArray?.at(1) as UntypedFormGroup)) {
           return null;
         }
       }
 
     } else if (writes.length === 2) {
-      const write1 = writes.at(0) as FormGroup;
-      const write2 = writes.at(1) as FormGroup;
-      const writeValuesArray1 = write1.controls[writeValueArrayName] as FormArray;
-      const writeValuesArray2 = write2.controls[writeValueArrayName] as FormArray;
-      if (hasOnAndOff(writeValuesArray1?.at(0) as FormGroup, writeValuesArray2?.at(0) as FormGroup)) {
+      const write1 = writes.at(0) as UntypedFormGroup;
+      const write2 = writes.at(1) as UntypedFormGroup;
+      const writeValuesArray1 = write1.controls[writeValueArrayName] as UntypedFormArray;
+      const writeValuesArray2 = write2.controls[writeValueArrayName] as UntypedFormArray;
+      if (hasOnAndOff(writeValuesArray1?.at(0) as UntypedFormGroup, writeValuesArray2?.at(0) as UntypedFormGroup)) {
         return null;
       }
     }
@@ -44,7 +44,7 @@ export function isControlValid(form: FormGroup, writeArrayName: string, writeVal
   };
 }
 
-function hasOnAndOff(writeValues1: FormGroup, writeValues2: FormGroup) {
+function hasOnAndOff(writeValues1: UntypedFormGroup, writeValues2: UntypedFormGroup) {
   if ((writeValues1?.controls.name?.value === ControlValueName.On && writeValues2?.controls.name?.value === ControlValueName.Off)
     || (writeValues1?.controls.name?.value === ControlValueName.Off && writeValues2?.controls.name?.value === ControlValueName.On)) {
     return true;

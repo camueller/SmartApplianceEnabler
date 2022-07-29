@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {StatusService} from '../status.service';
 import {TimeUtil} from '../../shared/time-util';
 import {FormHandler} from '../../shared/form-handler';
@@ -26,7 +26,7 @@ export class StatusEditComponent implements OnInit {
   formCancelled = new EventEmitter<any>();
   @ViewChild('runtimeComponent', {static: true})
   runtimeComp: TimepickerComponent;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -52,7 +52,7 @@ export class StatusEditComponent implements OnInit {
   }
 
   buildForm() {
-    this.form = new FormGroup({});
+    this.form = new UntypedFormGroup({});
   }
 
   get hasErrors(): boolean {

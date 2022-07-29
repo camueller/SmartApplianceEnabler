@@ -11,7 +11,7 @@ import {
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import {FormArray, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
@@ -47,7 +47,7 @@ export class HttpReadComponent implements OnChanges, OnInit {
   @Input()
   disableRemove = false;
   @Input()
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   @Input()
   translationPrefix: string;
@@ -120,7 +120,7 @@ export class HttpReadComponent implements OnChanges, OnInit {
       this.httpRead.readValues = [];
     }
     this.httpRead.readValues.push(newReadValue);
-    this.httpReadValuesFormArray.push(new FormGroup({}));
+    this.httpReadValuesFormArray.push(new UntypedFormGroup({}));
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }
@@ -140,7 +140,7 @@ export class HttpReadComponent implements OnChanges, OnInit {
   }
 
   get httpReadValuesFormArray() {
-    return this.form.controls.httpReadValues as FormArray;
+    return this.form.controls.httpReadValues as UntypedFormArray;
   }
 
   getHttpReadValueFormGroup(index: number) {

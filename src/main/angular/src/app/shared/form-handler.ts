@@ -1,8 +1,8 @@
 import {
   AbstractControlOptions,
-  AsyncValidatorFn, FormArray,
-  FormControl,
-  FormGroup,
+  AsyncValidatorFn, UntypedFormArray,
+  UntypedFormControl,
+  UntypedFormGroup,
   ValidatorFn,
   Validators
 } from '@angular/forms';
@@ -11,15 +11,15 @@ export class FormHandler {
 
   formControlNamesRequired: string[] = [];
 
-  public addFormControl(formGroup: FormGroup, formControlName: string, formState?: any,
+  public addFormControl(formGroup: UntypedFormGroup, formControlName: string, formState?: any,
                         validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null,
                         asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null) {
     this.registerValidators(formControlName, validatorOrOpts);
-    const control = new FormControl(formState, validatorOrOpts, asyncValidator);
+    const control = new UntypedFormControl(formState, validatorOrOpts, asyncValidator);
     formGroup.addControl(formControlName, control);
   }
 
-  public setFormControlValue(form: FormGroup, formControlName: string, value: any) {
+  public setFormControlValue(form: UntypedFormGroup, formControlName: string, value: any) {
     if (form) {
       const control = form.controls[formControlName];
       if (control) {
@@ -28,23 +28,23 @@ export class FormHandler {
     }
   }
 
-  public addFormArrayControlWithEmptyFormGroups(form: FormGroup, formControlName: string, items: Array<any>) {
+  public addFormArrayControlWithEmptyFormGroups(form: UntypedFormGroup, formControlName: string, items: Array<any>) {
     form.addControl(formControlName, this.buildFormArrayWithEmptyFormGroups(items));
   }
 
-  public setFormArrayControlWithEmptyFormGroups(form: FormGroup, formControlName: string, items: Array<any>) {
+  public setFormArrayControlWithEmptyFormGroups(form: UntypedFormGroup, formControlName: string, items: Array<any>) {
     form.setControl(formControlName, this.buildFormArrayWithEmptyFormGroups(items));
   }
 
-  public addFormControlToFormArray(formArray: FormArray, formArrayIndex: number, formControlName: string, validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null) {
-    (formArray.at(formArrayIndex) as FormGroup).addControl(formControlName, new FormControl(undefined, validatorOrOpts));
+  public addFormControlToFormArray(formArray: UntypedFormArray, formArrayIndex: number, formControlName: string, validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null) {
+    (formArray.at(formArrayIndex) as UntypedFormGroup).addControl(formControlName, new UntypedFormControl(undefined, validatorOrOpts));
     this.registerValidators(formControlName, validatorOrOpts);
   }
 
-  private buildFormArrayWithEmptyFormGroups(items: Array<any>): FormArray {
-    const formArray = new FormArray([]);
+  private buildFormArrayWithEmptyFormGroups(items: Array<any>): UntypedFormArray {
+    const formArray = new UntypedFormArray([]);
     if (items) {
-      items.forEach(() => formArray.push(new FormGroup({})));
+      items.forEach(() => formArray.push(new UntypedFormGroup({})));
     }
     return formArray;
   }

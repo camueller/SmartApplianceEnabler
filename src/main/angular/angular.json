@@ -103,7 +103,6 @@
       }
     }
   },
-  "defaultProject": "smartapplianceenabler",
   "schematics": {
     "@schematics/angular:component": {
       "inlineStyle": true,

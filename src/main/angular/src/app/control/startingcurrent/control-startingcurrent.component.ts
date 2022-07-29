@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ControlDefaults} from '../control-defaults';
-import {FormGroup, Validators} from '@angular/forms';
+import {UntypedFormGroup, Validators} from '@angular/forms';
 import {StartingCurrentSwitch} from './starting-current-switch';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
@@ -22,7 +22,7 @@ export class ControlStartingcurrentComponent implements OnChanges, OnInit {
   @Input()
   controlDefaults: ControlDefaults;
   @Input()
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;

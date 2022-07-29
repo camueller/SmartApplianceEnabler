@@ -35,10 +35,10 @@ import {
 import {
   AbstractControl,
   ControlContainer,
-  FormArray,
+  UntypedFormArray,
   FormBuilder,
-  FormControl,
-  FormGroup,
+  UntypedFormControl,
+  UntypedFormGroup,
   FormGroupDirective,
   ValidatorFn, Validators
 } from '@angular/forms';
@@ -83,7 +83,7 @@ export class ControlLevelComponent implements OnChanges, OnInit {
   @ViewChildren('controlModbusComponents')
   controlModbusComps: QueryList<ControlModbusComponent>;
   @Input()
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -201,7 +201,7 @@ export class ControlLevelComponent implements OnChanges, OnInit {
       this.levelSwitch.controls.push(modbusSwitch)
     }
     this.controlIds.push(nextId.toString());
-    this.controlsFormArray.push(new FormGroup({}))
+    this.controlsFormArray.push(new UntypedFormGroup({}))
     for(let i=0; i<this.powerLevelFormArray?.length ?? 0; i++) {
       this.formHandler.addFormControlToFormArray(this.powerLevelFormArray, i, nextId.toString(), [Validators.required]);
     }
@@ -217,29 +217,29 @@ export class ControlLevelComponent implements OnChanges, OnInit {
 
     const formControlName = index.toString();
     for(let i=0; i<this.powerLevelFormArray.length; i++) {
-      (this.powerLevelFormArray.at(i) as FormGroup).removeControl(formControlName);
+      (this.powerLevelFormArray.at(i) as UntypedFormGroup).removeControl(formControlName);
     }
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }
 
   get controlsFormArray() {
-    return this.form.controls.controls as FormArray;
+    return this.form.controls.controls as UntypedFormArray;
   }
 
-  getPowerLevelFormGroup(index: number): FormGroup {
-    return this.powerLevelFormArray.controls[index] as FormGroup;
+  getPowerLevelFormGroup(index: number): UntypedFormGroup {
+    return this.powerLevelFormArray.controls[index] as UntypedFormGroup;
   }
 
   get powerLevelFormArray() {
-    return this.form.controls.powerLevels as FormArray;
+    return this.form.controls.powerLevels as UntypedFormArray;
   }
 
   public addPowerLevel(powerLevel?: PowerLevel) {
-    const powerLevelFormGroup = new FormGroup({});
+    const powerLevelFormGroup = new UntypedFormGroup({});
     this.formHandler.addFormControl(powerLevelFormGroup, 'power', powerLevel?.power, [Validators.required]);
     this.controlIds.forEach(controlId => powerLevelFormGroup
-      .addControl(controlId, new FormControl(powerLevel?.switchStatuses.find(status => status.idref === controlId)?.on ?? false)))
+      .addControl(controlId, new UntypedFormControl(powerLevel?.switchStatuses.find(status => status.idref === controlId)?.on ?? false)))
     this.powerLevelFormArray.push(powerLevelFormGroup);
   }
 

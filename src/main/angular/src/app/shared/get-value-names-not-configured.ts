@@ -16,17 +16,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-import {FormArray, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormGroup} from '@angular/forms';
 
-export function getValueNamesNotConfigured(outerFormArray: FormArray, valueFormControlName: string, allNames: string[]) {
+export function getValueNamesNotConfigured(outerFormArray: UntypedFormArray, valueFormControlName: string, allNames: string[]) {
   if (!outerFormArray) {
     return [];
   }
   const valueNamesFound = new Set();
   for (let index = 0; index < outerFormArray.length; index++) {
-    const valueFormArray = (outerFormArray.at(index) as FormGroup).controls[valueFormControlName] as FormArray;
+    const valueFormArray = (outerFormArray.at(index) as UntypedFormGroup).controls[valueFormControlName] as UntypedFormArray;
     for (let valueIndex = 0; valueIndex < valueFormArray?.length; valueIndex++) {
-      const nameControl = (valueFormArray.at(valueIndex) as FormGroup).controls.name;
+      const nameControl = (valueFormArray.at(valueIndex) as UntypedFormGroup).controls.name;
       if (nameControl) {
         valueNamesFound.add(nameControl.value);
       }

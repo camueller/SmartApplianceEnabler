@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {ChangeDetectorRef, Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
-import {FormArray, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormGroup, Validators} from '@angular/forms';
 import {SettingsService} from './settings-service';
 import {Settings} from './settings';
 import {SettingsDefaults} from './settings-defaults';
@@ -49,7 +49,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   modbusSettingComps: QueryList<SettingsModbusComponent>;
   @ViewChild(FilenameInputComponent, {static: true})
   notificationCommandInput: FilenameInputComponent;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -85,7 +85,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   }
 
   buildForm() {
-    this.form = new FormGroup({});
+    this.form = new UntypedFormGroup({});
     this.formHandler.addFormControl(this.form, 'mqttHost', this.settings.mqttSettings?.host,
       Validators.pattern(InputValidatorPatterns.HOSTNAME)),
     this.formHandler.addFormControl(this.form, 'mqttPort', this.settings.mqttSettings?.port,
@@ -114,7 +114,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   }
 
   get modbusSettingsFormArray() {
-    return this.form.controls.modbusSettings as FormArray;
+    return this.form.controls.modbusSettings as UntypedFormArray;
   }
 
   getModbusSettingFormGroup(index: number) {
@@ -126,7 +126,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
       this.settings.modbusSettings = [];
     }
     this.settings.modbusSettings.push(new ModbusSetting());
-    this.modbusSettingsFormArray.push(new FormGroup({}));
+    this.modbusSettingsFormArray.push(new UntypedFormGroup({}));
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }

@@ -11,7 +11,7 @@ import {
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import {FormArray, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
@@ -43,7 +43,7 @@ export class HttpWriteComponent implements OnChanges, OnInit {
   @Input()
   disableFactorToValue = false;
   @Input()
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   @Input()
   translationPrefix: string;
@@ -105,7 +105,7 @@ export class HttpWriteComponent implements OnChanges, OnInit {
   addValue() {
     const newWriteValue = new HttpWriteValue();
     this.httpWrite.writeValues.push(newWriteValue);
-    this.httpWriteValuesFormArray.push(new FormGroup({}));
+    this.httpWriteValuesFormArray.push(new UntypedFormGroup({}));
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }
@@ -125,7 +125,7 @@ export class HttpWriteComponent implements OnChanges, OnInit {
   }
 
   get httpWriteValuesFormArray() {
-    return this.form.controls.httpWriteValues as FormArray;
+    return this.form.controls.httpWriteValues as UntypedFormArray;
   }
 
   getHttpWriteValueFormGroup(index: number) {

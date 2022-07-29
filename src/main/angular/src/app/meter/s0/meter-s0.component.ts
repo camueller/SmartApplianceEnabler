@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {S0ElectricityMeter} from './s0-electricity-meter';
 import {TranslateService} from '@ngx-translate/core';
 import {PinPullResistance} from './pin-pull-resistance';
@@ -28,7 +28,7 @@ export class MeterS0Component implements OnChanges, OnInit {
   meterDefaults: MeterDefaults;
   @Input()
   applianceId: string;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;

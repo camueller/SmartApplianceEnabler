@@ -19,7 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {Logger} from '../log/logger';
 import {Schedule} from './schedule';
-import {FormGroup, Validators} from '@angular/forms';
+import {UntypedFormGroup, Validators} from '@angular/forms';
 import {FormHandler} from '../shared/form-handler';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
@@ -45,7 +45,7 @@ export class ScheduleComponent implements OnChanges, AfterViewInit {
   @Input()
   schedule: Schedule;
   @Input()
-  form: FormGroup;
+  form: UntypedFormGroup;
   @Input()
   timeframeTypes: { key: string, value?: string }[];
   @Input()

@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
-import {FormArray, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormGroup} from '@angular/forms';
 import {DayTimeframe} from '../timeframe/day/day-timeframe';
 import {TranslateService} from '@ngx-translate/core';
 import {MessageBoxLevel} from '../../material/messagebox/messagebox.component';
@@ -31,7 +31,7 @@ import {AlwaysOnSwitch} from '../../control/alwayson/always-on-switch';
 export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
   @ViewChildren('scheduleComponents')
   scheduleComps: QueryList<ScheduleComponent>;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   schedules: Schedule[];
   control: Control;
@@ -141,11 +141,11 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
   }
 
   get schedulesFormArray() {
-    return this.form.controls.schedules as FormArray;
+    return this.form.controls.schedules as UntypedFormArray;
   }
 
-  createSchedulesFormGroup(): FormGroup {
-    return new FormGroup({});
+  createSchedulesFormGroup(): UntypedFormGroup {
+    return new UntypedFormGroup({});
   }
 
   getScheduleFormGroup(index: number) {
@@ -159,11 +159,11 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
     return this.dialogService.confirm(this.discardChangesMessage);
   }
 
-  buildForm(): FormGroup {
-    const schedulesFormArray = new FormArray([]);
+  buildForm(): UntypedFormGroup {
+    const schedulesFormArray = new UntypedFormArray([]);
     this.schedules.forEach(() => schedulesFormArray.push(this.createSchedulesFormGroup()));
 
-    const form = new FormGroup({
+    const form = new UntypedFormGroup({
       schedules: schedulesFormArray
     });
     return form;

@@ -3,7 +3,7 @@ import {ControlHttpComponent} from './control-http.component';
 import {Component, EventEmitter, NO_ERRORS_SCHEMA, Output, ViewChild} from '@angular/core';
 import {HttpSwitch} from './http-switch';
 import {createComponentAndConfigure, debugElementByCss, defaultImports, defaultProviders} from '../../shared/test-util';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {HttpRead} from '../../http/read/http-read';
 import {HttpWriteValue} from '../../http/write-value/http-write-value';
 import {HttpConfiguration} from '../../http/configuration/http-configuration';
@@ -55,7 +55,7 @@ class ControlHttpTestHostComponent {
   @ViewChild(ControlHttpComponent, { static: true }) testComponent;
   httpSwitch = undefined;
   applianceId = 'F-00000000001-00';
-  form = new FormGroup({});
+  form = new UntypedFormGroup({});
 }
 
 describe('ControlHttpComponent', () => {

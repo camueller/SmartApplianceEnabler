@@ -3,7 +3,7 @@ import {EvCharger} from './ev-charger';
 import {Settings} from '../../settings/settings';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {TranslateService} from '@ngx-translate/core';
-import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
@@ -56,7 +56,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   evChargerHttpComp: ControlEvchargerHttpComponent;
   @ViewChildren('electricVehicles')
   electricVehicleComps: QueryList<ElectricVehicleComponent>;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   translatedStrings: { [key: string]: string } = {};
   errors: { [key: string]: string } = {};
@@ -173,7 +173,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
       this.evCharger.vehicles = [];
     }
     this.evCharger.vehicles.push(this.createElectricVehicle());
-    this.electricVehiclesFormArray.push(new FormGroup({}));
+    this.electricVehiclesFormArray.push(new UntypedFormGroup({}));
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }
@@ -190,7 +190,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   }
 
   get electricVehiclesFormArray() {
-    return this.form.controls.electricVehicles as FormArray;
+    return this.form.controls.electricVehicles as UntypedFormArray;
   }
 
   getElectricVehicleFormGroup(index: number) {

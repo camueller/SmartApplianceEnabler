@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
-import {ControlContainer, FormGroup, FormGroupDirective} from '@angular/forms';
+import {ControlContainer, UntypedFormGroup, FormGroupDirective} from '@angular/forms';
 import {DayTimeframe} from './day-timeframe';
 import {ErrorMessages} from '../../../shared/error-messages';
 import {TimeOfDay} from '../../time-of-day';
@@ -29,7 +29,7 @@ export class ScheduleTimeframeDayComponent implements OnChanges, OnInit {
   startTimeComp: TimepickerComponent;
   @ViewChild('endTimeComponent', {static: true})
   endTimeComp: TimepickerComponent;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   daysOfWeek: DayOfWeek[];
   errors: { [key: string]: string } = {};
