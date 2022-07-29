@@ -11,7 +11,7 @@ import {
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import {FormArray, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusWrite} from './modbus-write';
 import {ModbusWriteValueComponent} from '../write-value/modbus-write-value.component';
@@ -46,7 +46,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   @Input()
   disableFactorToValue = false;
   @Input()
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   @Input()
   translationPrefix: string;
@@ -173,11 +173,11 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   }
 
   get modbusWriteValuesFormArray() {
-    return this.form.controls.modbusWriteValues as FormArray;
+    return this.form.controls.modbusWriteValues as UntypedFormArray;
   }
 
-  createModbusWriteValueFormGroup(): FormGroup {
-    return new FormGroup({});
+  createModbusWriteValueFormGroup(): UntypedFormGroup {
+    return new UntypedFormGroup({});
   }
 
   getModbusWriteValueFormGroup(index: number) {

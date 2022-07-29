@@ -11,7 +11,7 @@ import {
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import {FormArray, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusRead} from './modbus-read';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
@@ -46,7 +46,7 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   @Input()
   maxValues: number;
   @Input()
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   @Input()
   translationPrefix: string;
@@ -208,11 +208,11 @@ export class ModbusReadComponent implements OnChanges, OnInit {
   }
 
   get modbusReadValuesFormArray() {
-    return this.form.controls.modbusReadValues as FormArray;
+    return this.form.controls.modbusReadValues as UntypedFormArray;
   }
 
-  createModbusReadValueFormGroup(): FormGroup {
-    return new FormGroup({});
+  createModbusReadValueFormGroup(): UntypedFormGroup {
+    return new UntypedFormGroup({});
   }
 
   getModbusReadValueFormGroup(index: number) {

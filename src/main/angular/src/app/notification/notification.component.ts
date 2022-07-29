@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {FormHandler} from '../shared/form-handler';
 import {Logger} from '../log/logger';
-import {FormGroup, FormGroupDirective} from '@angular/forms';
+import {UntypedFormGroup, FormGroupDirective} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ListItem} from '../shared/list-item';
 import {Notifications} from './notifications';
@@ -18,7 +18,7 @@ export class NotificationComponent implements OnChanges {
   types: string[];
   @Input()
   configured: boolean;
-  form: FormGroup;
+  form: UntypedFormGroup;
   typeListItems: ListItem[] = [];
   formHandler: FormHandler;
 

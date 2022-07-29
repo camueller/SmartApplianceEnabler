@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {SocRequest} from './soc-request';
 import {ErrorMessages} from '../../../shared/error-messages';
@@ -25,7 +25,7 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
   electricVehicles: ElectricVehicle[];
   @Input()
   enabled: boolean;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;

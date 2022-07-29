@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import {Settings} from '../../../settings/settings';
 import {SettingsDefaults} from '../../../settings/settings-defaults';
-import {ControlContainer, FormArray, FormGroup, FormGroupDirective, ValidatorFn} from '@angular/forms';
+import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective, ValidatorFn} from '@angular/forms';
 import {Logger} from '../../../log/logger';
 import {EvHttpControl} from './ev-http-control';
 import {ContentProtocol} from '../../../shared/content-protocol';
@@ -52,7 +52,7 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
   httpReadComps: QueryList<HttpReadComponent>;
   @ViewChildren('httpWriteComponents')
   httpWriteComps: QueryList<HttpWriteComponent>;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   @Input()
   translationKeys: string[];
@@ -143,12 +143,12 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
       this.evHttpControl.httpReads = [];
     }
     this.evHttpControl.httpReads.push(httpRead);
-    this.httpReadsFormArray.push(new FormGroup({}));
+    this.httpReadsFormArray.push(new UntypedFormGroup({}));
     this.form.markAsDirty();
   }
 
   get httpReadsFormArray() {
-    return this.form.controls.httpReads as FormArray;
+    return this.form.controls.httpReads as UntypedFormArray;
   }
 
   onHttpReadRemove(index: number) {
@@ -167,12 +167,12 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
       this.evHttpControl.httpWrites = [];
     }
     this.evHttpControl.httpWrites.push(httpWrite);
-    this.httpWritesFormArray.push(new FormGroup({}));
+    this.httpWritesFormArray.push(new UntypedFormGroup({}));
     this.form.markAsDirty();
   }
 
   get httpWritesFormArray() {
-    return this.form.controls.httpWrites as FormArray;
+    return this.form.controls.httpWrites as UntypedFormArray;
   }
 
   onHttpWriteRemove(index: number) {

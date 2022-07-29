@@ -1,5 +1,5 @@
 import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {FormControl, FormControlName, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {UntypedFormControl, FormControlName, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
@@ -57,7 +57,7 @@ export class TimepickerComponent implements OnChanges, OnInit, AfterViewChecked 
   noErrorOnField: boolean;
   @Input()
   width: string;
-  form: FormGroup;
+  form: UntypedFormGroup;
   initializeOnceAfterViewChecked = false;
   errors: { [key: string]: string } = {};
   @Input()
@@ -80,7 +80,7 @@ export class TimepickerComponent implements OnChanges, OnInit, AfterViewChecked 
   }
 
   ngOnInit(): void {
-    this.form.addControl(this.formControlNameTP, new FormControl(undefined, [Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]));
+    this.form.addControl(this.formControlNameTP, new UntypedFormControl(undefined, [Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]));
     this.updateForm();
     if (this.errorMessages) {
       this.form.statusChanges.subscribe(() => {

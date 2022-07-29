@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Logger} from '../../log/logger';
-import {AbstractControl, FormGroup, FormGroupDirective} from '@angular/forms';
+import {AbstractControl, UntypedFormGroup, FormGroupDirective} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {FormHandler} from '../../shared/form-handler';
 import {SettingsService} from '../../settings/settings-service';
@@ -25,7 +25,7 @@ export class FilenameInputComponent implements OnInit {
   value: string;
   @Input()
   requiredFileModes: FileMode[];
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
 

@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {ControlContainer, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
 import {ErrorMessages} from '../../../shared/error-messages';
@@ -29,7 +29,7 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
   startTimeComp: TimepickerComponent;
   @ViewChild('endTimeComponent', {static: true})
   endTimeComp: TimepickerComponent;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   daysOfWeek: DayOfWeek[];
   errors: { [key: string]: string } = {};

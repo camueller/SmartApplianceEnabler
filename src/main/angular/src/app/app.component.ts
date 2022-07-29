@@ -19,8 +19,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {MatSidenav} from '@angular/material/sidenav';
-import {Subscription} from 'rxjs';
+import {filter, Subscription} from 'rxjs';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -48,9 +49,13 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.watcher = this.mediaObserver.media$.subscribe((change: MediaChange) => {
-      this.activeMediaQueryAlias = change.mqAlias;
-    });
+    this.watcher = this.mediaObserver.asObservable()
+      .pipe(
+        filter((changes: MediaChange[]) => changes.length > 0),
+        map((changes: MediaChange[]) => changes[0])
+      ).subscribe((change: MediaChange) => {
+        this.activeMediaQueryAlias = change.mqAlias;
+      });
   }
 
   get sideNavMode() {

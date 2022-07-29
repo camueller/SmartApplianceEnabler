@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {HttpElectricityMeter} from './http-electricity-meter';
 import {ContentProtocol} from '../../shared/content-protocol';
 import {HttpReadComponent} from '../../http/read/http-read.component';
@@ -39,7 +39,7 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   isEvCharger: boolean;
   readValueName: MeterValueName;
   contentProtocols = [undefined, ContentProtocol.JSON.toUpperCase()];
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -110,7 +110,7 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   }
 
   get httpReadsFormArray() {
-    return this.form.controls.httpReads as FormArray;
+    return this.form.controls.httpReads as UntypedFormArray;
   }
 
   getHttpReadFormGroup(index: number) {

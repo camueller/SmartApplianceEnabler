@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {FormHandler} from '../../shared/form-handler';
 import {Logger} from '../../log/logger';
 import {HttpConfiguration} from './http-configuration';
@@ -14,7 +14,7 @@ export class HttpConfigurationComponent implements OnChanges, OnInit {
   @Input()
   httpConfiguration: HttpConfiguration;
   @Input()
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
 
   constructor(private logger: Logger,

@@ -20,7 +20,7 @@ import {ChangeDetectionStrategy, Component, OnInit, ViewChild} from '@angular/co
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {MeterFactory} from './meter-factory';
 import {TranslateService} from '@ngx-translate/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {MeterDefaults} from './meter-defaults';
 import {MeterService} from './meter-service';
 import {Meter} from './meter';
@@ -58,7 +58,7 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   meterHttpComp: MeterHttpComponent;
   @ViewChild(NotificationComponent)
   notificationComp: NotificationComponent;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   applianceId: string;
   meterDefaults: MeterDefaults;
@@ -112,7 +112,7 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   }
 
   buildForm() {
-    this.form = new FormGroup({});
+    this.form = new UntypedFormGroup({});
     this.formHandler.addFormControl(this.form, 'meterType', this.meter && simpleMeterType(this.meter.type));
   }
 

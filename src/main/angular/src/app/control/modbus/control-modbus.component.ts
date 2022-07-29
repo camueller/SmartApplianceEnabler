@@ -10,7 +10,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import {ControlDefaults} from '../control-defaults';
-import {ControlContainer, FormArray, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
@@ -48,7 +48,7 @@ export class ControlModbusComponent implements OnChanges, OnInit {
   modbusSettings: ModbusSetting[];
   @Input()
   settingsDefaults: SettingsDefaults;
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -114,7 +114,7 @@ export class ControlModbusComponent implements OnChanges, OnInit {
 
   addModbusWrite() {
     this.modbusSwitch.modbusWrites.push(ModbusWrite.createWithSingleChild());
-    this.modbusWritesFormArray.push(new FormGroup({}));
+    this.modbusWritesFormArray.push(new UntypedFormGroup({}));
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }
@@ -126,7 +126,7 @@ export class ControlModbusComponent implements OnChanges, OnInit {
   }
 
   get modbusWritesFormArray() {
-    return this.form.controls.modbusWrites as FormArray;
+    return this.form.controls.modbusWrites as UntypedFormArray;
   }
 
   getModbusWriteFormGroup(index: number) {

@@ -21,7 +21,7 @@ import {ApplianceService} from './appliance.service';
 import {ActivatedRoute, CanDeactivate, Router} from '@angular/router';
 import {AppliancesReloadService} from './appliances-reload-service';
 import {Location} from '@angular/common';
-import {AbstractControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
@@ -44,7 +44,7 @@ import {ListItem} from '../shared/list-item';
 export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<ApplianceComponent> {
   appliance: Appliance;
   applianceIdsUsedElsewhere: string[];
-  form: FormGroup;
+  form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -142,7 +142,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
   }
 
   buildForm() {
-    this.form = new FormGroup({});
+    this.form = new UntypedFormGroup({});
     this.formHandler.addFormControl(this.form, 'id', this.appliance && this.appliance.id,
       [Validators.required, Validators.pattern(InputValidatorPatterns.APPLIANCE_ID),
         this.isApplianceIdValid(this.applianceIdsUsedElsewhere)]);
