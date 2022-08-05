@@ -47,7 +47,7 @@ Aktuell unterstützt der *Smart Appliance Enabler* folgende Möglichkeiten, den 
 | ------------- |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | GPIO | [S0-Zähler](doc/S0Meter_DE.md)                                                                                                                                                                                                                                                                                                                                                |
 | Modbus | [Modbus-basierte Zähler](doc/ModbusMeter_DE.md)                                                                                                                                                                                                                                                                                                                               |
-| HTTP | [HTTP-basierte Zähler](doc/HttpMeter_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug/3EM/4PM](doc/Shelly_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>alle Produkte mit [Tasmota](doc/Tasmota_DE.md)-Firmware |
+| HTTP | [HTTP-basierte Zähler](doc/HttpMeter_DE.md) allgemein<ul></ul>kompatible Produkte<ul><li>[Shelly Plug/3EM/4PM/Plus 1PM](doc/Shelly_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>alle Produkte mit [Tasmota](doc/Tasmota_DE.md)-Firmware |
 
 ## Schalter
 
