@@ -56,3 +56,26 @@ Für die Verwendung als Schalter sind folgende Einstellungen notwendig (# ist du
 | ----------------------------------------------- |------------------------------------|
 | Format                                          | JSON                               |
 | URL                                             | http://192.168.1.1/relay/#?turn=on |
+
+# Shelly Plus 1PM
+
+Mit dem [Shelly Plus 1PM](https://shelly.cloud/shelly-plus-1pm/), der mit dem WLAN verbunden ist, lässt sich ein Gerät schalten auch dessen aktueller Stromverbrauch messen.
+
+## Verwendung als Stromzähler
+
+Für die Verwendung als Stromzähler sind folgende Einstellungen notwendig (IP-Adresse bzw. Hostname ist anzupassen):
+
+| Feld                                           | Wert                                    |
+|------------------------------------------------|-----------------------------------------|
+| Format                                         | JSON                                    |
+| URL                                            | http://192.168.1.1/rpc/Shelly.GetStatus |
+| Pfad für Extraktion (bei Parameter `Leistung`) | $.status:0.apower                       |
+
+## Verwendung als Schalter
+
+Für die Verwendung als Schalter sind folgende Einstellungen notwendig (IP-Adresse bzw. Hostname ist anzupassen):
+
+| Feld                                            | Wert                               |
+| ----------------------------------------------- |------------------------------------|
+| Format                                          | JSON                               |
+| URL                                             | http://192.168.1.1/relay/0?turn=on |
