@@ -102,7 +102,7 @@ public class HttpTransactionExecutor {
                     request = new HttpDelete(url);
                 }
                 if(request != null) {
-                    if(request instanceof HttpEntityEnclosingRequestBase) {
+                    if(request instanceof HttpEntityEnclosingRequestBase && data != null) {
                         ((HttpEntityEnclosingRequestBase) request)
                                 .setEntity(new StringEntity(data, configuration.getContentType()));
                     }

@@ -171,10 +171,8 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
         ParentWithChild<HttpWrite, HttpWriteValue> write
                 = HttpWrite.getFirstHttpWrite(getValueName(switchOn).name(), this.httpWrites);
         if(write != null) {
-            HttpMethod httpMethod = write.child().getMethod();
-            String data = httpMethod == HttpMethod.POST ? write.child().getValue() : null;
             CloseableHttpResponse response = this.httpTransactionExecutor.executeLeaveOpen(write.child().getMethod(),
-                    write.parent().getUrl(), data);
+                    write.parent().getUrl(), write.child().getValue());
             if(response != null) {
                 int statusCode = response.getStatusLine().getStatusCode();
                 this.httpTransactionExecutor.closeResponse(response);

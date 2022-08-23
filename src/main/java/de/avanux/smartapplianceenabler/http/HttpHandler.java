@@ -84,7 +84,7 @@ public class HttpHandler implements ApplianceIdConsumer {
         if(read != null) {
             String url = read.parent().getUrl();
             HttpMethod method = read.child().getMethod() != null ? read.child().getMethod() : HttpMethod.GET;
-            String data = method == HttpMethod.POST ? read.child().getData() : null;
+            String data = read.child().getData();
             String response = this.httpTransactionExecutor.execute(method, url, data);
             String path = read.child().getPath();
             logger.debug("{}: url={} method={} data={} path={}", applianceId, url, method, data, path);
