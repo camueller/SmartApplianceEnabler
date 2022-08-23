@@ -287,9 +287,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         if(mqttClient != null) {
             mqttClient.disconnect();
         }
-        if(this.chargePowerRepetitionTimerTask != null) {
-            this.chargePowerRepetitionTimerTask.cancel();
-        }
+        cancelChargePowerRepetitionTimerTask();
     }
 
     /**
@@ -645,6 +643,22 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         return chargeSeconds;
     }
 
+    private GuardedTimerTask createChargePowerRepetitionTimerTask(int chargeCurrent) {
+        return new GuardedTimerTask(this.applianceId,"ChargePowerRepetition",
+                this.chargePowerRepetition * 1000) {
+            @Override
+            public void runTask() {
+                control.setChargeCurrent(chargeCurrent);
+            }
+        };
+    }
+
+    private void cancelChargePowerRepetitionTimerTask() {
+        if(this.chargePowerRepetitionTimerTask != null) {
+            this.chargePowerRepetitionTimerTask.cancel();
+        }
+    }
+
     public void setPowerToMinimum() {
         logger.debug("{}: Set minimum charge power", applianceId);
         if(this.minPowerConsumption != null && this.minPowerConsumption > 0) {
@@ -671,14 +685,11 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
                 applianceId, adjustedPower, current, phases);
         this.chargePower = adjustedPower;
         if(this.chargePowerRepetition != null && this.timer != null) {
-            this.chargePowerRepetitionTimerTask = new GuardedTimerTask(this.applianceId,"ChargePowerRepetition",
-                    this.chargePowerRepetition * 1000) {
-                @Override
-                public void runTask() {
-                    control.setChargeCurrent(current);
-                }
-            };
-
+            logger.debug("{}: Scheduling charge power repetition ...", this.applianceId);
+            if(this.chargePowerRepetitionTimerTask != null) {
+                cancelChargePowerRepetitionTimerTask();
+            }
+            this.chargePowerRepetitionTimerTask = createChargePowerRepetitionTimerTask(current);
             this.timer.schedule(this.chargePowerRepetitionTimerTask, 0, this.chargePowerRepetitionTimerTask.getPeriod());
         } else {
             control.setChargeCurrent(current);
