@@ -121,10 +121,10 @@ Der *Smart Appliance Enabler* würde so nicht existieren ohne folgende Tools und
 * [Docker Hub](https://hub.docker.com/) für den Betrieb einer Community-Platform zum Austausch von für Docker-Images
 * [GitHub](https://github.com/) für den Betrieb einer Community-Platform für Open-Source-Projekte
 * [IntelliJ](https://www.jetbrains.com/de-de/idea/) für die beste IDE (vor allem auch unter Linux) und kostenlose Lizenz für Open-Source-Projekte
+* [Jenkins](https://www.jenkins.io/) für den Server zur Automatisierung von Builds/Tests
 * [Pi4J](http://pi4j.com) für den Zugriff auf die GPIO-Ports des Raspberry
 * [Spring Boot](https://spring.io/projects/spring-boot) für Spring-basierte Anwendungen mit eingebettetem Web-Container
 * [Testcafe](https://devexpress.github.io/testcafe/) für einfaches Testen von Web-Anwendungen
-* [Travis CI](https://www.travis-ci.com/) für den Betrieb einer Continuous Integration-Platform
 * [WebStorm](https://www.jetbrains.com/de-de/webstorm/) für die beste Web-IDE (vor allem auch unter Linux) und kostenlose Lizenz für Open-Source-Projekte
 <br><br>
 
