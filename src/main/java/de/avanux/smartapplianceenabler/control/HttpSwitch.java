@@ -30,6 +30,7 @@ import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
+import de.avanux.smartapplianceenabler.util.RequestCache;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.slf4j.Logger;
@@ -65,6 +66,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     private transient String applianceId;
     private transient HttpHandler httpHandler = new HttpHandler();
     private transient HttpTransactionExecutor httpTransactionExecutor = new HttpTransactionExecutor();
+    private transient RequestCache<ParentWithChild<HttpRead, HttpReadValue>, Boolean> requestCache;
     private transient ContentProtocolHandler contentContentProtocolHandler;
     protected transient boolean on;
     private transient List<ControlStateChangedListener> controlStateChangedListeners = new ArrayList<>();
@@ -105,6 +107,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     @Override
     public void init() {
+        this.requestCache = new RequestCache<ParentWithChild<HttpRead, HttpReadValue>, Boolean>(applianceId, 20);
         if(this.httpConfiguration != null) {
             this.httpTransactionExecutor.setConfiguration(this.httpConfiguration);
         }
@@ -147,7 +150,15 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
             ParentWithChild<HttpRead, HttpReadValue> onRead = HttpRead.getFirstHttpRead(ControlValueName.On.name(),
                     Collections.singletonList(this.httpRead));
             if(onRead != null) {
-                return this.httpHandler.getBooleanValue(onRead, getContentContentProtocolHandler());
+                Boolean response = this.requestCache.get(onRead);
+                if(response == null) {
+                    response = this.httpHandler.getBooleanValue(onRead, getContentContentProtocolHandler());
+                    this.requestCache.put(onRead, response);
+                }
+                else {
+                    logger.debug("{}: Cached response: {}", applianceId, response);
+                }
+                return response;
             }
         }
         // fall back to internal state if no HttpRead is configured
