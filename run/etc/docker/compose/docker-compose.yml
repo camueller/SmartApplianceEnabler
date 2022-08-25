@@ -10,7 +10,7 @@ services:
       - /mosquitto-no-auth.conf
     networks:
       macvlan0:
-        # diese IP-Adresse muss in den Einstellung des Smart Appliance Enabler als MQTT Host eingetragen werden
+        # diese IP-Adresse oder der Container-Name muss in den Einstellung des Smart Appliance Enabler als MQTT Host eingetragen werden
         ipv4_address: 192.168.0.201
   pigpiod:
     # muss entfallen, falls der Smart Appliance Enabler nicht auf einem Raspberry Pi läuft
@@ -48,8 +48,8 @@ services:
       # in der nachfolgenden Zeile können Konfigurationsparameter an den Smart Appliance Enabler übergeben werden
       # Für mögliche Parameter siehe mit JAVA_OPTS beginnende Zeilen in https://github.com/camueller/SmartApplianceEnabler/blob/master/run/etc/default/smartapplianceenabler
       # Beispiel: JAVA_OPTS: '-Dserver.port=9000'
-      # Bei Verwendung von pigpiod muss -DPIGPIOD_HOST auf die IP-Adresse gesetzt sein, welche dem pigpiod-Container zugewiesen wurde
-      JAVA_OPTS: '-DPIGPIOD_HOST=192.168.0.202'
+      # Bei Verwendung von pigpiod muss -DPIGPIOD_HOST auf die IP-Adresse oder den Container-Namen gesetzt sein, welche dem pigpiod-Container zugewiesen wurde
+      JAVA_OPTS: '-DPIGPIOD_HOST=pigpiod'
     privileged: true
 volumes:
   sae:
