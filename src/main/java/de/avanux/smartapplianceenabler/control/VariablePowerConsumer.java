@@ -26,5 +26,7 @@ public interface VariablePowerConsumer extends Control {
 
     void setMinPower(Integer minPower);
 
+    Integer getMinPower();
+
     void setMaxPower(int maxPower);
 }

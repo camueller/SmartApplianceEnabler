@@ -71,6 +71,10 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
         this.minPowerConsumption = minPower;
     }
 
+    public Integer getMinPower() {
+        return this.minPowerConsumption;
+    }
+
     public void setMaxPower(int maxPower) {
         this.maxPowerConsumption = maxPower;
     }
@@ -134,9 +138,6 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
                         if(controlMessage.on) {
                             if(controlMessage.power != null) {
                                 setPower(now, controlMessage.power);
-                            }
-                            else if(!isOn()) {
-                                setPower(now, minPowerConsumption);
                             }
                         }
                         else {

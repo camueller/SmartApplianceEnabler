@@ -55,6 +55,7 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     private transient String applianceId;
+    private transient Integer minPowerConsumption;
     private transient Map<String, Boolean> controlStates = new HashMap<>();
     private transient NotificationHandler notificationHandler;
     private transient MqttClient mqttClient;
@@ -244,6 +245,11 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
 
     @Override
     public void setMinPower(Integer minPower) {
+        this.minPowerConsumption = minPower;
+    }
+
+    public Integer getMinPower() {
+        return this.minPowerConsumption;
     }
 
     @Override

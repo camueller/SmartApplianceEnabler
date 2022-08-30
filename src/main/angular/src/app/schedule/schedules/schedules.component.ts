@@ -22,6 +22,8 @@ import {Observable} from 'rxjs';
 import {DialogService} from '../../shared/dialog.service';
 import {MeterReportingSwitch} from '../../control/meterreporting/meter-reporting-switch';
 import {AlwaysOnSwitch} from '../../control/alwayson/always-on-switch';
+import {PwmSwitch} from '../../control/pwm/pwm-switch';
+import {LevelSwitch} from '../../control/level/level-switch';
 
 @Component({
   selector: 'app-schedules',
@@ -40,11 +42,14 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
     {key: DayTimeframe.TYPE},
     {key: ConsecutiveDaysTimeframe.TYPE},
   ];
-  evRequestTypes: { key: string, value?: string }[] = [
+  requestTypesEv: { key: string, value?: string }[] = [
     {key: EnergyRequest.TYPE},
     {key: SocRequest.TYPE},
   ];
-  nonEvRequestTypes: { key: string, value?: string }[] = [
+  requestTypesVariablePowerConsumer: { key: string, value?: string }[] = [
+    {key: EnergyRequest.TYPE},
+  ];
+  requestTypesDefault: { key: string, value?: string }[] = [
     {key: RuntimeRequest.TYPE}
   ];
   discardChangesMessage: string;
@@ -87,14 +92,18 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
         });
       });
 
-    const requestTypeKeys = [...this.evRequestTypes, ...this.nonEvRequestTypes].map((requestType) => requestType.key);
+    const requestTypeKeys = [...this.requestTypesEv, ...this.requestTypesVariablePowerConsumer, ...this.requestTypesDefault].map((requestType) => requestType.key);
     this.translate.get(requestTypeKeys).subscribe(
       translatedKeys => {
-        this.evRequestTypes.forEach(requestType => {
+        this.requestTypesEv.forEach(requestType => {
           requestType.value = translatedKeys[requestType.key];
           requestType.key = simpleTimeframeType(requestType.key);
         });
-        this.nonEvRequestTypes.forEach(requestType => {
+        this.requestTypesVariablePowerConsumer.forEach(requestType => {
+          requestType.value = translatedKeys[requestType.key];
+          requestType.key = simpleTimeframeType(requestType.key);
+        });
+        this.requestTypesDefault.forEach(requestType => {
           requestType.value = translatedKeys[requestType.key];
           requestType.key = simpleTimeframeType(requestType.key);
         });
@@ -104,11 +113,14 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
   get validRequestTypes() {
     if (this.isEvCharger) {
       if (this.hasElectricVehicles) {
-        return this.evRequestTypes;
+        return this.requestTypesEv;
       }
       return [];
     }
-    return this.nonEvRequestTypes;
+    if(this.isVariablePowerConsumer) {
+      return this.requestTypesVariablePowerConsumer;
+    }
+    return this.requestTypesDefault;
   }
 
   get isControlable(): boolean {
@@ -125,6 +137,10 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
 
   get electricVehicles(): ElectricVehicle[] {
     return this.control.evCharger ? this.control.evCharger.vehicles : [];
+  }
+
+  get isVariablePowerConsumer(): boolean {
+    return this.control ? (this.control.type === PwmSwitch.TYPE || this.control.type === LevelSwitch.TYPE) : false;
   }
 
   addSchedule() {

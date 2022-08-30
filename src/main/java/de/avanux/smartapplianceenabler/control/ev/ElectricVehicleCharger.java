@@ -191,6 +191,10 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         this.minPowerConsumption = minPower;
     }
 
+    public Integer getMinPower() {
+        return this.minPowerConsumption;
+    }
+
     public void setMaxPower(int maxPower) {
     }
 
@@ -246,9 +250,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
                 if(controlMessage.on) {
                     if(controlMessage.power != null) {
                         setPower(now, controlMessage.power);
-                    }
-                    else if(!isOn()) {
-                        setPowerToMinimum();
                     }
                 }
                 this.on(controlMessage.getTime(), controlMessage.on);

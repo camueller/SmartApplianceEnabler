@@ -341,7 +341,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         timeframeInterval.getRequest().setApplianceId(applianceId);
         Request request = timeframeInterval.getRequest();
         request.init();
-        if(request instanceof EnergyRequest) {
+        if(request instanceof EnergyRequest && control instanceof ElectricVehicleCharger) {
             var evHandler = ((ElectricVehicleCharger) control).getElectricVehicleHandler();
             if(evHandler.getConnectedVehicle() != null) {
                 ((EnergyRequest) request).setSocScript(evHandler.getConnectedVehicle().getSocScript() != null);

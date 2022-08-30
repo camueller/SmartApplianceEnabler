@@ -431,6 +431,10 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     public void setApplianceState(LocalDateTime now, boolean switchOn, Integer power, String logMessage) {
         if(control != null) {
             logger.debug("{}: {}", id, logMessage);
+            if(control instanceof VariablePowerConsumer && power == null) {
+                var minPower = ((VariablePowerConsumer) control).getMinPower();
+                power = minPower != null ? minPower : 0;
+            }
             publishControlMessage(now, switchOn, power);
         }
         else {
