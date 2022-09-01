@@ -434,6 +434,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             if(control instanceof VariablePowerConsumer && power == null) {
                 var minPower = ((VariablePowerConsumer) control).getMinPower();
                 power = minPower != null ? minPower : 0;
+                logger.debug("{}: power value not provided. Will use configured minimum power: {}W", id, power);
             }
             publishControlMessage(now, switchOn, power);
         }
