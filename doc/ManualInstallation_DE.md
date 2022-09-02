@@ -1,6 +1,6 @@
 # Manuelle Installation
 
-Die hier beschriebene manuelle Installation benötigt einen SSH-Zugriff auf den Raspberry Pi und die Interaktion mit der Shell. Falls möglich, sollte stattdessen die [Standard-Installation](Installation_DE.md) gewählt werden, die automatisch abläuft und  keine Linux-Kenntnisse erfordert.
+Die hier beschriebene manuelle Installation benötigt einen SSH-Zugriff auf den Raspberry Pi und die Interaktion mit der Shell. Falls möglich, sollte stattdessen die [Standard-Installation](Installation_DE.md) gewählt werden, die automatisch abläuft und keine Linux-Kenntnisse erfordert.
 
 Die nachfolgenden Kapitel sollten in der angegebenen Reihenfolge umgesetzt werden.
 

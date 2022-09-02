@@ -1,6 +1,10 @@
 # Standard-Installation
 
-Die hier beschriebene Standard-Installation läuft automatisch ab und erfordert keine Linux-Kenntnisse. Falls notwendig, kann alternativ auch die [manuelle Installation](ManualInstallation_DE.md) gewählt werden, bei der sämtliche Befehle der Dokumentation manuell auszuführen sind.
+Die hier beschriebene Standard-Installation läuft automatisch ab und erfordert keine Linux-Kenntnisse.
+
+Ist der Zugriff auf den Raspberry Pi per SSH möglich, kann alternativ die Installation auch erfolgen durch
+- [Installation via Script](InstallationViaScript_DE.md), bei der lediglich 2 Shell-Befehle eingegeben werden müssen
+- [manuelle Installation](ManualInstallation_DE.md) bei der sämtliche Befehle der Dokumentation in der Shell auszuführen sind
 
 ## Schreiben des Raspberry Pi OS Images auf die SD-Karte  
 Jeder Raspberry Pi hat einen Slot für eine SD-Karte die (analog zur Festplatte bei normalen PCs) als Speichermedium dient. Die SD-Karte sollte eine Grösse von mindestens **4 GB** haben.
