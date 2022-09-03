@@ -19,7 +19,7 @@
         <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.runningTime)}}</span>
       </div>
     </div>
-    <div *ngIf="status.remainingMinRunningTime == null">
+    <div *ngIf="status.remainingMinRunningTime == null && status.remainingMaxEnergy == null">
       <div class="StatusComponent__appliance-status">
         <span class="StatusComponent__appliance-status-label">{{getRemainingRunningTimeLabel(status)}}</span>
         <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMaxRunningTime)}}</span>
@@ -30,9 +30,23 @@
         <span class="StatusComponent__appliance-status-label">{{getRemainingMinRunningTimeLabel(status)}}</span>
         <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMinRunningTime)}}</span>
       </div>
+    </div>
+    <div *ngIf="status.remainingMaxRunningTime != null">
       <div class="StatusComponent__appliance-status">
         <span class="StatusComponent__appliance-status-label">{{getRemainingMaxRunningTimeLabel(status)}}</span>
         <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMaxRunningTime)}}</span>
+      </div>
+    </div>
+    <div *ngIf="status.remainingMinEnergy != null">
+      <div class="StatusComponent__appliance-status">
+        <span class="StatusComponent__appliance-status-label">{{'StatusComponent.remainingMinEnergy' | translate}}</span>
+        <span class="StatusComponent__appliance-status-value">{{toKWh(status.remainingMinEnergy)}} kWh</span>
+      </div>
+    </div>
+    <div *ngIf="status.remainingMaxEnergy != null">
+      <div class="StatusComponent__appliance-status">
+        <span class="StatusComponent__appliance-status-label">{{'StatusComponent.remainingMaxEnergy' | translate}}</span>
+        <span class="StatusComponent__appliance-status-value">{{toKWh(status.remainingMaxEnergy)}} kWh</span>
       </div>
     </div>
   </div>

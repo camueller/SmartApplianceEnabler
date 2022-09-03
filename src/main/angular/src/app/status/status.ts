@@ -6,6 +6,8 @@ export class Status {
   runningTime: number;
   remainingMinRunningTime: number;
   remainingMaxRunningTime: number;
+  remainingMinEnergy: number;
+  remainingMaxEnergy: number;
   plannedEnergyAmount: number;
   chargedEnergyAmount: number;
   currentChargePower: number;

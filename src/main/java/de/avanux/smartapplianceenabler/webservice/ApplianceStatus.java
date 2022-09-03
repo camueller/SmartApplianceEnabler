@@ -27,6 +27,8 @@ public class ApplianceStatus {
     private Integer runningTime;
     private Integer remainingMinRunningTime;
     private Integer remainingMaxRunningTime;
+    private Integer remainingMinEnergy;
+    private Integer remainingMaxEnergy;
     private Integer plannedEnergyAmount;
     private Integer chargedEnergyAmount;
     private Integer currentChargePower;
@@ -101,6 +103,22 @@ public class ApplianceStatus {
 
     public void setRemainingMaxRunningTime(Integer remainingMaxRunningTime) {
         this.remainingMaxRunningTime = remainingMaxRunningTime;
+    }
+
+    public Integer getRemainingMinEnergy() {
+        return remainingMinEnergy;
+    }
+
+    public void setRemainingMinEnergy(Integer remainingMinEnergy) {
+        this.remainingMinEnergy = remainingMinEnergy;
+    }
+
+    public Integer getRemainingMaxEnergy() {
+        return remainingMaxEnergy;
+    }
+
+    public void setRemainingMaxEnergy(Integer remainingMaxEnergy) {
+        this.remainingMaxEnergy = remainingMaxEnergy;
     }
 
     public Integer getPlannedEnergyAmount() {

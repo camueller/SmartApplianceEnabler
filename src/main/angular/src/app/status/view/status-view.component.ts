@@ -69,4 +69,12 @@ export class StatusViewComponent implements OnInit {
     }
     return TimeUtil.toHourMinuteWithUnits(seconds);
   }
+
+  toKWh(wh: number): number {
+    if (wh) {
+      // limit to 1 decimal digit
+      return Math.round(wh / 1000 * 10) / 10;
+    }
+    return 0;
+  }
 }

@@ -27,6 +27,7 @@ import de.avanux.smartapplianceenabler.configuration.ConfigurationParam;
 import de.avanux.smartapplianceenabler.configuration.Connectivity;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ControlDefaults;
+import de.avanux.smartapplianceenabler.control.VariablePowerConsumer;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
 import de.avanux.smartapplianceenabler.meter.MasterElectricityMeter;
@@ -931,9 +932,7 @@ public class SaeController {
                         }
                         applianceStatus.setOptionalEnergy(nextTimeframeInterval.getRequest().isUsingOptionalEnergy(now));
                         if (nextTimeframeInterval.getState() == TimeframeIntervalState.QUEUED) {
-                            applianceStatus.setRunningTime(0);
-                            applianceStatus.setRemainingMinRunningTime(nextTimeframeInterval.getRequest().getMin(now));
-                            applianceStatus.setRemainingMaxRunningTime(nextTimeframeInterval.getRequest().getMax(now));
+                            addRequestValuesToApplianceStatus(now, applianceStatus, control, nextTimeframeInterval.getRequest(), 0);
                         }
                     }
                     if (control instanceof ElectricVehicleCharger) {
@@ -976,9 +975,7 @@ public class SaeController {
                     }
                     if (nextTimeframeInterval != null && nextTimeframeInterval.getState() == TimeframeIntervalState.ACTIVE) {
                         applianceStatus.setPlanningRequested(true);
-                        applianceStatus.setRunningTime(nextTimeframeInterval.getRequest().getRuntime(now));
-                        applianceStatus.setRemainingMinRunningTime(nextTimeframeInterval.getRequest().getMin(now));
-                        applianceStatus.setRemainingMaxRunningTime(nextTimeframeInterval.getRequest().getMax(now));
+                        addRequestValuesToApplianceStatus(now, applianceStatus, control, nextTimeframeInterval.getRequest(), nextTimeframeInterval.getRequest().getRuntime(now));
                         if (! nextTimeframeInterval.getRequest().isEnabled() && nextTimeframeInterval.getRequest().isEnabledBefore()) {
                             applianceStatus.setInterruptedSince(
                                     Long.valueOf(
@@ -993,6 +990,18 @@ public class SaeController {
             applianceStatuses.add(applianceStatus);
         }
         return applianceStatuses;
+    }
+
+    private void addRequestValuesToApplianceStatus(LocalDateTime now, ApplianceStatus applianceStatus, Control control, Request request, Integer runningTime) {
+        if(control instanceof VariablePowerConsumer) {
+            applianceStatus.setRemainingMinEnergy(request.getMin(now));
+            applianceStatus.setRemainingMaxEnergy(request.getMax(now));
+        }
+        else {
+            applianceStatus.setRunningTime(runningTime);
+            applianceStatus.setRemainingMinRunningTime(request.getMin(now));
+            applianceStatus.setRemainingMaxRunningTime(request.getMax(now));
+        }
     }
 
     @RequestMapping(value = FILE_URL, method = RequestMethod.GET)

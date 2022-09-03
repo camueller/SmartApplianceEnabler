@@ -434,6 +434,8 @@
   "StatusComponent.remainingRunningTime": "Runtime remaining:",
   "StatusComponent.remainingMinRunningTime": "Runtime remaining min:",
   "StatusComponent.remainingMaxRunningTime": "Runtime remaining max:",
+  "StatusComponent.remainingMinEnergy": "Energy remaining min:",
+  "StatusComponent.remainingMaxEnergy": "Energy remaining max:",
   "StatusComponent.energyPlanned": "Energy planned: ",
   "StatusComponent.energyCharged": "Energy charged: ",
   "StatusComponent.energyChargePower": "Current charge power: ",
