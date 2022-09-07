@@ -43,8 +43,8 @@ export class ApplianceService extends SaeService {
       .pipe(map((appliance: Appliance) => appliance));
   }
 
-  updateAppliance(appliance: Appliance, create: boolean): Observable<any> {
-    const url = `${SaeService.API}/appliance?id=${appliance.id}&create=${create}`;
+  updateAppliance(applianceId: string, appliance: Appliance, create: boolean): Observable<any> {
+    const url = `${SaeService.API}/appliance?id=${applianceId}&create=${create}`;
     this.logger.debug('Updating appliance using ' + url);
     return this.http.put(url, appliance,
       {headers: this.headersContentTypeJson, responseType: 'text'});

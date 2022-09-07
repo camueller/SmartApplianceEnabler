@@ -42,6 +42,7 @@ import {ListItem} from '../shared/list-item';
   styleUrls: ['./appliance.component.scss']
 })
 export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<ApplianceComponent> {
+  applianceId: string;
   appliance: Appliance;
   applianceIdsUsedElsewhere: string[];
   form: UntypedFormGroup;
@@ -105,6 +106,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
     this.route.paramMap.subscribe(() => this.isNew = this.route.snapshot.paramMap.get('id') == null);
     this.route.data.subscribe((data: { appliance: Appliance, applianceIds: string[] }) => {
       this.appliance = data.appliance;
+      this.applianceId = this.appliance?.id;
       this.applianceIdsUsedElsewhere = data.applianceIds && data.applianceIds.filter(id => id !== data.appliance.id);
       this.buildForm();
       this.form.statusChanges.subscribe(() => {
@@ -206,7 +208,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
 
   submitForm() {
     this.updateModelFromForm();
-    this.applianceService.updateAppliance(this.appliance, this.isNew).subscribe(() => {
+    this.applianceService.updateAppliance(this.applianceId ?? this.appliance.id, this.appliance, this.isNew).subscribe(() => {
       this.appliancesReloadService.reload();
       this.router.navigateByUrl(`appliance/${this.appliance.id}`);
     });
