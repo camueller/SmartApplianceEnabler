@@ -489,6 +489,9 @@ public class ApplianceManager implements Runnable {
             device2EM.getDeviceInfo().add(device2EMReplaceIndex, deviceInfo);
         }
 
+        // handle change of appliance ID
+        appliance.setId(deviceInfo.getIdentification().getDeviceId());
+
         if(applianceReplaceIndex != null || device2EMReplaceIndex != null) {
             save(device2EMReplaceIndex != null, applianceReplaceIndex != null);
             return true;
