@@ -137,25 +137,3 @@ sae@raspi:~ $ grep "Running version" /tmp/rolling-2020-12-31.log
 ```
 
 *Webmin*: In [View Logfile](#webmin-logs) gibt man hinter `Only show lines with text` ein `Running version` und drückt Refresh.
-
-## Anzeige der SEMP-URL
-
-Direkt nach dem Start loggt der *Smart Appliance Enabler* die [SEMP-URL](SEMP_DE.md), welche er an den *Sunny Home Manager* kommuniziert. Mit folgendem Befehl kann man diesen Eintrag anzeigen:
-```console
-sae@raspi:~ $ grep "SEMP UPnP" /tmp/rolling-2020-12-31.log
-2020-12-31 14:36:22,744 INFO [main] d.a.s.s.d.SempDiscovery [SempDiscovery.java:57] SEMP UPnP will redirect to http://192.168.1.1:8080
-```
-
-*Webmin*: In [View Logfile](#webmin-logs) gibt man hinter `Only show lines with text` ein `SEMP UPnP` und drückt Refresh.
-
-## Schaltbefehl vom Sunny Home Manager
-<a name="control-request">
-
-Wenn ein Schaltbefehl vom *Sunny Home Manager* für ein Gerät empfangen wird, führt das zu einem entsprechenden Log-Eintrag, der mit folgendem Befehl angezeigt werden kann:
-
-```console
-sae@raspi:~ $ grep "control request" /tmp/rolling-2020-12-30.log
-2020-12-30 14:30:09,977 DEBUG [http-nio-8080-exec-9] d.a.s.s.w.SempController [SempController.java:235] F-00000001-000000000019-00: Received control request: on=true, recommendedPowerConsumption=22000W
-```
-
-*Webmin*: In [View Logfile](#webmin-logs) gibt man hinter `Only show lines with text` ein `control request` und drückt Refresh.

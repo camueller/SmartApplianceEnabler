@@ -17,3 +17,15 @@ Falls der gewählte Schalter-Typ mit [Anlaufstromerkennung](Anlaufstromerkennung
 Wenn als Gerätetyp `Elektroauto-Ladegerät` angegeben ist, kann auf dieser Seite die [Konfiguration der Wallbox sowie die Verwaltung der Fahrzeuge](EVCharger_DE.md) vorgenommen werden.
 
 Siehe auch: [Allgemeine Hinweise zur Konfiguration](Configuration_DE.md)
+
+## Schaltbefehl vom Sunny Home Manager
+<a name="control-request">
+
+Wenn ein Schaltbefehl vom *Sunny Home Manager* für ein Gerät empfangen wird, führt das zu einem entsprechenden Log-Eintrag, der mit folgendem Befehl angezeigt werden kann:
+
+```console
+sae@raspi:~ $ grep "control request" /tmp/rolling-2020-12-30.log
+2020-12-30 14:30:09,977 DEBUG [http-nio-8080-exec-9] d.a.s.s.w.SempController [SempController.java:235] F-00000001-000000000019-00: Received control request: on=true, recommendedPowerConsumption=22000W
+```
+
+*Webmin*: In [View Logfile](#webmin-logs) gibt man hinter `Only show lines with text` ein `control request` und drückt Refresh.
