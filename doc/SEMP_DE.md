@@ -14,7 +14,16 @@ Nachdem der *Sunny Home Manager* den *Smart Appliance Enabler* gefunden hat, bes
 ```
 http://raspi:8080/semp
 ```
-Die vom *Smart Appliance Enabler* an den *Sunny Home Manager* kommunizierte [SEMP-URL findet sich im Log](SEMP_DE.md#user-content-url). Wenn diese URL nicht korrekt ist, kann der *Sunny Home Manager* nicht mit dem *Smart Appliance Enabler* kommunizieren, d.h es können keine Geräte im *Sunny Portal* hinzugefügt werden und Geräte werden nicht gemessen und geschaltet!
+Die vom *Smart Appliance Enabler* an den *Sunny Home Manager* kommunizierte URL des SEMP-Hosts wird direkt nach dem Start in das Log geschrieben: 
+
+```console
+sae@raspi:~ $ grep "SEMP UPnP" /tmp/rolling-2020-12-31.log
+2020-12-31 14:36:22,744 INFO [main] d.a.s.s.d.SempDiscovery [SempDiscovery.java:57] SEMP UPnP will redirect to http://192.168.1.1:8080
+```
+
+*Webmin*: In [View Logfile](#webmin-logs) gibt man hinter `Only show lines with text` ein `SEMP UPnP` und drückt Refresh.
+
+Die Eingabe dieser URL, ergänzt um den Pfad `/semp` (entsprechend des obigen Beispiels wäre das `http://192.168.1.1:8080/semp`), in einen Web-Browser muss zur Anzeige des nachfolgend beschrieben SEMP-XML führen. Wenn das nicht funktioniert, weil diese URL nicht korrekt ist, kann der *Sunny Home Manager* nicht mit dem *Smart Appliance Enabler* kommunizieren, d.h es können keine Geräte im *Sunny Portal* hinzugefügt werden und Geräte werden nicht gemessen und geschaltet!
 
 ## SEMP-XML
 <a name="xml">
