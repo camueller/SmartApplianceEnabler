@@ -75,7 +75,7 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     }
 
     public Integer getMin(LocalDateTime now) {
-        var min = this.min - getMeteredEnergy();
+        var min = this.min != null ? this.min - getMeteredEnergy() : 0;
         return min > 0 ? min : 0;
     }
 
@@ -84,7 +84,7 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     }
 
     public Integer getMax(LocalDateTime now) {
-        var max = this.max - getMeteredEnergy();
+        var max = this.max != null ? this.max - getMeteredEnergy() : 0;
         return max > 0 ? max : 0;
     }
 
