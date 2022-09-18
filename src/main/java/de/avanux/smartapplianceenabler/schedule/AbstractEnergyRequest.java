@@ -64,6 +64,11 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
         });
     }
 
+    public void remove() {
+        super.remove();
+        getMqttClient().unsubscribe(MqttEventName.EVChargerStateChanged);
+    }
+
     public void setUpdateTimeframeIntervalEnd(boolean updateTimeframeIntervalEnd) {
         this.updateTimeframeIntervalEnd = updateTimeframeIntervalEnd;
     }

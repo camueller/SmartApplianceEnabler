@@ -18,7 +18,8 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
-import java.time.LocalDateTime;
+import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import java.time.LocalDateTime;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "min", "max" })
@@ -34,6 +36,7 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     private Integer min;
     @XmlAttribute
     private Integer max;
+    private transient MeterMessage meterMessage;
 
     public EnergyRequest() {
     }
@@ -48,6 +51,19 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     }
 
     @Override
+    public void init() {
+        super.init();
+        getMqttClient().subscribe(Meter.TOPIC, true, (topic, message) -> {
+            meterMessage = (MeterMessage) message;
+        });
+    }
+
+    public void remove() {
+        super.remove();
+        getMqttClient().unsubscribe(Meter.TOPIC);
+    }
+
+    @Override
     public boolean isUsingOptionalEnergy(LocalDateTime now) {
         Integer min = getMin(now);
         return min != null && min == 0 && getMax(now) > 0;
@@ -59,7 +75,8 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     }
 
     public Integer getMin(LocalDateTime now) {
-        return min;
+        var min = this.min - getMeteredEnergy();
+        return min > 0 ? min : 0;
     }
 
     public void setMin(Integer min) {
@@ -67,7 +84,15 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     }
 
     public Integer getMax(LocalDateTime now) {
-        return max;
+        var max = this.max - getMeteredEnergy();
+        return max > 0 ? max : 0;
+    }
+
+    private int getMeteredEnergy() {
+        if(meterMessage != null) {
+            return isActive() ? Double.valueOf(meterMessage.energy * 1000.0f).intValue() : 0;
+        }
+        return 0;
     }
 
     @Override
@@ -89,13 +114,13 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
         String text = super.toString();
         text += "/";
         if(min != null) {
-            text += min.toString();
+            text += getMin(now).toString();
         }
         else {
             text += "_";
         }
         text += "Wh/";
-        text += max.toString();
+        text += getMax(now).toString();
         text += "Wh";
         return text;
     }

@@ -389,8 +389,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         queue.remove(timeframeInterval);
         removeTimeframeIntervalChangedListener(timeframeInterval.getRequest());
         timeframeInterval.getRequest().remove();
-        if(control instanceof StartingCurrentSwitch && timeframeInterval.getRequest() instanceof RuntimeRequest) {
-            ((RuntimeRequest) timeframeInterval.getRequest()).unsubscribeStartingCurrentEvents();
+        if(control instanceof StartingCurrentSwitch) {
             fillQueue(now);
         }
     }
