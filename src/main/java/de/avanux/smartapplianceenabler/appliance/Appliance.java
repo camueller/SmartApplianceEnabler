@@ -505,11 +505,19 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
 
     private Set<ModbusSlave> getModbusSlaves() {
         Set<ModbusSlave> slaves = new HashSet<ModbusSlave>();
-        if(meter != null && meter instanceof  ModbusElectricityMeter) {
-            slaves.add((ModbusElectricityMeter) meter);
+        if(meter != null) {
+            if(meter instanceof ModbusElectricityMeter) {
+                slaves.add((ModbusElectricityMeter) meter);
+            }
+            else if (meter instanceof MasterElectricityMeter) {
+                Meter wrappedMeter = ((MasterElectricityMeter) meter).getWrappedMeter();
+                if(wrappedMeter instanceof ModbusElectricityMeter) {
+                    slaves.add((ModbusElectricityMeter) wrappedMeter);
+                }
+            }
         }
         if(control != null) {
-            if(control instanceof  ModbusSwitch) {
+            if(control instanceof ModbusSwitch) {
                 slaves.add((ModbusSwitch) control);
             }
             else if(control instanceof StartingCurrentSwitch) {
