@@ -12,6 +12,24 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [1.6.21](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.21) - 20.09.2022
+
+### Gefixt
+- bei HTTP-Zählern mit Parameter "Zählerstand" konnte die Leistungsberechnung zu falschen Werten führen, wenn bei der vorangegangenen Abfrage ein HTTP-Fehler aufgetreten war
+- Wallbox: Wenn beim Laden mit Überschuss-Energie das Ladeziel erreicht wird, bleibt dieser Zustand bestehen, solange das Fahrzeug nicht getrennt wird
+- bei Lesen von Float-Werten aus Modbus-Registern wird jetzt der Umrechnungsfaktor berücksichtigt
+- neues SAE-Release wird auch dann angezeigt, wenn das installierte Release bei GitHub nicht mehr verfügbar ist
+- bei HTTP-Schaltern wurde der konfigurierte Wert nur bei HTTP POST übergeben. Jetzt wird er auch bei PUT/PATCH/DELETE übergeben - siehe https://github.com/camueller/SmartApplianceEnabler/issues/308
+- das Ändern der Appliance-ID funktioniert jetzt
+
+### Geändert
+- Wallbox: Der Default-Wert für die Statuserkennung-Unterbrechnung wurde von 300s auf 30s verkürzt
+- die Abfrage des Status des HTTP-Schalters wird für einige Sekunden gecacht, um unnötig viele HTTP-Requests an den HTTP-Schalter zu vermeiden
+
+### Neu
+- Wallbox: die Wallbox-Vorlagen werden beim Start des SAE von Github geladen - dadurch können Vorlagen hinzugefügt/gefixt werden ohne neues SAE-Release
+- Wallbox: das Periodische Setzen der Ladestromstärke zur Vermeidungs des Rückfalls auf eine Standard-Stromstärke wird unterstützt (erforderlich z.B. für Alfen-Wallbox)
+ 
 ## [1.6.20](https://github.com/camueller/SmartApplianceEnabler/releases/tag/1.6.20) - 15.03.2022
 
 ### Gefixt
