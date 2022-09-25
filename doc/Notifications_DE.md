@@ -45,6 +45,10 @@ Jetzt steht dem Empfang von Benachrichtigungen nichts mehr im Wege:
 
 ![Telegram](../pics/Telegram.jpg)
 
-### Prowl (www.prowlapp.com)
+### Signal (https://signal.org/)
+
+Das Shell-Script für die Nutzung als Benachrichtigungskanal im *Smart Appliance Enabler* ist https://github.com/camueller/SmartApplianceEnabler/blob/master/run/notifyWithSignal.sh.
+
+### Prowl (https://www.prowlapp.com)
 
 Das Shell-Script für die Nutzung als Benachrichtigungskanal im *Smart Appliance Enabler* ist https://github.com/camueller/SmartApplianceEnabler/blob/master/run/notifyWithProwl.sh.
