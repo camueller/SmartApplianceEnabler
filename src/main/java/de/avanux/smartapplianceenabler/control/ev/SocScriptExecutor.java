@@ -28,7 +28,7 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
     private transient Logger logger = LoggerFactory.getLogger(SocScriptExecutor.class);
     private transient String applianceId;
 
-    private boolean socScriptRunning;
+    private Thread thread;
     private LocalDateTime nowForTesting;
     private SocScript socScript;
     private int evId;
@@ -58,12 +58,11 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
             return;
         }
         this.listener = listener;
-        if(!this.socScriptRunning) {
+        if(this.thread == null) {
             logger.debug( "{}: Trigger SOC retrieval: evId={}", applianceId, evId);
-            this.socScriptRunning = true;
             if(socScriptAsync) {
-                Thread managerThread = new Thread(this);
-                managerThread.start();
+                this.thread = new Thread(this);
+                this.thread.start();
             }
             else {
                 // for unit tests
@@ -75,6 +74,14 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
         }
     }
 
+    public void terminate() {
+        if(this.thread != null) {
+            logger.warn("{}: interrupting SOC script: evId={}", applianceId, evId);
+            this.thread.interrupt();
+        }
+        this.thread = null;
+    }
+
     @Override
     public void run() {
         if(socScript.getScript() != null) {
@@ -83,6 +90,6 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
             this.listener.handleSocScriptExecutionResult(
                     this.nowForTesting != null ? this.nowForTesting : LocalDateTime.now(), this.evId, result);
         }
-        socScriptRunning = false;
+        this.thread = null;
     }
 }

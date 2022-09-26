@@ -268,6 +268,10 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         }
     }
 
+    public void terminateSocScriptExecution() {
+        this.evIdWithSocScriptExecutor.values().forEach(SocScriptExecutor::terminate);
+    }
+
     @Override
     public void handleSocScriptExecutionResult(LocalDateTime now, int evId, SocScriptExecutionResult result) {
         logger.debug("{}: Handling SOC script execution result: result={} previousSocScriptExecutionResult={}",

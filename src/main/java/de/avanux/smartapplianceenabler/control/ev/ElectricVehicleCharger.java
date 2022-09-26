@@ -535,6 +535,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
 
         // SOC has to be retrieved after listener notification in order to allow for new listeners interested in SOC
         if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED && newState == EVChargerState.VEHICLE_CONNECTED) {
+            this.evHandler.terminateSocScriptExecution();
             this.evHandler.triggerSocScriptExecution();
         }
     }
