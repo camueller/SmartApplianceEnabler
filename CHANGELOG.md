@@ -12,6 +12,19 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [2.0.6](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.6) - 02.10.2022
+
+### Gefixt
+- neues SAE-Release wird auch dann angezeigt, wenn das installierte Release bei GitHub nicht mehr verfügbar ist
+- bei HTTP-Schaltern wurde der konfigurierte Wert nur bei HTTP POST übergeben. Jetzt wird er auch bei PUT/PATCH/DELETE übergeben - siehe https://github.com/camueller/SmartApplianceEnabler/issues/308
+- das Ändern der Appliance-ID funktioniert jetzt
+- Initialisierung von Master-Slave-Zählern für Modbus gefixt
+- Wallbox: wenn das SOC-Script "hängen" bleibt, wurde es auch nach erneutem Verbinden des Fahrzeugs nicht ausgeführt. Das sollte nicht mehr passieren können.
+
+### Geändert
+- die Abfrage des Status des HTTP-Schalters wird für einige Sekunden gecacht, um unnötig viele HTTP-Requests an den HTTP-Schalter zu vermeiden
+- Zeitpläne für PWM-Schalter und Stufenschalter verwenden als Anforderungsart " anstatt "Laufzeit" (analog zu Wallboxen), weil sonst der SHM kein Einschaltbefehle schickt 
+
 ## [2.0.5](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.5) - 22.07.2022
 
 ### Gefixt
@@ -35,7 +48,6 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 
 ### Geändert
 - Wallbox: Der Default-Wert für die Statuserkennung-Unterbrechnung wurde von 300s auf 30s verkürzt
-- 
 
 ## [2.0.4](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.4) - 13.04.2022
 
