@@ -30,18 +30,18 @@ export DEBIAN_FRONTEND=noninteractive
 OS_RELEASE=`cat /etc/os-release | grep bullseye`
 if [ -z "$OS_RELEASE" ] ; then
   # inspired by https://linuxnews.de/2021/11/raspberry-pi-os-auf-bullseye-aktualisieren/
-  apt -y update
-  apt -qy dist-upgrade
+  apt -y update 2>&1 >> $LOG
+  apt -qy dist-upgrade 2>&1 >> $LOG
   sed -i 's/buster/bullseye/g' /etc/apt/sources.list
   sed -i 's/buster/bullseye/g' /etc/apt/sources.list.d/raspi.list
-  apt -y update
-  apt -qy install libgcc-8-dev gcc-8-base
+  apt -y update 2>&1 >> $LOG
+  apt -qy install libgcc-8-dev gcc-8-base 2>&1 >> $LOG
 
   # inspired by https://serverfault.com/questions/527789/how-to-automate-changed-config-files-during-apt-get-upgrade-in-ubuntu-12
-  apt -qy -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
+  apt -qy -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade 2>&1 >> $LOG
 
-  apt -qyf install
-  apt -qy autoremove
+  apt -qyf install 2>&1 >> $LOG
+  apt -qy autoremove 2>&1 >> $LOG
 
   # inspired by https://raspberrypi.stackexchange.com/questions/133376/fix-error-failed-to-start-dhcp-client-daemon-after-upgrade-to-bullseye-remot
   sed -i 's|/usr/lib/dhcpcd5/dhcpcd|/usr/sbin/dhcpcd|g' /etc/systemd/system/dhcpcd.service.d/wait.conf
