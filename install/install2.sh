@@ -115,7 +115,7 @@ if [ "$INSTALL_WEBMIN" = true ] ; then
   echo "$PREFIX Installing Webmin ..." >> $LOG
   wget "http://prdownloads.sourceforge.net/webadmin/webmin_"$WEBMIN_VERSION"_all.deb" -P /tmp 2>>$LOG
   dpkg -i "/tmp/webmin_"$WEBMIN_VERSION"_all.deb" 2>&1 >> $LOG
-  sudo /etc/init.d/webmin start >> $LOG
+  sudo systemctl start webmin.service >> $LOG
 fi
 
 if [ "$INSTALL_MBUSD" = true ] ; then
