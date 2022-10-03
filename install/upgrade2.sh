@@ -22,6 +22,9 @@ set -x
 CONFIG_FILE=/usr/local/etc/install.config
 . $CONFIG_FILE
 
+echo "$PREFIX Waiting until boot is complete ..." >> $LOG
+sleep 60
+
 # inspired by https://github.com/Honey-Pi/HoneyPi-Build-Raspbian/blob/master/stage-honeypi/01-install-honeypi/00-run.sh
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 export DEBIAN_FRONTEND=noninteractive

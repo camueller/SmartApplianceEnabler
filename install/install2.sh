@@ -33,7 +33,7 @@ if [ -n "$WIFI_SSID" ] ; then
   echo "IP_ADDRESS=$IP_ADDRESS" >> $LOG
 fi
 
-echo "$PREFIX Waiting before updating the software catalog ..." >> $LOG
+echo "$PREFIX Waiting until boot is complete ..." >> $LOG
 sleep 30
 
 echo "$PREFIX Update software catalog ..." >> $LOG

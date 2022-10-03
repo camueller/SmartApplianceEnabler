@@ -33,6 +33,21 @@ Um den *Smart Appliance Enabler* zu starten/stoppen/restarten muss in der Listen
 
 ![Bootup and Shutdown](../pics/webmin/bootup_and_shutdown.png)
 
+## Command Shell
+Zur Ausführung von Befehlen ist möglich, indem man im Seitenmenü auf den Punkt `Tools` und den Unterpunkt `Command Shell` klickt.
+
+![Command Shell](../pics/webmin/command_shell.png)
+
+## Log Dateien anzeigen
+Die Anzeige von Log-Datei ist möglich, indem man im Seitenmenü auf den Punkt `System` und den Unterpunkt `System Logs` klickt.
+Hinter `View log file` kann auch der Pfad zu beliebigen Log-Datei angezeigt werden, wobei man danach noch auf `View` klicken muss.
+
+![System Logs](../pics/webmin/system_logs.png)
+
+Sehr hilfreich ist die `Refresh`-Schaltfläche, die via Drop-Down die Möglichkeit bietet festzulegen, alle wieviel Sekunden die Anzeige aktualisiert werden soll. Zuvor sollte man den Wert für `Last ... lines of` reduzieren (z.B. auf 50), weil sonst die letzten Zeilen möglicherweise nicht sichtbar sind. 
+
+![View Log File](../pics/webmin/system_logs2.png)
+
 ## Ausschalten (Shutdown) / Neustart (Reboot)
 Um das Risiko einer beschädigten SD-Karte zu minimieren, sollte der Raspberry Pi zum Ausschalten/Neustart nicht einfach vom Strom getrennt werden. Stattdessen sollte im im Seitenmenü über den Punkt `System` und den Unterpunkt `Bootup and Shutdown` auf eine Seite navigiert werden, auf der sich ganz unten die Schaltflächen `Reboot System` und `Shutdown System` befinden. Durch Klick auf einer dieser beiden Schaltfläche wird die entsprechende Aktion so ausgeführt, dass das Dateisystem auf der SD-Karte geschont wird.
 

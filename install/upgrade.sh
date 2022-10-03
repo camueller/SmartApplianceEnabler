@@ -33,4 +33,4 @@ echo "exit 0" >> $PARENT_SCRIPT
 chmod +x $PARENT_SCRIPT
 
 echo "$PREFIX $0 finished" >> $LOG
-# reboot
+reboot

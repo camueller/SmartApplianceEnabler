@@ -1,5 +1,7 @@
 # Standard-Installation
 
+Auf dieser Seite geht es um Neu-Installationen - die Vorgehensweise bei Updates ist [hier](Update_DE.md) beschrieben.
+
 Die hier beschriebene Standard-Installation läuft automatisch ab und erfordert keine Linux-Kenntnisse.
 
 Ist der Zugriff auf den Raspberry Pi per SSH möglich, kann alternativ die Installation auch erfolgen durch
