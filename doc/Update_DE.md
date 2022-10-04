@@ -45,11 +45,11 @@ Danach wird das Update wie folgt gestartet:
 curl -sSL https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/upgrade.sh | sudo sh
 ```
 
-Dabei wird das eigentliche Update-Script [upgrade2.sh](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/upgrade2.sh) heruntergeladen und zur Ausführung beim Systemstart (in `/etc/rc.local`) registriert. Danach wird ein Neustart ausgelöst, d.h. nachdem der Raspberry Pi den Bootvorgang beendet hat, muss man sich erneute per SSH verbinden oder die `webmin` erneut laden. Dabei sollte man mit `webmin` geduldig sein, weil durch Netzwerkverkehr und/oder Systemlast die Nutzbarkeit temporär eingeschränkt sein kann.
+Dabei wird das eigentliche Update-Script [upgrade2.sh](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/upgrade2.sh) heruntergeladen und zur Ausführung beim Systemstart (in `/etc/rc.local`) registriert. Danach wird ein Neustart ausgelöst, d.h. nachdem der Raspberry Pi den Bootvorgang beendet hat, muss man sich erneute per SSH verbinden oder `webmin` erneut laden. Dabei sollte man mit `webmin` geduldig sein, weil durch Netzwerkverkehr und/oder Systemlast die Nutzbarkeit temporär eingeschränkt sein kann.
 
-Ist man per SSH auf dem Raspberry Pi eingeloggt, lässt sich in der Console der Fortschritt des Updates verfolgen mit `tail -f /tmp/install.log`. Auch in `webmin` kann man den Fortschritt des Updates verfolgen - siehe [Log Dateien anzeigen](Log Dateien anzeigen), wobei als Log-Datei `/tmp/install.log` eingegeben werden muss.  
+Ist man per SSH auf dem Raspberry Pi eingeloggt, lässt sich in der Console der Fortschritt des Updates verfolgen mit `tail -f /tmp/install.log`. Auch in `webmin` kann man den Fortschritt des Updates verfolgen - siehe [Log Dateien anzeigen](Webmin_DE.md), wobei als Log-Datei `/tmp/install.log` eingegeben werden muss.  
 
-Zu Beginn des Updates erfolgt das **Update des Raspberry Pi OS auf "Bullseye"**, falls noch eine ältere Version installiert ist. Selbst bei schneller Internet-Anbindung kann dieses OS-Update selbst auf einem Raspberry Pi 4 bis zu einer Stunde dauern! Nach dem OS-Update wird der Raspberry Pi neu gestartet!
+Zu Beginn des Updates erfolgt das **Update des Raspberry Pi OS auf "Bullseye"**, falls noch eine ältere Version installiert ist. Selbst bei schneller Internet-Anbindung kann dieses OS-Update auch auf einem Raspberry Pi 4 bis zu einer Stunde dauern! Nach dem OS-Update wird der Raspberry Pi neu gestartet!
 
 Wenn das Raspberry Pi OS die Version "Bullseye" hat, wird das eigentliche Update des *Smart Appliance Enabler* durchgeführt inklusive der Installation der benötigten Packages. Zuvor werden die [Konfigurationsdateien des *Smart Appliance Enabler*](ConfigurationFiles_DE.md) und auch die `SmartApplianceEnabler-*.war`-Datei gesichert (mit Dateiendung `.bak`).
 
