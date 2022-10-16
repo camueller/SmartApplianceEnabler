@@ -2,15 +2,14 @@
 <Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1">
     <DeviceInfo>
         <Identification>
-            <DeviceId>F-00000001-000000000002-00</DeviceId>
-            <DeviceName>Tasmota</DeviceName>
-            <DeviceType>Other</DeviceType>
+            <DeviceId>F-00000001-000000000001-00</DeviceId>
+            <DeviceName>WP</DeviceName>
+            <DeviceType>HeatPump</DeviceType>
             <DeviceSerial>123456</DeviceSerial>
-            <DeviceVendor>Tasmota</DeviceVendor>
+            <DeviceVendor>Viessmann</DeviceVendor>
         </Identification>
         <Characteristics>
             <MaxPowerConsumption>4000</MaxPowerConsumption>
-            <MinPowerConsumption>1380</MinPowerConsumption>
         </Characteristics>
         <Capabilities>
             <CurrentPower>
@@ -23,21 +22,20 @@
                 <InterruptionsAllowed>true</InterruptionsAllowed>
             </Interruptions>
             <Requests>
-                <OptionalEnergy>true</OptionalEnergy>
+                <OptionalEnergy>false</OptionalEnergy>
             </Requests>
         </Capabilities>
     </DeviceInfo>
     <DeviceInfo>
         <Identification>
-            <DeviceId>F-00000001-000000000019-00</DeviceId>
-            <DeviceName>Wallbox</DeviceName>
-            <DeviceType>EVCharger</DeviceType>
-            <DeviceSerial>20180623</DeviceSerial>
-            <DeviceVendor>ESL</DeviceVendor>
+            <DeviceId>F-00000001-000000000008-00</DeviceId>
+            <DeviceName>WP SG Ready</DeviceName>
+            <DeviceType>Other</DeviceType>
+            <DeviceSerial>222222</DeviceSerial>
+            <DeviceVendor>Viessmann</DeviceVendor>
         </Identification>
         <Characteristics>
-            <MaxPowerConsumption>22000</MaxPowerConsumption>
-            <MinPowerConsumption>1380</MinPowerConsumption>
+            <MaxPowerConsumption>4000</MaxPowerConsumption>
         </Characteristics>
         <Capabilities>
             <CurrentPower>

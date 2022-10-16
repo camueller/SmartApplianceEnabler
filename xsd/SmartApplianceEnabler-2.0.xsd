@@ -90,6 +90,7 @@
                 <xs:element name="ElectricVehicleCharger" type="ElectricVehicleChargerType" />
                 <xs:element name="PwmSwitch" type="PwmSwitchType" />
                 <xs:element name="StartingCurrentSwitch" type="StartingCurrentSwitchType" />
+                <xs:element name="SwitchOption" type="SwitchOptionType" />
                 <xs:element name="LevelSwitch" type="LevelSwitchType" />
             </xs:choice>
             <xs:choice>
@@ -374,6 +375,17 @@
         <xs:attribute name="startingCurrentDetectionDuration" type="xs:int" />
         <xs:attribute name="finishedCurrentDetectionDuration" type="xs:int" />
         <xs:attribute name="minRunningTime" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="SwitchOptionType">
+        <xs:sequence>
+            <xs:element name="HttpSwitch" type="HttpSwitchType" minOccurs="0" />
+            <xs:element name="ModbusSwitch" type="ModbusSwitchType" minOccurs="0" />
+            <xs:element name="Switch" type="SwitchType" minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="powerThreshold" type="xs:int" />
+        <xs:attribute name="switchOnDetectionDuration" type="xs:int" />
+        <xs:attribute name="switchOffDetectionDuration" type="xs:int" />
     </xs:complexType>
 
     <xs:complexType name="LevelSwitchType">

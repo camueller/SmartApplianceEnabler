@@ -62,6 +62,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             @XmlElement(name = "LevelSwitch", type = LevelSwitch.class),
             @XmlElement(name = "StartingCurrentSwitch", type = StartingCurrentSwitch.class),
             @XmlElement(name = "Switch", type = Switch.class),
+            @XmlElement(name = "SwitchOption", type = SwitchOption.class),
             @XmlElement(name = "PwmSwitch", type = PwmSwitch.class),
             @XmlElement(name = "ElectricVehicleCharger", type = ElectricVehicleCharger.class),
     })
@@ -257,10 +258,9 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             }
         }
 
-        if(control instanceof StartingCurrentSwitch) {
-            StartingCurrentSwitch startingCurrentSwitch = (StartingCurrentSwitch) control;
-            startingCurrentSwitch.setTimeframeIntervalHandler(timeframeIntervalHandler);
-            logger.debug("{}: {} uses {}", id, control.getClass().getSimpleName(), meter.getClass().getSimpleName());
+        if(control instanceof TimeframeIntervalHandlerDependency) {
+            TimeframeIntervalHandlerDependency timeframeIntervalHandlerDependency = (TimeframeIntervalHandlerDependency) control;
+            timeframeIntervalHandlerDependency.setTimeframeIntervalHandler(timeframeIntervalHandler);
         }
 
         control.init();
@@ -481,10 +481,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             if(ev != null) {
                 if(!evCharger.isOn() && !isAcceptControlRecommendations()) {
                     logger.debug("{}: Removing timeframe interval of stopped charging process", id);
-                    TimeframeInterval activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
-                    if(activeTimeframeInterval != null) {
-                        timeframeIntervalHandler.removeTimeframeInterval(now, activeTimeframeInterval);
-                    }
+                    timeframeIntervalHandler.removeActiveTimeframeInterval(now);
                 }
                 timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
                         ev.getId(), ev.getBatteryCapacity(), socCurrent, socRequested);

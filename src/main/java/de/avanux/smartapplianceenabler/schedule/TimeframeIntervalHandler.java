@@ -394,6 +394,13 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         }
     }
 
+    public void removeActiveTimeframeInterval(LocalDateTime now) {
+        TimeframeInterval activeTimeframeInterval = getActiveTimeframeInterval();
+        if(activeTimeframeInterval != null) {
+            removeTimeframeInterval(now, activeTimeframeInterval);
+        }
+    }
+
     private boolean hasActiveTimeframeInterval() {
         return getActiveTimeframeInterval() != null;
     }

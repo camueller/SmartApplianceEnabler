@@ -18,8 +18,6 @@
 
 package de.avanux.smartapplianceenabler.schedule;
 
-import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttEventName;
 import de.avanux.smartapplianceenabler.mqtt.StartingCurrentSwitchMessage;
 import org.slf4j.Logger;
@@ -52,13 +50,17 @@ public class RuntimeRequest extends AbstractRequest {
         super.init();
         getMqttClient().subscribe(MqttEventName.StartingCurrentDetected, (topic, message) -> {
             getLogger().debug("{} Handling event StartingCurrentDetected", getApplianceId());
-            resetRuntime();
-            setEnabled(true);
+            if(hasStartingCurrentSwitch()) {
+                resetRuntime();
+                setEnabled(true);
+            }
         });
         getMqttClient().subscribe(MqttEventName.FinishedCurrentDetected, (topic, message) -> {
             getLogger().debug("{} Handling event FinishedCurrentDetected", getApplianceId());
-            setEnabled(false);
-            resetEnabledBefore();
+            if(hasStartingCurrentSwitch()) {
+                setEnabled(false);
+                resetEnabledBefore();
+            }
         });
     }
 

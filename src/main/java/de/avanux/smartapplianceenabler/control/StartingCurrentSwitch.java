@@ -27,6 +27,7 @@ import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
+import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandlerDependency;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,7 @@ import java.util.*;
  * The latter is only powered off after the starting current has been detected until the "on" command is received.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, MeterUpdateListener, NotificationProvider {
+public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, NotificationProvider, TimeframeIntervalHandlerDependency {
     private transient Logger logger = LoggerFactory.getLogger(StartingCurrentSwitch.class);
     @XmlAttribute
     private String id;
@@ -68,8 +69,6 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
             @XmlElement(name = "Switch", type = Switch.class)
     })
     private Control control;
-    @XmlElement(name = "ForceSchedule")
-    private DayTimeframeCondition dayTimeframeCondition;
     private transient String applianceId;
     private transient TimeframeIntervalHandler timeframeIntervalHandler;
     private transient Map<LocalDateTime, Integer> powerUpdates = new TreeMap<>();
@@ -125,16 +124,9 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
         return control instanceof NotificationProvider ? ((NotificationProvider) control).getNotifications() : null;
     }
 
+    @Override
     public void setTimeframeIntervalHandler(TimeframeIntervalHandler timeframeIntervalHandler) {
         this.timeframeIntervalHandler = timeframeIntervalHandler;
-    }
-
-    public DayTimeframeCondition getDayTimeframeCondition() {
-        return dayTimeframeCondition;
-    }
-
-    public void setDayTimeframeCondition(DayTimeframeCondition dayTimeframeCondition) {
-        this.dayTimeframeCondition = dayTimeframeCondition;
     }
 
     public Integer getPowerThreshold() {
@@ -275,7 +267,6 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Mete
         }
     }
 
-    @Override
     public void onMeterUpdate(LocalDateTime now, int averagePower, Double energy) {
         boolean applianceOn = this.applianceOn;
         logger.debug("{}: on={} applianceOn={} averagePower={}", applianceId, on, applianceOn, averagePower);
