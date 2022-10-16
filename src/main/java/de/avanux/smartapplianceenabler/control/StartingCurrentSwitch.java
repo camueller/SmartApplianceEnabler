@@ -47,10 +47,8 @@ import java.util.*;
  * The latter is only powered off after the starting current has been detected until the "on" command is received.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, NotificationProvider, TimeframeIntervalHandlerDependency {
+public class StartingCurrentSwitch extends WrappedControl implements TimeframeIntervalHandlerDependency {
     private transient Logger logger = LoggerFactory.getLogger(StartingCurrentSwitch.class);
-    @XmlAttribute
-    private String id;
     @XmlAttribute
     private Integer powerThreshold;
     @XmlAttribute
@@ -59,68 +57,10 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Noti
     private Integer finishedCurrentDetectionDuration; // seconds
     @XmlAttribute
     private Integer minRunningTime; // seconds
-    @XmlElements({
-            @XmlElement(name = "MeterReportingSwitch", type = MeterReportingSwitch.class),
-            @XmlElement(name = "HttpSwitch", type = HttpSwitch.class),
-            @XmlElement(name = "MockSwitch", type = MockSwitch.class),
-            @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
-            @XmlElement(name = "Switch", type = Switch.class)
-    })
-    private Control control;
-    private transient String applianceId;
     private transient TimeframeIntervalHandler timeframeIntervalHandler;
-    private transient Map<LocalDateTime, Integer> powerUpdates = new TreeMap<>();
     private transient boolean on;
-    private transient boolean applianceOn;
     private transient boolean startingCurrentDetected;
     private transient LocalDateTime switchOnTime;
-    private transient NotificationHandler notificationHandler;
-    private transient GuardedTimerTask mqttPublishTimerTask;
-    private transient MqttClient mqttClient;
-    private transient MqttMessage mqttMessageSent;
-    final static public String WRAPPED_CONTROL_TOPIC = "Wrapped" + Control.TOPIC;
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setApplianceId(String applianceId) {
-        this.applianceId = applianceId;
-        if(this.control instanceof ApplianceIdConsumer) {
-            ((ApplianceIdConsumer) this.control).setApplianceId(applianceId);
-        }
-    }
-
-    public void setControl(Control control) {
-        this.control = control;
-    }
-
-    public Control getControl() {
-        return control;
-    }
-
-    @Override
-    public void setMqttTopic(String mqttTopic) {
-    }
-
-    @Override
-    public void setPublishControlStateChangedEvent(boolean publishControlStateChangedEvent) {
-    }
-
-    @Override
-    public void setNotificationHandler(NotificationHandler notificationHandler) {
-        this.notificationHandler = notificationHandler;
-        if(control instanceof NotificationProvider && notificationHandler != null) {
-            this.notificationHandler.setRequestedNotifications(((NotificationProvider) control).getNotifications());
-        }
-    }
-
-    @Override
-    public Notifications getNotifications() {
-        return control instanceof NotificationProvider ? ((NotificationProvider) control).getNotifications() : null;
-    }
 
     @Override
     public void setTimeframeIntervalHandler(TimeframeIntervalHandler timeframeIntervalHandler) {
@@ -162,89 +102,28 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Noti
     }
 
     @Override
-    public void init() {
-        logger.debug("{}: Initializing ...", applianceId);
-        mqttClient = new MqttClient(applianceId, getClass());
-        if(this.control != null) {
-            this.control.setMqttTopic(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC);
-            this.control.setPublishControlStateChangedEvent(false);
-            this.control.init();
-        }
-    }
-
-    @Override
     public void start(LocalDateTime now, Timer timer) {
         logger.info("{}: Starting current switch: powerThreshold={}W startingCurrentDetectionDuration={}s " +
                         "finishedCurrentDetectionDuration={}s minRunningTime={}s",
-                applianceId, getPowerThreshold(), getStartingCurrentDetectionDuration(),
+                getApplianceId(), getPowerThreshold(), getStartingCurrentDetectionDuration(),
                 getFinishedCurrentDetectionDuration(), getMinRunningTime());
-        if(this.control != null) {
-            this.control.start(now, timer);
-        }
-        applianceOn(now, true);
-        if(mqttClient != null) {
-            mqttClient.subscribe(Meter.TOPIC, true, (topic, message) -> {
-                if(message instanceof MeterMessage) {
-                    onMeterUpdate(message.getTime(), ((MeterMessage) message).power, ((MeterMessage) message).energy);
-                }
-            });
-            mqttClient.subscribe(WRAPPED_CONTROL_TOPIC, true, (topic, message) -> {
-                if(message instanceof ControlMessage) {
-                    applianceOn = ((ControlMessage) message).on;
-                }
-            });
-            mqttClient.subscribe(Control.TOPIC, true, true, (topic, message) -> {
-                if(message instanceof ControlMessage) {
-                    ControlMessage controlMessage = (ControlMessage) message;
-                    this.on(controlMessage.getTime(), controlMessage.on);
-                }
-            });
-            this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
-                    MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
-                @Override
-                public void runTask() {
-                    try {
-                        publishControlMessage(isOn());
-                    }
-                    catch(Exception e) {
-                        logger.error("{}: Error publishing MQTT message", applianceId, e);
-                    }
-                }
-            };
-            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
-        }
+        super.start(now, timer);
+        setApplianceOn(now, true);
     }
 
-    @Override
-    public void stop(LocalDateTime now) {
-        logger.debug("{}: Stopping ...", this.applianceId);
-        if(this.control != null) {
-            this.control.stop(now);
-        }
-        if(mqttClient != null) {
-            mqttClient.disconnect();
-        }
-    }
-
-    public boolean on(LocalDateTime now, boolean switchOn) {
-        logger.debug("{}: Setting switch state to {}", applianceId, (switchOn ? "on" : "off"));
+    public void on(LocalDateTime now, boolean switchOn) {
+        logger.debug("{}: Setting switch state to {}", getApplianceId(), (switchOn ? "on" : "off"));
         if (switchOn) {
             // don't switch off appliance - otherwise it cannot be operated
-            applianceOn(now, true);
+            setApplianceOn(now, true);
             switchOnTime = now;
             startingCurrentDetected = false;
         }
         on = switchOn;
         publishControlMessage(switchOn);
-        if(this.notificationHandler != null && switchOn != on) {
-            this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
+        if(getNotificationHandler() != null && switchOn != on) {
+            getNotificationHandler().sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
         }
-        return on;
-    }
-
-    private void applianceOn(LocalDateTime now, boolean switchOn) {
-        logger.debug("{}: Setting wrapped appliance switch to {}", applianceId, (switchOn ? "on" : "off"));
-        mqttClient.publish(WRAPPED_CONTROL_TOPIC, new ControlMessage(now, switchOn), true, true);
     }
 
     @Override
@@ -256,18 +135,9 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Noti
         return on;
     }
 
-    private void publishControlMessage(boolean on) {
-        MqttMessage message = new StartingCurrentSwitchMessage(LocalDateTime.now(), on,
-                getPowerThreshold(), getStartingCurrentDetectionDuration(), getFinishedCurrentDetectionDuration());
-        if(!message.equals(mqttMessageSent)) {
-            mqttClient.publish(Control.TOPIC, message, true);
-            mqttMessageSent = message;
-        }
-    }
-
     public void onMeterUpdate(LocalDateTime now, int averagePower, Double energy) {
-        boolean applianceOn = this.applianceOn;
-        logger.debug("{}: on={} applianceOn={} averagePower={}", applianceId, on, applianceOn, averagePower);
+        boolean applianceOn = isApplianceOn();
+        logger.debug("{}: on={} applianceOn={} averagePower={}", getApplianceId(), on, applianceOn, averagePower);
         if (applianceOn) {
             detectExternalSwitchOn(now);
             if (on) {
@@ -279,56 +149,39 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Noti
                 detectStartingCurrent(now);
             }
         } else {
-            logger.debug("{}: Appliance not switched on.", applianceId);
+            logger.debug("{}: Appliance not switched on.", getApplianceId());
         }
-    }
-
-    public void addPowerUpdate(LocalDateTime now, int averagePower, int maxAgeSeconds) {
-        this.powerUpdates.put(now, averagePower);
-        Set<LocalDateTime> expiredPowerUpdates = new HashSet<>();
-        this.powerUpdates.keySet().forEach(timestamp -> {
-            if(now.minusSeconds(maxAgeSeconds).isAfter(timestamp)) {
-                expiredPowerUpdates.add(timestamp);
-            }
-        });
-        for(LocalDateTime expiredPowerUpdate: expiredPowerUpdates) {
-            this.powerUpdates.remove(expiredPowerUpdate);
-        }
-        Integer min = this.powerUpdates.values().stream().mapToInt(v -> v).min().orElseThrow(NoSuchElementException::new);
-        Integer max = this.powerUpdates.values().stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new);
-        logger.debug("{}: power value cache: min={}W max={}W values={} maxAge={}s",
-                applianceId, min, max, this.powerUpdates.size(), maxAgeSeconds);
     }
 
     public void detectStartingCurrent(LocalDateTime now) {
-        boolean belowPowerThreshold = this.powerUpdates.values().stream().anyMatch(power -> power < getPowerThreshold());
+        boolean belowPowerThreshold = getPowerUpdates().values().stream().anyMatch(power -> power < getPowerThreshold());
         if (!on && !belowPowerThreshold) {
-            logger.debug("{}: Starting current detected.", applianceId);
+            logger.debug("{}: Starting current detected.", getApplianceId());
             startingCurrentDetected = true;
-            applianceOn(now,false);
+            setApplianceOn(now,false);
             switchOnTime = null;
-            this.powerUpdates.clear();
-            mqttClient.publish(MqttEventName.WrappedControlSwitchOnDetected, new MqttMessage(now));
+            clearPowerUpdates();;
+            getMqttClient().publish(MqttEventName.WrappedControlSwitchOnDetected, new MqttMessage(now));
         } else {
-            logger.debug("{}: Starting current not detected.", applianceId);
+            logger.debug("{}: Starting current not detected.", getApplianceId());
         }
     }
 
     public void detectFinishedCurrent(LocalDateTime now) {
-        boolean abovePowerThreshold = this.powerUpdates.values().stream().anyMatch(power -> power > getPowerThreshold());
+        boolean abovePowerThreshold = this.getPowerUpdates().values().stream().anyMatch(power -> power > getPowerThreshold());
         if (isMinRunningTimeExceeded(now) && !abovePowerThreshold) {
-            logger.debug("{}: Finished current detected.", applianceId);
-            this.powerUpdates.clear();
-            mqttClient.publish(MqttEventName.WrappedControlSwitchOffDetected, new MqttMessage(now));
+            logger.debug("{}: Finished current detected.", getApplianceId());
+            clearPowerUpdates();
+            getMqttClient().publish(MqttEventName.WrappedControlSwitchOffDetected, new MqttMessage(now));
             on(now, false);
         } else {
-            logger.debug("{}: Finished current not detected.", applianceId);
+            logger.debug("{}: Finished current not detected.", getApplianceId());
         }
     }
 
     public void detectExternalSwitchOn(LocalDateTime now) {
         if(startingCurrentDetected && switchOnTime == null) { // && applianceOn ensured by caller
-            logger.debug("{}: External switch-on detected.", applianceId);
+            logger.debug("{}: External switch-on detected.", getApplianceId());
             startingCurrentDetected = false;
             on = true;
             switchOnTime = now;
@@ -345,5 +198,11 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Noti
      */
     protected boolean isMinRunningTimeExceeded(LocalDateTime now) {
         return switchOnTime != null && switchOnTime.plusSeconds(getMinRunningTime()).isBefore(now);
+    }
+
+    @Override
+    protected MqttMessage buildControlMessage(boolean on) {
+        return new StartingCurrentSwitchMessage(LocalDateTime.now(), on,
+                getPowerThreshold(), getStartingCurrentDetectionDuration(), getFinishedCurrentDetectionDuration());
     }
 }

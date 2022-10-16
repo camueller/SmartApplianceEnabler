@@ -18,11 +18,9 @@
 
 package de.avanux.smartapplianceenabler.control;
 
-import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.mqtt.MqttEventName;
 import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
 import de.avanux.smartapplianceenabler.mqtt.SwitchOptionMessage;
-import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandlerDependency;
@@ -36,7 +34,7 @@ import java.time.LocalDateTime;
 import java.util.Timer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SwitchOption extends WrappedControl implements Control, ApplianceIdConsumer, NotificationProvider, TimeframeIntervalHandlerDependency {
+public class SwitchOption extends WrappedControl implements TimeframeIntervalHandlerDependency {
     private transient Logger logger = LoggerFactory.getLogger(SwitchOption.class);
     @XmlAttribute
     private Integer powerThreshold;
@@ -56,10 +54,10 @@ public class SwitchOption extends WrappedControl implements Control, ApplianceId
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
-        super.start(now, timer);
         logger.info("{}: Starting switch option: powerThreshold={}W switchOnDetectionDuration={}s " +
                         "switchOffDetectionDuration={}s",
                 getApplianceId(), powerThreshold, switchOnDetectionDuration, switchOffDetectionDuration);
+        super.start(now, timer);
     }
 
     @Override
