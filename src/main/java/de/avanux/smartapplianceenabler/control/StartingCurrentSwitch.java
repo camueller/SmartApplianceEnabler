@@ -19,13 +19,11 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
-import de.avanux.smartapplianceenabler.meter.MeterUpdateListener;
 import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
-import de.avanux.smartapplianceenabler.schedule.DayTimeframeCondition;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandlerDependency;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
@@ -310,7 +308,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Noti
             applianceOn(now,false);
             switchOnTime = null;
             this.powerUpdates.clear();
-            mqttClient.publish(MqttEventName.StartingCurrentDetected, new MqttMessage(now));
+            mqttClient.publish(MqttEventName.WrappedControlSwitchOnDetected, new MqttMessage(now));
         } else {
             logger.debug("{}: Starting current not detected.", applianceId);
         }
@@ -321,7 +319,7 @@ public class StartingCurrentSwitch implements Control, ApplianceIdConsumer, Noti
         if (isMinRunningTimeExceeded(now) && !abovePowerThreshold) {
             logger.debug("{}: Finished current detected.", applianceId);
             this.powerUpdates.clear();
-            mqttClient.publish(MqttEventName.FinishedCurrentDetected, new MqttMessage(now));
+            mqttClient.publish(MqttEventName.WrappedControlSwitchOffDetected, new MqttMessage(now));
             on(now, false);
         } else {
             logger.debug("{}: Finished current not detected.", applianceId);

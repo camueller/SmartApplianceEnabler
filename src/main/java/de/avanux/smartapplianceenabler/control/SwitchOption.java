@@ -91,8 +91,7 @@ public class SwitchOption extends WrappedControl implements Control, ApplianceId
                 switchOnDetected = true;
                 detectingSwitchOn = false;
                 clearPowerUpdates();
-                // FIXME rename to WrappedControlSwitchOnDetected
-                getMqttClient().publish(MqttEventName.StartingCurrentDetected, new MqttMessage(now));
+                getMqttClient().publish(MqttEventName.WrappedControlSwitchOnDetected, new MqttMessage(now));
             } else {
                 logger.debug("{}: Switch on not detected.", getApplianceId());
             }
@@ -104,7 +103,7 @@ public class SwitchOption extends WrappedControl implements Control, ApplianceId
         if (!abovePowerThreshold) {
             logger.debug("{}: Switch off detected.", getApplianceId());
             clearPowerUpdates();
-            getMqttClient().publish(MqttEventName.FinishedCurrentDetected, new MqttMessage(now));
+            getMqttClient().publish(MqttEventName.WrappedControlSwitchOffDetected, new MqttMessage(now));
             timeframeIntervalHandler.removeActiveTimeframeInterval(now);
         } else {
             logger.debug("{}: Switch off not detected.", getApplianceId());

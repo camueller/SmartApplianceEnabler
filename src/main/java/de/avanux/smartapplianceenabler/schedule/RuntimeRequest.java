@@ -48,14 +48,14 @@ public class RuntimeRequest extends AbstractRequest {
     @Override
     public void init() {
         super.init();
-        getMqttClient().subscribe(MqttEventName.StartingCurrentDetected, (topic, message) -> {
+        getMqttClient().subscribe(MqttEventName.WrappedControlSwitchOnDetected, (topic, message) -> {
             getLogger().debug("{} Handling event StartingCurrentDetected", getApplianceId());
             if(hasStartingCurrentSwitch()) {
                 resetRuntime();
                 setEnabled(true);
             }
         });
-        getMqttClient().subscribe(MqttEventName.FinishedCurrentDetected, (topic, message) -> {
+        getMqttClient().subscribe(MqttEventName.WrappedControlSwitchOffDetected, (topic, message) -> {
             getLogger().debug("{} Handling event FinishedCurrentDetected", getApplianceId());
             if(hasStartingCurrentSwitch()) {
                 setEnabled(false);
@@ -66,8 +66,8 @@ public class RuntimeRequest extends AbstractRequest {
 
     public void remove() {
         super.remove();
-        getMqttClient().unsubscribe(MqttEventName.StartingCurrentDetected);
-        getMqttClient().unsubscribe(MqttEventName.FinishedCurrentDetected);
+        getMqttClient().unsubscribe(MqttEventName.WrappedControlSwitchOnDetected);
+        getMqttClient().unsubscribe(MqttEventName.WrappedControlSwitchOffDetected);
     }
 
     protected Logger getLogger() {
