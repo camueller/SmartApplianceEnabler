@@ -73,13 +73,13 @@ JAVA_OPTS="${JAVA_OPTS} -DPIGPIOD_HOST=localhost"
 
 #### MQTT-Broker
 
-Ohne MQTT-Broker ist SAE 2.0 nicht lauffähig. Theoretisch sollte jeder vorhanden MQTT-Broker funktionieren, aber in der Praxis scheint das nicht so zu sein. Im Zweifel sollte der MQTT-Broker [Mosquitto installiert](ManualInstallation_DE.md#mqtt-broker) werden.
+**Ohne MQTT-Broker ist SAE 2.0 nicht lauffähig**. Theoretisch sollte jeder vorhandene MQTT-Broker funktionieren, aber in der Praxis scheint das nicht so zu sein. Im Zweifel sollte der MQTT-Broker [Mosquitto installiert](ManualInstallation_DE.md#mqtt-broker) werden.
 
-Wenn der MQTT-Broker nicht über `localhost:1883` erreichbar ist oder Benutzername/Passwort notwendig sind, müssen diese Parameter in den Einstellungen des SAE konfiguriert werden. Solange diese nicht konfiguriert sind, ist zwar die Web-Oberfläche des SAE nutzbar, aber es werden **keine Daten an den SHM übermittelt oder Schaltbefehle von diesem ausgeführt**.
+Wenn der MQTT-Broker nicht über `localhost:1883` erreichbar ist oder Benutzername/Passwort notwendig sind, müssen diese Parameter in den Einstellungen des *Smart Appliance Enabler* konfiguriert werden. Solange diese nicht konfiguriert sind, ist zwar die Web-Oberfläche des SAE nutzbar, aber es werden **keine Daten an den SHM übermittelt oder Schaltbefehle von diesem ausgeführt**.
 
 #### Konfigurationsdateien
 
-Es wird dringend empfohlen, die Konfigurationsdatei `Appliances.xml` vor dem Update zu sichern, falls man doch wieder zurück auf die Version 1.6 möchte. Sobald in SAE 2.0 eine Änderung gespeichert wird, wird die Datei `Appliances.xml` überschrieben und ist für SAE 1.6 nicht mehr lesbar.
+Es wird dringend empfohlen, die Konfigurationsdatei `Appliances.xml` vor dem Update zu sichern, für den Fall, dass man doch wieder zurück auf die Version 1.6 wechseln möchte. Sobald im *Smart Appliance Enabler* 2.0 eine Änderung gespeichert wird führt das zum Überschreiben der Datei `Appliances.xml`, wodurch diese nicht mehr für den *Smart Appliance Enabler* 1.6 lesbar ist.
 
 #### Update der installierten Version des *Smart Appliance Enabler*
 
