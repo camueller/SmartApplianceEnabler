@@ -54,3 +54,37 @@ Zu Beginn des Updates erfolgt das **Update des Raspberry Pi OS auf "Bullseye"**,
 Wenn das Raspberry Pi OS die Version "Bullseye" hat, wird das eigentliche Update des *Smart Appliance Enabler* durchgeführt inklusive der Installation der benötigten Packages. Zuvor werden die [Konfigurationsdateien des *Smart Appliance Enabler*](ConfigurationFiles_DE.md) und auch die `SmartApplianceEnabler-*.war`-Datei gesichert (mit Dateiendung `.bak`).
 
 Wenn das Update beendet ist, wird die **rote LED für eine Stunde ausgeschaltet**.
+
+### Manuelles Update
+
+Das manuelle Update sollte nur dann ausgeführt werden, wenn:
+- kein Raspberry Pi verwendet wird
+- und eine nicht-virtualisierte Installation des *Smart Appliance Enabler* verwendet wird
+
+#### pigpiod
+
+Falls GPIO verwendet werden soll (nur auf Raspberry Pi) muss [pigpiod installiert werden](ManualInstallation_DE.md#pigpiod-installieren).
+
+In der Datei `/etc/default/smartapplianceenabler` müssen folgende Zeile hinzugefügt werden:
+```
+# Configure pigpioj to use pigpiod daemon in order to avoid forcing the Smart Appliance Enabler to run as root
+JAVA_OPTS="${JAVA_OPTS} -DPIGPIOD_HOST=localhost"
+```
+
+#### MQTT-Broker
+
+Ohne MQTT-Broker ist SAE 2.0 nicht lauffähig. Theoretisch sollte jeder vorhanden MQTT-Broker funktionieren, aber in der Praxis scheint das nicht so zu sein. Im Zweifel sollte der MQTT-Broker [Mosquitto installiert](ManualInstallation_DE.md#mqtt-broker) werden.
+
+Wenn der MQTT-Broker nicht über `localhost:1883` erreichbar ist oder Benutzername/Passwort notwendig sind, müssen diese Parameter in den Einstellungen des SAE konfiguriert werden. Solange diese nicht konfiguriert sind, ist zwar die Web-Oberfläche des SAE nutzbar, aber es werden **keine Daten an den SHM übermittelt oder Schaltbefehle von diesem ausgeführt**.
+
+#### Konfigurationsdateien
+
+Es wird dringend empfohlen, die Konfigurationsdatei `Appliances.xml` vor dem Update zu sichern, falls man doch wieder zurück auf die Version 1.6 möchte. Sobald in SAE 2.0 eine Änderung gespeichert wird, wird die Datei `Appliances.xml` überschrieben und ist für SAE 1.6 nicht mehr lesbar.
+
+#### Update der installierten Version des *Smart Appliance Enabler*
+
+Das Update des *Smart Appliance Enabler* erfolgt, wie ganz oben auf dieser Seite beschrieben.
+
+### Docker
+
+Die Datei https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/docker/compose/docker-compose.yaml wurde angepasst und started vor dem *Smart Appliance Enabler* jeweils einen Container mit `pigpiod` und `mosquitto`.
