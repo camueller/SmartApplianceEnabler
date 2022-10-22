@@ -56,6 +56,8 @@ import {PwmSwitch} from './pwm/pwm-switch';
 import {LevelSwitch} from './level/level-switch';
 import {ControlLevelComponent} from './level/control-level.component';
 import {EvChargerTemplate} from './evcharger/ev-charger-template';
+import {SwitchOption} from './switchoption/switch-option';
+import {ControlSwitchOptionComponent} from './switchoption/control-switchoption.component';
 
 @Component({
   selector: 'app-control',
@@ -77,6 +79,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   controlPwmComp: ControlPwmComponent;
   @ViewChild(ControlStartingcurrentComponent)
   controlStartingcurrentComp: ControlStartingcurrentComponent;
+  @ViewChild(ControlSwitchOptionComponent)
+  controlSwitchOptionComp: ControlSwitchOptionComponent;
   @ViewChild(ControlSwitchComponent)
   controlSwitchComp: ControlSwitchComponent;
   @ViewChild(NotificationComponent)
@@ -149,8 +153,10 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   buildForm() {
     this.form = new UntypedFormGroup({});
     this.formHandler.addFormControl(this.form, 'controlType', this.control && simpleControlType(this.control.type));
-    this.formHandler.addFormControl(this.form, 'startingCurrentDetection',
-      this.control && this.control.startingCurrentDetection);
+    this.formHandler.addFormControl(this.form, 'startingCurrentSwitchUsed',
+      this.control && this.control.startingCurrentSwitchUsed);
+    this.formHandler.addFormControl(this.form, 'switchOptionUsed',
+      this.control && this.control.switchOptionUsed);
 
     this.form.addControl('testControlName', new UntypedFormControl('parent'))
 
@@ -242,34 +248,75 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.form.setErrors({'typeChanged': true});
     }
     if (!this.control.type) {
-      this.control.startingCurrentDetection = false;
+      this.control.startingCurrentSwitchUsed = false;
+      this.control.switchOptionUsed = false;
     } else if (this.isAlwaysOnSwitch) {
       this.control.alwaysOnSwitch = this.controlFactory.createAlwaysOnSwitch();
     } else if (this.isEvCharger) {
-      this.control.startingCurrentDetection = false;
+      this.control.startingCurrentSwitchUsed = false;
+      this.control.switchOptionUsed = false;
     }
     if (this.isAlwaysOnSwitch || this.isMeterReportingSwitch) {
       this.form.markAsDirty();
     }
   }
 
-  get canHaveStartingCurrentDetection(): boolean {
+  get canHaveDecoratingControl(): boolean {
     return !(this.isMeterReportingSwitch || this.isAlwaysOnSwitch || this.isPwmSwitch || this.isLevelSwitch || this.control.type === MockSwitch.TYPE);
   }
 
   toggleStartingCurrentDetection() {
-    this.setStartingCurrentDetection(!this.control.startingCurrentDetection);
+    this.setStartingCurrentDetection(!this.control.startingCurrentSwitchUsed);
   }
 
-  setStartingCurrentDetection(startingCurrentDetection: boolean) {
-    if (startingCurrentDetection) {
+  setStartingCurrentDetection(startingCurrentSwitchUsed: boolean) {
+    if (startingCurrentSwitchUsed) {
       this.control.startingCurrentSwitch = new StartingCurrentSwitch();
-      this.control.startingCurrentDetection = true;
+      this.control.startingCurrentSwitchUsed = true;
+      this.setSwitchOption(false);
+      this.setSwitchOptionControlState(false);
     } else {
       this.control.startingCurrentSwitch = null;
-      this.control.startingCurrentDetection = false;
+      this.control.startingCurrentSwitchUsed = false;
+      this.setSwitchOptionControlState(true);
     }
     this.form.markAsDirty();
+  }
+
+  setStartingCurrentDetectionControlState(enabled: boolean) {
+    if (enabled) {
+      this.form.controls.startingCurrentSwitchUsed.enable();
+    } else {
+      this.form.controls.startingCurrentSwitchUsed.disable();
+      this.form.controls.startingCurrentSwitchUsed.setValue(false);
+    }
+  }
+
+  toggleSwitchOption() {
+    this.setSwitchOption(!this.control.switchOptionUsed);
+  }
+
+  setSwitchOption(switchOptionUsed: boolean) {
+    if (switchOptionUsed) {
+      this.control.switchOption = new SwitchOption();
+      this.control.switchOptionUsed = true;
+      this.setStartingCurrentDetection(false);
+      this.setStartingCurrentDetectionControlState(false);
+    } else {
+      this.control.switchOption = null;
+      this.control.switchOptionUsed = false;
+      this.setStartingCurrentDetectionControlState(true);
+    }
+    this.form.markAsDirty();
+  }
+
+  setSwitchOptionControlState(enabled: boolean) {
+    if (enabled) {
+      this.form.controls.switchOptionUsed.enable();
+    } else {
+      this.form.controls.switchOptionUsed.disable();
+      this.form.controls.switchOptionUsed.setValue(false);
+    }
   }
 
   submitForm() {
@@ -294,8 +341,11 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     else if (this.controlEvchargerComp) {
       this.control.evCharger = this.controlEvchargerComp.updateModelFromForm();
     }
-    if (this.control.startingCurrentDetection) {
+    if (this.control.startingCurrentSwitchUsed) {
       this.control.startingCurrentSwitch = this.controlStartingcurrentComp.updateModelFromForm();
+    }
+    if(this.control.switchOptionUsed) {
+      this.control.switchOption = this.controlSwitchOptionComp.updateModelFromForm();
     }
     if (this.notificationComp) {
       this.control.notifications = this.notificationComp.updateModelFromForm();

@@ -35,7 +35,7 @@ function createCharger(): ApplianceConfiguration {
       type: S0ElectricityMeter.TYPE,
       s0ElectricityMeter: s0Meter,
     },
-    control: {type: PwmSwitch.TYPE, startingCurrentDetection: false, pwmSwitch }  });
+    control: {type: PwmSwitch.TYPE, startingCurrentSwitchUsed: false, pwmSwitch }  });
 }
 
 test('Create appliance', async t => {

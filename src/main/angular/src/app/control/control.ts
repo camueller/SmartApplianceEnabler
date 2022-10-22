@@ -27,11 +27,14 @@ import {Notifications} from '../notification/notifications';
 import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 import {PwmSwitch} from './pwm/pwm-switch';
 import {LevelSwitch} from './level/level-switch';
+import {SwitchOption} from './switchoption/switch-option';
 
 export class Control {
   type: string;
-  startingCurrentDetection?: boolean;
+  startingCurrentSwitchUsed?: boolean;
   startingCurrentSwitch?: StartingCurrentSwitch;
+  switchOptionUsed?: boolean;
+  switchOption?: SwitchOption;
   meterReportingSwitch?: MeterReportingSwitch;
   alwaysOnSwitch?: AlwaysOnSwitch;
   switch_?: Switch;

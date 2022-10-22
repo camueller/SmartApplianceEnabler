@@ -17,7 +17,7 @@ function createPump(): ApplianceConfiguration {
     appliance: {...pumpAppliance, id: generateApplianceId(), notificationSenderId: 'myNotificationId'},
     meter: {type: ModbusElectricityMeter.TYPE, modbusElectricityMeter: modbusMeter_pollInterval,
       notifications: new Notifications()},
-    control: {type: ModbusSwitch.TYPE, startingCurrentDetection: false, modbusSwitch: modbusSwitch_2modbusWrite_complete,
+    control: {type: ModbusSwitch.TYPE, startingCurrentSwitchUsed: false, modbusSwitch: modbusSwitch_2modbusWrite_complete,
       notifications: new Notifications({types: [NotificationType.CONTROL_ON]})},
   });
 }

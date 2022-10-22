@@ -169,6 +169,17 @@
   "ControlStartingcurrentComponent.error.finishedCurrentDetectionDuration_pattern": "The duration of undershoot during switch off has to be a number",
   "ControlStartingcurrentComponent.error.minRunningTime_pattern": "The minimal runtime has to be a number",
 
+  "ControlSwitchOptionComponent.switchOption": "Switch-On option",
+  "ControlSwitchOptionComponent.powerThreshold": "Power threshold [W]",
+  "ControlSwitchOptionComponent.powerThreshold.tooltip": "During switch-on detection the power has to stay above this value. During switch-off detection the power has to remain below this value.",
+  "ControlSwitchOptionComponent.switchOnDetectionDuration": "Switch-on detection duration [s]",
+  "ControlSwitchOptionComponent.switchOnDetectionDuration.tooltip": "For this duration the power has to stay above the power threshold in order to being evaluated as switch-on",
+  "ControlSwitchOptionComponent.switchOffDetectionDuration": "Switch-off detection duration [s]",
+  "ControlSwitchOptionComponent.switchOffDetectionDuration.tooltip": "For this duration the power has to stay below the power threshold in order to being evaluated as switch-off",
+  "ControlSwitchOptionComponent.error.powerThreshold_pattern": "The power threshold has to be a number",
+  "ControlSwitchOptionComponent.error.switchOnDetectionDuration_pattern": "The duration of transgression during switch on has to be a number",
+  "ControlSwitchOptionComponent.error.switchOffDetectionDuration_pattern": "The duration of undershoot during switch off has to be a number",
+
   "ControlMeterreportingComponent.powerThreshold": "Power threshold [W]",
   "ControlMeterreportingComponent.offDetectionDelay": "Switch off delay [s]",
   "ControlMeterreportingComponent.offDetectionDelay.tooltip": "For this duration the power has to stay below the power threshold in order to being evaluated as switch off",

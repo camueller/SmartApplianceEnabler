@@ -19,7 +19,7 @@ function createHeatPump(): ApplianceConfiguration {
       isMasterMeter: true,
       masterElectricityMeter: new MasterElectricityMeter({slaveSwitchOn: true})
     },
-    control: {type: Switch.TYPE, startingCurrentDetection: false, switch_}
+    control: {type: Switch.TYPE, startingCurrentSwitchUsed: false, switch_}
   });
 }
 

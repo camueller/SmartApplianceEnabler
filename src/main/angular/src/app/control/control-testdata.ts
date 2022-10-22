@@ -77,7 +77,7 @@ export class ControlTestdata {
   public static switch_StartingCurrent_type(): Control {
     return new Control({
       type: 'de.avanux.smartapplianceenabler.control.Switch',
-      startingCurrentDetection: true,
+      startingCurrentSwitchUsed: true,
       startingCurrentSwitch: new StartingCurrentSwitch({
         '@class': 'de.avanux.smartapplianceenabler.control.StartingCurrentSwitch',
         powerThreshold: null,

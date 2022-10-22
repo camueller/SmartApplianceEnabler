@@ -24,7 +24,7 @@ function createWashingMachine(): ApplianceConfiguration {
     appliance: {...washingMachineAppliance, id: generateApplianceId()},
     meter: {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter_pollInterval},
     control: {type: HttpSwitch.TYPE, httpSwitch: httpSwitch_2httpWrite_httpRead_complete,
-      startingCurrentDetection: true, startingCurrentSwitch },
+      startingCurrentSwitchUsed: true, startingCurrentSwitch },
     schedules: runtimeRequest_dayTimeframe_weekday_weekend,
   });
 }

@@ -16,7 +16,7 @@ function createHeatingRod(): ApplianceConfiguration {
       type: SlaveElectricityMeter.TYPE,
       slaveElectricityMeter: new SlaveElectricityMeter({masterElectricityMeterApplianceId: 'F-00000001-000000000001-00'}),
     },
-    control: {type: LevelSwitch.TYPE, startingCurrentDetection: false, levelSwitch }  });
+    control: {type: LevelSwitch.TYPE, startingCurrentSwitchUsed: false, levelSwitch }  });
 }
 
 test('Create appliance', async t => {

@@ -14,7 +14,7 @@ function createFridge(): ApplianceConfiguration {
   return new ApplianceConfiguration({
     appliance: {...fridgeAppliance, id: generateApplianceId()},
     meter: {type: HttpElectricityMeter.TYPE, httpElectricityMeter: httpMeter_complete},
-    control: {type: AlwaysOnSwitch.TYPE, startingCurrentDetection: false, alwaysOnSwitch}
+    control: {type: AlwaysOnSwitch.TYPE, startingCurrentSwitchUsed: false, alwaysOnSwitch}
   });
 }
 

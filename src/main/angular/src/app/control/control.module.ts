@@ -25,6 +25,7 @@ import { ControlMeterreportingComponent } from './meterreporting/control-meterre
 import {ControlPwmComponent} from './pwm/control-pwm.component';
 import {ControlLevelComponent} from './level/control-level.component';
 import {EvChargerTemplateResolver} from './evcharger/ev-charger-template-resolver.service';
+import {ControlSwitchOptionComponent} from './switchoption/control-switchoption.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import {EvChargerTemplateResolver} from './evcharger/ev-charger-template-resolve
     ControlPwmComponent,
     ControlStartingcurrentComponent,
     ControlSwitchComponent,
+    ControlSwitchOptionComponent,
     ElectricVehicleComponent,
   ],
   imports: [

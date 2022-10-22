@@ -32,6 +32,7 @@ import {ElectricVehicle} from './evcharger/electric-vehicle/electric-vehicle';
 import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 import {PwmSwitch} from './pwm/pwm-switch';
 import {LevelSwitch} from './level/level-switch';
+import {SwitchOption} from './switchoption/switch-option';
 
 export class ControlFactory {
 
@@ -53,8 +54,12 @@ export class ControlFactory {
     this.logger.debug('Control (JSON): ' + JSON.stringify(rawControl));
     const control = new Control();
     if (rawControl['@class'] === StartingCurrentSwitch.TYPE) {
-      control.startingCurrentDetection = true;
+      control.startingCurrentSwitchUsed = true;
       control.startingCurrentSwitch = this.createStartingCurrentSwitch(rawControl);
+      this.fromJSONbyType(control, rawControl.control);
+    } else if (rawControl['@class'] === SwitchOption.TYPE) {
+      control.switchOptionUsed = true;
+      control.switchOption = this.createSwitchOption(rawControl);
       this.fromJSONbyType(control, rawControl.control);
     } else {
       this.fromJSONbyType(control, rawControl);
@@ -132,6 +137,10 @@ export class ControlFactory {
     return new StartingCurrentSwitch(rawStartingCurrentSwitch);
   }
 
+  createSwitchOption(rawSwitchOption: any): SwitchOption {
+    return new SwitchOption(rawSwitchOption);
+  }
+
   createSwitch(rawSwitch: any): Switch {
     return new Switch(rawSwitch);
   }
@@ -188,10 +197,14 @@ export class ControlFactory {
   toJSON(control: Control): string {
     this.logger.debug('Control (TYPE): ' + JSON.stringify(control));
     let controlUsed: any;
-    if (control.startingCurrentDetection) {
+    if (control.startingCurrentSwitchUsed) {
       control.startingCurrentSwitch['control'] = this.getControlByType(control);
       control.startingCurrentSwitch['control'].notifications = control.notifications;
       controlUsed = control.startingCurrentSwitch;
+    } else if(control.switchOptionUsed) {
+      control.switchOption['control'] = this.getControlByType(control);
+      control.switchOption['control'].notifications = control.notifications;
+      controlUsed = control.switchOption;
     } else {
       controlUsed = this.getControlByType(control);
     }

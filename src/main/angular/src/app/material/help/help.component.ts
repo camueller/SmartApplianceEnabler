@@ -15,7 +15,7 @@ export class HelpComponent {
   anchor: string;
   @Input()
   cssClass = 'middle';
-  private baseUrl = 'https://github.com/camueller/SmartApplianceEnabler/blob/2.0/doc/';
+  private baseUrl = 'https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/';
 
   public get url() {
     const url = `${this.baseUrl}${this.helpfile}_${this.language}.md`;

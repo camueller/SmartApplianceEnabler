@@ -159,8 +159,8 @@ export async function createControl(t: TestController, applianceId: string, cont
     await EvchargerPage.setEvChargerFromTemplate(t, control.evCharger, controlTemplate);
     await EvchargerPage.setElectricVehicles(t, applianceId, control.evCharger.vehicles);
   }
-  if (control.startingCurrentDetection) {
-    await StartingCurrentSwitchPage.setStartingCurrentSwitch(t, control.startingCurrentDetection, control.startingCurrentSwitch);
+  if (control.startingCurrentSwitchUsed) {
+    await StartingCurrentSwitchPage.setStartingCurrentSwitch(t, control.startingCurrentSwitchUsed, control.startingCurrentSwitch);
   }
   await NotificationPage.setNotifications(t, control.notifications);
   await ControlPage.clickSave(t);
@@ -189,8 +189,8 @@ export async function assertControl(t: TestController, applianceId: string, cont
     await EvchargerPage.assertEvCharger(t, control.evCharger);
     await EvchargerPage.assertElectricVehicles(t, applianceId, control.evCharger.vehicles);
   }
-  if (control.startingCurrentDetection) {
-    await StartingCurrentSwitchPage.assertStartingCurrentSwitch(t, control.startingCurrentDetection, control.startingCurrentSwitch);
+  if (control.startingCurrentSwitchUsed) {
+    await StartingCurrentSwitchPage.assertStartingCurrentSwitch(t, control.startingCurrentSwitchUsed, control.startingCurrentSwitch);
   }
   await NotificationPage.assertNotifications(t, control.notifications);
 }
