@@ -403,8 +403,8 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             if(control instanceof GpioControllable) {
                 controllables.add((GpioControllable) control);
             }
-            else if(control instanceof StartingCurrentSwitch) {
-                Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
+            else if(control instanceof WrappedControl) {
+                Control wrappedControl = ((WrappedControl) control).getControl();
                 if(wrappedControl instanceof GpioControllable) {
                     controllables.add((GpioControllable) wrappedControl);
                 }
