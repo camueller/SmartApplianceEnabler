@@ -84,7 +84,7 @@ public class SwitchOption extends WrappedControl implements TimeframeIntervalHan
         }
         else {
             boolean abovePowerThreshold = getPowerUpdates().values().stream().anyMatch(power -> power > powerThreshold);
-            if (detectingSwitchOn && abovePowerThreshold) {
+            if (abovePowerThreshold) {
                 logger.debug("{}: Switch on detected.", getApplianceId());
                 switchOnDetected = true;
                 detectingSwitchOn = false;
