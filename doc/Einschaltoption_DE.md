@@ -42,7 +42,6 @@ $ grep SwitchOption /tmp/rolling-2022-10-23.log
 
 *Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `SwitchOption` und drückt Refresh.
 
-:q
 Wenn das Gerät _Wärmepumpe_ nicht innerhalb der **Dauer der Einschalterkennung** eingeschaltet hat, findet sich folgender Eintrag im Log:
 
 ```console
