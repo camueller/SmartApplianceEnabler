@@ -81,6 +81,7 @@ public class SwitchOption extends WrappedControl implements TimeframeIntervalHan
         if(switchOnDetectionDurationExpired) {
             logger.debug("{}: No switch on detected within switchOnDetectionDuration={}s. Removing timeframe interval.", getApplianceId(), switchOnDetectionDuration);
             timeframeIntervalHandler.removeActiveTimeframeInterval(now);
+            on(now, false);
         }
         else {
             boolean abovePowerThreshold = getPowerUpdates().values().stream().anyMatch(power -> power > powerThreshold);
