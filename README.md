@@ -61,7 +61,7 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 | Modbus | [Modbus-basierte Schalter](doc/ModbusSwitch_DE.md)<br>[Modbus-basierte Stufenschalter](doc/LevelSwitch_DE.md)<br><br>[Wallboxen mit Modbus-Schnittstelle](doc/EVCharger_DE.md)                                                                                                                                                                                                                                                                                                                 |
 | HTTP | [HTTP-basierte Schalter](doc/HttpSwitch_DE.md)<br>[HTTP-basierte Stufenschalter](doc/LevelSwitch_DE.md)<ul></ul>kompatible Produkte<ul><li>[Shelly Plug/4PM](doc/Shelly_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>alle Produkte mit [Tasmota](doc/Tasmota_DE.md)-Firmware<ul></ul>[Wallboxen mit HTTP-Schnittstelle](doc/EVCharger_DE.md)|
 
-[Details zu diesen Schaltern und weiteren Software-basierten Schalten (z.B. Anlaufstromerkennung)](doc/Control_DE.md)
+[Details zu diesen Schaltern und weiteren Software-basierten Schalten (z.B. Anlaufstromerkennung, Unterstützung der SG-Ready-Funktion von Wärmepumpen )](doc/Control_DE.md)
 
 # Montage
 

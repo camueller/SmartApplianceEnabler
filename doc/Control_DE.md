@@ -16,6 +16,8 @@ Entsprechend dieser Auswahl werden die für den gewählten Schalter-Typ konfigur
 
 Falls der gewählte Schalter-Typ mit [Anlaufstromerkennung](Anlaufstromerkennung_DE.md) kombiniert werden kann und diese durch Anklicken der Checkbox aktiviert wurde, werden weitere Felder mit Konfigurationsparametern der Anlaufstromerkennung eingeblendet.
 
+Zur Nutzung der SG-Ready-Funktion von Wärmepumpen können einige Schalter-Typen als [Einschaltoption](Einschaltoption_DE.md) markiert werden.
+
 Wenn als Gerätetyp `Elektroauto-Ladegerät` angegeben ist, kann auf dieser Seite die [Konfiguration der Wallbox sowie die Verwaltung der Fahrzeuge](EVCharger_DE.md) vorgenommen werden.
 
 Siehe auch: [Allgemeine Hinweise zur Konfiguration](Configuration_DE.md)
