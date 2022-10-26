@@ -99,7 +99,7 @@ public class SwitchOption extends WrappedControl implements TimeframeIntervalHan
 
     public void detectSwitchOff(LocalDateTime now) {
         boolean abovePowerThreshold = getPowerUpdates().values().stream().anyMatch(power -> power > powerThreshold);
-        if (!abovePowerThreshold) {
+        if (isMinRunningTimeExceeded(now) && !abovePowerThreshold) {
             logger.debug("{}: Switch off detected.", getApplianceId());
             clearPowerUpdates();
             getMqttClient().publish(MqttEventName.WrappedControlSwitchOffDetected, new MqttMessage(now));
@@ -107,6 +107,15 @@ public class SwitchOption extends WrappedControl implements TimeframeIntervalHan
         } else {
             logger.debug("{}: Switch off not detected.", getApplianceId());
         }
+    }
+
+    /**
+     * Returns true, if the minimum running time has been exceeded.
+     *
+     * @return
+     */
+    protected boolean isMinRunningTimeExceeded(LocalDateTime now) {
+        return switchOnTime != null && switchOnTime.plusSeconds(120).isBefore(now);
     }
 
     @Override
