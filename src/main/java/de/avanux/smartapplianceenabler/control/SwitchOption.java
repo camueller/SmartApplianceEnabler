@@ -129,6 +129,7 @@ public class SwitchOption extends WrappedControl implements TimeframeIntervalHan
         else {
             switchOnTime = null;
             detectingSwitchOn = false;
+            switchOnDetected = false;
         }
         publishControlMessage(switchOn);
         if(getNotificationHandler() != null) {
