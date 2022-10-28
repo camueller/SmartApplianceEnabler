@@ -49,9 +49,9 @@ Dabei wird das eigentliche Update-Script [upgrade2.sh](https://raw.githubusercon
 
 Ist man per SSH auf dem Raspberry Pi eingeloggt, lässt sich in der Console der Fortschritt des Updates verfolgen mit `tail -f /tmp/install.log`. Auch in `webmin` kann man den Fortschritt des Updates verfolgen - siehe [Log Dateien anzeigen](Webmin_DE.md), wobei als Log-Datei `/tmp/install.log` eingegeben werden muss.  
 
-Zu Beginn des Updates erfolgt das **Update des Raspberry Pi OS auf "Bullseye"**, falls noch eine ältere Version installiert ist. Selbst bei schneller Internet-Anbindung kann dieses OS-Update auch auf einem Raspberry Pi 4 bis zu einer Stunde dauern! Nach dem OS-Update wird der Raspberry Pi neu gestartet!
+Zu Beginn des Updates erfolgt das **Update des Raspberry Pi OS auf "Bullseye"**, falls noch eine ältere Version installiert ist. Selbst bei schneller Internet-Anbindung kann dieses OS-Update auch auf einem Raspberry Pi 4 eine Stunde oder länger dauern! Nach dem OS-Update wird der Raspberry Pi neu gestartet!
 
-Wenn das Raspberry Pi OS die Version "Bullseye" hat, wird das eigentliche Update des *Smart Appliance Enabler* durchgeführt inklusive der Installation der benötigten Packages. Zuvor werden die [Konfigurationsdateien des *Smart Appliance Enabler*](ConfigurationFiles_DE.md) und auch die `SmartApplianceEnabler-*.war`-Datei gesichert (mit Dateiendung `.bak`).
+Wenn das Raspberry Pi OS die Version "Bullseye" hat, werden zuerst die [Konfigurationsdateien des *Smart Appliance Enabler*](ConfigurationFiles_DE.md) und auch die `SmartApplianceEnabler-*.war`-Datei gesichert (mit Dateiendung `.bak`). Danach wird das eigentliche Update des *Smart Appliance Enabler* durchgeführt inklusive der Installation der benötigten Packages. Auch der MQTT-Broker `mosquitto` wird automatisch installiert und konfiguriert.
 
 Wenn das Update beendet ist, wird die **rote LED für eine Stunde ausgeschaltet**.
 
@@ -88,3 +88,5 @@ Das Update des *Smart Appliance Enabler* erfolgt, wie ganz oben auf dieser Seite
 ### Docker
 
 Die Datei https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/docker/compose/docker-compose.yaml wurde angepasst und started vor dem *Smart Appliance Enabler* jeweils einen Container mit `pigpiod` und `mosquitto`.
+
+Ansonsten muss lediglich das Docker-Image in der gewünschten Version verwendet werden.
