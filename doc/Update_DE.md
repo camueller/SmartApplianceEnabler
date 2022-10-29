@@ -1,5 +1,13 @@
 # Update
 
+## Allgemeine Hinweise
+
+Teil des *Smart Appliance Enabler* ist die Web-Anwendung, die im Rahmen des Updates ebenfalls aktualisiert wird. In Abhängigkeit von den Einstellungen im verwendeten Web-Browser kann es sein, dass nach dem Update die Web-Oberfläche nicht richtig angezeigt wird und sich "komisch" verhält. 
+
+![Web App Corrupt](../pics/fe/WebAppCorrupt.png)
+
+In diesem Fall muss der Cache des Web-Browser für die URL des *Smart Appliance Enabler* oder möglicherweise komplett gelöscht werden. Danach sollte die Web-Anwendung wie gewohnt funktionieren.
+
 ## Update bei gleichbleibender Hauptversion (1.x -> 1.x, 2.x -> 2.x)
 Das Update der installierten Version des *Smart Appliance Enabler* besteht im Austausch der `SmartApplianceEnabler-*.war`-Datei im Verzeichnis `/opt/sae`. **Dabei ist zu beachten, das sich im Verzeichnis immer nur eine Datei mit der Erweiterung `.war` befindet!** Damit man ggf. auf die alte Version zurückwechseln kann, kann man diese umbenennen beispielsweise in `SmartApplianceEnabler-1.6.19.war.old` anstatt sie zu löschen.
 
