@@ -173,7 +173,6 @@ public class StartingCurrentSwitch extends WrappedControl implements TimeframeIn
             logger.debug("{}: Finished current detected.", getApplianceId());
             clearPowerUpdates();
             getMqttClient().publish(MqttEventName.WrappedControlSwitchOffDetected, new MqttMessage(now));
-            on(now, false);
         } else {
             logger.debug("{}: Finished current not detected.", getApplianceId());
         }

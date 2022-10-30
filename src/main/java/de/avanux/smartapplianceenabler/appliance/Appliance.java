@@ -307,6 +307,9 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             mqttClient.subscribe(Meter.TOPIC, true, (topic, message) -> {
                 meterMessage = (MeterMessage) message;
             });
+            mqttClient.subscribe(MqttEventName.WrappedControlSwitchOffDetected, (topic, message) -> {
+                publishControlMessage(now, false, null);
+            });
         }
         if(meter != null) {
             logger.info("{}: Starting {}", id, meter.getClass().getSimpleName());
