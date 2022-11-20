@@ -2,9 +2,9 @@
 Mercedes stellt eine API bereit, die es erlaubt verschiedene Daten wie z.B. SoC oder Restreichweite des eigenen Fahrzeugs auszulesen. Anbei findet sich ein shellbasiertes Skript, das an das Projekt "Mercedes_me_Api" angelehnt ist (https://github.com/xraver/mercedes_me_api).
 
 Voraussetzung ist, dass man einen Mercedes Me Account erstellt hat und dort in der Diensteverwaltung für das Auto den Dienst "Schnittstelle Drittanbieter: Fahrzeugdaten" aktiviert hat. Nun loggt man sich im Developer-Portal ein (https://developer.mercedes-benz.com/). Dort muss ein Projekt erstellt werden, dem dann verschiedene Dienste zugeordnet werden können. Für den SoC ist der Dienst "Electric Vehicle Status" wichtig. Unter der "Bring your own car"-Option ist der Zugriff aufs eigene Fahrzeug kostenlos möglich. Beim Anlegen des Projekts wird eine Client Id und ein Client Secret erzeugt, die man später für die Authentisierung braucht.
-Die API verwendet das OAUTH2.0 Verfahren. Vereinzelte Nutzer berichten aber davon, dass nach einigen Tagen die initiale Tokengenerierung erneut manuell durchgeführt werden muss.
+Die API verwendet das OAUTH2.0 Verfahren.
 
-Im Folgenden werden mehrere Skripte erstellt. Eines stellt die Verbindung zur API von Mercedes her und dient gleichzeitig der Generierung von Access- und Refreshtoken. Ein zweites Skript ruft das erste in Verbindung mit einem Argument auf um den SoC zu erhalten. Dieses Skript wird vom SAE ausgeführt. Ein drittes wird als Cronjob eingerichtet, um alle zwei Stunden den Token zu erneuern.
+Im Folgenden werden mehrere Skripte erstellt. Eines stellt die Verbindung zur API von Mercedes her und dient gleichzeitig der Generierung von Access- und Refreshtoken. Ein zweites Skript ruft das erste in Verbindung mit einem Argument auf um den SoC zu erhalten. Dieses Skript wird vom SAE ausgeführt. Ein drittes wird als Cronjob eingerichtet, um den nur 60 Minuten gültigen Token zu erneuern.
 
 ## Mercedes Me API-Script
 Als Erstes muss das Verzeichnis für die Skripte und die Konfigurationsdatei angelegt und dorthin gewechselt werden:
@@ -15,18 +15,18 @@ pi@raspberrypi ~ $ cd /opt/sae/soc
 
 Die Konfigurationsdatei mit den auf der Developer-Seite erhaltenen IDs wird mit dem Namen `.mercedesme_config` im selben Verzeichnis erstellt und hat folgenden Inhalt:
 ```
-CLIENT_ID=<INSERT_YOUR_CLIENT_ID>
-CLIENT_SECRET=<INSERT_YOUR_CLIENT_SECRET>
-VEHICLE_ID=<INSERT_YOUR_VEHICLE_ID>
+CLIENT_ID="INSERT_YOUR_CLIENT_ID"
+CLIENT_SECRET="INSERT_YOUR_CLIENT_SECRET"
+VEHICLE_ID="INSERT_YOUR_VEHICLE_ID"
 ```
-Entsprechende Felder in `<>` sind mit der Client ID und dem Client Secret des Developer-Projekts zu ersetzen. VEHICLE_ID ist die Fahrzeugidentifikationsnummer.
+Entsprechende Felder in `""` sind mit der Client ID und dem Client Secret des Developer-Projekts zu ersetzen. VEHICLE_ID ist die Fahrzeugidentifikationsnummer.
 
 Das eigentliche Mercedes Me API-Script wird mit dem Namen `mercedes_me_api.sh` und folgendem Inhalt angelegt:
 ```console
 #!/bin/bash
 
 # Author: G. Ravera
-# Version 0.7
+# Version 0.8
 # Creation Date: 28/09/2020
 #
 # Change log:
@@ -37,17 +37,18 @@ Das eigentliche Mercedes Me API-Script wird mit dem Namen `mercedes_me_api.sh` u
 #             19/12/2020 - 0.5 - Added Electric Vehicle Status support
 #             23/12/2020 - 0.6 - Added PayAsYouDrive support (danielrheinbay@gmail.com)
 #             04/03/2022 - 0.7 - Only Electric Vehicle Status support
+#             06/10/2022 - 0.8 - Implement changes of new API management
 
 # Script Name & Version
 NAME="mercedes_me_api.sh"
-VERSION="0.7"
+VERSION="0.8"
 
 # Script Parameters
 TOKEN_FILE=".mercedesme_token"
 CONFIG_FILE=".mercedesme_config"
 # Mercedes me Application Parameters
 REDIRECT_URL="https://localhost"
-SCOPE="mb:vehicle:mbdata:evstatus%20offline_access"
+SCOPE="openid%20mb:vehicle:mbdata:evstatus%20offline_access"
 RES_URL_PREFIX="https://api.mercedes-benz.com/vehicledata/v2"
 # Resources
 RES_ELECTRIC=(soc rangeelectric)
@@ -137,15 +138,14 @@ function getAuthCode ()
   
   echo "Open the browser and insert this link:"
   echo 
-  echo "https://id.mercedes-benz.com/as/authorization.oauth2?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPE"
-  #echo "https://id.mercedes-benz.com/as/authorization.oauth2?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPE&state=$STATE"
+  echo "https://ssoalpha.dvb.corpinter.net/v1/auth?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URL&scope=$SCOPE"
   echo 
   echo "Copy the code in the url:"
 
   read AUTH_CODE
 
   TOKEN=$(curl --request POST \
-               --url https://id.mercedes-benz.com/as/token.oauth2 \
+               --url https://ssoalpha.dvb.corpinter.net/v1/token \
                --header "Authorization: Basic $BASE64" \
                --header "content-type: application/x-www-form-urlencoded" \
                --data "grant_type=authorization_code&code=$AUTH_CODE&redirect_uri=$REDIRECT_URL")
@@ -159,7 +159,7 @@ function refreshAuthCode ()
   extractRefreshToken
 
   TOKEN=$(curl --request POST \
-               --url https://id.mercedes-benz.com/as/token.oauth2 \
+               --url https://ssoalpha.dvb.corpinter.net/v1/token \
                --header "Authorization: Basic $BASE64" \
                --header "content-type: application/x-www-form-urlencoded" \
                --data "grant_type=refresh_token&refresh_token=$REFRESH_CODE")
@@ -230,7 +230,7 @@ Nun kann das angelegte Skript gestestet werden und sollte SoC und Restreichweite
 
 ```console
 pi@raspberrypi:/opt/sae/soc $ ./soc.sh
-mercedes_me_api.sh - 0.7
+mercedes_me_api.sh - 0.8
 
 Retrieving soc:
 {"soc":{"value":"56","timestamp":1646662088000}}
@@ -245,11 +245,10 @@ Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus de
 ```
 
 ### Cronjob zur Generierung des Accesstoken
-Da der Accesstoken nach 7200 Sekunden abläuft, muss ein Cronjob eingerichtet werden, der alle zwei Stunden mit Hilfe des Refreshtokens einen neuen Accesstoken erzeugt.
+Da der Accesstoken nach 60 Minuten abläuft, muss ein Cronjob eingerichtet werden, der innerhalb dieser Zeit mit Hilfe des Refreshtokens einen neuen Accesstoken erzeugt.
 Dafür wird ein Skript mit dem Namen `token_refresh.sh` und diesem Inhalt angelegt und über crontab aufgerufen:
 ```console
 #!/bin/sh
 cd /opt/sae/soc
 ./mercedes_me_api.sh -r
 ```
-
