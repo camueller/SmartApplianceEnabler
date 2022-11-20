@@ -159,8 +159,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.control && this.control.switchOptionUsed);
 
     this.form.addControl('testControlName', new UntypedFormControl('parent'))
-    this.setStartingCurrentDetectionControlState(this.control?.startingCurrentSwitchUsed ?? false);
-    this.setSwitchOptionControlState(this.control?.switchOptionUsed ?? false);
+    this.setStartingCurrentDetection(this.control?.startingCurrentSwitchUsed ?? false, this.control?.startingCurrentSwitch, false);
+    this.setSwitchOption(this.control.switchOptionUsed ?? false, this.control.switchOption, false);
   }
 
   canDeactivate(): Observable<boolean> | boolean {
@@ -270,19 +270,19 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     this.setStartingCurrentDetection(!this.control.startingCurrentSwitchUsed);
   }
 
-  setStartingCurrentDetection(startingCurrentSwitchUsed: boolean) {
+  setStartingCurrentDetection(startingCurrentSwitchUsed: boolean, startingCurrentSwitch = new StartingCurrentSwitch(), markFormAsDirty = true) {
+    this.control.startingCurrentSwitchUsed = startingCurrentSwitchUsed;
     if (startingCurrentSwitchUsed) {
-      this.control.startingCurrentSwitch = new StartingCurrentSwitch();
-      this.control.startingCurrentSwitchUsed = true;
+      this.control.startingCurrentSwitch = startingCurrentSwitch;
       this.setSwitchOption(false);
       this.setSwitchOptionControlState(false);
     } else {
       this.control.startingCurrentSwitch = null;
-      this.control.startingCurrentSwitchUsed = false;
       this.setSwitchOptionControlState(true);
     }
-    this.form.markAsDirty();
-    console.log('form=', this.form);
+    if(markFormAsDirty) {
+      this.form.markAsDirty();
+    }
   }
 
   setStartingCurrentDetectionControlState(enabled: boolean) {
@@ -298,18 +298,19 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     this.setSwitchOption(!this.control.switchOptionUsed);
   }
 
-  setSwitchOption(switchOptionUsed: boolean) {
+  setSwitchOption(switchOptionUsed: boolean, switchOption = new SwitchOption(), markFormAsDirty = true) {
+    this.control.switchOptionUsed = switchOptionUsed;
     if (switchOptionUsed) {
-      this.control.switchOption = new SwitchOption();
-      this.control.switchOptionUsed = true;
+      this.control.switchOption = switchOption;
       this.setStartingCurrentDetection(false);
       this.setStartingCurrentDetectionControlState(false);
     } else {
       this.control.switchOption = null;
-      this.control.switchOptionUsed = false;
       this.setStartingCurrentDetectionControlState(true);
     }
-    this.form.markAsDirty();
+    if(markFormAsDirty) {
+      this.form.markAsDirty();
+    }
   }
 
   setSwitchOptionControlState(enabled: boolean) {
