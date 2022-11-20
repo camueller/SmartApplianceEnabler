@@ -12,7 +12,7 @@ export class StartingCurrentSwitchPage {
 
   public static async setStartingCurrentSwitch(t: TestController, startingCurrentDetection: boolean,
                                                startingCurrentSwitch: StartingCurrentSwitch) {
-    await setCheckboxEnabled(t, selectorCheckboxByFormControlName('startingCurrentDetection'), startingCurrentDetection);
+    await setCheckboxEnabled(t, selectorCheckboxByFormControlName('startingCurrentSwitchUsed'), startingCurrentDetection);
     await StartingCurrentSwitchPage.setPowerThreshold(t, startingCurrentSwitch.powerThreshold);
     await StartingCurrentSwitchPage.setStartingCurrentDetectionDuration(t, startingCurrentSwitch.startingCurrentDetectionDuration);
     await StartingCurrentSwitchPage.setFinishedCurrentDetectionDuration(t, startingCurrentSwitch.finishedCurrentDetectionDuration);
@@ -21,7 +21,7 @@ export class StartingCurrentSwitchPage {
 
   public static async assertStartingCurrentSwitch(t: TestController, startingCurrentDetection: boolean,
                                                   startingCurrentSwitch: StartingCurrentSwitch) {
-    await assertCheckbox(t, selectorCheckboxCheckedByFormControlName('startingCurrentDetection'), startingCurrentDetection);
+    await assertCheckbox(t, selectorCheckboxCheckedByFormControlName('startingCurrentSwitchUsed'), startingCurrentDetection);
     await StartingCurrentSwitchPage.assertPowerThreshold(t, startingCurrentSwitch.powerThreshold);
     await StartingCurrentSwitchPage.assertStartingCurrentDetectionDuration(t, startingCurrentSwitch.startingCurrentDetectionDuration);
     await StartingCurrentSwitchPage.assertFinishedCurrentDetectionDuration(t, startingCurrentSwitch.finishedCurrentDetectionDuration);
