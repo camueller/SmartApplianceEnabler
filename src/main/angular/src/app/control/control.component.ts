@@ -159,7 +159,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.control && this.control.switchOptionUsed);
 
     this.form.addControl('testControlName', new UntypedFormControl('parent'))
-
+    this.setStartingCurrentDetectionControlState(this.control?.startingCurrentSwitchUsed ?? false);
+    this.setSwitchOptionControlState(this.control?.switchOptionUsed ?? false);
   }
 
   canDeactivate(): Observable<boolean> | boolean {
@@ -281,6 +282,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       this.setSwitchOptionControlState(true);
     }
     this.form.markAsDirty();
+    console.log('form=', this.form);
   }
 
   setStartingCurrentDetectionControlState(enabled: boolean) {
