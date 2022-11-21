@@ -62,12 +62,17 @@ sed -i "s/ExecStart=\/usr\/bin\/pigpiod -l/ExecStart=\/usr\/bin\/pigpiod/g" /lib
 systemctl start pigpiod 2>&1 >> $LOG
 systemctl enable pigpiod 2>&1 >> $LOG
 
-echo "$PREFIX Setting up mosquitto ..." >> $LOG
-sed -i "s/persistence true/persistence false/g" /etc/mosquitto/mosquitto.conf 2>&1 >> $LOG
-echo "listener 1883" > /etc/mosquitto/conf.d/smartapplianceenabler.conf
-echo "allow_anonymous true" >> /etc/mosquitto/conf.d/smartapplianceenabler.conf
-systemctl start mosquitto 2>&1 >> $LOG
-systemctl enable mosquitto 2>&1 >> $LOG
+MOSQUITTO_INSTALLED=`dpkg -l mosquitto 2>&1 | grep ii`
+if [ -z "$MOSQUITTO_INSTALLED" ] ; then
+  echo "$PREFIX Setting up mosquitto ..." >> $LOG
+  sed -i "s/persistence true/persistence false/g" /etc/mosquitto/mosquitto.conf 2>&1 >> $LOG
+  echo "listener 1883" > /etc/mosquitto/conf.d/smartapplianceenabler.conf
+  echo "allow_anonymous true" >> /etc/mosquitto/conf.d/smartapplianceenabler.conf
+  systemctl start mosquitto 2>&1 >> $LOG
+  systemctl enable mosquitto 2>&1 >> $LOG
+else
+  echo "$PREFIX mosquitto already installed" >> $LOG
+fi
 
 echo "$PREFIX Stopping SAE ..." >> $LOG
 systemctl stop smartapplianceenabler.service 2>&1 >> $LOG
