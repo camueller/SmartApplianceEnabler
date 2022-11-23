@@ -91,7 +91,7 @@ Es wird dringend empfohlen, die Konfigurationsdatei `Appliances.xml` vor dem Upd
 
 #### Update der installierten Version des *Smart Appliance Enabler*
 
-Das Update des *Smart Appliance Enabler* erfolgt, wie ganz oben auf dieser Seite beschrieben.
+Das Update des *Smart Appliance Enabler* erfolgt durch [Austausch der war-Datei wie oben auf dieser Seite beschrieben](#durchf%C3%BChrung-des-updates).
 
 ### Docker
 
