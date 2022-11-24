@@ -95,7 +95,7 @@ fi
 wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/logback-spring.xml -P $SAE_HOME 2>>$LOG
 chmod 644 $SAE_HOME/logback-spring.xml 2>&1 >> $LOG
 
-SAE_VERSION=`curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/camueller/SmartApplianceEnabler/releases | jq -c '.[] | select( .prerelease == false) | .tag_name' | head -n 1 | tr -d '"'`
+SAE_VERSION=`curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/camueller/SmartApplianceEnabler/releases | jq -c '.[] | select( .prerelease == false) | .tag_name' | head -n 1 | tr -d '"'`
 wget "https://github.com/camueller/SmartApplianceEnabler/releases/download/"$SAE_VERSION"/SmartApplianceEnabler-"$SAE_VERSION".war" -P $SAE_HOME 2>>$LOG
 
 chown -R sae:sae $SAE_HOME 2>&1 >> $LOG

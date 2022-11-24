@@ -12,6 +12,11 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [2.1.0](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.1.0) - 24.11.2022
+
+### Neu
+- Einschalt-Option für Schalter - derzeit primär zur Unterstützung der SG-Ready-Funktion von Wärmepumpen - siehe [#360](https://github.com/camueller/SmartApplianceEnabler/issues/360)
+
 ## [2.0.6](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.6) - 02.10.2022
 
 ### Gefixt
