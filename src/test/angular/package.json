@@ -9,9 +9,9 @@
     "debug": "testcafe $NODE_DEBUG_OPTION chrome",
     "test:default": "testcafe chrome \"src/*.spec.ts\"",
     "test:localhost8080": "E2E_TEST_URL=http://localhost:8080 testcafe chrome \"src/*.spec.ts\"",
-    "test:chrome": "DEBUG=true testcafe --page-load-timeout 10000 --selector-timeout=10000 \"browserstack:chrome@92.0:Windows 10\" \"src/*.spec.ts\"",
-    "test:firefox": "DEBUG=true testcafe --page-load-timeout 10000 --selector-timeout=10000 \"browserstack:firefox@91.0:Windows 10\" \"src/*.spec.ts\"",
-    "test:safari": "DEBUG=true testcafe --page-load-timeout 10000 --selector-timeout=10000 \"browserstack:safari@14.1:OS X Big Sur\" \"src/*.spec.ts\""
+    "test:chrome":  "E2E_TEST_URL=http://server:8081/?lang=de DEBUG=true testcafe --page-load-timeout 10000 --selector-timeout=10000 \"browserstack:chrome@92.0:Windows 10\" \"src/*.spec.ts\"",
+    "test:firefox": "E2E_TEST_URL=http://server:8081/?lang=de DEBUG=true testcafe --page-load-timeout 10000 --selector-timeout=10000 \"browserstack:firefox@91.0:Windows 10\" \"src/*.spec.ts\"",
+    "test:safari":  "E2E_TEST_URL=http://server:8081/?lang=de DEBUG=true testcafe --page-load-timeout 10000 --selector-timeout=10000 \"browserstack:safari@14.1:OS X Big Sur\" \"src/*.spec.ts\""
   },
   "private": true,
   "dependencies": {

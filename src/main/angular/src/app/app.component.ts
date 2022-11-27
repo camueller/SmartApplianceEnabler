@@ -22,6 +22,7 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {filter, Subscription} from 'rxjs';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {map} from 'rxjs/operators';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -35,6 +36,7 @@ export class AppComponent implements OnInit {
   activeMediaQueryAlias = '';
 
   constructor(
+    private route: ActivatedRoute,
     private mediaObserver: MediaObserver,
     private translate: TranslateService
   ) {
@@ -43,12 +45,22 @@ export class AppComponent implements OnInit {
     const  currentLanguage  =  this.translate.getBrowserLang();
     // For "en" we have to force German since Browserstack does not support setting the accepted languages in the browser.
     // This would cause the tests to fail since they expect German string from Drop-Downs etc.
-    if (currentLanguage !== 'de' && currentLanguage !== 'en') {
+    if (currentLanguage !== 'de') {
       translate.use('en');
     }
   }
 
   ngOnInit(): void {
+    // Allow forcing a language by query param to initial URL since testcafe-browser-provider-browserstack
+    // cannot handle it otherwise:
+    // e.g. http://localhost:4200/?lang=de
+    this.route.queryParams
+      .subscribe(params => {
+        if(params?.lang) {
+          console.log(`*** Forcing Language ${params?.lang}`);
+          this.translate.use(params?.lang);
+        }
+      });
     this.watcher = this.mediaObserver.asObservable()
       .pipe(
         filter((changes: MediaChange[]) => changes.length > 0),
