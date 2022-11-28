@@ -23,6 +23,7 @@ import {filter, Subscription} from 'rxjs';
 import {MediaChange, MediaObserver} from '@angular/flex-layout';
 import {map} from 'rxjs/operators';
 import {ActivatedRoute} from '@angular/router';
+import {LanguageService} from './shared/language-service';
 
 @Component({
   selector: 'app-root',
@@ -38,7 +39,8 @@ export class AppComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private mediaObserver: MediaObserver,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private languageService: LanguageService
   ) {
     translate.setDefaultLang('de');
     translate.addLangs(['en']);
@@ -46,7 +48,7 @@ export class AppComponent implements OnInit {
     // For "en" we have to force German since Browserstack does not support setting the accepted languages in the browser.
     // This would cause the tests to fail since they expect German string from Drop-Downs etc.
     if (currentLanguage !== 'de') {
-      translate.use('en');
+      this.setLanguage('en')
     }
   }
 
@@ -58,7 +60,7 @@ export class AppComponent implements OnInit {
       .subscribe(params => {
         if(params?.lang) {
           console.log(`*** Forcing Language ${params?.lang}`);
-          this.translate.use(params?.lang);
+          this.setLanguage(params?.lang)
         }
       });
     this.watcher = this.mediaObserver.asObservable()
@@ -84,4 +86,8 @@ export class AppComponent implements OnInit {
     this.sidenav.toggle();
   }
 
+  private setLanguage(language: string) {
+    this.translate.use(language);
+    this.languageService.setLanguage(language);
+  }
 }

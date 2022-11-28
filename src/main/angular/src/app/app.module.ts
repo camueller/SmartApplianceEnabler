@@ -53,6 +53,7 @@ import {SettingsModbusComponent} from './settings/modbus/settings-modbus.compone
 import {NotificationModule} from './notification/notification.module';
 import {VersionService} from './shared/version-service';
 import {ApplianceIdsResolver} from './appliance/appliance-ids-resolver';
+import {LanguageService} from './shared/language-service';
 
 @NgModule({
   declarations: [
@@ -93,6 +94,7 @@ import {ApplianceIdsResolver} from './appliance/appliance-ids-resolver';
     ApplianceIdsResolver,
     CanDeactivateGuard,
     DialogService,
+    LanguageService,
     Logger,
     {provide: Options, useValue: {level: Level.DEBUG}},
     SettingsService,
