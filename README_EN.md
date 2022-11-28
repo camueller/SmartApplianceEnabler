@@ -31,7 +31,7 @@ For that, the *Smart Appliance Enabler* reports **demands** of these devices to 
 
 The following graphic from the [Sunny Portal](https://www.sunnyportal.com/) shows a sunny autumn day on which the [Wallbox](doc/EVCharger_DE.md) was optimally controlled to charge the electric car while avoiding grid purchase. At the same time, the *Sunny Home Manager* had to run the dishwasher and washing machine according to the set requirements. In addition, the heat pump (hot water and heating) and the espresso machine were switched on at times, which are not controlled by the *Sunny Home Manager*, but of course also consume electricity.
 
-![SHM_Verbraucherbilanz_GuterTag](pics/shm/Verbraucherbilanz_GuterTag.png)
+![SHM_Verbraucherbilanz_GuterTag](pics/shm/Verbraucherbilanz_GuterTag_EN.png)
 
 # Hardware
 
@@ -93,7 +93,7 @@ In the following video you can get an impression of the configuration of the *Sm
 # Integration with Sunny Portal
 In addition to being controlled by the *Sunny Home Manager*, the *Smart Appliance Enabler* enables the [integration of devices into Sunny Portal](doc/SunnyPortal_DE.md).
 
-![Verbraucherbilanz](pics/shm/Verbraucherbilanz.png)
+![Verbraucherbilanz](pics/shm/Verbraucherbilanz_EN.png)
 
 # Frequently asked questions
 <a href="doc/QA_DE.md"><img align="left" src="pics/fragen_antworten.jpeg"></a>[This page hopefully leads to the solution in case of problems](doc/QA_DE.md). Based on frequently asked questions, answers are given as well as references to relevant parts of the documentation.
