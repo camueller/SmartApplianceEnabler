@@ -5,7 +5,7 @@ Dabei sollten unbedingt die [Hinweise zum Raspberry Pi und zur Numerierung der G
 
 Zur Konfiguration eines GPIO-basierten Schalters gehört die Nummer des GPIO-Anschlusses und die Angabe, ob der Schalter-Status invertiert werden soll.
 
-Optional kann die [Anlaufstromerkennung](Anlaufstromerkennung_DE.md) aktiviert werden.
+Optional kann die [Anlaufstromerkennung](StartingCurrentDetection_DE.md) aktiviert werden.
 
 ![GPIO Switch](../pics/fe/GPIOSwitch.png)
 

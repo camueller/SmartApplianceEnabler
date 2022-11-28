@@ -68,7 +68,7 @@ Wenn mehrere Fahrzeuge konfiguriert werden, ist eine automatische Erkennung des 
 - Zeitpunkt des Einsteckens des Ladekabels
 - Geo. Breite/Länge des Fahrzeugs
 
-Falls vorhanden, müssen diese Werte zusätzlich zum eigentlichen SOC mit [Regulären Ausdrücken(Regex)](WertExtraktion_DE.md) aus der Ausgabe des [Scripts zum automatisierten Abfragen des SOC](soc/SOC_DE.md) extrahiert werden.
+Falls vorhanden, müssen diese Werte zusätzlich zum eigentlichen SOC mit [Regulären Ausdrücken(Regex)](ValueExtraction_DE.md) aus der Ausgabe des [Scripts zum automatisierten Abfragen des SOC](soc/SOC_DE.md) extrahiert werden.
 
 ![Fahrzeugkonfiguration](../pics/fe/EV.png)
 

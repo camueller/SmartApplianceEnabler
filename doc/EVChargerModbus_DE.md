@@ -21,7 +21,7 @@ Zur Bestimmung des Wallbox-Status müssen 4 Parameter bestimmt werden:
 - Ladevorgang läuft
 - Ladegerät meldet Fehler
 
-Jeder Parameter muss zusammen mit einem [Regulärer Ausdruck/Regex](WertExtraktion_DE.md) einem Register zugeordnet werden, d.h. wenn der Wert in diesem Register auf den Regulären Ausruck passt, entspricht der Wallbox-Status diesem Parameter.
+Jeder Parameter muss zusammen mit einem [Regulärer Ausdruck/Regex](ValueExtraction_DE.md) einem Register zugeordnet werden, d.h. wenn der Wert in diesem Register auf den Regulären Ausruck passt, entspricht der Wallbox-Status diesem Parameter.
 
 Es können mehrere Parameter demselben Register zugeordnet werden, wobei jeder Parameter einen anderen Reguläre Ausdruck haben sollte.
 

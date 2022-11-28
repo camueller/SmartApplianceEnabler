@@ -65,7 +65,7 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 
 # Montage
 
-Falls der *Smart Appliance Enabler* auf einem Raspberry Pi betrieben werden soll, sollten dafür die [Montage-Hinweise](doc/Montage_DE.md) beachtet werden.
+Falls der *Smart Appliance Enabler* auf einem Raspberry Pi betrieben werden soll, sollten dafür die [Montage-Hinweise](doc/Assembly_DE.md) beachtet werden.
 
 # Installation / Update
 
