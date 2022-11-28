@@ -1,3 +1,5 @@
+<a href="https://github.com/camueller/SmartApplianceEnabler/blob/master/README_EN.md"><img align="left" src="pics/english.jpeg">&nbsp;&nbsp;</a>[This documentation is available in English](README_EN.md).<br><br><br><br>
+
 <p align="center">
   <img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/logo-384x384.png">
   <h3 align="center">Smart Appliance Enabler</h3>
@@ -57,9 +59,9 @@ Zum Ein-/Ausschalten eines Gerätes unterstützt der *Smart Appliance Enabler* d
 
 | Protokolle    | Produkte                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ------------- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| GPIO | [GPIO-basierte Schalter](doc/GPIOSwitch_DE.md)<br>[GPIO-basierte Stufenschalter](doc/LevelSwitch_DE.md)<br>[PWM-Schalter](doc/PwmSwitch_DE.md)                                                                                                                                                                                                                                                                                                                                                 |
-| Modbus | [Modbus-basierte Schalter](doc/ModbusSwitch_DE.md)<br>[Modbus-basierte Stufenschalter](doc/LevelSwitch_DE.md)<br><br>[Wallboxen mit Modbus-Schnittstelle](doc/EVCharger_DE.md)                                                                                                                                                                                                                                                                                                                 |
-| HTTP | [HTTP-basierte Schalter](doc/HttpSwitch_DE.md)<br>[HTTP-basierte Stufenschalter](doc/LevelSwitch_DE.md)<ul></ul>kompatible Produkte<ul><li>[Shelly Plug/4PM](doc/Shelly_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>alle Produkte mit [Tasmota](doc/Tasmota_DE.md)-Firmware<ul></ul>[Wallboxen mit HTTP-Schnittstelle](doc/EVCharger_DE.md)|
+| GPIO | [GPIO-basierte Schalter](doc/GPIOSwitch_DE.md)<br>[Stufenschalter](doc/LevelSwitch_DE.md)<br>[PWM-Schalter](doc/PwmSwitch_DE.md)                                                                                                                                                                                                                                                                                                                                                 |
+| Modbus | [Modbus-basierte Schalter](doc/ModbusSwitch_DE.md)<br>[Modbus-basierte Stufenschalter](doc/LevelSwitch_DE.md)<br><br>[Wallboxen](doc/EVCharger_DE.md)                                                                                                                                                                                                                                                                                                                 |
+| HTTP | [HTTP-basierte Schalter](doc/HttpSwitch_DE.md)<br>[HTTP-basierte Stufenschalter](doc/LevelSwitch_DE.md)<ul></ul>kompatible Produkte<ul><li>[Shelly Plug/4PM](doc/Shelly_DE.md)</li><li>[Edimax SP-2101W](doc/EdimaxSP2101W_DE.md)</li></ul>alle Produkte mit [Tasmota](doc/Tasmota_DE.md)-Firmware<ul></ul>[Wallboxen](doc/EVCharger_DE.md)|
 
 [Details zu diesen Schaltern und weiteren Software-basierten Schalten (z.B. Anlaufstromerkennung, Unterstützung der SG-Ready-Funktion von Wärmepumpen )](doc/Control_DE.md)
 
@@ -83,7 +85,7 @@ Die [Konfiguration](doc/Configuration_DE.md) des *Smart Appliance Enabler* erfol
 
 Der Status aller steuerbaren Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersichtlich dargestellt, wobei der Status jedes Gerätes durch eine **Ampel** visualisiert wird. Die Ampel kann auch zur **manuellen Steuerung** verwendet werden.
 
-<a href="doc/Docker_DE.md"><img align="left" src="pics/mqtt-logo.png"></a>
+<a><img align="left" src="pics/mqtt-logo.png"></a>
 Zusätzlich unterstützt der *Smart Appliance Enabler* [Node-RED indem er für die konfigurierten Geräte Flows exportiert, damit diese im Dashboard von Node-RED visualisiert werden](doc/NodeRED_DE.md). Darüber hinaus kann MQTT zur Integration des *Smart Appliance Enabler* mit anderen Automatisierungsplatformen verwendet werden.
 
 In dem nachfolgenden Video kann man einen Eindruck von der Konfiguration des *Smart Appliance Enabler* gewinnen. Dieses Video wurde im Rahmen der Durchführung automatisierter Tests erstellt, welche die Qualität des *Smart Appliance Enabler* sicherstellen sollen.
@@ -121,13 +123,13 @@ Der *Smart Appliance Enabler* würde so nicht existieren ohne folgende Tools und
 * [Angular](https://angular.io) für das Web-Frontend
 * [Angular Material](https://material.angular.io/) für die Material-Design-Komponenten des Web-Frontends
 * [Browserstack](https://www.browserstack.com) für automatisierte Multi-Browser-Tests und kostenlose Lizenz für Open-Source-Projekte
-* [Cling](http://4thline.org/projects/cling) für UPnP (SEMP-Protokoll)
-* [Docker](https://www.docker.com/) für die Entwicklung einer Container-Platform
-* [Docker Hub](https://hub.docker.com/) für den Betrieb einer Community-Platform zum Austausch von für Docker-Images
-* [GitHub](https://github.com/) für den Betrieb einer Community-Platform für Open-Source-Projekte
+* [Cling](http://4thline.org/projects/cling) für eine Implementierung des UPnP-Protokolls (Teil des SEMP-Protokolls)
+* [Docker](https://www.docker.com/) für seine Container-Platform
+* [Docker Hub](https://hub.docker.com/) für sein Repository zum Austausch von Docker-Images
+* [GitHub](https://github.com/) für seine Plaformform für Projekt-Repositories
 * [IntelliJ](https://www.jetbrains.com/de-de/idea/) für die beste IDE (vor allem auch unter Linux) und kostenlose Lizenz für Open-Source-Projekte
 * [Jenkins](https://www.jenkins.io/) für den Server zur Automatisierung von Builds/Tests
-* [pigpioj](https://github.com/mattjlewis/pigpioj) für den Zugriff auf die GPIO-Ports des Raspberry
+* [pigpioj](https://github.com/mattjlewis/pigpioj) für eine Bibliothek für den Zugriff auf die GPIO-Ports des Raspberry Pi
 * [Spring Boot](https://spring.io/projects/spring-boot) für Spring-basierte Anwendungen mit eingebettetem Web-Container
 * [Testcafe](https://devexpress.github.io/testcafe/) für einfaches Testen von Web-Anwendungen
 * [WebStorm](https://www.jetbrains.com/de-de/webstorm/) für die beste Web-IDE (vor allem auch unter Linux) und kostenlose Lizenz für Open-Source-Projekte
