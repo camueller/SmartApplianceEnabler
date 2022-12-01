@@ -91,10 +91,10 @@ The power consumption of the device, which is transmitted to the *Sunny Home Man
 
 ### SAE4
 If a switching command is received from the *Sunny Home Manager*, this is passed on to the switch configured for the device in the *Smart Appliance Enabler*. Depending on its type, you can see the switching command in the log:
-- [GPIO-basierter Schalter](GPIOSwitch_EN.md#log)
-- [HTTP-basierter Schalter](HttpSwitch_EN.md#log)
-- [Modbus-basierter Schalter](ModbusSwitch_EN.md#log)
-- [PWM-Schalter](PwmSwitch_EN.md#log)
+- [GPIO switch](GPIOSwitch_EN.md#log)
+- [HTTP switch](HttpSwitch_EN.md#log)
+- [Modbus switch](ModbusSwitch_EN.md#log)
+- [PWM switch](PwmSwitch_EN.md#log)
 - [Wallbox](EVCharger_EN.md#log)
 
 ### SAE5
