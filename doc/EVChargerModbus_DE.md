@@ -1,7 +1,6 @@
-# Konfiguration von Wallboxen ohne Vorlage
+# Konfiguration von Wallboxen mit Modbus-Protokoll ohne Vorlage
 
-Der *Smart Appliance Enabler* bringt für diverse Wallboxen Vorlagen mit, welche die zugehörige Konfiguration beinhalten.
-Wenn für die verwendete Wallbox keine Konfiguration vorhanden ist, diese aber über Modbus/TCP gesteuert werden kann, kann man auch selbst eine Konfiguration erstellen.
+Der *Smart Appliance Enabler* bringt für diverse Wallboxen Vorlagen mit, welche die zugehörige Konfiguration beinhalten. Wenn für die verwendete Wallbox keine Konfiguration vorhanden ist, diese aber über Modbus/TCP gesteuert werden kann, kann man auch selbst eine Konfiguration erstellen.
 
 ## Allgemeine Modbus-Konfiguration
 
@@ -27,9 +26,10 @@ Es können mehrere Parameter demselben Register zugeordnet werden, wobei jeder P
 
 Wenn man einen Parameter mehreren Registern zuordnet, entspricht das einer UND-Verknüfung, d.h. der Wallbox-Status entspricht nur dann diesem Parameter, wenn alle zugeordneten Register einen Wert haben, der auf den jeweiligen Regulären Ausruck passt.
 
-In der Modbus-Dokumentation der Wallbox sucht man bei den Input-Registern (Read) nach einem oder mehreren Registern, welche den die o.g. 4 Parameter des Status abbilden können.
+In der Modbus-Dokumentation der Wallbox sucht man bei den Input-Registern (Read) nach einem oder mehreren Registern, welche die o.g. 4 Parameter des Status abbilden können.
 
 _Beispiel:_
+
 Bei Wallboxen mit Phoenix Contact EM-CP-PP-ETH-Controller ist der Status im Register 100 in Form eines Buchstabens enthalten:
 
 | Parameter                       | Regulärer Ausdruck | Erklärung                                                                         |
@@ -46,6 +46,7 @@ Das Beginnen und Beenden des Ladevorganges sind zwei Aktionen, die einen Schreib
 In der Modbus-Dokumentation der Wallbox sucht man bei den Holding-Registern (Write) nach einem Register, welche das Setzen des Ladestatus erlaubt. Nach dem Beenden des Ladevorganges sollte der Ladevorgang erneut gestartet werden können, ohne das Fahrzeug von der Wallbox zu trennen.
 
 _Beispiel:_
+
 Bei Wallboxen mit Phoenix Contact EM-CP-PP-ETH-Controller erfolgt das Setzen des Ladestatus über das Register 400:   
 
 | Parameter            | Wert | Erklärung                                                                              |
@@ -60,6 +61,7 @@ Das Setzen der Ladestromstärke stellt ebenfalls einen Schreibzugriff dar.
 In der Modbus-Dokumentation der Wallbox sucht man bei den Holding-Registern (Write) nach einem Register, welche das Setzen der Ladestromstärke erlaubt.
 
 _Beispiel:_
+
 Bei Wallboxen mit Phoenix Contact EM-CP-PP-ETH-Controller erfolgt das Setzen der Ladestromstärke über das Register 300:
 
 | Parameter              | Wert | Erklärung                                                                                        |

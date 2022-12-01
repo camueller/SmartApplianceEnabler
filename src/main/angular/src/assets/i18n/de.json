@@ -387,7 +387,7 @@
   "ScheduleComponent.requestType": "Anforderungsart",
   "de.avanux.smartapplianceenabler.schedule.RuntimeRequest": "Laufzeit",
   "de.avanux.smartapplianceenabler.schedule.EnergyRequest": "Energie",
-  "de.avanux.smartapplianceenabler.schedule.SocRequest": "Laden bis SOC",
+  "de.avanux.smartapplianceenabler.schedule.SocRequest": "Soll-SOC",
 
   "ScheduleTimeframeDayComponent.startTime": "Startzeit [HH:MM]",
   "ScheduleTimeframeDayComponent.endTime": "Endzeit [HH:MM]",

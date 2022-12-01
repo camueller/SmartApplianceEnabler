@@ -4,11 +4,11 @@ Im *Smart Appliance Enabler* wird eine Wallbox als komplexer Schalter mit divers
 
 Damit der Sunny Home Manager die Leistung von Wallboxen steuern kann, **muss zur Bestimmung der aktuellen Leistungsaufnahme ein Stromzähler im Smart Appliance Enabler konfiguriert werden**!
 
-Der *Sunny Home Manager* gibt dabei die aktuell einzustellende **Leistung in W** vor. Falls sie den im *Smart Appliance Enabler* für das Fahrzeug eingegebenen Wert für `Max. Leistung` übersteigt, wird sie auf diesen **Wert begrenzt**. 
+Der *Sunny Home Manager* gibt dabei die aktuell einzustellende **Leistung in W** vor. Falls sie den im *Smart Appliance Enabler* für das Fahrzeug eingegebenen Wert für `Max. Leistung` übersteigt, wird sie auf den konfigurierten **Wert begrenzt**. 
+
 Der *Smart Appliance Enabler* **errechnet die an der Wallbox einzustellende Stromstärke** aus der Leistung und der Phasenanzahl. Massgeblich dabei ist die für das Fahrzeug eingestellte Phasenanzahl, ansonsten die für die Wallbox eingestellte Phasenanzahl. 
 
 ## Konfiguration
-
 Momentan stellt der *Smart Appliance Enabler* Vorlagen bzw. Konfigurationen für die folgende Wallboxen bereit:
 * [go-eCharger](GoeCharger_DE.md)
 * [Keba KeContact P30 c-series / x-series](Keba_DE.md)  
@@ -102,7 +102,7 @@ Während des Ladevorgangs wird das **SOC-Script periodisch ausgeführt**. Wenn s
 
 **Ohne SOC-Script** und ohne [Eingabe des aktuellen Ist-Ladezustands](Status_DE.md#user-content-click-green-ev) geht der *Smart Appliance Enabler* von einem Ist-Ladezustand von 0% aus und meldet einen entsprechend großen Energiebedarf. Das verschlechtert zwar die Planung des *Sunny Home Manager*, aber unabhängig davon beendet die Wallbox das Laden spätestens, wenn das Fahrzeug voll geladen ist.
 
-### Beispiel:
+### Beispiel
 Der Ablauf eines (Überschuss-) Ladevorgangs soll hier anhand von Auszügen aus dem Log veranschaulicht werden:
 
 Nachdem das Fahrzeug mit der Wallbox verbunden wurde:
@@ -184,7 +184,6 @@ batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=666Wh chargeLos
 ## Log
 
 ### Schaltbefehl
-
 Wird vom *Sunny Home Manager* ein Schaltbefehl für eine Wallbox (hier `F-00000001-000000000019-00`) empfangen, kann man das im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
 
 ```console
@@ -198,7 +197,6 @@ sae@raspi:~ $ grep "Received control" -A 3 /tmp/rolling-2020-11-18.log
 *Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `Received control` und drückt Refresh.
 
 ### SOC-Script
-
 Für jede Ausführung des SOC-Scripts finden sich im [Log](Logging_DE.md) folgende Zeilen:
 
 ```console

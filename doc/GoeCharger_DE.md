@@ -1,29 +1,22 @@
 # go-eCharger
-
 Ein sehr vielseitiges, kompaktes Ladegerät, das auch für den mobilen Einsatz geeignet ist, ist der [go-eCharger](https://go-e.co/go-echarger-home/).
 
 Bei Verwendung dieser Wallbox ist kein separater Stromzähler erforderlich, weil der Zählerwert von der Wallbox selbst mit hoher Genauigkeit bereitgestellt wird und der *Smart Appliance Enabler* daraus die aktuelle Leistungsaufnahme berechnet.
 
-Den go-eCharger gibt es mittlerweile in mehreren Versionen.
-Die aktuellste Version ist die V3, welche mehr features als die Vorgängerversion unterstützt.
-Um einen V3 go-eCharger voll kompatibel mit den unten genannten Parametern zu machen, muss die lokale HTTP API v1 in der App des go-eCharger
-aktiviert werden unter: Internet -> erweiterte Einstellungen -> Aktiviere lokale HTTP API v1
+Den go-eCharger gibt es mittlerweile in mehreren Versionen. Die aktuellste Version ist die V3, welche mehr features als die Vorgängerversion unterstützt.
 
 ## Geräte-Konfiguration
-
 Der go-eCharger muss mit WLAN verbunden sein, in dem sich auch der *Smart Appliance Enabler* befindet oder das zumindest für ihn erreichbar ist.
-Die HTTP-Schnittstelle des go-eCharger muss aktiviert werden, damit der *Smart Appliance Enabler* mit ihm darüber kommunizieren kann.
+
+Die lokale HTTP API v1 des go-eCharger muss in der App des go-eCharger aktiviert werden unter: `Internet -> erweiterte Einstellungen -> Aktiviere lokale HTTP API v1`, damit der *Smart Appliance Enabler* mit ihm darüber kommunizieren kann.
 
 ## Konfiguration im Smart Appliance Enabler
-
 ### Wallbox
-
 Für die Konfiguration sollte die Vorlage `go-eCharger` verwendet werden - dadurch werden alle Felder korrekt ausgefüllt. Lediglich die IP-Adresse bzw. der Hostname in den URL-Feldern muss auf die des go-eChargers angepasst werden. 
 
 ![Konfiguration des go-eCharger als Schalter](../pics/fe/EVChargerGoeCharger.png)
 
 ### Zähler
-
 Wie oben geschrieben muss der go-eCharger selbst als Zähler angegeben werden, d.h.
 die IP-Adresse bzw. der Hostname in den URL-Feldern muss auf die des go-eChargers angepasst werden. 
 

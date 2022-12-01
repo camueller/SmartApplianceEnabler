@@ -1,5 +1,4 @@
 # Installation via Script
-
 Die hier beschriebene manuelle Installation benötigt einen SSH-Zugriff auf den Raspberry Pi und die Interaktion mit der Shell. Falls möglich, sollte stattdessen die [Standard-Installation](Installation_DE.md) gewählt werden, die automatisch abläuft und keine Linux-Kenntnisse erfordert.
 
 Nachdem der Login per SSH als User "pi" erfolgt ist, muss eine Root-Shell gestartet werden:

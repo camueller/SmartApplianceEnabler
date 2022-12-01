@@ -1,5 +1,4 @@
 # Manuelle Installation
-
 Die hier beschriebene manuelle Installation benötigt einen SSH-Zugriff auf den Raspberry Pi und die Interaktion mit der Shell. Falls möglich, sollte stattdessen die [Standard-Installation](Installation_DE.md) gewählt werden, die automatisch abläuft und keine Linux-Kenntnisse erfordert.
 
 Die nachfolgenden Kapitel sollten in der angegebenen Reihenfolge umgesetzt werden.
@@ -25,8 +24,7 @@ _**Für Smart Appliancer Enabler bis einschliesslich Version 1.4 gilt:**_ Es mus
 
 _**Für Smart Appliancer Enabler ab Version 1.5 gilt:**_ Es ist mindestens Raspbian Buster erforderlich.
 
-Zum Schreiben des Images auf eine SD-Karte eignet sich der [Raspberry Pi Imager](https://www.raspberrypi.org/software) 
-Alternativ kann man mit dem nachfolgenden Befehl unter Linux das Image auf eine SD-Karte schreiben:
+Zum Schreiben des Images auf eine SD-Karte eignet sich der [Raspberry Pi Imager](https://www.raspberrypi.org/software). Alternativ kann man mit dem nachfolgenden Befehl unter Linux das Image auf eine SD-Karte schreiben:
 ```console
 axel@p51:/tmp$ sudo dd bs=4M if=2019-09-26-raspbian-buster-lite.img of=/dev/mmcblk0 status=progress oflag=sync
 [sudo] password for axel: 
@@ -58,8 +56,7 @@ axel@tpw520:~$ sudo touch /mnt/ssh
 ```console
 axel@tpw520:~$ sudo umount /mnt
 ```
-Nachdem der Raspberry Pi mit der so modifizierten SD-Karte gebootet wurde, sollte der Zugriff mit SSH möglich sein.
-Dabei nicht vergessen, den Raspberry Pi über ein Ethernet-Kabel mit dem Router zu verbinden!
+Nachdem der Raspberry Pi mit der so modifizierten SD-Karte gebootet wurde, sollte der Zugriff mit SSH möglich sein. Dabei nicht vergessen, den Raspberry Pi über ein Ethernet-Kabel mit dem Router zu verbinden!
 Für den zugriff benötigt man natürllich die IP-Adresse oder den Hostnamen, der dem Raspberry Pi vom Router zugewiesen wurde (in meinem Beispiel ist das `raspi`)
 ```console
 axel@p51:~$ ssh pi@raspi
@@ -168,7 +165,7 @@ Get:3 http://archive.raspberrypi.org/debian buster/main armhf firmware-atheros a
 Soll der Raspberry Pi über WLAN statt über Ethernet angebunden werden, müssen SSID und Passwort in die Datei `/etc/wpa_supplicant/wpa_supplicant.conf` eingetragen werden. Eine genaue Beschreibung findet sich in [Setting WiFi up via the command line](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md).
 
 ### Hostnamen ändern
-Unabhängig von dem Hostnamen, über den der Raspberry im lokalen Netzwerk erreicht werden kann, ist sein Hostname standardmäßig `raspberry` (auch sichtbar am Prompt: `pi@raspberrypi:~ $`). Vor allem, wenn man mehrere Raspberries im Netz hat, will man auch am Prompt sehen, auf welchem Raspberry man gerade die Befehle eingibt.
+Unabhängig von dem Hostnamen, über den der Raspberry im lokalen Netzwerk erreicht werden kann, ist sein Hostname standardmäßig `raspberry` (auch sichtbar am Prompt: `pi@raspberrypi:~ $`). Vor allem, wenn man mehrere Raspberry Pis im Netz hat, will man auch am Prompt sehen, auf welchem Raspberry man gerade die Befehle eingibt.
 
 Zum Ändern des Hostnames kann das Tool `raspi-config` verwendet werden, wobei der Menüpunkt _System Options_ und dann der Menüpunkt _Hostname_ gewählt werden muss:
 ```console
@@ -197,7 +194,7 @@ openjdk version "11.0.5" 2019-10-15
 OpenJDK Runtime Environment (build 11.0.5+10-post-Raspbian-1deb10u1)
 OpenJDK Server VM (build 11.0.5+10-post-Raspbian-1deb10u1, mixed mode)
 ```
-#### Besonderheiten Raspberry Pi Zero
+#### Hinweis zum Raspberry Pi Zero
 **Die nachfolgenden Hinweise stammen von Usern, die den *Smart Appliance Enabler* auf einem Raspberry Pi Zero betreiben. Diese Platform ist offiziell nicht unterstützt, also bitte keinen Support bei Problemen erwarten.**
 
 OpenJDK 11 ist mit ARMv6 und ARMv7 leider nicht kompatibel. Dafür besteht die Möglichkeit über "Zulu Build for OpenJDK" von Azul eine Alternative zu installieren.
@@ -231,14 +228,6 @@ Damit der Deamon beim Systemstart ebenfalls gestartet wird (via Systemd), muss f
 ```console
 pi@raspberrypi ~ $ sudo systemctl enable pigpiod
 Created symlink /etc/systemd/system/multi-user.target.wants/pigpiod.service → /lib/systemd/system/pigpiod.service.
-```
-
-### Hinweis bei Update des Smart Appliance Enabler von Version < 2.x 
-
-Damit `pigpiod` verwendet wird, ist der neue Parameter `-DPIGPIOD_HOST=localhost` erforderlich. Dementsprechend wurde die Datei `/etc/default/smartapplianceenabler` geändert, welche bei einer neuen Installation installiert wird. Wenn bei einer vorhandenen Installation ein Update durchgeführt wird fehlt dann natürlich der Parameter. Man kann aber einfach selbst die folgende Zeilen an die Datei anhängen:
-```console
-# Configure pigpioj to use pigpiod daemon in order to avoid forcing the Smart Appliance Enabler to run as root
-JAVA_OPTS="${JAVA_OPTS} -DPIGPIOD_HOST=localhost"
 ```
 
 ## MQTT-Broker
@@ -394,7 +383,7 @@ Danach muss die Konfiguration neu erstellt werden, wie im Kapitel [Konfiguration
 
 ### Benachrichtigungen
 <a name="notifications"></a>
-Für den optionalen Versand von Benachrichtigungen via [Telegram](http://www.telegram.org) wird ein Script bereitgestellt, das mit den folgenden Befehlen heruntergeladen und ausführbar gemacht wird:
+Für den optionalen Versand von Benachrichtigungen via Instant-Messanger wie [Telegram](http://www.telegram.org) muss das entsprechend Shell-Script heruntergeladen und ausführbar gemacht werden:
 ```console
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/notifyWithTelegram.sh -P /opt/sae
 pi@raspberrypi ~ $ chmod +x /opt/sae/notifyWithTelegram.sh

@@ -1,5 +1,4 @@
 # Benachrichtigungen
-
 Durch Benachrichtigungen informiert der *Smart Appliance Enabler* über Ereignisse ("Gerät wurde eingeschaltet", "Kommunikationsfehler"), sobald diese auftreten.
 
 Ein Hauptanwendungsfall für mich ist die Benachrichtigung, wenn Geräte nicht erreichbar sind. Bei mir kommt es immer wieder vor, dass Geräte mit Tasmota irgendwann nicht mehr im WLAN sind und ich das nicht gleich bemerke. Dann fehlen natürlich die Verbräuche im *Sunny Home Manager*. Aber es ist auch ganz nett, wenn man eine Benachrichtigung bekommt, wenn die Waschmaschine fertig ist oder das Auto voll geladen.
@@ -16,12 +15,10 @@ Alternativ kann die Benachrichtiung auf einzlene Ereignisse beschränkt werden:
 
 ![Ausgewählte Ereignisse](../pics/fe/NotificationsSome.png)
 
-## Benachrichtigungskanäle
-
-Für den *Smart Appliance Enabler* existieren Shell-Scripts zur Nutzung der nachfolgend beschriebenen Benachrichtigungskanäle. Mit wenig Shell-Script-Know-How sollte es möglich sein, auf Basis der vorhanden Shell-Scripts solche für andere Benachrichtigungskanäle zu erstellen. Bitte diese Scripts als **Pull-Request** auch den anderen *Smart Appliance Enabler*-Usern zur Verfügung stellen!  
+## Messenger-Platformen
+Für den *Smart Appliance Enabler* existieren Shell-Scripts zur Nutzung der nachfolgend beschriebenen Messenger-Platformen. Mit wenig Shell-Script-Know-How sollte es möglich sein, auf Basis der vorhanden Shell-Scripts solche für andere Benachrichtigungskanäle zu erstellen. Bitte diese Scripts als **Pull-Request** auch den anderen *Smart Appliance Enabler*-Usern zur Verfügung stellen!  
 
 ### Telegram (https://telegram.org)
-
 Das Shell-Script für die Nutzung als Benachrichtigungskanal im *Smart Appliance Enabler* ist https://github.com/camueller/SmartApplianceEnabler/blob/master/run/notifyWithTelegram.sh.
 
 Zunächst muss in Telegram eine [Gruppe erstellt](https://telegram.org/faq/de#f-wie-kann-ich-eine-gruppe-erstellen) werden, die man z.B. "Haus" nennen könnte.
@@ -46,9 +43,7 @@ Jetzt steht dem Empfang von Benachrichtigungen nichts mehr im Wege:
 ![Telegram](../pics/Telegram.jpg)
 
 ### Signal (https://signal.org/)
-
 Das Shell-Script für die Nutzung als Benachrichtigungskanal im *Smart Appliance Enabler* ist https://github.com/camueller/SmartApplianceEnabler/blob/master/run/notifyWithSignal.sh.
 
 ### Prowl (https://www.prowlapp.com)
-
 Das Shell-Script für die Nutzung als Benachrichtigungskanal im *Smart Appliance Enabler* ist https://github.com/camueller/SmartApplianceEnabler/blob/master/run/notifyWithProwl.sh.

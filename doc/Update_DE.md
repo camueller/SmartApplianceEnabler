@@ -1,7 +1,5 @@
 # Update
-
 ## Allgemeine Hinweise
-
 Teil des *Smart Appliance Enabler* ist die Web-Anwendung, die im Rahmen des Updates ebenfalls aktualisiert wird. In Abhängigkeit von den Einstellungen im verwendeten Web-Browser kann es sein, dass nach dem Update die Web-Oberfläche nicht richtig angezeigt wird und sich "komisch" verhält. 
 
 ![Web App Corrupt](../pics/fe/WebAppCorrupt.png)
@@ -23,7 +21,6 @@ Die neue `SmartApplianceEnabler-*.war`-Datei kopiert man mit `scp` auf den Raspb
 
 ### Starten der aktualisierten Version
 Nachdem die zu verwendende `SmartApplianceEnabler-*.war`-Datei platziert worden ist, muss der *Smart Appliance Enabler*-Prozess neu gestartet werden. Das passiert mit folgendem Befehl:
-
 ```console
 sudo systemctl restart smartapplianceenabler.service
 ```
@@ -31,9 +28,7 @@ sudo systemctl restart smartapplianceenabler.service
 *Webmin*: Mit der [Dienstverwaltung von webmin](Webmin_DE.md) kann der *Smart Appliance Enabler* ebenfalls restarted werden. 
 
 ## Update von Version 1.6 auf Version 2.x
-
 ### Automatisiertes Update
-
 Voraussetzungen für das automatiserte Update sind:
 - Raspberry Pi
 - SSH-Shell oder `webmin`
@@ -64,13 +59,11 @@ Wenn das Raspberry Pi OS die Version "Bullseye" hat, werden zuerst die [Konfigur
 Wenn das Update beendet ist, wird die **rote LED für eine Stunde ausgeschaltet**.
 
 ### Manuelles Update
-
 Das manuelle Update sollte nur dann ausgeführt werden, wenn:
 - kein Raspberry Pi verwendet wird
 - und eine nicht-virtualisierte Installation des *Smart Appliance Enabler* verwendet wird
 
 #### pigpiod
-
 Falls GPIO verwendet werden soll (nur auf Raspberry Pi) muss [pigpiod installiert werden](ManualInstallation_DE.md#pigpiod-installieren).
 
 In der Datei `/etc/default/smartapplianceenabler` müssen folgende Zeile hinzugefügt werden:
@@ -80,21 +73,17 @@ JAVA_OPTS="${JAVA_OPTS} -DPIGPIOD_HOST=localhost"
 ```
 
 #### MQTT-Broker
-
 **Ohne MQTT-Broker ist SAE 2.0 nicht lauffähig**. Theoretisch sollte jeder vorhandene MQTT-Broker funktionieren, aber in der Praxis scheint das nicht so zu sein. Im Zweifel sollte der MQTT-Broker [Mosquitto installiert](ManualInstallation_DE.md#mqtt-broker) werden.
 
 Wenn der MQTT-Broker nicht über `localhost:1883` erreichbar ist oder Benutzername/Passwort notwendig sind, müssen diese Parameter in den Einstellungen des *Smart Appliance Enabler* konfiguriert werden. Solange diese nicht konfiguriert sind, ist zwar die Web-Oberfläche des SAE nutzbar, aber es werden **keine Daten an den SHM übermittelt oder Schaltbefehle von diesem ausgeführt**.
 
 #### Konfigurationsdateien
-
 Es wird dringend empfohlen, die Konfigurationsdatei `Appliances.xml` vor dem Update zu sichern, für den Fall, dass man doch wieder zurück auf die Version 1.6 wechseln möchte. Sobald im *Smart Appliance Enabler* 2.0 eine Änderung gespeichert wird führt das zum Überschreiben der Datei `Appliances.xml`, wodurch diese nicht mehr für den *Smart Appliance Enabler* 1.6 lesbar ist.
 
 #### Update der installierten Version des *Smart Appliance Enabler*
-
 Das Update des *Smart Appliance Enabler* erfolgt durch [Austausch der war-Datei wie oben auf dieser Seite beschrieben](#durchf%C3%BChrung-des-updates).
 
 ### Docker
-
 Die Datei https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/docker/compose/docker-compose.yaml wurde angepasst und started vor dem *Smart Appliance Enabler* jeweils einen Container mit `pigpiod` und `mosquitto`.
 
 Ansonsten muss lediglich das Docker-Image in der gewünschten Version verwendet werden.

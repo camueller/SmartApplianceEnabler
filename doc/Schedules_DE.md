@@ -27,16 +27,14 @@ Beispiel für einen Mehrtagesplan:
 
 Der *Smart Appliance Enabler* meldet dem Sunny Home Manager den Geräte-Laufzeitbedarf für die nächsten 48 Stunden, damit er auf dieser Basis optimal planen kann.
 
-## Besonderheiten für Wallboxen
+## Besonderheiten für Verbraucher mit variabler Leistungsaufnahme
+Bei Verbrauchern mit variabler Leistungsaufnahme können als **Anforderungsart** zwei weitere Optionen verfügbar sein:
 
-Bei Wallboxen existieren als **Anforderungsart** zwei Optionen:
-
-### Laden bis SOC
+### Soll-SOC
 Mit der Anforderungsart `Laden bis SOC` wird genau die Energie angefordert, die notwendig ist, um einen bestimmten SOC zu erreichen. Zur Berechnung dieser Energiemenge wird die Batteriekapazität und der SOC des Fahrzeugs bei Ladebeginn herangezogen. Für letzteres ist es notwendig, dass der [SOC des Fahrzeugs via Script](soc/SOC_DE.md) abgefragt werden kann.
 ![Anforderungsart SOC](../pics/fe/SchaltzeitenTagesplanSOC.png)
 
 ### Energie
-
 Mit der Anforderungsart `Energie` kann wird anzufordernde Energie direkt vorgegeben. Normalerweise wird nur die `max. Energie` angegeben, die auf jeden Fall geladen werden soll.
 
 Optional kann für die `min. Energie` ein kleinerer Wert angegeben werden. Falls er angegeben ist, wird nur dieser Wert auf jeden Fall geladen und die darüber hinausgehende Energiemenge bis zur `max. Ernergie` nur dann, wenn **Überschussenergie** verfügbar ist.

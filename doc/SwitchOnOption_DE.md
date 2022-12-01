@@ -20,7 +20,6 @@ Sobald ein Einschaltbefehl für das Gerät _SG-Ready-Eingang_ vom *Sunny Home Ma
 
 Nachdem das Einschalten des Gerätes _Wärmepumpe_ erkannt wurde, ist die Ausschalterkennung aktiv. Das bedeutet, dass das Ausschalten des des Gerätes _Wärmepumpe_ erkannt wird, sobald die Leistungsaufnahme für die **Dauer der Ausschalterkennung** unterhalb der **Leistungsschaltgrenze** bleibt. Wenn das Ausschalten erkannt wurde, wird das aktuelle Zeitfenster freigegeben.
 
-
 ## Log
 Wird für den Schalter des Gerätes _SG-Ready-Eingang_ ein Einschaltbefehl vom *Sunny Home Manager* empfangen, findet sich im Log Einträge, die das Einschalten des Gerätes _SG-Ready-Eingang_ und nachfolgende Warten auf das Einschalten des Gerätes _Wärmepumpe_ zeigen :
 

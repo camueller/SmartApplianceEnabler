@@ -1,4 +1,4 @@
-# GPIO-basiertes Schalten
+# GPIO Schalten
 
 Der Raspberry Pi verfügt über **GPIO-Anschlüsse** die ein- und ausgeschaltet werden können.
 Dabei sollten unbedingt die [Hinweise zum Raspberry Pi und zur Numerierung der GPIO-Anschlüsse](Raspberry_DE.md) beachtet werden! 
@@ -42,7 +42,7 @@ Um das Risiko einer Überhitzung zu minimieren habe ich gleich [passende Kühlk�
 
 Bei [Pohltechnik](https://www.pohltechnik.com/de/ssr-relais) gibt es ebenfalls geeignete SSRs und passende Kühlkörper. 
 
-#### Schaltbeispiel 1: Schaltung eines 240V-Gerätes mittels Solid-State-Relais
+#### Schaltbeispiel: Schaltung eines 240V-Gerätes mittels Solid-State-Relais
 Der Aufbau zum Schalten eines 240V-Gerätes (z.B. Pumpe) mittels Solid-State-Relais könnte wie folgt aussehen:
 
 ![Schaltbeispiel](../pics/SchaltungSSR.jpg)

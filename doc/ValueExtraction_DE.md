@@ -1,11 +1,9 @@
 # Wert-Extraktion 
-
 Bei Abfragen erhält der *Smart Appliance Enabler* oft eine umfangreiche Antwort (XML, JSON, ...), aus welcher der eigentlich benötigte Zahlenwert erst extrahiert werden muss.
 
 Dazu kann an diversen Stellen im *Smart Appliance Enabler* entweder ein (JSON-) Pfad (Feldname `Pfad für Extraktion`) oder ein regulärer Ausdruck (Feldname `Regex für Extraktion`) konfiguriert werden.
 
 ## Mit JSON-Pfad
-
 Diese Methode zur Wert-Extraktion funktioniert nur, wenn die Antwort im JSON-Format vorliegt!
 
 Ob eine Antwort im JSON-Format vorliegt lässt sich relativ einfach an den geschweiften Klammern erkennen, welche deren Struktur bestimmen. 

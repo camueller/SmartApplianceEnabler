@@ -1,5 +1,4 @@
 # Einstellungen
-
 Über den Menüpunkt `Einstellungen` gelangt man zur Verwaltung der zentralen, geräteunabhängigen Einstellungen.
 
 ![Einstellungen](../pics/fe/Settings.png)

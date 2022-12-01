@@ -23,7 +23,7 @@ sae@raspi:~ $ grep 'Modbus\|Register' /tmp/rolling-2020-12-30.log | grep F-00000
 
 *Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `Modbus` und drückt Refresh.
 
-## Schaltbeispiel 1: 240V-Gerät mit Stromverbrauchsmessung
+## Schaltbeispiel: 240V-Gerät mit Stromverbrauchsmessung
 Der Aufbau zum Messen des Stromverbrauchs eines 240V-Gerätes (z.B. Pumpe) könnte wie folgt aussehen, wobei diese Schaltung natürlich um einen Schalter erweitert werden kann, wenn neben dem Messen auch geschaltet werden soll.
 
 ![Schaltbeispiel](../pics/SchaltungModbusZaehler.jpg)

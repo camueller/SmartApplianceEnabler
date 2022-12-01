@@ -25,12 +25,12 @@ Der Zählerstand wird in `Register 1036` bereitgestellt.
 
 Der `Register-Typ` ist `Holding (FC=3)`.
 
-Der Wert-Typ muss auf `Float als Integer` gesetzt werden.
+Der `Wert-Typ` muss auf `Float als Integer` gesetzt werden.
 
 Bei `Datenwörter` muss nichts eingegeben werden.
 
 Der `Umrechnungsfaktor` muss auf `0.0001` gesetzt werden.
 
-Als Zustand ist `Zählerwert` zu wählen.
+Als `Parameter` ist `Zählerwert` zu wählen.
 
 ![Konfiguration des go-eCharger als Zähler](../pics/fe/EVChargerKebaMeter.png)

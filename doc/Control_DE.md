@@ -1,5 +1,4 @@
 # Schalter
-
 Um einen Schalter zu konfigurieren muss in der `Typ`-Auswahlbox der Typ des Schalters ausgewählt werden.
 
 Derzeit unterstützt der *Smart Appliance Enabler* folgende Schalter:

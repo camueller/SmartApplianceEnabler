@@ -1,6 +1,5 @@
 # SEMP
 ## Protokoll
-
 Der *Sunny Home Manager* findet den *Smart Appliance Enabler* über das [UPnP-Protokoll](https://de.wikipedia.org/wiki/Universal_Plug_and_Play), über das sich auch Multimedia-Geräte einfach finden. Über dieses Protokoll teilt der *Smart Appliance Enabler* dem *Sunny Home Manager* die eigentliche **SEMP-URL** mit.
 
 Aus der Vewendung des UPnP-Protokolls ergibt sich die Notwendigkeit, dass *Sunny Home Manager* und *Smart Appliance Enabler* sich **im gleichen Netz befinden** und per Multicast miteinander kommunizieren können müssen!

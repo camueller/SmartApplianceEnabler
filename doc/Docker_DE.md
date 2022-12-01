@@ -1,5 +1,4 @@
 # Images 
-
 Für den *Smart Appliance Enabler* gibt es Images für Raspberry Pi und amd64, die jeweils die passende Java-Version beinhalten (deshalb Plaform-spezifische Images).
 
 * [avanux/smartapplianceenabler-arm32](https://hub.docker.com/r/avanux/smartapplianceenabler-arm32)
@@ -60,10 +59,9 @@ Für die Konfiguration als Container gibt es zwei Möglichkeiten:
  * Konfiguration mit `docker-compose` auf Basis einer YAML-Datei (empfohlen!)
  * Konfiguration mit diversen `docker`-Aufrufen
  
-Der *Smart Appliance Enabler* implementiert das SEMP-Protokoll von SMA. Dieses Protokoll basiert auf UPnP, welches wiederum IP Multicast benötigt.
-Die nachfolgend beschriebenen Konfigurationen verwenden deshalb ein [`macvlan`-Netz](https://docs.docker.com/network/macvlan/), mit dessen Hilfe der Docker-Container des *Smart Appliance Enabler* eine eigene MAC- und IP-Adresse erhält. Falls das nicht möglich oder gewünscht ist, muss der Docker-Container des *Smart Appliance Enabler* mit `--net=host` gestartet werden.
+Der *Smart Appliance Enabler* implementiert das SEMP-Protokoll von SMA. Dieses Protokoll basiert auf UPnP, welches wiederum IP Multicast benötigt. Die nachfolgend beschriebenen Konfigurationen verwenden deshalb ein [`macvlan`-Netz](https://docs.docker.com/network/macvlan/), mit dessen Hilfe der Docker-Container des *Smart Appliance Enabler* eine eigene MAC- und IP-Adresse erhält. Falls das nicht möglich oder gewünscht ist, muss der Docker-Container des *Smart Appliance Enabler* mit `--net=host` gestartet werden.
  
-## Konfiguration mit `docker-compose`
+## Konfiguration mit `docker-compose`-Befehlen
 
 `docker-compose` ermöglicht eine komfortable Konfiguration des Containers über eine YAML-Datei.
 
@@ -139,37 +137,27 @@ Dec 26 13:05:40 raspi docker-compose[30810]: sae    | 13:05:40.622 [http-nio-808
 Dec 26 13:05:40 raspi docker-compose[30810]: sae    | 13:05:40.696 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 73 ms
 ```
 
-#### Anzeige der Consolen-Ausgabe
-```console
-pi@raspi:/etc/docker/compose/smartapplianceenabler $ sudo systemctl status smartapplianceenabler-docker-compose
-● smartapplianceenabler-docker-compose.service - Smart Appliance Enabler Container
-   Loaded: loaded (/lib/systemd/system/smartapplianceenabler-docker-compose.service; enabled; vendor preset: enabled)
-   Active: active (running) since Mon 2020-11-30 17:27:44 CET; 6s ago
- Main PID: 1501 (docker-compose)
-    Tasks: 3 (limit: 2063)
-   CGroup: /system.slice/smartapplianceenabler-docker-compose.service
-           └─1501 /usr/bin/python3 /usr/local/bin/docker-compose up
-
-Nov 30 17:27:44 raspi systemd[1]: Started Smart Appliance Enabler Container.
-Nov 30 17:27:47 raspi docker-compose[1501]: Creating network "macvlan0" with driver "macvlan"
-Nov 30 17:27:48 raspi docker-compose[1501]: Creating sae ...
-```
-
-### Direkte Interaktion mit `docker-compose`
+### Befehle mit `docker-compose`
 Für alle nachfolgenden Befehle muss man sich im Verzeichnis mit der zum *Smart Appliance Enabler* gehörenden `docker-compose.yaml`-Datei befinden (normalerweise `/etc/docker/compose/smartapplianceenabler`)!
 
-#### Starten des Containers
+#### Starten der Container
 ```console
-pi@raspberrypi:~ $ docker-compose up -d
+pi@raspberrypi:/etc/docker/compose/smartapplianceenabler $ docker-compose up -d
 Creating network "macvlan0" with driver "macvlan"
-Creating sae ... done
+Creating mosquitto ... done
+Creating pigpiod   ... done
+Creating sae       ... done
 ```
 
-#### Stoppen des Containers
+#### Stoppen der Container
 ```console
 pi@raspberrypi:~ $ docker-compose down
-Stopping sae ... done
-Removing sae ... done
+Stopping sae       ... done
+Stopping mosquitto ... done
+Stopping pigpiod   ... done
+Removing sae       ... done
+Removing mosquitto ... done
+Removing pigpiod   ... done
 Removing network macvlan0
 ```
 
@@ -206,6 +194,7 @@ Zunächst wird ein `macvlan`-Interface mit der Bezeichnung `macvlan0` als Link a
 sudo ip link add macvlan0 link eth0 type macvlan mode bridge
 ```
 Für die IP-Adressen der Docker-Container muss ein Overlay-Netz von IP-Adressen definiert werden, welches den Adressbereich des physischen Interfaces überlagert. Dieser Adressbereich muss vom DHCP-Server ignoriert werden, d.h. er darf diesen Adressen niemandem zusteilen!!
+
 Zur Bestimmung geeignete Netze eignet sich der [IP Calculator](http://jodies.de/ipcalc).
 Nachfolgend wird das `macvlan`-Interface konfiguriert auf eine IP-Adresse aus dem Adressbereich des Overlay-Netzes.
 ```console

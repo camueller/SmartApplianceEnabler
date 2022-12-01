@@ -1,13 +1,11 @@
 # Mitmachen
-
 Jeder von Euch kann helfen, den *Smart Appliance Enabler* besser zu machen:
 
-- Unterstützung anderer Anwender durch Beantwortung von deren Fragen im [Forum](https://www.photovoltaikforum.com/geraete-mit-home-manager-koppeln-via-semp-ethernet-t104060.html)
+- Unterstützung anderer Anwender durch Beantwortung von deren Fragen im [Forum](https://github.com/camueller/SmartApplianceEnabler/discussions)
 - Ihr habt Ideen, was den *Smart Appliance Enabler* noch nützlicher machen würde? Kommuniziert diese Ideen im [Forum](https://github.com/camueller/SmartApplianceEnabler/discussions) oder [erstellt einen Issue auf Github](https://github.com/camueller/SmartApplianceEnabler/issues).
 - Verbesserung der vorhandenen Dokumentation oder Erstellung neuer Dokumentation, insbesondere Eure [Anwendungsszenarien](ApplicationScenarios_DE.md)
 
 ## Github
-
 Alles, was den *Smart Appliance Enabler* ausmacht, befindet sich in einem Repository bei Github: Der Programmcode, Automatisierte Tests, Bilder, Dokumentation - auch diese Seite, die Du gerade liest.
 
 Daraus ergibt sich zwangsläufig, dass Du für Dich **einen Github-Account (ist kostenlos!) anlegen** musst, falls Du noch keinen hast.

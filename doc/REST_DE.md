@@ -1,5 +1,4 @@
 # REST-Schnittstelle
-
 Für die Konfiguration mittels Web-Frontend existieren entsprechende REST-Services. Diese können, wie die SEMP-Schnittstelle selbst, auch unabhängig vom Web-Frontend verwendet werden.
 
 ## Schalten eines Gerätes

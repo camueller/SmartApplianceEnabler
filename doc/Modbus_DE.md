@@ -1,5 +1,4 @@
 # Modbus
-
 Vor der Einbindung von Modbus-Geräten in den *Smart Appliance Enabler* sollte geprüft werden, ob
 - mit dem Gerät via Modbus/TCP kommuniziert werden kann
 - die relevanten Register die erwarteten Daten liefern
@@ -36,6 +35,7 @@ Durch Variation von
 - `High byte first`
 - `High word first`
 - Response data type (erste Spalte in der Tabelle rechts) 
+
 muss erreicht werden, dass in Spalte `results` der korrekte Wert angezeigt wird.
 
 ![SimplyModbusTCPClient](../pics/SimplyModbusTCPClient.png)
@@ -56,7 +56,7 @@ Zahlenwerte mit hoher Genauigkeit benötigen manchmal 2 oder 4 Datenwörter. In 
 
 Außerdem kann ein Umrechnungsfaktor angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um ihn in die benötigte Einheit umzurechnen.
 
-Beim Finden der richtigen Konfiguration hilft Ausprobieren: Eine zu testende Kombination aus Register-Adresse, Register-Typ und Wert-Typ einstellen und im Log prüfen, welcher Wert aus dem Registerinhalt ermittelt wurde. Ggf. muss auch die Anzahl der Datenwörter und die Byte-Reihefolge variiert werden. Ziel ist, zumindest die richtige Ziffernfolge zu ermitteln, bei der nur noch das Komma an der falschen Stelle steht. Dies kann man abschliessend durch Setzen eines Umrechnungsfaktors korrigieren. 
+Beim Finden der richtigen Konfiguration hilft Ausprobieren: Eine zu testende Kombination aus `Register-Adresse`, `Register-Typ` und `Wert-Typ` einstellen und im Log prüfen, welcher Wert aus dem Registerinhalt ermittelt wurde. Ggf. muss auch die Anzahl der `Datenwörter` und die `Byte-Reihefolge` variiert werden. Ziel ist, zumindest die richtige Ziffernfolge zu ermitteln, bei der nur noch das Komma an der falschen Stelle steht. Dies kann man abschliessend durch Setzen eines Umrechnungsfaktors korrigieren. 
 
 ## Modbus-Protokoll
 ### Modbus/TCP
@@ -195,7 +195,7 @@ Jetzt steht einem Start des `mbusd` nichts mehr im Wege:
 pi@raspberrypi:/etc/mbusd $ sudo systemctl start mbusd@ttyUSB0.service
 ```
 
-Nachfolgend ist zu sehen, wie überprüft werden kann, ob der ```mbusd``` läuft:
+Nachfolgend ist zu sehen, wie überprüft werden kann, ob der `mbusd` läuft:
 ```console
 pi@raspberrypi:/etc/mbusd $ sudo systemctl status mbusd@ttyUSB0.service
 ● mbusd@ttyUSB0.service - Modbus TCP to Modbus RTU (RS-232/485) gateway.
