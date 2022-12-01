@@ -11,16 +11,16 @@ The *Smart Appliance Enabler* **calculates the current** to be set on the wallbo
 
 ## Configuration
 The *Smart Appliance Enabler* currently provides templates and configurations for the following wallboxes:
-* [go-eCharger](GoeCharger_DE.md)
-* [Keba KeContact P30 c-series / x-series](Keba_DE.md)
-* [Phoenix Contact EM-CP-PP-ETH-Controller](PhoenixContactEMCPPPETH_DE.md) e.g. Walli, wallbe feat. old controller
+* [go-eCharger](GoeCharger_EN.md)
+* [Keba KeContact P30 c-series / x-series](Keba_EN.md)
+* [Phoenix Contact EM-CP-PP-ETH-Controller](PhoenixContactEMCPPPETH_EN.md) e.g. Walli, wallbe feat. old controller
 * wallbe feat. new controller
-* [Warp Charger Smart / Pro](WarpCharger_DE.md)
+* [Warp Charger Smart / Pro](WarpCharger_EN.md)
 
 These configurations are contained in the `evcharger-templates.json` file, which is downloaded from https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/run/evcharger-templates.json every time the *Smart Appliance Enabler* is started into the directory pointed to by the variable `SAE_HOME` (usually `/opt/sae`). If the *Smart Appliance Enabler* cannot/may not download the file, the file must be downloaded manually and placed there.
 
 In addition, the use of other wall boxes should also be possible as long as they are connected via a supported protocol:
-* [Modbus/TCP](EVChargerModbus_DE.md)
+* [Modbus/TCP](EVChargerModbus_EN.md)
 * HTTP
 
 _Note for HTTP-based wallboxes:_
@@ -62,16 +62,16 @@ The *default value for manual loading* only contains the pre-assignment of the f
 
 If a *default value for excess energy* is set, after connecting the vehicle, excess energy will only be charged up to this value and then the charging process will be stopped.
 
-The AC wall boxes supported by the *Smart Appliance Enabler* cannot determine the current SOC of the vehicle and communicate with the *Smart Appliance Enabler*! In order to determine the energy demand as precisely as possible, however, this value must be known. The *Smart Appliance Enabler* therefore offers the option of integrating a [script for automated querying of the SOC](soc/SOC_DE.md), provided this is supported by the vehicle manufacturer.
+The AC wall boxes supported by the *Smart Appliance Enabler* cannot determine the current SOC of the vehicle and communicate with the *Smart Appliance Enabler*! In order to determine the energy demand as precisely as possible, however, this value must be known. The *Smart Appliance Enabler* therefore offers the option of integrating a [script for automated querying of the SOC](soc/SOC_EN.md), provided this is supported by the vehicle manufacturer.
 
 
-If several vehicles are configured, automatic detection of the vehicle is only possible if the [scripts for automated querying of the SOC](soc/SOC_DE.md) can also supply at least one of the following values in addition to the SOC:
+If several vehicles are configured, automatic detection of the vehicle is only possible if the [scripts for automated querying of the SOC](soc/SOC_EN.md) can also supply at least one of the following values in addition to the SOC:
 
 - Connection status of the charging cable
 - Time of plugging in the charging cable
 - Latitude/longitude of vehicle
 
-If available, these values must be extracted from the output of the [Script for automated querying of the SOC](soc/SOC_DE.md) in addition to the actual SOC with [Regular Expressions(Regex)](ValueExtraction_DE.md).
+If available, these values must be extracted from the output of the [Script for automated querying of the SOC](soc/SOC_EN.md) in addition to the actual SOC with [Regular Expressions(Regex)](ValueExtraction_EN.md).
 
 ![Fahrzeugkonfiguration](../pics/fe/EV.png)
 
@@ -83,12 +83,12 @@ In the *Sunny Home Manager*, the consumer configuration for a wall box should lo
 
 If a *SOC script* has been configured, it will **run automatically after connecting the vehicle to the wallbox**.
 
-There is also the option of entering the actual and target state of charge when [manually starting the charging process](Status_DE.md#user-content-click-green-ev).
+There is also the option of entering the actual and target state of charge when [manually starting the charging process](Status_EN.md#user-content-click-green-ev).
 
 Based on the values for
 - `Battery capcity`: from vehicle configuration
-- `Current SOC`: delivered by the SOC script or entered via the [traffic light control](Status_DE.md#user-content-click-green-ev)
-- `Targate SOC` default value from the vehicle configuration or entered via [traffic light control](Status_DE.md#user-content-click-green-ev)
+- `Current SOC`: delivered by the SOC script or entered via the [traffic light control](Status_EN.md#user-content-click-green-ev)
+- `Targate SOC` default value from the vehicle configuration or entered via [traffic light control](Status_EN.md#user-content-click-green-ev)
 
 ...the **initial energy** is calculated, which is to be requested from the *Sunny Home Manager*.
 
@@ -102,7 +102,7 @@ The energy requested by the *Sunny Home Manager* is **continuously calculated** 
 
 During the loading process, the **SOC script is executed periodically**. If the calculated SOC either increases by a configured value (default: 20%) or a configured time has passed since the SOC script was last executed, the SOC script is executed again. The calculated SOC is compared with the actual SOC and the actual charging losses are calculated from this. The actual charging losses are taken into account for all subsequent calculations of the SOC until the next execution of the SOC script during the current charging process.
 
-**Without SOC script** and without [entering the current actual state of charge](Status_DE.md#user-content-click-green-ev), the *Smart Appliance Enabler* assumes an actual state of charge of 0% and reports a correspondingly large energy requirement. Although this worsens the planning of the *Sunny Home Manager*, regardless of this, the wallbox stops charging at the latest when the vehicle is fully charged.
+**Without SOC script** and without [entering the current actual state of charge](Status_EN.md#user-content-click-green-ev), the *Smart Appliance Enabler* assumes an actual state of charge of 0% and reports a correspondingly large energy requirement. Although this worsens the planning of the *Sunny Home Manager*, regardless of this, the wallbox stops charging at the latest when the vehicle is fully charged.
 
 ### Example
 The course of a charging process using excess energy is illustrated here using excerpts from the log:
@@ -187,7 +187,7 @@ batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=666Wh chargeLos
 
 ### Control requests
 
-If a control request for a wallbox (here `F-00000001-000000000019-00`) is received from the *Sunny Home Manager*, this can be displayed in the [Log](Logging_DE.md) with the following command:
+If a control request for a wallbox (here `F-00000001-000000000019-00`) is received from the *Sunny Home Manager*, this can be displayed in the [Log](Logging_EN.md) with the following command:
 
 ```console
 sae@raspi:~ $ grep "Received control" -A 3 /tmp/rolling-2020-11-18.log
@@ -197,10 +197,10 @@ sae@raspi:~ $ grep "Received control" -A 3 /tmp/rolling-2020-11-18.log
 2020-11-18 09:36:10,063 DEBUG [http-nio-8080-exec-3] d.a.s.m.EVModbusControl [EVModbusControl.java:178] F-00000001-000000000019-00: Set charge current 14A
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) enter `Received control` after `Only show lines with text` and press Refresh.
+*Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `Received control` after `Only show lines with text` and press Refresh.
 
 ### SOC script
-The [Log](Logging_DE.md) contains the following lines for each execution of the SOC script:
+The [Log](Logging_EN.md) contains the following lines for each execution of the SOC script:
 
 ```console
 sae@raspi:~ $ grep "SocScript" /tmp/rolling-2021-01-09.log
@@ -211,4 +211,4 @@ sae@raspi:~ $ grep "SocScript" /tmp/rolling-2021-01-09.log
 2021-01-09 08:51:15,503 DEBUG [Thread-7] d.a.s.c.e.SocScript [SocScript.java:87] F-00000001-000000000019-00: SoC: 94.0
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) enter `SocScript` after `Only show lines with text` and press Refresh.
+*Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `SocScript` after `Only show lines with text` and press Refresh.

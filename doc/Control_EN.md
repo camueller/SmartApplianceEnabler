@@ -3,23 +3,23 @@ In order to configure a control, its type must be selected in the `Type` selecti
 
 The *Smart Appliance Enabler* currently supports the following controls:
 
-* [Meter reporting switch](MeterReportingSwitch_DE.md) is automatically active if no other control is configured
-* [GPIO](GPIOSwitch_DE.md)
-* [Modbus](ModbusSwitch_DE.md) only appears if at least one Modbus has been configured in the [Settings](Settings_DE.md#user-content-modbus)
-* [HTTP](HttpSwitch_DE.md)
-* [Level switch](LevelSwitch_DE.md)
-* [PWM switch](PwmSwitch_DE.md)
-* [Always-on switch](AlwaysOnSwitch_DE.md)
+* [Meter reporting switch](MeterReportingSwitch_EN.md) is automatically active if no other control is configured
+* [GPIO](GPIOSwitch_EN.md)
+* [Modbus](ModbusSwitch_EN.md) only appears if at least one Modbus has been configured in the [Settings](Settings_EN.md#user-content-modbus)
+* [HTTP](HttpSwitch_EN.md)
+* [Level switch](LevelSwitch_EN.md)
+* [PWM switch](PwmSwitch_EN.md)
+* [Always-on switch](AlwaysOnSwitch_EN.md)
 
 According to this selection, the fields that can be configured for the selected switch type are displayed.
 
-If the selected switch type can be combined with [Starting current detection](StartingCurrentDetection_DE.md) and this has been activated by clicking the checkbox, further fields with configuration parameters of the starting current detection are displayed.
+If the selected switch type can be combined with [Starting current detection](StartingCurrentDetection_EN.md) and this has been activated by clicking the checkbox, further fields with configuration parameters of the starting current detection are displayed.
 
-To use the SG-Ready function of heat pumps, some switch types can be marked as [switch-on option](SwitchOnOption_DE.md).
+To use the SG-Ready function of heat pumps, some switch types can be marked as [switch-on option](SwitchOnOption_EN.md).
 
-If `EV charger` is specified as the appliance type, the [wallbox configuration and vehicle management](EVCharger_DE.md) can be carried out on this page.
+If `EV charger` is specified as the appliance type, the [wallbox configuration and vehicle management](EVCharger_EN.md) can be carried out on this page.
 
-See also: [General notes on configuration](Configuration_DE.md)
+See also: [General notes on configuration](Configuration_EN.md)
 
 ## Control requests from the Sunny Home Manager
 <a name="control-request">

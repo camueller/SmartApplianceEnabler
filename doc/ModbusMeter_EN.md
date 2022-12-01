@@ -1,6 +1,6 @@
 # Modbus meter
 
-The general notes on using [Modbus in the SmartApplianceEnabler](Modbus_DE.md) apply to Modbus switches.
+The general notes on using [Modbus in the SmartApplianceEnabler](Modbus_EN.md) apply to Modbus switches.
 
 If possible, `Meter reading` should be set as the parameter, because the *Smart Appliance Enabler* then only has to query this value **once per minute** and can calculate the power very precisely from the difference to the previous query.
 
@@ -11,7 +11,7 @@ The value in kWh is required for the `Meter reading` parameter and in W for the 
 ![Modbus-basierter Zähler](../pics/fe/ModbusMeter.png)
 
 ## Log
-If a Modbus meter is used for the device `F-00000001-000000000005-00`, the determined power consumption can be displayed in [Log](Logging_DE.md) with the following command:
+If a Modbus meter is used for the device `F-00000001-000000000005-00`, the determined power consumption can be displayed in [Log](Logging_EN.md) with the following command:
 
 ```console
 sae@raspi:~ $ grep 'Modbus\|Register' /tmp/rolling-2020-12-30.log | grep F-00000001-000000000019-00
@@ -21,7 +21,7 @@ sae@raspi:~ $ grep 'Modbus\|Register' /tmp/rolling-2020-12-30.log | grep F-00000
 2020-12-30 14:33:51,551 DEBUG [http-nio-8080-exec-7] d.a.s.m.ModbusElectricityMeter [ModbusElectricityMeter.java:88] F-00000001-000000000019-00: average power = 6895W
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) enter `Modbus` after `Only show lines with text` and press Refresh.
+*Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `Modbus` after `Only show lines with text` and press Refresh.
 
 ## Wiring example: 240V device with power consumption measurement
 The structure for measuring the power consumption of a 240V device (e.g. pump) could look like this, whereby this circuit can of course be expanded with a switch if switching is also to be carried out in addition to measuring.

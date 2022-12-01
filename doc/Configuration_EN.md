@@ -20,12 +20,12 @@ The menu can be opened and closed at any time using the menu symbol (the three l
 
 ![Menü ohne Konfiguration](../pics/fe/OhneKonfigurationSeitenmenu.png)
 
-The menu contains an entry for the [Status](Status_DE.md) display, which is always initially displayed.
+The menu contains an entry for the [Status](Status_EN.md) display, which is always initially displayed.
 
-Below this is an entry for managing the central, device-independent [Settings](Settings_DE.md).
+Below this is an entry for managing the central, device-independent [Settings](Settings_EN.md).
 
 Below are links in the menu
-- to [page with questions / problems and answers](QA_DE.md)
+- to [page with questions / problems and answers](QA_EN.md)
 - to the [project homepage](https://github.com/camueller/SmartApplianceEnabler)
 - to the [user forum](https://github.com/camueller/SmartApplianceEnabler/discussions)
 
@@ -36,15 +36,15 @@ Unterhalb des Eintrags für `Neues Gerät` werden die konfigurierten Geräte mit
 ## Basics
 Before starting the actual configuration, you should be aware of the following relationships, which if ignored will result in the *Smart Appliance Enabler* not being able to work:
 
-1. The *Sunny Home Manager* only takes into account the power consumption of devices for which the "switched on" status is also transmitted by the *Smart Appliance Enabler* (see [Switch](Control_DE.md))
+1. The *Sunny Home Manager* only takes into account the power consumption of devices for which the "switched on" status is also transmitted by the *Smart Appliance Enabler* (see [Switch](Control_EN.md))
 2. The *Sunny Home Manager* will only control a device with switching commands if the *Smart Appliance Enabler* transmits a demand request. basis for it is
     - for wall boxes: a connected vehicle (results in a request for excess energy)
-    - for all other devices: a configured [schedule](Schedules_DE.md) (results in a runtime request)
+    - for all other devices: a configured [schedule](Schedules_EN.md) (results in a runtime request)
 
 After the basics have been clarified, you can proceed with the actual configuration:
-- [Appliances](Appliance_DE.md)
-- [Meters](Meter_DE.md)
-- [Controls](Control_DE.md)
-- [Schedules](Schedules_DE.md)
-- [Notifications](Notifications_DE.md)
-- [Configuration using REST](REST_DE.md)
+- [Appliances](Appliance_EN.md)
+- [Meters](Meter_EN.md)
+- [Controls](Control_EN.md)
+- [Schedules](Schedules_EN.md)
+- [Notifications](Notifications_EN.md)
+- [Configuration using REST](REST_EN.md)

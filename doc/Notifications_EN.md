@@ -3,7 +3,7 @@ The *Smart Appliance Enabler* provides notifications about events ("device was s
 
 A main use case for me is notification when devices are unreachable. It happens to me again and again that devices with Tasmota are no longer in the WLAN at some point and I don't notice it right away. Then, of course, the consumption in the *Sunny Home Manager* is missing. But it's also nice if you get a notification when the washing machine is finished or the car is fully charged.
 
-Before notifications can be configured, there must be a [shell script configured in the settings](Settings_DE.md#user-content-notifications) via which the *Smart Appliance Enabler* sends the notifications.
+Before notifications can be configured, there must be a [shell script configured in the settings](Settings_EN.md#user-content-notifications) via which the *Smart Appliance Enabler* sends the notifications.
 
 After a shell script has been configured, the sending of device-specific notifications can be activated for counters and switches by activating the checkbox `Activated`.
 
@@ -33,7 +33,7 @@ These [bots must be added to the previously created group](https://telegram.org/
 
 The chat ID of the group is required to send notifications. This is displayed when you add the `@getidsbot` bot to the group. Once the ID has been determined, the `@getidsbot` can be removed from the group.
 
-A shell script](ManualInstallation_DE.md#user-content-notifications) is provided for the use of [Notifications via Telegram]. The previously determined chat ID must be entered in this shell script (possibly existing minus sign must be accepted):
+A shell script](ManualInstallation_EN.md#user-content-notifications) is provided for the use of [Notifications via Telegram]. The previously determined chat ID must be entered in this shell script (possibly existing minus sign must be accepted):
 ```
 chat=-123456789
 ```

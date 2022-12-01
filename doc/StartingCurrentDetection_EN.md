@@ -12,7 +12,7 @@ Likewise, the **finish current** will be recognized as a transition back if the 
 
 ![Anlaufstromerkennung](../pics/fe/Anlaufstromerkennung.png)
 
-After detection of the finish current, the starting current detection is reactivated immediately. This makes it possible to run the device several times in succession within a [Schedule](Schedules_DE.md).
+After detection of the finish current, the starting current detection is reactivated immediately. This makes it possible to run the device several times in succession within a [Schedule](Schedules_EN.md).
 
 ## Log
 If the starting current is detected, there is a corresponding entry in the log:
@@ -22,7 +22,7 @@ $ grep "Starting current detected" /tmp/rolling-2021-01-08.log
 2021-01-08 10:43:57,469 DEBUG [pi4j-gpio-event-executor-2] d.a.s.c.StartingCurrentSwitch [StartingCurrentSwitch.java:298] F-00000001-000000000012-00: Starting current detected.
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) enter `Starting current detected` after `Only show lines with text` and press Refresh.
+*Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `Starting current detected` after `Only show lines with text` and press Refresh.
 
 Accordingly, there is also an entry in the log as soon as the finish current has been detected:
 
@@ -31,4 +31,4 @@ $ grep "Finished current detected" /tmp/rolling-2021-01-08.log
 2021-01-08 13:04:25,374 DEBUG [Timer-0] d.a.s.c.StartingCurrentSwitch [StartingCurrentSwitch.java:316] F-00000001-000000000012-00: Finished current detected.
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) enter `Finished current detected` after `Only show lines with text` and press Refresh.
+*Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `Finished current detected` after `Only show lines with text` and press Refresh.

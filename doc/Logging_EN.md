@@ -9,7 +9,7 @@ The following log files are relevant for the *Smart Appliance Enabler*:
 ## Log output of *Smart Appliance Enabler*
 The logging of the *Smart Appliance Enabler* was implemented in such a way that it makes transparent what the *Smart Appliance Enabler* is currently doing. Values are often also output before they are used for decisions. As a result, the log should also provide the best possible support for troubleshooting.
 
-If the log entries refer to a specific device, they always contain the [`ID`](Appliance_DE.md#id) to enable filtering of the log entries:
+If the log entries refer to a specific device, they always contain the [`ID`](Appliance_EN.md#id) to enable filtering of the log entries:
 ```
 2019-12-30 11:46:51,501 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:160] F-00000001-000000000015-00: Response code is 200
 ```

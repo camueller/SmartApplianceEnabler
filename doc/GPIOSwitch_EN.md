@@ -1,16 +1,16 @@
 # GPIO switches
 
 The Raspberry Pi has **GPIO ports** that can be turned on and off.
-The [Notes on the Raspberry Pi and the numbering of the GPIO connections](Raspberry_DE.md) should be observed!
+The [Notes on the Raspberry Pi and the numbering of the GPIO connections](Raspberry_EN.md) should be observed!
 
 Configuring a GPIO-based switch involves specifying the GPIO port number and whether to invert the switch state.
 
-Optionally, the [Starting current detection](StartingCurrentDetection_DE.md) can be activated.
+Optionally, the [Starting current detection](StartingCurrentDetection_EN.md) can be activated.
 
 ![GPIO Switch](../pics/fe/GPIOSwitch.png)
 
 ## Log
-If a device (here `F-00000001-000000000013-00`) is switched using a GPIO-based switch, you can display the switching command in [Log](Logging_DE.md) with the following command:
+If a device (here `F-00000001-000000000013-00`) is switched using a GPIO-based switch, you can display the switching command in [Log](Logging_EN.md) with the following command:
 
 ```console
 sae@raspi2:~ $ grep "c.Switch" /tmp/rolling-2020-12-30.log | grep F-00000001-000000000013-00
@@ -18,7 +18,7 @@ sae@raspi2:~ $ grep "c.Switch" /tmp/rolling-2020-12-30.log | grep F-00000001-000
 2020-12-30 11:05:59,820 INFO [http-nio-8080-exec-6] d.a.s.c.Switch [Switch.java:101] F-00000001-000000000013-00: Switching on GPIO 3
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) enter `c.Switch` after `Only show lines with text` and press refresh.
+*Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `c.Switch` after `Only show lines with text` and press refresh.
 
 ## Solid state relais
 

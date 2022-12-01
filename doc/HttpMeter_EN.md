@@ -1,16 +1,16 @@
 # HTTP meter
 
-For [HTTP-based devices, these general instructions](Http_DE.md) must be observed!
+For [HTTP-based devices, these general instructions](Http_EN.md) must be observed!
 
 The `parameter` designates the measured value which the meter supplies to the *Smart Appliance Enabler* for performance determination.
 
-If possible, `Meter reading` should be set as the parameter, because the *Smart Appliance Enabler* then only has to query this value **once per minute** and can calculate the power very precisely from the difference to the previous query. However, the meter reading in kWh must be supplied with at least **4 decimal places** (better 5). With some adapters, this accuracy must first be set (see [Tasmota](Tasmota_DE.md)).
+If possible, `Meter reading` should be set as the parameter, because the *Smart Appliance Enabler* then only has to query this value **once per minute** and can calculate the power very precisely from the difference to the previous query. However, the meter reading in kWh must be supplied with at least **4 decimal places** (better 5). With some adapters, this accuracy must first be set (see [Tasmota](Tasmota_EN.md)).
 
 If `Power` is set as the parameter, this value is queried several times per minute in order to calculate the average from these values. The interval between these queries can be specified with the `Query Interval` - the default value is 20 seconds.
 
 If the HTTP response is delivered in **JSON format**, this should be set as `Format` because then by specifying the `Extraction path` the numerical value can be extracted from the HTTP response very easily.
 
-Alternatively (or also downstream of the JSON interpretation), a [regular expression for extraction](ValueExtraction_DE.md) can be specified if the numerical value has to be extracted from a text (XML, ...). This also applies if the HTTP response appears to only contain the number, but it also contains a line break (CR/LF).
+Alternatively (or also downstream of the JSON interpretation), a [regular expression for extraction](ValueExtraction_EN.md) can be specified if the numerical value has to be extracted from a text (XML, ...). This also applies if the HTTP response appears to only contain the number, but it also contains a line break (CR/LF).
 
 The configuration of the parameters described above must ensure that the *Smart Appliance Enabler* can extract the correct number from the HTTP response.
 
@@ -19,7 +19,7 @@ The value in kWh is required for the `Meter reading` parameter and in W for the 
 ![HTTP-basierter Zähler](../pics/fe/HttpMeter.png)
 
 ## Log
-If an HTTP counter is used for the device `F-00000001-000000000005-00`, the determined power consumption can be displayed in [Log](Logging_DE.md) with the following command:
+If an HTTP counter is used for the device `F-00000001-000000000005-00`, the determined power consumption can be displayed in [Log](Logging_EN.md) with the following command:
 
 ```console
 sae@raspi:~ $ grep 'Http' /tmp/rolling-2021-01-01.log | grep F-00000001-000000000005-00
@@ -32,4 +32,4 @@ sae@raspi:~ $ grep 'Http' /tmp/rolling-2021-01-01.log | grep F-00000001-00000000
 2021-01-01 09:42:55,636 DEBUG [http-nio-8080-exec-9] d.a.s.m.HttpElectricityMeter [HttpElectricityMeter.java:154] F-00000001-000000000005-00: average power = 1280W
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) enter `F-00000001-000000000005-00` after `Only show lines with text` and press refresh.
+*Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `F-00000001-000000000005-00` after `Only show lines with text` and press refresh.

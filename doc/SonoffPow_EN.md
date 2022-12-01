@@ -3,7 +3,7 @@ The [Sonoff Pow from ITead](https://www.itead.cc/sonoff-pow.html) is an inexpens
 
 I've already "lost" many Gosund SP111 devices with high starting currents (e.g. motors/pumps), while a Sonoff Pow is not overwhelmed even with such devices.
 
-Use with the *Smart Appliance Enabler* is only possible if the adapter is flashed with the [Tasmota-Firmware](Tasmota_DE.md).
+Use with the *Smart Appliance Enabler* is only possible if the adapter is flashed with the [Tasmota-Firmware](Tasmota_EN.md).
 
 Observe the [device-specific instructions for flashing with Tasmota](https://tasmota.github.io/docs/devices/Sonoff-Pow/).
 

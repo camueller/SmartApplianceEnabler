@@ -25,7 +25,7 @@ The error message should be displayed instead
 
 > The device found by your Sunny Home Manager with the serial number ... is already registered in another system and therefore cannot be added to your system.
 
-the ID you selected for the device is already assigned and another [ID configured](Appliance_DE.md#id) must be configured. Then you have to add the device again in the *Sunny Portal*.
+the ID you selected for the device is already assigned and another [ID configured](Appliance_EN.md#id) must be configured. Then you have to add the device again in the *Sunny Portal*.
 
 ### Maximum number of devices in Sunny Portal
 <a name="max-devices">

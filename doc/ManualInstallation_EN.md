@@ -1,5 +1,5 @@
 # Manual installation
-The manual installation described here requires SSH access to the Raspberry Pi and interaction with the shell. If possible, the [Standard Installation](Installation_DE.md) should be selected instead, which runs automatically and does not require any Linux knowledge.
+The manual installation described here requires SSH access to the Raspberry Pi and interaction with the shell. If possible, the [Standard Installation](Installation_EN.md) should be selected instead, which runs automatically and does not require any Linux knowledge.
 
 The following chapters should be implemented in the order given.
 
@@ -270,7 +270,7 @@ $ docker run -it --rm -p 1883:1883 --name mosquitto eclipse-mosquitto mosquitto 
 ```
 
 ## Node-RED
-The optional [Installation of Node-RED](NodeRED_DE.md) enables the use of a detailed dashboard based on the MQTT messages.
+The optional [Installation of Node-RED](NodeRED_EN.md) enables the use of a detailed dashboard based on the MQTT messages.
 
 ## Smart Appliance Enabler
 ### Initial installation
@@ -304,8 +304,8 @@ The *Smart Appliance Enabler* is normally managed as a [Systemd](https://de.wiki
 The file `/opt/sae/smartapplianceenabler` is the actual start script for the *Smart Appliance Enabler*. While it can be called directly, it should only be used by _Systemd_.
 
 See also:
-- [Konfigurationseinstellungen](ConfigurationFiles_DE.md#user-content-etc-default-smartapplianceenabler)
-- [Konfiguration des Loggings](ConfigurationFiles_DE.md#user-content-log-konfiguration)
+- [Konfigurationseinstellungen](ConfigurationFiles_EN.md#user-content-etc-default-smartapplianceenabler)
+- [Konfiguration des Loggings](ConfigurationFiles_EN.md#user-content-log-konfiguration)
 
 The following command must be executed so that the *Smart Appliance Enabler* is also started when the system starts (via systemd):
 ```console
@@ -343,7 +343,7 @@ pi@raspberrypi:~ $ sudo systemctl start smartapplianceenabler
 ```
 Depending on the Raspberry Pi model, the start takes up to 60 seconds.
 
-If the *Smart Appliance Enabler* is running, the [configuration](Configuration_DE.md) must be made next.
+If the *Smart Appliance Enabler* is running, the [configuration](Configuration_EN.md) must be made next.
 
 #### Stop
 The *Smart Appliance Enabler* is stopped as follows:
@@ -378,7 +378,7 @@ In most cases the new version of the *Smart Appliance Enabler* can migrate the c
 pi@raspberrypi ~ $ mv /opt/sae/Appliances.xml /opt/sae/Appliances.xml.old
 pi@raspberrypi ~ $ mv /opt/sae/Device2EM.xml /opt/sae/Device2EM.xml.old
 ```
-The configuration must then be created again, as described in the [Configuration](Configuration_DE.md) chapter.
+The configuration must then be created again, as described in the [Configuration](Configuration_EN.md) chapter.
 
 ### Notifications
 <a name="notifications"></a>

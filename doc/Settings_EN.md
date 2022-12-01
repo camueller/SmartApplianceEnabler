@@ -40,4 +40,4 @@ Specifying the host name or IP address and port is optional.
 
 To use notifications, a shell script must be specified that is called when a configured event occurs.
 
-The installation of provided shell scripts for the *Smart Appliance Enabler* is described [here](ManualInstallation_DE.md#user-content-notifications).
+The installation of provided shell scripts for the *Smart Appliance Enabler* is described [here](ManualInstallation_EN.md#user-content-notifications).

@@ -4,7 +4,7 @@ The *Smart Appliance Enabler* comes with templates for various wallboxes that co
 
 ## General Modbus configuration
 
-Before the Wallbox-specific Modbus configuration can be created, these [General requirements for using Modbus in the Smart Appliance Enabler](Modbus_DE.md) must be met.
+Before the Wallbox-specific Modbus configuration can be created, these [General requirements for using Modbus in the Smart Appliance Enabler](Modbus_EN.md) must be met.
 
 ## Wallbox specific Modbus configuration
 

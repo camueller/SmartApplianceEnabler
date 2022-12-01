@@ -96,7 +96,7 @@ To do this, go to the Tasmota web console of the adapter and enter the command `
 17:14:25 RSL: RESULT = {"EnergyRes":5}
 ```
 
-The [Log](Logging_DE.md) contains the following lines for each counter query:
+The [Log](Logging_EN.md) contains the following lines for each counter query:
 ```
 2021-02-08 00:09:54,324 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000014-00: Executing timer task name=PollEnergyMeter id=13049675
 2021-02-08 00:09:54,324 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:107] F-00000001-000000000014-00: Sending GET request url=http://kuehltruhe/cm?cmnd=Status%208
@@ -107,7 +107,7 @@ The [Log](Logging_DE.md) contains the following lines for each counter query:
 2021-02-08 00:09:54,465 DEBUG [Timer-0] d.a.s.m.PollEnergyMeter [PollEnergyMeter.java:120] F-00000001-000000000014-00: Adding value: timestamp=2021-02-08T00:09:54.324795 value=56.00865
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) enter `Http` after `Only show lines with text` and press refresh.
+*Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `Http` after `Only show lines with text` and press refresh.
 
 ## Devices with Tasmota firmware as switches
 
@@ -137,14 +137,14 @@ The above example results in the following field contents in the *Smart Applianc
 | Action "Switch off"     | http://192.168.1.1/cm?cmnd=Power%20Off |                  |
 | Parameter "Switched on" | http://192.168.1.1/cm?cmnd=Power       | :.ON             |
 
-The [Log](Logging_DE.md) contains the following lines for each switching process:
+The [Log](Logging_EN.md) contains the following lines for each switching process:
 ```
 2020-01-06 14:51:22,817 INFO [http-nio-8080-exec-4] d.a.s.c.HttpSwitch [HttpSwitch.java:128] F-00000001-000000000001-00: Switching on
 2020-01-06 14:51:22,817 DEBUG [http-nio-8080-exec-4] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: Sending GET request url=http://192.168.1.1/cm?cmnd=Power%20On
 2020-01-06 14:51:22,984 DEBUG [http-nio-8080-exec-4] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:160] F-00000001-000000000001-00: Response code is 200
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) enter `Http` after `Only show lines with text` and press refresh.
+*Webmin*: In [View Logfile](Logging_EN.md#webmin-logs) enter `Http` after `Only show lines with text` and press refresh.
 
 ## Create runtime request on keypress
 Tasmota allows you to create rules that are triggered on specific events.

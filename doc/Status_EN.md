@@ -31,7 +31,7 @@ By clicking on the `Start` button, the device is switched on immediately.
 After a **click on the green traffic light** you can set the `loading mode` for the current loading process.
 
 Depending on the charging mode selected, the fields `Charge status: Actual` and/or `Charge status: Target` are displayed, where the following applies:
-- if a [SOC-Script](soc/SOC_DE.md) was specified for the selected vehicle, the input field `State of charge: Actual` is pre-assigned with the current value at this point in time. Without the SOC script, it can be read in the car and entered here if you want to enable the *Sunny Home Manager* to plan well. Otherwise 0 is assumed and a correspondingly high energy demand is reported.
+- if a [SOC-Script](soc/SOC_EN.md) was specified for the selected vehicle, the input field `State of charge: Actual` is pre-assigned with the current value at this point in time. Without the SOC script, it can be read in the car and entered here if you want to enable the *Sunny Home Manager* to plan well. Otherwise 0 is assumed and a correspondingly high energy demand is reported.
 - If no value is entered in the `State of charge: Target` input field, 100% is assumed and a correspondingly high energy requirement is reported to the *Sunny Home Manager*.
 
 ### Charge mode: fast

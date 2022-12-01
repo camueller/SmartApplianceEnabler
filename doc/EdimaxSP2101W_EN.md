@@ -48,7 +48,7 @@ The above example results in the following field contents in the *Smart Applianc
 | Password         | 12345678                                                                                                                                                                                                                                   |
 | Content-Type     | application/xml                                                                                                                                                                                                                            |
 
-If an Edimax SP2101W is switched, the following lines can be found in the [Log](Logging_DE.md) for each switching process:
+If an Edimax SP2101W is switched, the following lines can be found in the [Log](Logging_EN.md) for each switching process:
 ```
 2017-06-03 18:54:03,193 DEBUG [http-nio-8080-exec-5] d.a.s.s.w.SempController [SempController.java:192] F-00000001-000000000001-00: Received control request
 2017-06-03 18:54:03,197 DEBUG [http-nio-8080-exec-5] d.a.s.a.HttpTransactionExecutor [HttpTransactionExecutor.java:101] F-00000001-000000000001-00: Sending HTTP request

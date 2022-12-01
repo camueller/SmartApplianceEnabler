@@ -32,7 +32,7 @@ If the check is successful, a message with a green background *The XML document 
 
 To transfer the files between Raspberry Pi and PC you can use `scp` under Linux, under Windows there is `WinSCP` ([Video with WinSCP instructions in German](https://www.youtube.com/watch?v=z6yJDMjTdMg )).
 
-*Webmin*: With the [Webmin file manager](Webmin_DE.md) the transfer between Raspberry Pi and PC can be done under Linux in the browser.
+*Webmin*: With the [Webmin file manager](Webmin_EN.md) the transfer between Raspberry Pi and PC can be done under Linux in the browser.
 
 ## Server configuration
 <a name="etc-default-smartapplianceenabler">

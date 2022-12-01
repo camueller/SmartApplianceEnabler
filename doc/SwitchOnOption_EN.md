@@ -8,7 +8,7 @@ Switching the SG-Ready input corresponds to an offer to the heat pump that does 
 
 To do this, the **heat pump and SG-Ready must each be created as an independent device** in the *Smart Appliance Enabler*.
 
-Both devices share a physical meter that is assigned to both devices in the *Smart Appliance Enabler* as [Master/Slave Meter](MasterSlaveMeter_DE.md). The master meter must be configured so that the power consumption is allocated to the slave when the slave switch is on:
+Both devices share a physical meter that is assigned to both devices in the *Smart Appliance Enabler* as [Master/Slave Meter](MasterSlaveMeter_EN.md). The master meter must be configured so that the power consumption is allocated to the slave when the slave switch is on:
 
 ![Master-Zähler bei Einschaltoption](../pics/fe/EinschaltoptionMasterMeter.png)
 
@@ -39,7 +39,7 @@ $ grep SwitchOption /tmp/rolling-2022-10-23.log
 2022-10-23 10:21:10,181 DEBUG [MQTT Call: F-00000001-000000000008-00-SwitchOption-0] d.a.s.c.SwitchOption [SwitchOption.java:66] F-00000001-000000000008-00: on=true averagePower=0
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) enter `SwitchOption` after `Only show lines with text` and press Refresh.
+*Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `SwitchOption` after `Only show lines with text` and press Refresh.
 
 If the device _Heat pump_ has not switched on within the **duration of the switch-on detection**, the following entry is made in the log:
 ```console
@@ -47,4 +47,4 @@ $ grep SwitchOption /tmp/rolling-2022-10-23.log
 2022-10-23 10:35:30,193 DEBUG [MQTT Call: F-00000001-000000000008-00-SwitchOption-0] d.a.s.c.SwitchOption [SwitchOption.java:82] F-00000001-000000000008-00: No switch on detected within switchOnDetectionDuration=900s. Removing timeframe interval.
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) enter `SwitchOption` after `Only show lines with text` and press Refresh.
+*Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `SwitchOption` after `Only show lines with text` and press Refresh.

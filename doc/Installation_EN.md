@@ -1,12 +1,12 @@
 # Standard installation
 
-This page is about new installations - the procedure for updates is described [here](Update_DE.md).
+This page is about new installations - the procedure for updates is described [here](Update_EN.md).
 
 The standard installation described here runs automatically and requires no Linux knowledge.
 
 If access to the Raspberry Pi is possible via SSH, the installation can alternatively also be carried out by
-- [Installation via Script](InstallationViaScript_DE.md), where only 2 shell commands have to be entered
-- [manual installation](ManualInstallation_DE.md) in which all commands in the documentation must be executed in the shell
+- [Installation via Script](InstallationViaScript_EN.md), where only 2 shell commands have to be entered
+- [manual installation](ManualInstallation_EN.md) in which all commands in the documentation must be executed in the shell
 
 ## Writing the Raspberry Pi OS image to the SD card
 Each Raspberry Pi has a slot for an SD card that serves as a storage medium (similar to the hard drive on normal PCs). The SD card should have a size of at least **4 GB**.
@@ -74,9 +74,9 @@ Next, the **USB stick** must be plugged into the Raspberry Pi (it doesn't matter
 
 The **USB stick must now be removed**. This will **automatically reboot** the Raspberry Pi (thanks to the modified image), the red LED will turn on again and the **second phase of the installation** will begin. The software of the Raspberry Pi is updated, the *Smart Appliance Enabler* and, if necessary, *webmin* are installed. Depending on the Raspberry Pi model, the speed of the SD card and the internet connection, this phase can take some time (it takes 22 minutes on my Raspberry Pi 4 Model B). When the installation is complete, the **red LED will turn off for one hour**.
 
-The *Smart Appliance Enabler* is now running and you can continue with the [Configuration](Configuration_DE.md).
+The *Smart Appliance Enabler* is now running and you can continue with the [Configuration](Configuration_EN.md).
 
-The software for administration via web browser (*webmin*) should now run - see [Notes on using webmin for *Smart Appliance Enabler*](Webmin_DE.md).
+The software for administration via web browser (*webmin*) should now run - see [Notes on using webmin for *Smart Appliance Enabler*](Webmin_EN.md).
 
 ### Errors during installation
 
