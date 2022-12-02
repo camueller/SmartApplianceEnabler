@@ -203,6 +203,10 @@ public class MqttClient {
         return false;
     }
 
+    public static void removeMqttBrokerInstanceForAvailabilityTest() {
+        instance = null;
+    }
+
     public void publish(String topic, MqttMessage message, boolean retained) {
         publish(topic, true, message, false, retained);
     }

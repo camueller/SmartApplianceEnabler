@@ -852,6 +852,7 @@ public class SaeController {
                 connectivity = new Connectivity();
                 connectivity.setMqttBroker(mqttBroker);
                 connectivity.setModbusTCPs(modbusTCPs);
+                MqttClient.removeMqttBrokerInstanceForAvailabilityTest();
             }
 
             List<Configuration> configurations = new ArrayList<>();
