@@ -32,12 +32,14 @@ For consumers with variable power consumption, two further options can be availa
 
 ### Target SOC
 With the request type `Charge until SOC`, exactly the energy required to reach a specific SOC is requested. The battery capacity and the SOC of the vehicle at the start of charging are used to calculate this amount of energy. For the latter it is necessary that the [SOC of the vehicle via script](soc/SOC_EN.md) can be queried.
-![Requirement type SOC](../pics/fe/Switch timesDayplanSOC.png)
+
+![Requirement type SOC](../pics/fe/ScheduleDaySoc_EN.png)
 
 ### Energy
 With the request type 'Energy', the energy to be requested can be specified directly. Normally only the `max. Energy` specified, which should be charged in any case.
 
 Optionally, for the `min. Energy` a smaller value can be specified. If it is specified, only this value will be loaded in any case and the excess amount of energy up to the `max. Energy` only if **excess energy** is available.
-![Energy requirement type](../pics/fe/Switching timesDayplanEnergy.png)
+
+![Energy requirement type](../pics/fe/ScheduleDayEnergy_EN.png)
 
 See also: [General notes on configuration](Configuration_EN.md)

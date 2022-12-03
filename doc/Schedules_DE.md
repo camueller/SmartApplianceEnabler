@@ -32,12 +32,14 @@ Bei Verbrauchern mit variabler Leistungsaufnahme können als **Anforderungsart**
 
 ### Soll-SOC
 Mit der Anforderungsart `Laden bis SOC` wird genau die Energie angefordert, die notwendig ist, um einen bestimmten SOC zu erreichen. Zur Berechnung dieser Energiemenge wird die Batteriekapazität und der SOC des Fahrzeugs bei Ladebeginn herangezogen. Für letzteres ist es notwendig, dass der [SOC des Fahrzeugs via Script](soc/SOC_DE.md) abgefragt werden kann.
+
 ![Anforderungsart SOC](../pics/fe/ScheduleDaySoc_DE.png)
 
 ### Energie
 Mit der Anforderungsart `Energie` kann wird anzufordernde Energie direkt vorgegeben. Normalerweise wird nur die `max. Energie` angegeben, die auf jeden Fall geladen werden soll.
 
 Optional kann für die `min. Energie` ein kleinerer Wert angegeben werden. Falls er angegeben ist, wird nur dieser Wert auf jeden Fall geladen und die darüber hinausgehende Energiemenge bis zur `max. Ernergie` nur dann, wenn **Überschussenergie** verfügbar ist.
+
 ![Anforderungsart Energie](../pics/fe/ScheduleDayEnergy_DE.png)
 
 Siehe auch: [Allgemeine Hinweise zur Konfiguration](Configuration_DE.md)
