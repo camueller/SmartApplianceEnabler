@@ -16,7 +16,7 @@ Durch die Konfiguration der zuvor beschriebenen Parameter muss sichergestellt se
 
 Für den Parameter `Zählerstand` wird der Wert in kWh und für den Parameter `Leistung` in W benötigt. Falls die Werte in anderen Einheiten geliefert werden, muss ein muss ein `Umrechnungsfaktor` angegeben werden, der mit dem gelieferten Wert multipliziert wird, um ihn in die benötigte Einheit umzurechnen. Wird beispielsweise der Parameter `Leistung` in mW geliefert, muss als `Umrechnungsfaktor` der Wert `1000` angegeben werden.
 
-![HTTP-basierter Zähler](../pics/fe/HttpMeter.png)
+![HTTP-basierter Zähler](../pics/fe/HttpMeter_DE.png)
 
 ## Log
 Wird ein HTTP-Zähler für das Gerät `F-00000001-000000000005-00` verwendet, kann man die ermittelte Leistungsaufnahme im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:

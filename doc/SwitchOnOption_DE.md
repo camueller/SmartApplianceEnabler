@@ -4,13 +4,13 @@ Die Einschaltoption kann dazu verwendet werden, die [SG-Ready-Funktion von Wärm
 
 Das Schalten des SG-Ready-Eingangs entspricht einem Angebot an die Wärmepumpe, das diese nicht annehmen muss. Damit eine Nicht-Annahme der Einschaltoption nicht dazu führt, dass andere Geräte unter Kontrolle des *Sunny Home Manager* unnötig ausgebremst werden, füht die Nicht-Annahme der Einschaltoption innerhalb einer bestimmten Zeit dazu, dass das aktuelle Zeitfenster freigegeben wird.
 
-![Einschaltoption](../pics/fe/Einschaltoption.png)
+![Einschaltoption](../pics/fe/SwitchOnOption_DE.png)
 
 Dazu müssen **Wärmepumpe und SG-Ready jeweils als eigenständiges Gerät** im *Smart Appliance Enabler* angelegt werden.
 
 Beide Geräte teilen sich einen physischen Zähler teilen, der im *Smart Appliance Enabler* als [Master/Slave-Zähler](MasterSlaveMeter_DE.md) beiden Geräten zugeordnet ist. Der Master-Zähler muss so konfiguriert sein, dass die Leistungsaufnahme dem Slave zugeordnet wird, wenn der Slave-Schalter eingeschaltet ist:
 
-![Master-Zähler bei Einschaltoption](../pics/fe/EinschaltoptionMasterMeter.png)
+![Master-Zähler bei Einschaltoption](../pics/fe/EinschaltoptionMasterMeter_DE.png)
 
 Der Schalter des Gerätes _Wärmepumpe_  schaltet und/oder signalisiert den Schaltzustand der Wärmepumpe während der Schalter des Gerätes _SG-Ready-Eingang_ den SG-Ready-Eingang schaltet.
 

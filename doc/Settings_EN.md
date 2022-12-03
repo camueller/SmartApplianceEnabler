@@ -1,7 +1,7 @@
 # Settings
 The `Settings` menu item takes you to the administration of the central, device-independent settings.
 
-![Settings](../pics/fe/Settings.png)
+![Settings](../pics/fe/Settings_EN.png)
 
 ## Feiertage
 <a name="holidays">

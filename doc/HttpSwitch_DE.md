@@ -8,7 +8,7 @@ Normalerweise kennt der *Smart Appliance Enabler* den Zustand des Gerätes, weil
 
 Für alle URLs lassen sich `Daten` angeben, die mit der Anfrage gesendet werden. Wenn Daten angegeben werden, sollte auch der `Content-Type` dieser Daten in dem entsprechenden Eingabefeld angegeben werden.
 
-![HTTP Switch](../pics/fe/HttpSwitch.png)
+![HTTP Switch](../pics/fe/HttpSwitch_DE.png)
 
 ## Log
 

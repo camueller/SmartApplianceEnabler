@@ -37,7 +37,7 @@ The configuration with the combination of the features described above could loo
 ```
 
 ### Protocol-independent settings for wallboxes
-![Fahrzeugkonfiguration](../pics/fe/EVChargerCommon.png)
+![Fahrzeugkonfiguration](../pics/fe/EVChargerCommon_EN.png)
 
 Regardless of the specific wallbox, the following settings apply to all wallboxes:
 - `voltage`: is required for the calculation of the charging current (default value: 230V)
@@ -73,7 +73,7 @@ If several vehicles are configured, automatic detection of the vehicle is only p
 
 If available, these values must be extracted from the output of the [Script for automated querying of the SOC](soc/SOC_EN.md) in addition to the actual SOC with [Regular Expressions(Regex)](ValueExtraction_EN.md).
 
-![Fahrzeugkonfiguration](../pics/fe/EV.png)
+![Fahrzeugkonfiguration](../pics/fe/EV_EN.png)
 
 ## Load configuration in Sunny Home Manager
 In the *Sunny Home Manager*, the consumer configuration for a wall box should look like this:

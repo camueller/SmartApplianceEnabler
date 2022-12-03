@@ -8,7 +8,7 @@ Wird als Parameter `Leistung` eingestellt, erfolgt die Abfrage dieses Wertes meh
 
 Für den Parameter `Zählerstand` wird der Wert in kWh und für den Parameter `Leistung` in W benötigt. Falls die Werte in anderen Einheiten geliefert werden, muss ein muss ein `Umrechnungsfaktor` angegeben werden, der mit dem gelieferten Wert multipliziert wird, um ihn in die benötigte Einheit umzurechnen. Wird beispielsweise der Parameter `Leistung` in mW geliefert, muss als `Umrechnungsfaktor` der Wert `1000` angegeben werden.
 
-![Modbus-basierter Zähler](../pics/fe/ModbusMeter.png)
+![Modbus-basierter Zähler](../pics/fe/ModbusMeter_DE.png)
 
 ## Log
 Wird ein Modbus-Zähler für das Gerät `F-00000001-000000000005-00` verwendet, kann man die ermittelte Leistungsaufnahme im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:

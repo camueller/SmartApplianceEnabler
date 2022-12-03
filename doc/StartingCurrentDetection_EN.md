@@ -10,7 +10,7 @@ The **starting current detection** consists in distinguishing between the switch
 
 Likewise, the **finish current** will be recognized as a transition back if the power consumption remains below this configurable limit for a configurable time (default: 5 minutes). So that the cut-off current is not incorrectly detected shortly after the start-up current has been detected, the cut-off current detection begins with a delay (default: 10 minutes).
 
-![Anlaufstromerkennung](../pics/fe/Anlaufstromerkennung.png)
+![Anlaufstromerkennung](../pics/fe/StartingCurrentDetection_EN.png)
 
 After detection of the finish current, the starting current detection is reactivated immediately. This makes it possible to run the device several times in succession within a [Schedule](Schedules_EN.md).
 

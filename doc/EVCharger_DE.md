@@ -36,7 +36,7 @@ Die Konfiguration mit der Kombination der zuvor beschriebenen Besonderheiten kö
 ```
 
 ### Protokoll-unabhängige Einstellungen für Wallboxen
-![Fahrzeugkonfiguration](../pics/fe/EVChargerCommon.png)
+![Fahrzeugkonfiguration](../pics/fe/EVChargerCommon_DE.png)
 
 Unabhängig von der spezifischen Wallbox gibt folgende Einstellungen, die für alle Wallboxen gelten:
 - `Spannung`: wird für die Berechnung der ladestromstärke benötigt (Standardwert: 230V)
@@ -70,7 +70,7 @@ Wenn mehrere Fahrzeuge konfiguriert werden, ist eine automatische Erkennung des 
 
 Falls vorhanden, müssen diese Werte zusätzlich zum eigentlichen SOC mit [Regulären Ausdrücken(Regex)](ValueExtraction_DE.md) aus der Ausgabe des [Scripts zum automatisierten Abfragen des SOC](soc/SOC_DE.md) extrahiert werden.
 
-![Fahrzeugkonfiguration](../pics/fe/EV.png)
+![Fahrzeugkonfiguration](../pics/fe/EV_DE.png)
 
 ## Vebraucherkonfiguration im Sunny Home Manager
 

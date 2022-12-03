@@ -7,7 +7,7 @@ Zur Konfiguration eines GPIO-basierten Schalters gehört die Nummer des GPIO-Ans
 
 Optional kann die [Anlaufstromerkennung](StartingCurrentDetection_DE.md) aktiviert werden.
 
-![GPIO Switch](../pics/fe/GPIOSwitch.png)
+![GPIO Switch](../pics/fe/GPIOSwitch_DE.png)
 
 ## Log
 

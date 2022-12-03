@@ -12,5 +12,5 @@ Für neuere Wallbe-Wallboxen sollte die Vorlage `wallbe (neuer Controller)` verw
 
 Alle anderen, oben genannten Wallboxen werden durch die Vorlage `Phoenix Contact EM-CP-PP-ETH` konfiguriert. Dadurch werden alle Felder korrekt ausgefüllt. Lediglich die Modbus-Instanz muss noch gewählt werden.
 
-![Konfiguration Phoenix Contact](../pics/fe/EVChargerPhoenixContact.png)
+![Konfiguration Phoenix Contact](../pics/fe/EVChargerPhoenixContact_DE.png)
  

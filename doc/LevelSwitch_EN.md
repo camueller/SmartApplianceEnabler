@@ -6,7 +6,7 @@ In the [Appliance Settings](Appliance_EN.md) a value for the *Min. Power consump
 
 The figure below shows the configuration of a step switch for a [heating rod whose power consumption is between 0.5 kW and 3.5 kW in steps of 0.5 kW](https://www.killus-technik.de/de/heizungszubehoer/ electric-heating rods/photovoltaic-vario-heater-0-5-3-5-kw.html) can be controlled:
 
-![LevelSwitch](../pics/fe/LevelSwitch.png)
+![LevelSwitch](../pics/fe/LevelSwitch_EN.png)
 
 ## Log
 If a device (here `F-00000001-000000000001-00`) is controlled with a configured step switch, the control commands can be displayed in [Log](Logging_EN.md) with the following command:

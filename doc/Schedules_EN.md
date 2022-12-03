@@ -19,11 +19,11 @@ It is also possible to create several schedules for one device. Care must be tak
 
 _Example of a daily schedule_
 
-![Schaltzeiten Tagesplan](../pics/fe/SchaltzeitenTagesplanLaufzeit.png)
+![Schaltzeiten Tagesplan](../pics/fe/ScheduleDayRuntime_EN.png)
 
 _Example of a multi-day plan_
 
-![Schaltzeiten Mehrtagesplan](../pics/fe/SchaltzeitenMehrtagesplanLaufzeit.png)
+![Schaltzeiten Mehrtagesplan](../pics/fe/ScheduleConsecutiveDaysRuntime_EN.png)
 
 Der *Smart Appliance Enabler* meldet dem Sunny Home Manager den Geräte-Laufzeitbedarf für die nächsten 48 Stunden, damit er auf dieser Basis optimal planen kann.
 

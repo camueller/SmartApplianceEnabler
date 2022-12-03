@@ -7,7 +7,7 @@ Configuring a GPIO-based switch involves specifying the GPIO port number and whe
 
 Optionally, the [Starting current detection](StartingCurrentDetection_EN.md) can be activated.
 
-![GPIO Switch](../pics/fe/GPIOSwitch.png)
+![GPIO Switch](../pics/fe/GPIOSwitch_EN.png)
 
 ## Log
 If a device (here `F-00000001-000000000013-00`) is switched using a GPIO-based switch, you can display the switching command in [Log](Logging_EN.md) with the following command:

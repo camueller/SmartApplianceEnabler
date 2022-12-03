@@ -6,7 +6,7 @@ Zur Konfiguration eines S0-Stromzählers gehört die Nummer des GPIO-Anschlusses
 
 Für die Genauigkeit des Zählers ist die Anzahl der Impulse pro kWh wichtig. Die meisten aktuellen Zähler bieten hier 1000 Impulse je kWh. Persönlich bin ich sehr zufrieden mit den Zählern von [B+G E-Tech](http://www.bg-etech.de/), die zudem recht günstig sind.
 
-![S0 Meter](../pics/fe/S0Meter.png)
+![S0 Meter](../pics/fe/S0Meter_DE.png)
 
 ## Log
 Wird ein S0-Zähler für das Gerät `F-00000001-000000000012-00` verwendet, kann man die ermittelte Leistungsaufnahme im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:

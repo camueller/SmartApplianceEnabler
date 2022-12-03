@@ -10,7 +10,7 @@ Die **Anlaufstromerkennung** besteht darin, dass unterschieden wird zwischen dem
 
 Genauso wird der **Abschaltstrom** als Übergang zurück erkannt, wenn der Stromverbrauch für eine konfigurierbare Zeit (Standard: 5 Minuten) unterhalb dieser konfigurierbaren Grenze bleibt. Damit der Abschaltstrom nicht fälschlicherweise kurz nach der Erkennung des Anlaufstromes erkannt wird, beginnt die Abschaltstromerkennung mit einer Verzögerung (Standard: 10 Minuten).
 
-![Anlaufstromerkennung](../pics/fe/Anlaufstromerkennung.png)
+![Anlaufstromerkennung](../pics/fe/StartingCurrentDetection_DE.png)
 
 Nach Erkennung des Abschaltstromes wird direkt wieder die Anlaufstromerkennung aktiviert. Dadurch ist es möglich das Gerät innerhalb eines [Zeitplanes](Schedules_DE.md) mehrmals hintereinander laufen zu lassen.
 

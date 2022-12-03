@@ -16,7 +16,7 @@ The configuration of the parameters described above must ensure that the *Smart 
 
 The value in kWh is required for the `Meter reading` parameter and in W for the `Power` parameter. If the values are supplied in other units, a `factor to value` must be specified, which is multiplied by the supplied value to convert it into the required unit. For example, if the parameter `Power` is supplied in mW, the value `1000` must be specified as the `factor to value`.
 
-![HTTP-basierter Zähler](../pics/fe/HttpMeter.png)
+![HTTP-basierter Zähler](../pics/fe/HttpMeter_EN.png)
 
 ## Log
 If an HTTP counter is used for the device `F-00000001-000000000005-00`, the determined power consumption can be displayed in [Log](Logging_EN.md) with the following command:

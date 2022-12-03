@@ -6,4 +6,4 @@ Dementsprechend gibt es einen Parameter zur Festlegung der Leistung, oberhalb de
 
 Außerdem gibt es einen Parameter `Ausschaltverzögerung`. Innerhalb der angegebenen Dauer darf die Leistungsaufnahme nie oberhalb der Leistungsgrenze liegen. Für Geräte mit schwankender Leistungsaufnahme kann hier ein Wert größer 0 eingetragen werden um zu verhindern, dass der gemeldete Gerätezustand immer zwischen "eingeschaltet" und "ausgeschaltet" wechselt.  
 
-![Zählerbasierter Zustandsmelder](../pics/fe/MeterReportingSwitch.png)
+![Zählerbasierter Zustandsmelder](../pics/fe/MeterReportingSwitch_DE.png)

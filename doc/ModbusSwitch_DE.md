@@ -5,7 +5,7 @@ Für einen Modbus-Schalter müssen Register-Adresse und -Typ eingegeben werden.
 
 Für Modbus-Schalter müssen die Aktionen `Einschalten` und `Auschalten` konfiguriert werden. Das kann wahlweise über ein Register mit unterschiedlichen Werten oder über zwei Register erreicht werden.
 
-![Modbus Switch](../pics/fe/ModbusSwitch.png)
+![Modbus Switch](../pics/fe/ModbusSwitch_DE.png)
 
 ## Log
 Wird ein Gerät (hier `F-00000001-000000000019-00`) mittels HTTP-Schalter geschaltet, kann man den Schaltbefehl im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:

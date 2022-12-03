@@ -9,11 +9,11 @@ Nachdem ein Shell-Script konfiguriert wurde, kann für Zähler und Schalter durc
 
 Ohne Auswahl einzelner Ereignisse erfolgt die Benachrichtiung für alle Ereignisse:
 
-![Alle Ereignisse](../pics/fe/NotificationsAll.png)
+![Alle Ereignisse](../pics/fe/NotificationsAll_DE.png)
 
 Alternativ kann die Benachrichtiung auf einzlene Ereignisse beschränkt werden:
 
-![Ausgewählte Ereignisse](../pics/fe/NotificationsSome.png)
+![Ausgewählte Ereignisse](../pics/fe/NotificationsSome_DE.png)
 
 ## Messenger-Platformen
 Für den *Smart Appliance Enabler* existieren Shell-Scripts zur Nutzung der nachfolgend beschriebenen Messenger-Platformen. Mit wenig Shell-Script-Know-How sollte es möglich sein, auf Basis der vorhanden Shell-Scripts solche für andere Benachrichtigungskanäle zu erstellen. Bitte diese Scripts als **Pull-Request** auch den anderen *Smart Appliance Enabler*-Usern zur Verfügung stellen!  

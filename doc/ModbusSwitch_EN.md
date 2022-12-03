@@ -5,7 +5,7 @@ For a Modbus switch, register address and type must be entered.
 
 For Modbus switches, the actions `switch on` and `switch off` must be configured. This can be achieved either via a register with different values ​​or via two registers.
 
-![Modbus Switch](../pics/fe/ModbusSwitch.png)
+![Modbus Switch](../pics/fe/ModbusSwitch_EN.png)
 
 ## Log
 If a device (here `F-00000001-000000000019-00`) is switched using an HTTP switch, the switching command can be displayed in [Log](Logging_EN.md) with the following command:

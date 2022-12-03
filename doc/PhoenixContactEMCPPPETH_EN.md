@@ -12,5 +12,5 @@ For newer Wallbe wallboxes, the template `wallbe (new controller)` should be use
 
 All other wall boxes mentioned above are configured using the template `Phoenix Contact EM-CP-PP-ETH`. This will fill out all fields correctly. Only the Modbus instance still has to be selected.
 
-![Konfiguration Phoenix Contact](../pics/fe/EVChargerPhoenixContact.png)
+![Konfiguration Phoenix Contact](../pics/fe/EVChargerPhoenixContact_EN.png)
  

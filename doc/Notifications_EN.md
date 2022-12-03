@@ -9,11 +9,11 @@ After a shell script has been configured, the sending of device-specific notific
 
 Without selecting individual events, the notification is for all events:
 
-![Alle Ereignisse](../pics/fe/NotificationsAll.png)
+![Alle Ereignisse](../pics/fe/NotificationsAll_EN.png)
 
 Alternatively, the notification can be limited to individual events:
 
-![Ausgewählte Ereignisse](../pics/fe/NotificationsSome.png)
+![Ausgewählte Ereignisse](../pics/fe/NotificationsSome_EN.png)
 
 ## Messenger platforms
 There are shell scripts for the *Smart Appliance Enabler* to use the messanger platforms described below. With little shell script know-how, it should be possible to create shell scripts for other notification channels based on the existing shell scripts. Please also make these scripts available to the other *Smart Appliance Enabler* users as a **pull request**!

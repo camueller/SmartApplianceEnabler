@@ -2,7 +2,7 @@
 
 By clicking on `New Appliance` the configuration of a new appliance is started and the following page opens:
 
-![Neues Gerät](../pics/fe/NeuesGeraet.png)
+![Neues Gerät](../pics/fe/ApplianceNew_EN.png)
 
 After saving the appliance, an entry for the created appliance appears in the menu. In addition, the sub-items Meter, Switch and Schedules appear.
 
@@ -33,7 +33,7 @@ The name (e.g. `SMI12345XV3`) is only used for the display in the *Smart Applian
 The `type` is also a central feature of a appliance.
 
 In order to be able to configure a appliance as a wallbox, `EV charger` must be set here.
-![Wallbox](../pics/fe/GeraetEV.png)
+![Wallbox](../pics/fe/ApplianceEV_EN.png)
 
 ### Serial number
 The value for the serial number (e.g. `40982841`) is only used for the display in *Sunny Portal*.
@@ -75,4 +75,4 @@ The value of this field is used as the sender when sending notifications. If no 
 ## Example
 At least the following information must be provided for an appliance:
 
-![Gerät](../pics/fe/Geraet.png)
+![Gerät](../pics/fe/Appliance_EN.png)

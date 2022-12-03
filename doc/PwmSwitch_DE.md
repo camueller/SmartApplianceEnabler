@@ -5,7 +5,7 @@ In den [Einstellungen für das Gerät](Appliance_DE.md) muss ein Wert für die *
 
 Die nachfolgende Abbildung zeigt die PWM-Einstellungen für ein Modellbau-Servo:
 
-![PWM Switch](../pics/fe/PwmSwitch.png)
+![PWM Switch](../pics/fe/PwmSwitch_DE.png)
 
 Bei der Konfiguration des GPIO-Anschlusses sollten unbedingt die [Hinweise zum Raspberry Pi und zur Numerierung der GPIO-Anschlüsse](Raspberry_DE.md) beachtet werden!
 

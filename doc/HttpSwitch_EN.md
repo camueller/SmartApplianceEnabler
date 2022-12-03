@@ -8,7 +8,7 @@ Normally, the *Smart Appliance Enabler* knows the state of the device because it
 
 `Data` can be specified for all URLs, which are sent with the request. If data is provided, the `Content-Type` of that data should also be specified in the appropriate input field.
 
-![HTTP Switch](../pics/fe/HttpSwitch.png)
+![HTTP Switch](../pics/fe/HttpSwitch_EN.png)
 
 ## Log
 If a device (here `F-00000001-000000000013-00`) is switched using an HTTP switch, the switching command can be displayed in [Log](Logging_EN.md) with the following command:

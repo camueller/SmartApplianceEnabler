@@ -13,7 +13,7 @@ Die Firmware-Version muss mindestens den o.g. Stand haben.
 
 Für die Konfiguration sollte die Vorlage `Keba P30 c-series >3.10.16 / x-series >1.11` verwendet werden - dadurch werden alle Felder korrekt ausgefüllt. Lediglich die Modbus-Instanz muss noch gewählt werden.
 
-![Konfiguration des go-eCharger als Schalter](../pics/fe/EVChargerKeba.png)
+![Konfiguration des go-eCharger als Schalter](../pics/fe/EVChargerKeba_DE.png)
 
 ### Zähler
 
@@ -33,4 +33,4 @@ Der `Umrechnungsfaktor` muss auf `0.0001` gesetzt werden.
 
 Als `Parameter` ist `Zählerwert` zu wählen.
 
-![Konfiguration des go-eCharger als Zähler](../pics/fe/EVChargerKebaMeter.png)
+![Konfiguration des go-eCharger als Zähler](../pics/fe/EVChargerKebaMeter_DE.png)

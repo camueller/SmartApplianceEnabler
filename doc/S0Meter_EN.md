@@ -6,7 +6,7 @@ The configuration of an S0 electricity meter includes the number of the GPIO con
 
 The number of pulses per kWh is important for the accuracy of the meter. Most current meters offer 1000 pulses per kWh. Personally, I am very satisfied with the meters from [B+G E-Tech](http://www.bg-etech.de/), which are also quite cheap.
 
-![S0 Meter](../pics/fe/S0Meter.png)
+![S0 Meter](../pics/fe/S0Meter_EN.png)
 
 ## Log
 If an S0 meter is used for the device `F-00000001-000000000012-00`, the determined power consumption can be displayed in [Log](Logging_EN.md) with the following command:

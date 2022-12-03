@@ -4,13 +4,13 @@ The switch-on option can be used to optimally support the [SG-Ready function of 
 
 Switching the SG-Ready input corresponds to an offer to the heat pump that does not have to accept it. So that non-acceptance of the switch-on option does not result in other devices under the control of the *Sunny Home Manager* being slowed down unnecessarily, non-acceptance of the switch-on option within a certain period of time results in the current time window being released.
 
-![Einschaltoption](../pics/fe/Einschaltoption.png)
+![Einschaltoption](../pics/fe/SwitchOnOption_EN.png)
 
 To do this, the **heat pump and SG-Ready must each be created as an independent device** in the *Smart Appliance Enabler*.
 
 Both devices share a physical meter that is assigned to both devices in the *Smart Appliance Enabler* as [Master/Slave Meter](MasterSlaveMeter_EN.md). The master meter must be configured so that the power consumption is allocated to the slave when the slave switch is on:
 
-![Master-Zähler bei Einschaltoption](../pics/fe/EinschaltoptionMasterMeter.png)
+![Master-Zähler bei Einschaltoption](../pics/fe/EinschaltoptionMasterMeter_EN.png)
 
 The switch on the _Heat pump_ device switches and/or signals the switching status of the heat pump, while the switch on the _SG-Ready-Input_ device switches the SG-Ready input.
 

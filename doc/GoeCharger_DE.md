@@ -14,7 +14,7 @@ Die lokale HTTP API v1 des go-eCharger muss in der App des go-eCharger aktiviert
 ### Wallbox
 Für die Konfiguration sollte die Vorlage `go-eCharger` verwendet werden - dadurch werden alle Felder korrekt ausgefüllt. Lediglich die IP-Adresse bzw. der Hostname in den URL-Feldern muss auf die des go-eChargers angepasst werden. 
 
-![Konfiguration des go-eCharger als Schalter](../pics/fe/EVChargerGoeCharger.png)
+![Konfiguration des go-eCharger als Schalter](../pics/fe/EVChargerGoeCharger_DE.png)
 
 ### Zähler
 Wie oben geschrieben muss der go-eCharger selbst als Zähler angegeben werden, d.h.
@@ -28,6 +28,6 @@ Im Feld `Umrechnungsfaktor` muss die Zahl `0.0000027778` eingegeben werden, weil
 
 Es wird empfohlen, den Parameter `Zählerstand` zu wählen. Dadurch wird der go-eCharger weniger oft (alles 60 Sekunden) abgfragt und die Leistung wird aus der Zählerstandsdifferenz berechnet.
 
-![Konfiguration des go-eCharger als Zähler](../pics/fe/EVChargerGoeChargerMeter.png)
+![Konfiguration des go-eCharger als Zähler](../pics/fe/EVChargerGoeChargerMeter_DE.png)
 
 Alternativ kann als Parameter `Leistung` konfiguriert werden, um direkt den vom go-eCharger gemeldete Leistung zu übernehmen anstatt sie aus Zählerstandsdifferenzen zu berechnen. Dazu muss im Feld `Pfad für Extraktion` der Wert `$.nrg[11]` eingetragen werden. Im Feld `Umrechnungsfaktor` muss die Zahl `10` eingegeben werden, weil der go-eCharger die Leistung in 0.01kW liefert.

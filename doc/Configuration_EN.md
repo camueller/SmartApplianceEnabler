@@ -14,11 +14,11 @@ Mandatory fields are marked with a `*` after the field name. As long as not all 
 
 When starting for the first time without existing configuration files, the following page is displayed:
 
-![Ohne Konfiguration](../pics/fe/OhneKonfiguration.png)
+![Ohne Konfiguration](../pics/fe/StatusNoConfiguration_EN.png)
 
 The menu can be opened and closed at any time using the menu symbol (the three lines to the left of the "Smart Appliance Enabler" title).
 
-![Menü ohne Konfiguration](../pics/fe/OhneKonfigurationSeitenmenu.png)
+![Menü ohne Konfiguration](../pics/fe/MenuNoConfiguration_EN.png)
 
 The menu contains an entry for the [Status](Status_EN.md) display, which is always initially displayed.
 
@@ -31,7 +31,7 @@ Below are links in the menu
 
 Unterhalb des Eintrags für `Neues Gerät` werden die konfigurierten Geräte mit Zähler, Schalter und Schaltzeiten angezeigt, wenn sie vorhanden sind.
 
-![Menü mit Geräten](../pics/fe/MenueMitGeraeten.png)
+![Menü mit Geräten](../pics/fe/MenuStatus_EN.png)
 
 ## Basics
 Before starting the actual configuration, you should be aware of the following relationships, which if ignored will result in the *Smart Appliance Enabler* not being able to work:

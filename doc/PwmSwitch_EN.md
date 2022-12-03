@@ -5,7 +5,7 @@ In the [Device Settings](Appliance_EN.md) a value for the *Min. Power consumptio
 
 The figure below shows the PWM settings for a model making servo:
 
-![PWM Switch](../pics/fe/PwmSwitch.png)
+![PWM Switch](../pics/fe/PwmSwitch_EN.png)
 
 When configuring the GPIO connection, it is essential to observe the [Notes on the Raspberry Pi and the numbering of the GPIO connections](Raspberry_EN.md)!
 

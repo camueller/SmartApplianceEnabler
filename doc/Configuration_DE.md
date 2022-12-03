@@ -13,11 +13,11 @@ Pflichtfelder sind mit einem `*` hinter der Feldbezeichnung gekennzeichnet. Sola
 
 Beim ersten Start ohne vorhandene Konfigurationsdateien wird folgende Seite angezeigt:
 
-![Ohne Konfiguration](../pics/fe/OhneKonfiguration.png)
+![Ohne Konfiguration](../pics/fe/StatusNoConfiguration_DE.png)
 
 Über das Menü-Symbol (die drei Striche links vom Titel "Smart Appliance Enabler") lässt sich jederzeit das Menü öffnen und schliessen.
 
-![Menü ohne Konfiguration](../pics/fe/OhneKonfigurationSeitenmenu.png)
+![Menü ohne Konfiguration](../pics/fe/MenuNoConfiguration_DE.png)
  
 Im Menü findet sich ein Eintrag für die [Status](Status_DE.md)-Anzeige, die initial immer angezeigt wird.
 
@@ -30,7 +30,7 @@ Nachfolgend finden sich im Menü Links
 
 Unterhalb des Eintrags für `Neues Gerät` werden die konfigurierten Geräte mit Zähler, Schalter und Schaltzeiten angezeigt, wenn sie vorhanden sind.
 
-![Menü mit Geräten](../pics/fe/MenueMitGeraeten.png)
+![Menü mit Geräten](../pics/fe/MenuStatus_DE.png)
 
 ## Grundlagen
 Vor Beginn der eigentlichen Konfiguration sollten folgende Zusammenhänge bewusst sein, deren Nichtbeachtung dazu führen wird, dass der *Smart Appliance Enabler* nicht funktionieren kann:

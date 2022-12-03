@@ -13,7 +13,7 @@ The firmware version must have at least the above status.
 
 The template `Keba P30 c-series >3.10.16 / x-series >1.11` should be used for the configuration - this means that all fields are filled out correctly. Only the Modbus instance still has to be selected
 
-![Konfiguration des go-eCharger als Schalter](../pics/fe/EVChargerKeba.png)
+![Konfiguration des go-eCharger als Schalter](../pics/fe/EVChargerKeba_EN.png)
 
 ### Meter
 
@@ -33,4 +33,4 @@ The `factor to value` must be set to `0.0001`.
 
 `Meter reading` is to be selected as the `parameter`.
 
-![Konfiguration des go-eCharger als Zähler](../pics/fe/EVChargerKebaMeter.png)
+![Konfiguration des go-eCharger als Zähler](../pics/fe/EVChargerKebaMeter_EN.png)

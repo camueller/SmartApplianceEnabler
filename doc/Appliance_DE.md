@@ -2,7 +2,7 @@
 
 Durch Klick auf `Neues Gerät` wird die Konfiguration eines neuen Geräte begonnen und es öffnet sich folgende Seite:
 
-![Neues Gerät](../pics/fe/NeuesGeraet.png)
+![Neues Gerät](../pics/fe/ApplianceNew_DE.png)
 
 Nach dem Speichern des Geätes erscheint im Menü ein Eintrag für das angelegte Gerät. Zusätzlich erscheinen die Unterpunkte Zähler, Schalter und Schaltzeiten.
 
@@ -33,7 +33,7 @@ Der Wert für Bezeichnung (z.B. `SMI12345XV3`) wird lediglich für die Anzeige i
 Der `Typ` ist ebenfalls ein zentrales Merkmal eines Gerätes.
 
 Um ein Gerät als Wallbox konfigurieren zu können, muss hier `Elektroauto-Ladegerät` eingestellt werden.
-![Wallbox](../pics/fe/GeraetEV.png)
+![Wallbox](../pics/fe/ApplianceEV_DE.png)
 
 ### Seriennummer
 Der Wert für Seriennummer (z.B. `40982841`) wird lediglich für die Anzeige im *Sunny Portal* verwendet.
@@ -76,4 +76,4 @@ Der Wert dieses Feldes wird beim Versenden von Benachrichtigungen als Absender v
 ## Beispiel
 Minimal müssen für ein Gerät folgende Angaben gemacht werden:
 
-![Gerät](../pics/fe/Geraet.png)
+![Gerät](../pics/fe/Appliance_DE.png)
