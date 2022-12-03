@@ -14,7 +14,7 @@
   "ApplianceComponent.id": "ID",
   "ApplianceComponent.id.tooltip": "Unique appliance ID beginning with 'F-', followed by a 8 digit number identifying your appliance range, followed by '-' and a 12 digit number identifying the appliance, followed by '-00'",
   "ApplianceComponent.general": "General",
-  "ApplianceComponent.vendor": "Vendor",
+  "ApplianceComponent.vendor": "Manufacturer",
   "ApplianceComponent.name": "Name",
   "ApplianceComponent.type": "Type",
   "ApplianceComponent.serial": "Serial number",
