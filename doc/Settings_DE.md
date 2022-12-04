@@ -40,5 +40,5 @@ Die Angabe von Hostname bzw. IP-Adresse und Port ist optional möglich.
 
 Zur Verwendung von Benachrichtigungen muss ein Shell-Script angegeben werden, das beim Auftreten eines konfigurierten Ereignisses aufgerufen wird.
 
-Die Installation von bereitgestellten Shell-Scripts für den *Smart Appliance Enabler* ist [hier](ManualInstallation_DE.md#user-content-notifications) beschrieben.
+Die Installation von bereitgestellten Shell-Scripts für den *Smart Appliance Enabler* ist [hier](InstallationManual_DE.md#user-content-notifications) beschrieben.
 

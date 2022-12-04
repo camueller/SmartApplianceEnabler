@@ -71,7 +71,7 @@ You can [check in the log](Control_EN.md#control-request) whether a control requ
 From the point of view of SMA, the information that the *Sunny Home Manager* received is relevant for the error analysis. Its [SEMP logs can also be called up](ConnectionAssist_EN.md) and should be used for any service requests to SMA. SMA will not deal with logs from the *Smart Appliance Enabler*.
 
 ### SAE1
-The command to check whether the *Smart Appliance Enabler* is running can be found in the [Installation Guide](ManualInstallation_EN.md#status) or in the [Docker Guide](Docker_EN.md#container-status).
+The command to check whether the *Smart Appliance Enabler* is running can be found in the [Installation Guide](InstallationManual_EN.md#status) or in the [Docker Guide](Docker_EN.md#container-status).
 
 ### SAE2
 If the *Smart Appliance Enabler* cannot be started and you cannot find any information in the [Log](Logging_EN.md), it makes sense to start it in the current shell as a test. This allows you to see any errors on the console. The shell must be owned by the user who is otherwise used for the *Smart Appliance Enabler* process - this is usually the user `sae`.

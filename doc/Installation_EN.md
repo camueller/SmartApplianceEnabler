@@ -5,7 +5,7 @@ The standard installation described here runs automatically and requires no Linu
 
 If access to the Raspberry Pi is possible via SSH, the installation can alternatively also be carried out by
 - [Installation via Script](InstallationViaScript_EN.md), where only 2 shell commands have to be entered
-- [manual installation](ManualInstallation_EN.md) in which all commands in the documentation must be executed in the shell
+- [manual installation](InstallationManual_EN.md) in which all commands in the documentation must be executed in the shell
 
 ## Writing the Raspberry Pi OS image to the SD card
 Each Raspberry Pi has a slot for an SD card that serves as a storage medium (similar to the hard drive on normal PCs). The SD card should have a size of at least **4 GB**.

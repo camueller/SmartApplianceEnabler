@@ -73,7 +73,7 @@ Falls der *Smart Appliance Enabler* auf einem Raspberry Pi betrieben werden soll
 
 Die [Standard-Installation](doc/Installation_DE.md) läuft automatisch ab und erfordert keine Linux-Kenntnisse.
 
-Falls notwendig, kann alternativ auch die [manuelle Installation](doc/ManualInstallation_DE.md) gewählt werden, bei der sämtliche Befehle der Dokumentation manuell auszuführen sind. 
+Falls notwendig, kann alternativ auch die [manuelle Installation](doc/InstallationManual_DE.md) gewählt werden, bei der sämtliche Befehle der Dokumentation manuell auszuführen sind. 
 
 Die [Installation von Updates](doc/Update_DE.md) ermöglicht die Nutzung neuer Funktionen und Fehlerbehebungen.
 

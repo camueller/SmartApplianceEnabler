@@ -5,7 +5,7 @@ An die GPIO-Pins des Raspberry können diverse Schalter und/oder Stromzähler an
 
 Um auf die GPIO-Pins zuzugreifen verwendet der *Smart Appliance Enabler* intern die Java-Bibliothek [pigpioj](https://github.com/mattjlewis/pigpioj). Dabei wird der Socket-Mode der Bibliothek verwendet, damit der *Smart Appliance Enabler* auch ohne root-Privilegien auf die GPIO-Pins zugreifen kann. 
 
-[pigpioj](https://github.com/mattjlewis/pigpioj) wiederum verwendet [pigpio](https://abyz.me.uk/rpi/pigpio/). Von dieser Bibliothek gibt es auch einen Daemon `pigpiod`, auf den [pigpioj](https://github.com/mattjlewis/pigpioj) im Socket-Mode zugreift. Voraussetzung dafür ist, dass [pigpiod installiert wurde](ManualInstallation_DE.md)!
+[pigpioj](https://github.com/mattjlewis/pigpioj) wiederum verwendet [pigpio](https://abyz.me.uk/rpi/pigpio/). Von dieser Bibliothek gibt es auch einen Daemon `pigpiod`, auf den [pigpioj](https://github.com/mattjlewis/pigpioj) im Socket-Mode zugreift. Voraussetzung dafür ist, dass [pigpiod installiert wurde](InstallationManual_DE.md)!
 
 Für die [Numerierung der Anschlusse wird dabei nicht die Pin-Nummer auf dem Raspberry Pi verwendet, sondern die GPIO-Nummer des Broadcom-Prozessors](https://raspberrypi.stackexchange.com/questions/12966/what-is-the-difference-between-board-and-bcm-for-gpio-pin-numbering).
 

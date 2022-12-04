@@ -64,7 +64,7 @@ Das manuelle Update sollte nur dann ausgeführt werden, wenn:
 - und eine nicht-virtualisierte Installation des *Smart Appliance Enabler* verwendet wird
 
 #### pigpiod
-Falls GPIO verwendet werden soll (nur auf Raspberry Pi) muss [pigpiod installiert werden](ManualInstallation_DE.md#pigpiod-installieren).
+Falls GPIO verwendet werden soll (nur auf Raspberry Pi) muss [pigpiod installiert werden](InstallationManual_DE.md#pigpiod-installieren).
 
 In der Datei `/etc/default/smartapplianceenabler` müssen folgende Zeile hinzugefügt werden:
 ```
@@ -73,7 +73,7 @@ JAVA_OPTS="${JAVA_OPTS} -DPIGPIOD_HOST=localhost"
 ```
 
 #### MQTT-Broker
-**Ohne MQTT-Broker ist SAE 2.0 nicht lauffähig**. Theoretisch sollte jeder vorhandene MQTT-Broker funktionieren, aber in der Praxis scheint das nicht so zu sein. Im Zweifel sollte der MQTT-Broker [Mosquitto installiert](ManualInstallation_DE.md#mqtt-broker) werden.
+**Ohne MQTT-Broker ist SAE 2.0 nicht lauffähig**. Theoretisch sollte jeder vorhandene MQTT-Broker funktionieren, aber in der Praxis scheint das nicht so zu sein. Im Zweifel sollte der MQTT-Broker [Mosquitto installiert](InstallationManual_DE.md#mqtt-broker) werden.
 
 Wenn der MQTT-Broker nicht über `localhost:1883` erreichbar ist oder Benutzername/Passwort notwendig sind, müssen diese Parameter in den Einstellungen des *Smart Appliance Enabler* konfiguriert werden. Solange diese nicht konfiguriert sind, ist zwar die Web-Oberfläche des SAE nutzbar, aber es werden **keine Daten an den SHM übermittelt oder Schaltbefehle von diesem ausgeführt**.
 

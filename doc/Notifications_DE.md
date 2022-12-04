@@ -33,7 +33,7 @@ Diese [Bots müssen der zuvor angelegten Gruppe hinzugefügt](https://telegram.o
 
 Zum Versenden von Benachrichtigungen wird die Chat ID der Gruppe benötigt. Diese wird angezeigt, wenn man den Bot `@getidsbot` zur Gruppe hinzufügt. Wenn man die ID ermittelt hat, kann der `@getidsbot` wieder aus der Gruppe entfernt werden.
 
-Für die Nutzung von [Benachrichtigungen via Telegram wird ein Shell-Script](ManualInstallation_DE.md#user-content-notifications) bereitgestellt. In diesem Shell-Script muss die zuvor ermittelte Chat ID eingetragen werden (ggf. vorhandenes Minus-Zeichen muss übernommen werden):
+Für die Nutzung von [Benachrichtigungen via Telegram wird ein Shell-Script](InstallationManual_DE.md#user-content-notifications) bereitgestellt. In diesem Shell-Script muss die zuvor ermittelte Chat ID eingetragen werden (ggf. vorhandenes Minus-Zeichen muss übernommen werden):
 ```
 chat=-123456789
 ```
