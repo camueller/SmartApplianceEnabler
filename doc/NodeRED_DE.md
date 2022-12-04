@@ -104,6 +104,7 @@ Im Export-Dialog kann direkt der Button `Inhalt in die Zwischenablage kopieren` 
 ## Import der Flows
 ### Löschen der vorhandenen Flows
 Die vom *Smart Appliance Enabler* exportierte Flow-JSON ist vollständig, d.h. sie beinhaltet neben den Flows auch die globalen Configuration Nodes.
+
 Um doppelte Nodes und damit verbundene Fehler oder Performance-Einbussen zu vermeiden, sollten die von einem vorherigen Import des vom *Smart Appliance Enabler* exportierten Flow-JSON stammenden Nodes vor einem erneuten Import gelöscht werden.
 
 Wenn Node-RED nur für den *Smart Appliance Enabler* verwendet wird, kann sämtliche Flows einfach dadurch löschen, indem man die Datei `~/.node-red/flows.json` löscht und Node-RED neu startet - fertig!

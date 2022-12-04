@@ -1,16 +1,14 @@
-# Modbus-basierte Schalter
-
+# Modbus-Schalter
 Für Modbus-Schalter gelten die allgemeinen Hinweise zur Verwendung von [Modbus im SmartApplianceEnabler](Modbus_DE.md).
 
-Für einen Modbus-basierter Schalter müssen Register-Adresse und -Typ eingegeben werden.
+Für einen Modbus-Schalter müssen Register-Adresse und -Typ eingegeben werden.
 
-Für Modbus-basierter Schalter müssen die Aktionen `Einschalten` und `Auschalten` konfiguriert werden. Das kann wahlweise über ein Register mit unterschiedlichen Werten oder über zwei Register erreicht werden.
+Für Modbus-Schalter müssen die Aktionen `Einschalten` und `Auschalten` konfiguriert werden. Das kann wahlweise über ein Register mit unterschiedlichen Werten oder über zwei Register erreicht werden.
 
-![Modbus Switch](../pics/fe/ModbusSwitch.png)
+![Modbus Switch](../pics/fe/ModbusSwitch_DE.png)
 
 ## Log
-
-Wird ein Gerät (hier `F-00000001-000000000019-00`) mittels HTTP-Schalter geschaltet, kann man den Schaltbefehl im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
+Wird ein Gerät (hier `F-00000001-000000000019-00`) mittels Modbus-Schalter geschaltet, kann man den Schaltbefehl im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
 
 ```console
 sae@raspi:~ $ grep 'Modbus\|Register' /tmp/rolling-2020-12-30.log | grep F-00000001-000000000019-00

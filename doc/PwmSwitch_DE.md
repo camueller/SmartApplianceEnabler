@@ -1,12 +1,11 @@
 # PWM-Schalter
-
 Ein PWM-Schalter ermöglicht die Steuerung von Verbrauchern mit **variabler Leistungsaufnahme** sofern sich diese über [PWM (Pulsweitenmodulation)](https://de.wikipedia.org/wiki/Pulsdauermodulation) steuern lassen. Die **GPIO-Anschlüsse** des Raspberry Pi können nicht nur ein- und ausgeschaltet werden, sondern auch ein PWM-Signal senden.
 
 In den [Einstellungen für das Gerät](Appliance_DE.md) muss ein Wert für die *Min. Leistungsaufnahme* eingegeben werden. Ausserdem muss ein [Zeitplan für Überschussenergie](Schedules_DE.md) konfiguriert sein.
 
 Die nachfolgende Abbildung zeigt die PWM-Einstellungen für ein Modellbau-Servo:
 
-![PWM Switch](../pics/fe/PwmSwitch.png)
+![PWM Switch](../pics/fe/PwmSwitch_DE.png)
 
 Bei der Konfiguration des GPIO-Anschlusses sollten unbedingt die [Hinweise zum Raspberry Pi und zur Numerierung der GPIO-Anschlüsse](Raspberry_DE.md) beachtet werden!
 

@@ -31,7 +31,7 @@
         <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMinRunningTime)}}</span>
       </div>
     </div>
-    <div *ngIf="status.remainingMaxRunningTime != null">
+    <div *ngIf="status.remainingMinRunningTime != null && status.remainingMaxRunningTime != null">
       <div class="StatusComponent__appliance-status">
         <span class="StatusComponent__appliance-status-label">{{getRemainingMaxRunningTimeLabel(status)}}</span>
         <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMaxRunningTime)}}</span>

@@ -53,9 +53,7 @@ Hard resetting via RTS pin...
 ## Aktualisieren der Firmware
 Wenn sich auf dem Adapter bereits Tasmota-Firmware befindet, kann man diese über den Menüpunkt `Firmware update` aktualsieren. Falls dabei ein Fehler auftritt (`Upload-buffer-Vergleich weicht ab`), sollte man zunächst die `tasmota-minimal.bin` aufspielen und danach erst die gewünschte Vollversion. [Quelle](https://www.schimmer-media.de/forum/index.php?thread/223-sonoff-basic-update-nicht-m%C3%B6glich/)
 
-
 ## Geräte mit Tasmota-Firmware als Stromzähler 
-
 Mit dem folgenden Befehl kann der Status von Tasmota-Adaptern abgefragt werden, der auch den Zählerstand und die Leistung beinhaltet:
 ```console
 pi@raspberrypi:~ $ curl http://192.168.1.1/cm?cmnd=Status%208
@@ -112,7 +110,6 @@ Für jede Zähler-Abfrage finden sich im [Log](Logging_DE.md) folgende Zeilen:
 *Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `Http` und drückt Refresh.
 
 ## Geräte mit Tasmota-Firmware als Schalter
-
 Der Schaltzustand kann wie folgt geändert werden:
 
 _Einschalten_

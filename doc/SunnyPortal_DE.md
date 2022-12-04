@@ -1,7 +1,5 @@
 # Sunny Portal
-
 ## Hinzugfügen neuer Geräte im Sunny Portal
-
 Bevor der *Sunny Home Manager* ein Gerät steuern oder messen kann, muss dieses im [Sunny Portal](https://www.sunnyportal.com/) hinzugefügt werden.
 
 Dazu muss dort auf der Seite
@@ -26,11 +24,11 @@ Im zweiten Schritt wird lediglich eine Zusammenfassung angezeigt:
 
 Nach Drücken von `Fertigstellen` wird noch eine Bestätigung angezeigt, dass das Gerät hinzugefügt wurde.
 
-Sollte stattdessen die Fehlermeldung angezeigt werden
+Wenn stattdessen die Fehlermeldung angezeigt wird
 
 > Das von Ihrem Sunny Home Manager gefundene Gerät mit der Seriennummer ... ist bereits in einer anderen Anlage registriert und kann deshalb Ihrer Anlage nicht hinzugefügt werden.
 
-ist die von Ihnen für das Gerät gewählte ID bereits vergeben und es muß eine andere [ID konfiguriert](Appliance_DE.md#id) werden. Danach muss man das Gerät im *Sunny Portal*  erneut hinzuzufügen.
+... ist die von Ihnen für das Gerät gewählte ID bereits vergeben und es muß eine andere [ID konfiguriert](Appliance_DE.md#id) werden. Danach muss man das Gerät im *Sunny Portal*  erneut hinzuzufügen.
 
 ### Maximale Anzahl der Geräte im Sunny Portal
 <a name="max-devices">
@@ -44,7 +42,6 @@ Quelle: https://www.photovoltaikforum.com/thread/104060-ger%C3%A4te-mit-home-man
 ![Mehr als 12 Geräte](../pics/shm/MehrAls12Geraete.png)
 
 ## Vebraucherbilanz
-
 In der *Verbraucherbilanz* sollte ab jetzt das neue Gerät aufgeführt werden mit seinem Verbrauch:
 
 ![Verbraucherbilanz](../pics/shm/Verbraucherbilanz.png)
@@ -53,11 +50,4 @@ Falls der *Smart Appliance Enabler* für Geräte Timeframes übermittelt werden 
 
 ![Prognose](../pics/shm/PrognoseMitEingeplantenGeraeten.png)
 
-Das mögliche Zeitfenster wird dabei durchsichtig angezeigt (im Bild der lilane Balken 8:00 bis 17:00), während die darin geplante Laufzeit nicht durchsichtig ist (im Bild der lila-farbene Balken ca. 13:30 bis 16:30). Im Extremfall ist der komplette Balken tansparent, wenn das Gerät ausschließlich optionale Energie konsumieren möchte (im Bild der orange Balken für eine Wallbox).
-
-## Analyse der Log Dateien des SEMP Moduls im Sunny Home Manager
-
-Siehe https://www.photovoltaikforum.com/thread/104060-ger%C3%A4te-mit-home-manager-koppeln-via-semp-ethernet/?postID=1396300#post1396300
-
-## Fehler "Timeframe for unknown or unrequested device" im Log des SEMP Moduls vom Sunny Home Manager
-Der Fehler tritt dann auf wenn sich die interne UID des *Smart Appliance Enabler* ändert. Dies passiert immer dann wenn man die Hardware auf der der *Smart Appliance Enabler* läuft austauscht (zB neuer Raspberry Pi), da sie von der Hardware-MAC-Adresse der ersten Netzwerkstelle abhängt. Einfachste Abhilfe ist ein Neustart des Sunny Home Managers, danach werden die Timeframes wieder akzeptiert.
+Das mögliche Zeitfenster wird dabei durchsichtig angezeigt (im Bild der lilane Balken 8:00 bis 17:00), während die darin geplante Laufzeit nicht durchsichtig ist (im Bild der lila-farbene Balken ca. 13:30 bis 16:30). Der komplette Balken ist tansparent, wenn das Gerät ausschließlich Überschussenergie konsumieren möchte (im Bild der orange Balken für eine Wallbox).

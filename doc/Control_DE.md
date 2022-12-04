@@ -1,5 +1,4 @@
 # Schalter
-
 Um einen Schalter zu konfigurieren muss in der `Typ`-Auswahlbox der Typ des Schalters ausgewählt werden.
 
 Derzeit unterstützt der *Smart Appliance Enabler* folgende Schalter:
@@ -14,9 +13,9 @@ Derzeit unterstützt der *Smart Appliance Enabler* folgende Schalter:
 
 Entsprechend dieser Auswahl werden die für den gewählten Schalter-Typ konfigurierbaren Felder eingeblendet.
 
-Falls der gewählte Schalter-Typ mit [Anlaufstromerkennung](Anlaufstromerkennung_DE.md) kombiniert werden kann und diese durch Anklicken der Checkbox aktiviert wurde, werden weitere Felder mit Konfigurationsparametern der Anlaufstromerkennung eingeblendet.
+Falls der gewählte Schalter-Typ mit [Anlaufstromerkennung](StartingCurrentDetection_DE.md) kombiniert werden kann und diese durch Anklicken der Checkbox aktiviert wurde, werden weitere Felder mit Konfigurationsparametern der Anlaufstromerkennung eingeblendet.
 
-Zur Nutzung der SG-Ready-Funktion von Wärmepumpen können einige Schalter-Typen als [Einschaltoption](Einschaltoption_DE.md) markiert werden.
+Zur Nutzung der SG-Ready-Funktion von Wärmepumpen können einige Schalter-Typen als [Einschaltoption](SwitchOnOption_DE.md) markiert werden.
 
 Wenn als Gerätetyp `Elektroauto-Ladegerät` angegeben ist, kann auf dieser Seite die [Konfiguration der Wallbox sowie die Verwaltung der Fahrzeuge](EVCharger_DE.md) vorgenommen werden.
 

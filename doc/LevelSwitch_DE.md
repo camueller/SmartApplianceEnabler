@@ -1,12 +1,11 @@
 # Stufenschalter
-
 Ein Stufenschalter ermöglicht die Steuerung von Verbrauchern mit **variabler Leistungsaufnahme** sofern sich Leistungsstufen durch eine Kombination mehrerer Schalter steuern lassen. Diese können GPIO-, HTTP- oder Modbus-Schalter sein.
 
 In den [Einstellungen für das Gerät](Appliance_DE.md) muss ein Wert für die *Min. Leistungsaufnahme* eingegeben werden. Ausserdem muss ein [Zeitplan für Überschussenergie](Schedules_DE.md) konfiguriert sein.
 
 Die nachfolgende Abbildung zeigt die Konfiguration einens Stufenschalters für einen [Heizstab, dessen Leistungsaufnahme zwischen 0,5 kW und 3,5 kW in Schritten von 0,5 kW](https://www.killus-technik.de/de/heizungszubehoer/elektro-heizstaebe/photovoltaik-vario-heizer-0-5-3-5-kw.html) gesteuert werden kann:
 
-![LevelSwitch](../pics/fe/LevelSwitch.png)
+![LevelSwitch](../pics/fe/LevelSwitch_DE.png)
 
 ## Log
 Wird ein Gerät (hier `F-00000001-000000000001-00`) mit konfiguriertem Stufenschalter gesteuert, kann man die Steuerbefehle im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:

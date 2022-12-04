@@ -53,7 +53,6 @@ Wenn Zählerwerte nicht im *Sunny Portal* angezeigt werden, müssen folgende Wer
 Zunächst muss sichergestellt sein, dass der *Smart Appliance Enabler* vom *Sunny Home Manager* gefunden wird ---> [SEMP1](#semp1)
 
 Der *Sunny Home Manager* wird nur dann einen Einschaltbefehl für eine Gerät senden, wenn ihm ein (Laufzeit-/Energie-) Bedarf gemeldet wurde. Der *Smart Appliance Enabler* macht das, wenn 
-
 - [Zeitplan angelegt wurde](Schedules_DE.md), der **aktiv** und **zutreffend (Wochentag und Zeit)** ist
 - oder durch [Klick auf das grüne Ampel-Licht](Status_DE.md#click-green) ein **ad-hoc Bedarf** entsteht
 
@@ -73,20 +72,21 @@ Ob ein Schaltbefehl vom *Sunny Home Manager* empfangen wird, kann man [im Log pr
 Aus Sicht von SMA ist bei der Fehleranalyse relevant, welche Informationen der *Sunny Home Manager* erhalten hat. Dessen [SEMP-Logs lassen sich ebenfalls abrufen](ConnectionAssist_DE.md) und sollten für eventuelle Service-Anfragen bei SMA verwendet werden. Mit Logs des *Smart Appliance Enabler* wird man sich bei SMA nicht auseinandersetzen.
 
 ### SAE1
-Der Befehl zur Prüfung, ob der *Smart Appliance Enabler* läuft, findet sich in der [Installationsanleitung](ManualInstallation_DE.md#status) bzw. in der [Docker-Anleitung](Docker_DE.md#container-status).
+Der Befehl zur Prüfung, ob der *Smart Appliance Enabler* läuft, findet sich in der [Installationsanleitung](InstallationManual_DE.md#status) bzw. in der [Docker-Anleitung](Docker_DE.md#container-status).
 
 ### SAE2
 Falls sich der *Smart Appliance Enabler* nicht starten läßt und man keine Hinweise im [Log](Logging_DE.md) findet, ist es sinnvoll, ihn testweise in der aktuellen Shell zu starten. Dadurch kann man etwaige Fehler auf der Konsole sehen. Die Shell muss dabei dem User gehören, der auch sonst für den *Smart Appliance Enabler*-Prozess verwendet wird - normalerweise ist das der User `sae`.
+
 Der Befehl dafür entspricht genau dem, was sonst das Start-Script macht und sieht wie folgt aus:
 ```console
-sae@raspberrypi:~ $ /usr/bin/java -Djava.awt.headless=true -Xmx256m -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=/opt/sae -jar /opt/sae/SmartApplianceEnabler-1.6.1.war
+sae@raspberrypi:~ $ /usr/bin/java -Djava.awt.headless=true -Xmx256m -Duser.language=de -Duser.country=DE -DPIGPIOD_HOST=localhost -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=/opt/sae -jar /opt/sae/SmartApplianceEnabler-2.1.0.war
 ```  
 Die Versionsnummer im Namen der war-Datei muss natürlich entsprechend der verwendeten Version angepasst werden!
 
 ### SAE3
 Die Leistungaufname des Gerätes, die an den *Sunny Home Manager* übermittelt wird, wird über den im *Smart Appliance Enabler* konfigurierten Zähler bestimmt. In Abhängkeit von dessen Typ kann man im Log die Leistungaufname sehen:
 - [S0](SOMeter_DE.md#log)
-- [HTTP](HttpMeter_DE.md#log): wenn die HTTP-Response mehr als den "nackten" Zahlenwert enthält, muss ein [Regulärer Ausdruck zum Extrahieren](WertExtraktion_DE.md) konfiguriert werden!
+- [HTTP](HttpMeter_DE.md#log): wenn die HTTP-Response mehr als den "nackten" Zahlenwert enthält, muss ein [Regulärer Ausdruck zum Extrahieren](ValueExtraction_DE.md) konfiguriert werden!
 - [Modbus](ModbusMeter_DE.md#log)
 
 

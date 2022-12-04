@@ -1,15 +1,12 @@
 # Logging
-
 ## Log-Dateien
-
-Für den *Smart Appliance Enabler* sind folgende Log-Dateien relevant:
+Der *Smart Appliance Enabler* erzeugt folgende Log-Dateien:
 - `/tmp/rolling-<datum>.log` (z.B. `/tmp/rolling-2019-12-30.log`) enthält die Log-Ausgaben des *Smart Appliance Enabler*
 - `/var/log/smartapplianceenabler.log` enthält die `stdout`-Ausgaben des *Smart Appliance Enabler*-Prozesses
 - `/var/log/smartapplianceenabler.err` enthält die `stderr`-Ausgaben des *Smart Appliance Enabler*-Prozesses
 
 ## Log-Ausgaben des *Smart Appliance Enabler*
-
-Das Logging des *Smart Appliance Enabler* wurde so implementiert, dass es transparent macht, was der *Smart Appliance Enabler* gerade macht. Oft werden auch Werte ausgegeben, bevor sie für Entscheidungen herangezogen werden. Dadurch sollte das Log auch  bestmöglich unterstützen bei einer Fehlersuche.
+Das Logging des *Smart Appliance Enabler* wurde so implementiert, dass es transparent macht, was der *Smart Appliance Enabler* gerade macht. The relevant values are often output before they are used for a decision or the calculation of a new value. Dadurch sollte das Log auch bestmöglich unterstützen bei einer Fehlersuche.
 
 Soweit sich die Log-Einträge auf ein bestimmtes Gerät beziehen, enthalten diese immer die [`ID`](Appliance_DE.md#id) um das Filtern der Log-Einträge zu ermöglichen:
 ```
@@ -17,21 +14,18 @@ Soweit sich die Log-Einträge auf ein bestimmtes Gerät beziehen, enthalten dies
 ```
 
 ## Log-Level
-
 Der *Log-Level* steht standardmässig auf `debug`, um im Fehlerfall detaillierte Informationen zu haben. Falls weniger geloggt werden soll, kann der Log-Level auf `info` geändert werden in der Datei `/opt/sae/logback-spring.xml`:
 ```
 <logger name="de.avanux" level="debug" additivity="false">
 ```
 
 ## Aufbewahrung der Log-Dateien
-
 Standardmässig werden nur die Logs der letzten 7 Tage gespeichert. Bei Bedarf kann das geändert werden in der Datei `/opt/sae/logback-spring.xml`:
 ```
 <maxHistory>7</maxHistory>
 ```
 
 ## Hilfreiche Befehle zur Log-Analyse
-
 Für die Log-Analyse haben sich einige Befehle als sehr hilfreich erwiesen.
 
 Bei den beispielhaft gezeigten Befehlen muss das Datum im Dateinamen der Log-Datei immer angepasst werden!
@@ -73,6 +67,7 @@ Um nur die Log-Einträge des interssierenden Gerätes zu sehen gibt man hinter `
 ## Log auf Fehler durchsuchen
 
 Bei Verdacht auf Fehlverhalten des *Smart Appliance Enabler* sollte das Log gezielt nach Fehlern durchsucht werden.
+
 Der *Smart Appliance Enabler* loggt Fehler mit dem Log-Level `ERROR`. d.h. diese "Wort" kann man als Such-Kriterium verwenden.
 
 ```console
@@ -83,7 +78,6 @@ sae@raspi:~ $ grep ERROR /tmp/rolling-2020-12-31.log
 
 Wenn dieser Befehl keine Ausgaben liefen, enthält das Log für diesen Tag keine Fehler. 
 Zusammen mit dem Fehler wird meist die Ursache des Fehlers in das Log geschrieben. Um diese Fehlerursache mit anzuzeigen muss der Befehl erweitert werden, sodass er die 2 Zeilen vor dem Fehler und 35 Zeilen nach dem Fehler ebenfalls ausgibt:
-
 ```console
 sae@raspi:~ $ grep ERROR -B 2 -A 35 /tmp/rolling-2020-12-31.log
 2020-12-31 16:48:56,748 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000006-00: Executing timer task name=PollPowerMeter id=25032537
@@ -129,7 +123,6 @@ java.net.SocketTimeoutException: Read timed out
 *Webmin*: Wenn sich in [View Logfile](#webmin-logs) sich ein Fehler findet, koptiert man sich die Zeit des Log-Eintrages (z.B. `15:37:22`) und fügt diesen für eine erneute Suche `Only show lines with text` ein, wobei man aber den letzten Sekundenwert weglässt (damit wird das vorgenannte Beispiel zu `15:37:2`), damit man auch die Log-Einträge von den Sekunden vor dem Fehler angezeigt bekommt.
 
 ## Version des Smart Appliance Enabler
-
 Direkt nach dem Start loggt der *Smart Appliance Enabler* seine Version. Mit folgendem Befehl kann man diesen Eintrag anzeigen:
 ```console
 sae@raspi:~ $ grep "Running version" /tmp/rolling-2020-12-31.log 

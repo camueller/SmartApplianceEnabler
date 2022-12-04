@@ -1,7 +1,6 @@
 # Modbus
-
 Vor der Einbindung von Modbus-Geräten in den *Smart Appliance Enabler* sollte geprüft werden, ob
-- mit dem Gerät via Modbus/TCP kommuniziert werden kann
+- die Kommunikation mit dem Gerät via Modbus/TCP funktioniert
 - die relevanten Register die erwarteten Daten liefern
 
 Dazu eignet sich das Windows-Programm [Simply Modbus TCP Client](https://www.simplymodbus.ca/TCPclient.htm), dessen Demo-Version zwar funtional nicht eingeschränkt ist aber nach 6 Modbus-Nachrichten einen Neustart des Programms erfodert.
@@ -36,27 +35,28 @@ Durch Variation von
 - `High byte first`
 - `High word first`
 - Response data type (erste Spalte in der Tabelle rechts) 
+
 muss erreicht werden, dass in Spalte `results` der korrekte Wert angezeigt wird.
 
 ![SimplyModbusTCPClient](../pics/SimplyModbusTCPClient.png)
 
 # Modbus im Smart Appliance Enabler
 ## Allgemein
-Für jeden Zähler/Schalter/Wallbox muss ein konfigurierter [Modbus/TCP](Settings_DE.md#user-content-modbus) ausgewählt werden.
+Für jeden Modbus-basierten Zähler/Schalter/Wallbox muss ein konfigurierter [Modbus/TCP](Settings_DE.md#user-content-modbus) ausgewählt werden.
 
 Ausserdem muss die **Slave-Adresse** des Modbus-Gerätes angegeben werden.
 
-Grundsätzlich ist die Angabe von Slave-Adresse oder Register-Adressen als Hexadezimalzahl (mit "0x" am Anfang) oder als Dezimalzahl (ohne "0x" am Anfang) möglich.
+Grundsätzlich ist die Angabe jeder Slave-Adresse oder Register-Adresse als Hexadezimalzahl (mit "0x" am Anfang) oder als Dezimalzahl (ohne "0x" am Anfang) möglich.
 
 Für jedes Modbus-Register sind folgende Angaben erforderlich:
-- Register-Adresse
-- Register-Typ bzw. Function-Code
-- Wert-Typ: legt fest, welches Format der Wert im Register hat
+- `Register-Adresse`
+- `Register-Typ` bzw. Function-Code
+- `Wert-Typ`: legt fest, welches Format der Wert im Register hat
 Zahlenwerte mit hoher Genauigkeit benötigen manchmal 2 oder 4 Datenwörter. In diesen Fällen kann auch die Byte-Reihenfolge (Big Endian / Little Endian) konfiguriert werden.
 
-Außerdem kann ein Umrechnungsfaktor angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um ihn in die benötigte Einheit umzurechnen.
+Außerdem kann ein `Umrechnungsfaktor` angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um ihn in die benötigte Einheit umzurechnen.
 
-Beim Finden der richtigen Konfiguration hilft Ausprobieren: Eine zu testende Kombination aus Register-Adresse, Register-Typ und Wert-Typ einstellen und im Log prüfen, welcher Wert aus dem Registerinhalt ermittelt wurde. Ggf. muss auch die Anzahl der Datenwörter und die Byte-Reihefolge variiert werden. Ziel ist, zumindest die richtige Ziffernfolge zu ermitteln, bei der nur noch das Komma an der falschen Stelle steht. Dies kann man abschliessend durch Setzen eines Umrechnungsfaktors korrigieren. 
+Beim Finden der richtigen Konfiguration hilft Ausprobieren: Eine zu testende Kombination aus `Register-Adresse`, `Register-Typ` und `Wert-Typ` einstellen und im Log prüfen, welcher Wert aus dem Registerinhalt ermittelt wurde. Ggf. muss auch die Anzahl der `Datenwörter` und die `Byte-Reihefolge` variiert werden. Ziel ist, zumindest die richtige Ziffernfolge zu ermitteln, bei der nur noch das Komma an der falschen Stelle steht. Dies kann man abschliessend durch Setzen eines Umrechnungsfaktors korrigieren. 
 
 ## Modbus-Protokoll
 ### Modbus/TCP
@@ -67,20 +67,20 @@ Die Konfiguration von Modbus/TCP erfolgt in den [Einstellungen](Settings_DE.md#u
 
 #### Aktivieren/Starten des `mbusd` nach Automatischer Installation
 Bei der automatischen Installation wird der `mbusd` bereits gebaut und installiert, aber zur Vermeidung unnötiger Einträge im Syslog nicht gestartet und im Boot-System aktiviert.
-Das lässt sich bei Bedarf mit den beiden folgenden Befehlen nachholen, nachdem ein **USB-Modbus-Adapter** angeschlossen ist:
+Das lässt sich bei Bedarf mit den beiden folgenden Befehlen nachholen, nachdem ein **USB-Modbus-Adapter** angeschlossen wurde:
 ```console
 sae@raspberrypi:/~ $ sudo systemctl start mbusd@ttyUSB0.service
 sae@raspberrypi:/~ $ sudo systemctl enable mbusd@ttyUSB0.service
 ```
 
 #### Manuelle Installation
-Falls noch nicht installiert, muss als Git und cmake installiert werden:
+Falls noch nicht installiert, muss `git` und `cmake` installiert werden:
 ```console
 pi@raspberrypi:/tmp $ sudo apt update
 pi@raspberrypi:/tmp $ sudo apt install git cmake
 ```
 
-Für den Build wird in das tmp-Verzeichnis gewechselt:
+Für den Build wird in das Verzeichnis `/tmp` gewechselt:
 ```console
 pi@raspberrypi ~ $ cd /tmp
 ```
@@ -195,7 +195,7 @@ Jetzt steht einem Start des `mbusd` nichts mehr im Wege:
 pi@raspberrypi:/etc/mbusd $ sudo systemctl start mbusd@ttyUSB0.service
 ```
 
-Nachfolgend ist zu sehen, wie überprüft werden kann, ob der ```mbusd``` läuft:
+Nachfolgend ist zu sehen, wie überprüft werden kann, ob der `mbusd` läuft:
 ```console
 pi@raspberrypi:/etc/mbusd $ sudo systemctl status mbusd@ttyUSB0.service
 ● mbusd@ttyUSB0.service - Modbus TCP to Modbus RTU (RS-232/485) gateway.
@@ -223,7 +223,6 @@ ExecStart=/usr/bin/mbusd -d -v9 -c /etc/mbusd/mbusd-%i.conf -p /dev/%i
 Danach finden sich sehr detaillierte Log-Ausgaben in der Datei `/var/log/mbus.log`.
 
 ### Überprüfung der Modbus-Installation und der mbusd-Installation
-
 Bei Modbus-Problemen sollten zunächst folgende Punkte geprüft werden:
 - Wurde bei der Modbus-Verkabelung Plus und Minus nicht vertauscht?
 - Hat der Modbus einen 100-Ohm-Widerstand mindestens an einem Ende?
@@ -231,7 +230,6 @@ Bei Modbus-Problemen sollten zunächst folgende Punkte geprüft werden:
 Nach der Hardware-Überprüfung sollte zunächst die Modbus/RTU-Funktion überprüft werden, bevor Modbus/TCP geprüft wird.
 
 #### Installation von mbpoll
-
 Für die Überprüfung von Modbus/RTU und Modbus/TCP eignet sich das Command-Line-Tool [mbpoll](https://github.com/epsilonrt/mbpoll), das wie folgt installiert wird:
 ```
 wget -O- http://www.piduino.org/piduino-key.asc | sudo apt-key add -
@@ -243,11 +241,9 @@ sudo apt install mbpoll
 `mbpoll -h` liefert Hinweise zur Verwendung. Alternativ finden sich diese auch auf der [Projekt-Homepage](https://github.com/epsilonrt/mbpoll#help).
 
 #### Überprüfung Modbus/RTU
-
 *Vor der Überprüfung von Modbus/RTU sollte unbedingt der `mbusd` gestoppt werden, damit `mbpoll` auf den USB-Modbus-Adapter zugreifen kann!*
 
-Danach sollte es möglich sein, beispielsweise das Register für den Zählerstand auszulesen.
-Der Aufruf dazu sieht z.B. für den `SDM220-Modbus` wie folgt aus:
+Danach sollte es möglich sein ein Register auszulesen. Beispielsweise sieht der Aufruf für den `SDM220-Modbus`-Zähler zum Lesen des Zählerstandes wie folgt aus:
 - Slave-Adresse (`-a`), hier im Beispiel: 1
 - Register (`-r`), hier im Beispiel: 342 (Dezimal! - entspricht 156 hex)
 - Register-Typ (`-t`), hier im Beispiel: 32bit Input-Register mit Float-Wert
@@ -276,11 +272,9 @@ Data type.............: 32-bit float (big endian), input register table
 ```
 
 #### Überprüfung Modbus/TCP
-
 *Vor der Überprüfung von Modbus/TCP muss sichergestellt sein, dass der `mbusd` läuft!*
 
-Danach sollte es möglich sein, beispielsweise das Register für den Zählerstand auszulesen.
-Der Aufruf dazu sieht z.B. für den `SDM220-Modbus` wie folgt aus:
+Danach sollte es möglich sein ein Register auszulesen. Beispielsweise sieht der Aufruf für den `SDM220-Modbus`-Zähler zum Lesen des Zählerstandes wie folgt aus:
 - Slave-Adresse (`-a`), hier im Beispiel: 1
 - Register (`-r`), hier im Beispiel: 342 (Dezimal! - entspricht 156 hex)
 - Register-Typ (`-t`), hier im Beispiel: 32bit Input-Register mit Float-Wert

@@ -102,10 +102,10 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 ## [2.0.0](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.0.0) - 09.01.2022
 
 ### Neu
-- der wesentliche Teil der internen Kommunikation wurde auf MQTT umgestellt - siehe auch [#124](https://github.com/camueller/SmartApplianceEnabler/issues/124).  [Deshalb ist muss MQTT-Broker vorhanden sein und installiert werden](doc/ManualInstallation_DE.md).
+- der wesentliche Teil der internen Kommunikation wurde auf MQTT umgestellt - siehe auch [#124](https://github.com/camueller/SmartApplianceEnabler/issues/124).  [Deshalb ist muss MQTT-Broker vorhanden sein und installiert werden](doc/InstallationManual_DE.md).
 - zusätzlich zur Status-Seite mit den Ampeln kann man Node-RED dazu verwenden [ein detailliertes Dashboard anzuzeigen](doc/NodeRED_DE.md) - siehe [#159](https://github.com/camueller/SmartApplianceEnabler/issues/159)
 - für den Zugriff auf die GPIOs des Raspberry Pi wird nicht mehr Pi4J verwendet, sondern `pigpioj`.
-  - [Dafür muss allerdings pigpiod installiert werden.](doc/ManualInstallation_DE.md).
+  - [Dafür muss allerdings pigpiod installiert werden.](doc/InstallationManual_DE.md).
   - Es ist ein neuer Parameter in `/etc/default/smartapplianceenabler` hinzugekommen (`-DPIGPIOD_HOST=localhost"`): die neue Datei installieren oder die neuen Zeilen hinzufügen
   - Durch den Wechsel wird `libwiringpi` nicht mehr benötigt, die ab Raspbian Bullseye nicht mehr im offiziellen Raspbian-Repository enthalten ist.
   - Durch den Wechsel ändert sich auch das [Nummern-Schema der GPIOs](doc/Raspberry_DE.md). Bereits konfigurierte GPIO-Nummer werden automatisch migriert.
