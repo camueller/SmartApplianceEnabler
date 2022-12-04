@@ -1,7 +1,6 @@
 # Logging
-
 ## Log files
-The following log files are relevant for the *Smart Appliance Enabler*:
+The *Smart Appliance Enabler* generates the following log files:
 - `/tmp/rolling-<date>.log` (e.g. `/tmp/rolling-2019-12-30.log`) contains the log output of the *Smart Appliance Enabler*
 - `/var/log/smartapplianceenabler.log` contains the `stdout` output of the *Smart Appliance Enabler* process
 - `/var/log/smartapplianceenabler.err` contains the `stderr` output of the *Smart Appliance Enabler* process
@@ -41,7 +40,7 @@ sae@raspi ~ $ tail -f /tmp/rolling-2020-12-31.log
 2020-12-31 11:23:19,690 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000005-00: Executing timer task name=PollEnergyMeter id=24264618
 ```
 
-If you have configured various devices, this output is quite confusing. In this case, it makes sense to filter the log output so that you only see those of the device you are interested in:
+If you have configured various appliances, this output is quite confusing. In this case, it makes sense to filter the log output so that you only see those of the appliance you are interested in:
 ```console
 pi@raspi ~ $ tail -f /tmp/rolling-2020-12-31.log | grep --line-buffered F-00000001-000000000002-00
 2020-12-31 11:23:19,695 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000002-00: Executing timer task name=PollPowerMeter id=26904981
@@ -123,7 +122,6 @@ java.net.SocketTimeoutException: Read timed out
 *Webmin*: If you find an error in [View Logfile](#webmin-logs), copy the time of the log entry (e.g. `15:37:22`) and add it for a new search `Only show lines with text` but omitting the last seconds value (this makes the above example `15:37:2`) so that you can also see the log entries from the seconds before the error.
 
 ## Version of Smart Appliance Enabler
-
 Immediately after the start, the *Smart Appliance Enabler* logs its version. You can display this entry with the following command:
 ```console
 sae@raspi:~ $ grep "Running version" /tmp/rolling-2020-12-31.log 

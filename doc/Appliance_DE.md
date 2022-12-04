@@ -4,7 +4,7 @@ Durch Klick auf `Neues Gerät` wird die Konfiguration eines neuen Geräte begonn
 
 ![Neues Gerät](../pics/fe/ApplianceNew_DE.png)
 
-Nach dem Speichern des Geätes erscheint im Menü ein Eintrag für das angelegte Gerät. Zusätzlich erscheinen die Unterpunkte Zähler, Schalter und Schaltzeiten.
+Nach dem Speichern des Geätes erscheint im Menü ein Eintrag für das angelegte Gerät. Zusätzlich erscheinen die Unterpunkte `Zähler`, `Schalter` und `Schaltzeiten`.
 
 Durch Klicken der `Löschen`-Schaltfläche und Bestätigung der Löschabsicht wird das Gerät gelöscht.
 
@@ -19,7 +19,7 @@ Für den *Smart Appliance Enabler* bedeutet das:
 * 000000000001 für jedes verwaltete Gerät hochzählen bzw. eine individuelle 12-stellige Zahl verwenden
 * 00 unverändert lassen (sub device id)
 
-Die Device-IDs werden vom Sunny-Portal direkt verwendet, d.h. wenn jemand anderes bereits diese ID verwendet, kann das Gerät nicht im Sunny-Portal angelegt werden. Durch die Verwendung individueller Bestandteile wie Geburtsdatum sollte das Risiko dafür jedoch gering sein.
+Die IDs werden vom Sunny-Portal direkt verwendet, d.h. wenn jemand anderes bereits diese ID verwendet, kann das Gerät nicht im Sunny-Portal angelegt werden. Durch die Verwendung individueller Bestandteile wie Geburtsdatum sollte das Risiko dafür jedoch gering sein.
 
 Das Ändern der `ID` führt dazu, dass der *Sunny Home Manager* das Gerät als Neugerät betrachtet.
 
@@ -33,6 +33,7 @@ Der Wert für Bezeichnung (z.B. `SMI12345XV3`) wird lediglich für die Anzeige i
 Der `Typ` ist ebenfalls ein zentrales Merkmal eines Gerätes.
 
 Um ein Gerät als Wallbox konfigurieren zu können, muss hier `Elektroauto-Ladegerät` eingestellt werden.
+
 ![Wallbox](../pics/fe/ApplianceEV_DE.png)
 
 ### Seriennummer
@@ -53,27 +54,27 @@ Wenn aktiviert, darf der *Sunny Home Manager* die Laufzeit des Gerätes unterbre
 #### Min. Einschaltdauer
 Dieses Feld ist nur aktiv, wenn `Unterbrechnung erlaubt` aktiviert wurde.
 
-Wenn das Gerät eingeschaltet ist, muss der *Sunny Home Manager* es in diesem Zustand lassen für die angegebene Dauer.
+Wenn das Gerät eingeschaltet ist, muss der *Sunny Home Manager* es in diesem Zustand lassen für die angegebene Dauer, bevor es ausgeschaltet wird.
 
 #### Max. Einschaltdauer
 Dieses Feld ist nur aktiv, wenn `Unterbrechnung erlaubt` aktiviert wurde.
 
-Wenn das Gerät eingeschaltet ist, darf der *Sunny Home Manager* es in diesem Zustand nicht länger als die angegebene Dauer lassen.
+Wenn das Gerät eingeschaltet ist, darf der *Sunny Home Manager* es in diesem Zustand nicht länger als die angegebene Dauer lassen, bevor es ausgeschaltet wird.
 
 #### Min. Ausschaltdauer
 Dieses Feld ist nur aktiv, wenn `Unterbrechnung erlaubt` aktiviert wurde.
 
-Wenn das Gerät ausgeschaltet ist, muss der *Sunny Home Manager* es in diesem Zustand lassen für die angegebene Dauer.
+Wenn das Gerät ausgeschaltet ist, muss der *Sunny Home Manager* es in diesem Zustand lassen für die angegebene Dauer, bevor es wieder eingeschaltet wird.
 
 #### Max. Ausschaltdauer
 Dieses Feld ist nur aktiv, wenn `Unterbrechnung erlaubt` aktiviert wurde.
 
-Wenn das Gerät ausgeschaltet ist, darf der *Sunny Home Manager* es in diesem Zustand nicht länger als die angegebene Dauer lassen.
+Wenn das Gerät ausgeschaltet ist, darf der *Sunny Home Manager* es in diesem Zustand nicht länger als die angegebene Dauer lassen, bevor es wieder eingeschaltet wird.
 
-### Geräte-ID für Benachrichtigungen
+### Absender-ID für Benachrichtigungen
 Der Wert dieses Feldes wird beim Versenden von Benachrichtigungen als Absender verwendet. Wenn kein Wert eingetragen ist, wird stattdessen der Wert des Feldes `ID` verwendet. 
 
 ## Beispiel
 Minimal müssen für ein Gerät folgende Angaben gemacht werden:
 
-![Gerät](../pics/fe/Appliance_DE.png)
+![Appliance](../pics/fe/Appliance_DE.png)

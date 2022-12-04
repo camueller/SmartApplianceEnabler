@@ -1,5 +1,4 @@
 # HTTP-basierte Schalter
-
 Für [HTTP-basierte Geräte sind diese allgemeinen Hinweise](Http_DE.md) zu beachten!
 
 Für HTTP-basierte Schalter müssen die Aktionen `Einschalten` und `Auschalten` konfiguriert werden. Das kann wahlweise durch zwei unterschiedlicher URLs oder eine URL mit unterschiedlicher Konfiguration erreicht werden.
@@ -11,7 +10,6 @@ Für alle URLs lassen sich `Daten` angeben, die mit der Anfrage gesendet werden.
 ![HTTP Switch](../pics/fe/HttpSwitch_DE.png)
 
 ## Log
-
 Wird ein Gerät (hier `F-00000001-000000000013-00`) mittels HTTP-Schalter geschaltet, kann man den Schaltbefehl im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
 
 ```console

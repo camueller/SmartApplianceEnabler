@@ -1,5 +1,4 @@
 # Stufenschalter
-
 Ein Stufenschalter ermöglicht die Steuerung von Verbrauchern mit **variabler Leistungsaufnahme** sofern sich Leistungsstufen durch eine Kombination mehrerer Schalter steuern lassen. Diese können GPIO-, HTTP- oder Modbus-Schalter sein.
 
 In den [Einstellungen für das Gerät](Appliance_DE.md) muss ein Wert für die *Min. Leistungsaufnahme* eingegeben werden. Ausserdem muss ein [Zeitplan für Überschussenergie](Schedules_DE.md) konfiguriert sein.

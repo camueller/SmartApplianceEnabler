@@ -51,8 +51,8 @@ In the case of wall boxes with a Phoenix Contact EM-CP-PP-ETH controller, the ch
 
 | Parameter      | Value | Explanation                                                                      |
 |----------------|-------|----------------------------------------------------------------------------------|
-| Start charging | 1     | To start the loading process, the value 1 must be written into this register.    |
-| Stop charging  | 0     | If the value 0 is written into the register, the loading process is terminated.  |
+| Start charging | 1     | To start the charge process, the value 1 must be written into this register.    |
+| Stop charging  | 0     | If the value 0 is written into the register, the charge process is terminated.  |
 
 ### Set charging current
 

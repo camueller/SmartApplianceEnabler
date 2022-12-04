@@ -1,5 +1,5 @@
 # Node-RED
-[Node-RED](https://nodered.org/) can be used to visualize the *Smart Appliance Enabler* MQTT messages in the Node-RED dashboard. The performance charts in particular can help to understand and optimize the behavior of the *Smart Appliance Enabler*.
+[Node-RED](https://nodered.org/) can be used to visualize the MQTT messages of the *Smart Appliance Enabler* in the Node-RED dashboard. The performance charts in particular can help to understand and optimize the behavior of the *Smart Appliance Enabler*.
 
 ## Installation without Docker
 A separate user should be used for Node-RED, which is added to the `sudo` group and whose password is also set:
@@ -103,7 +103,7 @@ In the export dialog, the `Copy content to clipboard` button can be pressed dire
 
 ## Import of flows
 ### Remove existing flows
-The flow JSON exported by the *Smart Appliance Enabler* is complete, i.e. it contains the global configuration nodes in addition to the flows.
+The flow JSON exported by the *Smart Appliance Enabler* is complete, meaning that it contains the global configuration nodes in addition to the flows.
 
 To avoid duplicate nodes and the associated errors or performance losses, the nodes originating from a previous import of the flow JSON exported by the *Smart Appliance Enabler* should be deleted before importing again.
 
@@ -127,7 +127,7 @@ The flows are imported into Node-RED via the `Import` menu:
 
 ![Menu Import](../pics/nodered/MenuImport.png)
 
-After clicking in the central, red area of ​​the import dialog, the Node-RED Flow JSON can be pasted from the clipboard. By clicking the `Import` button, the flows are imported into Node-RED.
+After clicking in the central, red area of the import dialog, the Node-RED Flow JSON can be pasted from the clipboard. By clicking the `Import` button, the flows are imported into Node-RED.
 
 A tab with a flow is created for each device in the *Smart Appliance Enabler*:
 
@@ -136,7 +136,7 @@ A tab with a flow is created for each device in the *Smart Appliance Enabler*:
 In addition, a `General` tab for device-independent nodes is created.
 
 ### Adaptation of the configured MQTT broker
-After the import there is a global configuration node named `MQTT-Broker (SAE)`. This contains the host name and port of the MQTT broker, as specified in the *Smart Appliance Enabler* settings. Normally it should not be necessary to configure these values ​​differently in Node-RED.
+After the import there is a global configuration node named `MQTT-Broker (SAE)`. This contains the host name and port of the MQTT broker, as specified in the *Smart Appliance Enabler* settings. Normally it should not be necessary to configure these values differently in Node-RED.
 
 If Node-RED and MQTT server are operated as a Docker container, it must be noted that its IP address in the Docker Bridge network is used for container-to-container communication. This can be determined as follows ([see also](https://www.tutorialworks.com/container-networking/)):
 ```console
@@ -149,7 +149,7 @@ $ docker inspect mosquitto | grep IPAddress
 ### Deploying flows
 Normally it should be possible to deploy the imported flows directly without any adjustments.
 
-To take over, you only have to press the `Deploy` button:
+To apply, you only have to press the `Deploy` button:
 ![Flow](../pics/nodered/Deploy.png)
 
 After the transfer, `Connected` must appear in all tabs below the `MQTT in` node:
@@ -165,7 +165,7 @@ In the settings of the *Smart Appliance Enabler*, the `Dashboard URL` of Node-RE
 
 You will almost always have to adjust the default URL `http://localhost:1880/ui` displayed as a placeholder so that `localhost` is replaced by the host name under which Node-RED can be reached.
 
-The Node-RED dashboard can then be called up via the link button in the status display of the *Smart Appliance Enabler*:
+The Node-RED dashboard can then be opened using the link button in the status display of the *Smart Appliance Enabler*:
 ![Aufruf des Dashboards](../pics/nodered/StatusDashboard.png)
 
 The dashboard itself shows the following information on a tab called `Smart Appliance Enabler`:

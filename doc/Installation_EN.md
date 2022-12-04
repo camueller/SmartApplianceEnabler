@@ -1,5 +1,4 @@
 # Standard installation
-
 This page is about new installations - the procedure for updates is described [here](Update_EN.md).
 
 The standard installation described here runs automatically and requires no Linux knowledge.
@@ -60,26 +59,24 @@ A USB stick with the following files (and only these!) must be prepared for the 
 - [install.sh](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/install.sh)
 - [install2.sh](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/install2.sh)
 
-The file names must not be changed (upper and lower case, file extensions). This is particularly important under Windows if it is set in such a way that they are not displayed!
+**The file names must not be changed (upper and lower case, file extensions). This is particularly important under Windows if it is set in such a way that they are not displayed!**
 
 ## performing the installation
-
 The Raspberry Pi must be **unplugged** while the **SD card** containing the image is inserted into the SD card slot.
 
-If no WLAN was configured (in which a value was specified for `WIFI_SSID` in the `install.config` file), the Raspberry Pi must be connected with a **network cable** for the installation.
+If no WLAN has been configured (by specifying a value for `WIFI_SSID` in the `install.config` file), the Raspberry Pi must be connected with a **network cable** for the installation.
 
 Now the Raspberry Pi needs to be **connected to the power supply**. The red LED should light up continuously (indicates the "switched on" status), while the green LED signals access to the SD card. The **boot process** should be completed after approx. 1 minute, i.e. the green LED should no longer be lit for at least 10 seconds.
 
-Next, the **USB stick** must be plugged into the Raspberry Pi (it doesn't matter which USB socket). As soon as the Raspberry Pi (thanks to the modified image) recognizes the USB stick, it will run the **first phase of the installation**. This only lasts a few seconds, the end of which is signaled by the **red LED going out**.
+Next, the **USB stick** must be plugged into the Raspberry Pi (it doesn't matter which USB socket). As soon as the Raspberry Pi (thanks to the modified image) recognizes the USB stick, it will run the **first phase of the installation**. This only lasts a few seconds, the end of which is signaled by the **red LED switched off**.
 
-The **USB stick must now be removed**. This will **automatically reboot** the Raspberry Pi (thanks to the modified image), the red LED will turn on again and the **second phase of the installation** will begin. The software of the Raspberry Pi is updated, the *Smart Appliance Enabler* and, if necessary, *webmin* are installed. Depending on the Raspberry Pi model, the speed of the SD card and the internet connection, this phase can take some time (it takes 22 minutes on my Raspberry Pi 4 Model B). When the installation is complete, the **red LED will turn off for one hour**.
+The **USB stick must now be removed**. This will **automatically reboot** the Raspberry Pi (thanks to the modified image), the red LED will turn on again and the **second phase of the installation** will begin. The software of the Raspberry Pi is updated and the *Smart Appliance Enabler* and other required software are installed. Depending on the Raspberry Pi model, the speed of the SD card and the internet connection, this phase can take some time (it takes 22 minutes on my Raspberry Pi 4 Model B). When the installation is complete, the **red LED will turn off for one hour**.
 
 The *Smart Appliance Enabler* is now running and you can continue with the [Configuration](Configuration_EN.md).
 
 The software for administration via web browser (*webmin*) should now run - see [Notes on using webmin for *Smart Appliance Enabler*](Webmin_EN.md).
 
 ### Errors during installation
-
 In my experience so far, 90% of unsuccessful installations were due to the **instructions not being followed exactly**. In this respect, it can definitely make sense to repeat the installation with more attention.
 
 The installation is logged in the file `/tmp/install.log`. In the event of a faulty installation, it would be very helpful for error analysis if this file was backed up by the Raspberry Pi (with `scp` or `WinSCP`). Before the backup, the Raspberry Pi must not be disconnected from the power supply or rebooted, otherwise the file will no longer be available! The prerequisite for downloading the file is, of course, that the Raspberry Pi can be reached via LAN or WLAN.

@@ -1,5 +1,4 @@
 # go-eCharger
-
 The [go-eCharger](https://go-e.co/go-echarger-home/) is a very versatile, compact charger that is also suitable for mobile use.
 
 When using this wallbox, no separate electricity meter is required because the meter value is provided by the wallbox itself with high accuracy and the *Smart Appliance Enabler* calculates the current power consumption from it.
@@ -18,8 +17,7 @@ The template `go-eCharger` should be used for the configuration - this will ensu
 ![Konfiguration des go-eCharger als Schalter](../pics/fe/EVChargerGoeCharger_EN.png)
 
 ### Meter
-As written above, the go-eCharger itself must be specified as a meter, i.e.
-the IP address or the host name in the URL fields must be adjusted to that of the go-eCharger.
+As written above, the go-eCharger itself must be specified as a meter, i.e. the IP address or the host name in the URL fields must be adjusted to that of the go-eCharger.
 
 `JSON` must be selected as `Format` so that the responses of the go-eCharger can be interpreted correctly.
 

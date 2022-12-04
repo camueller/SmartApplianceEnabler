@@ -12,6 +12,20 @@ As a result, the assembled devices could look like this:
 
 ![Schaltschrank](../pics/Schaltschrank.png)
 
+
+| Number | Description                                          |
+|--------|------------------------------------------------------|
+| 1      | solid state relay with heat sink for dishwasher      |
+| 2      | electricity meter for dishwasher                     |
+| 3      | solid state relay with heat sink for washing machine |
+| 4      | meter for washing machine                          |
+| 5      | residual current device for Wallbox                  |
+| 6      | Raspberry Pi                                         |
+| 7      | USB modbus adapter                                   |
+| 8      | IDE ribbon cable                                     |
+| 9      | power supply for Raspberry Pi                        |
+| 10     | Modbus electricity meter for wallbox (3 phases)      |
+
 ## DIN rail holder
 To mount the Raspberry Pi and solid-state relays in the control cabinet, I use **Bopla TSH 35** DIN rail mounts, which can be ordered from major electronics retailers. First, I screw a PVC plate onto this. The actual component is then attached to this with nylon screws (do not conduct electricity).
 

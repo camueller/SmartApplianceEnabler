@@ -1,12 +1,11 @@
 # Modbus meter
-
 The general notes on using [Modbus in the SmartApplianceEnabler](Modbus_EN.md) apply to Modbus switches.
 
 If possible, `Meter reading` should be set as the parameter, because the *Smart Appliance Enabler* then only has to query this value **once per minute** and can calculate the power very precisely from the difference to the previous query.
 
 If `Power` is set as the parameter, this value is queried several times per minute in order to calculate the average from these values. The interval between these queries can be specified with the `poll Interval` - the default value is 20 seconds.
 
-The value in kWh is required for the `Meter reading` parameter and in W for the `Power` parameter. If the values are supplied in other units, a `factor to value` must be specified, which is multiplied by the supplied value to convert it into the required unit. For example, if the parameter `Power` is supplied in mW, the value `1000` must be specified as the `factor to value`.
+For parameter `Meter reading` the value has to be provided in kWh and for parameter `Power` the value has to be provided in W. If the values are supplied in other units, a `factor to value` must be specified, which is multiplied by the supplied value to convert it into the required unit. For example, if the parameter `Power` is supplied in mW, the value `1000` must be specified as the `factor to value`.
 
 ![Modbus-basierter Zähler](../pics/fe/ModbusMeter_EN.png)
 
@@ -24,6 +23,6 @@ sae@raspi:~ $ grep 'Modbus\|Register' /tmp/rolling-2020-12-30.log | grep F-00000
 *Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `Modbus` after `Only show lines with text` and press Refresh.
 
 ## Wiring example: 240V device with power consumption measurement
-The structure for measuring the power consumption of a 240V device (e.g. pump) could look like this, whereby this circuit can of course be expanded with a switch if switching is also to be carried out in addition to measuring.
+The wiring for measuring the power consumption of a 240V device (e.g. pump) could look like this, whereby it can of course be expanded with a switch if switching is also to be carried out in addition to measuring.
 
 ![Schaltbeispiel](../pics/SchaltungModbusZaehler.jpg)

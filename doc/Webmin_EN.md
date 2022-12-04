@@ -1,5 +1,4 @@
 # Administration of Raspberry Pi and Smart Appliance Enabler with `webmin`
-
 [webmin](https://www.webmin.com) is installed by default, which allows the Raspberry Pi to be administered using a web browser. This is very helpful if you are not familiar with Linux.
 
 `webmin` can be reached at the URL: `https://raspi:10000`, where "raspi" is to be replaced by the host name or IP address of the Raspberry PI. The certificate does not seem to be valid at the moment, which is why you have to confirm in the web browser that you still want to call up *webmin*.
@@ -20,7 +19,7 @@ By clicking on a file with the right mouse button, the possible file operations 
 
 ![File Manager](../pics/webmin/file_manager.png)
 
-Clicking on the File menu at the top also shows directory operations, such as "Upload to current directory":
+Clicking on the File menu at the top also shows directory operations, such as `Upload to current directory`:
 
 ![File Menu](../pics/webmin/file_menu.png)
 
@@ -38,7 +37,7 @@ Commands can be executed by clicking on the `Tools` item and the `Command Shell`
 
 ![Command Shell](../pics/webmin/command_shell.png)
 
-## Log Dateien anzeigen
+## Display log files
 The log file can be displayed by clicking on the item `System` and the sub-item `System Logs` in the side menu.
 The path to any log file can also be displayed behind `View log file`, after which you have to click on `View`.
 

@@ -6,7 +6,7 @@ Die nachfolgenden Kapitel sollten in der angegebenen Reihenfolge umgesetzt werde
 ## Betriebssystem
 ### Allgemeine Hinweise
 Das Betriebssystem für den Raspberry ist Linux. Die Interaktion mit Linux erfolgt dabei über die sogenannte Shell (vergleichbar der DOS-Box bzw. cmd.exe unter Windows). Eine deutschsprachige Einführung dazu findet sich [hier](https://wiki.ubuntuusers.de/Shell/Einf%C3%BChrung/).
-In der Dokumentation zum *Smart Appliance Enabler* finden sich immer wieder Shell-Befehle und die dazu korrespondieren Ausgaben. Zur besseren Lesbarkeit bietet Github ein Farbschema an, das verschiedene Farben für die einzelnen Elemente verwendet:
+In der Dokumentation zum *Smart Appliance Enabler* finden sich überall Shell-Befehle und die dazu korrespondieren Ausgaben. Zur besseren Lesbarkeit bietet Github ein Farbschema an, das verschiedene Farben für die einzelnen Elemente verwendet:
 * violett: Eingabeaufforderung bzw. Prompt (endet mit dem $-Zeichen)
 * schwarz: einzugebender Befehl (Dollar-Zeichen und Leerzeichen zu Beginn gehören nicht dazu!)
 * blau: Ausgabe bzw. Antwort auf den eingegebenen Befehl
@@ -38,7 +38,7 @@ Das [Vergrößerung des Root-Filesystems](#root-filesystem-vergrern) kann späte
 Sollte der Raspberry mit der SD-Karte nicht starten, kann es durchaus an der SD-Karte selbst liegen. In diesem Fall einfach einen anderen SD-Karten-Typ verwenden (gute Erfahrungen habe ich mit SanDisk gemacht). Einen erfolgreichen Start erkennt man leicht daran, dass die grüne LED flackert/leuchtet (= Zugriff auf die SD-Karte).
 
 ### SSH-Client
-Die Interaktion mit dem Raspberry Pi erfolt über SSH (Secure Shell), d.h. über ein Fenster vergleichbar der Windows-Eingabeaufforderung. Während bei Linux ein SSH-Client zur Standardausrüstung gehört muss dieser unter Windows separat installiert werden. Eine Anleitung dafür findet sich im Artikel [SSH using Windows](https://www.raspberrypi.org/documentation/remote-access/ssh/windows.md).
+Die Interaktion mit dem Raspberry Pi erfolt über SSH (Secure Shell), das ist ein Fenster vergleichbar der Windows-Eingabeaufforderung. Während bei Linux ein SSH-Client zur Standardausrüstung gehört muss dieser unter Windows separat installiert werden. Eine Anleitung dafür findet sich im Artikel [SSH using Windows](https://www.raspberrypi.org/documentation/remote-access/ssh/windows.md).
 
 ### SSH-Zugriff
 Auf neueren Images ist SSH aus Sicherheitsgründen standardmäßig deaktiviert. Zum Aktivieren gibt es verschiedene Möglichkeiten (siehe https://linuxundich.de/raspberry-pi/ssh-auf-dem-raspberry-pi-aktivieren-jetzt-unter-raspian-noetig oder
@@ -165,9 +165,9 @@ Get:3 http://archive.raspberrypi.org/debian buster/main armhf firmware-atheros a
 Soll der Raspberry Pi über WLAN statt über Ethernet angebunden werden, müssen SSID und Passwort in die Datei `/etc/wpa_supplicant/wpa_supplicant.conf` eingetragen werden. Eine genaue Beschreibung findet sich in [Setting WiFi up via the command line](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md).
 
 ### Hostnamen ändern
-Unabhängig von dem Hostnamen, über den der Raspberry im lokalen Netzwerk erreicht werden kann, ist sein Hostname standardmäßig `raspberry` (auch sichtbar am Prompt: `pi@raspberrypi:~ $`). Vor allem, wenn man mehrere Raspberry Pis im Netz hat, will man auch am Prompt sehen, auf welchem Raspberry man gerade die Befehle eingibt.
+Unabhängig von dem Hostnamen, über den der Raspberry Pi im lokalen Netzwerk erreicht werden kann, ist sein Hostname standardmäßig `raspberry` (auch sichtbar am Prompt: `pi@raspberrypi:~ $`). Vor allem, wenn man mehrere Raspberry Pis im Netz hat, will man auch am Prompt sehen, auf welchem Raspberry man gerade die Befehle eingibt.
 
-Zum Ändern des Hostnames kann das Tool `raspi-config` verwendet werden, wobei der Menüpunkt _System Options_ und dann der Menüpunkt _Hostname_ gewählt werden muss:
+Zum Ändern des Hostnames kann das Tool `raspi-config` verwendet werden, indem der Menüpunkt _System Options_ und dann der Menüpunkt _Hostname_ gewählt wird:
 ```console
 pi@raspberrypi:~ $ sudo raspi-config
 ```
@@ -212,7 +212,7 @@ pi@raspberrypi:~ $ sudo rm *.tar.gz
 pi@raspberrypi:~ $ sudo update-alternatives --install /usr/bin/java java /opt/jdk/zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf/bin/java 1
 pi@raspberrypi:~ $ sudo update-alternatives --install /usr/bin/javac javac /opt/jdk/zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf/bin/javac 1
 ```
-Da die alten Pi-Modelle bzw. die Pi-Zero weniger Rechnen-Leistung bereitstellen, dauert der Start des SAE im Allgmeinen etwas länger, so dass die Timeout-Zeiten noch angepasst werden müssen, um einen Abbruch beim Programmstart zu verhindern. Dafür mit einem Editor in `/opt/sae/smartapplianceenabler` den `sleep 1` durch `sleep 3` ersetzen und in /lib/systemd/system/smartapplianceenabler.service `TimeoutStartSec=90s` auf `TimeoutStartSec=180s` ändern.
+Da die Raspberry Pi 1-Modelle bzw. die Pi-Zero weniger Rechnen-Leistung bereitstellen, dauert der Start des SAE im Allgmeinen etwas länger, so dass die Timeout-Zeiten noch angepasst werden müssen, um einen Abbruch beim Programmstart zu verhindern. Dafür mit einem Editor in `/opt/sae/smartapplianceenabler` den `sleep 1` durch `sleep 3` ersetzen und in /lib/systemd/system/smartapplianceenabler.service `TimeoutStartSec=90s` auf `TimeoutStartSec=180s` ändern.
 
 ## pigpiod installieren
 Falls der *Smart Appliance Enabler* auf die GPIO-Anschlüsse des Raspberry Pi zugreifen soll, muss die Bibliothek [pigpiod](http://abyz.me.uk/rpi/pigpio/) installiert sein. Das lässt sich mit folgendem Befehlen erreichen:
@@ -224,7 +224,7 @@ Der `pigpiod` ist standardmässig so installiert, dass er nur lokale Zugriffe ak
 ExecStart=/usr/bin/pigpiod
 ```
 
-Damit der Deamon beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
+Um den Deamon beim Systemstart automatisch zu starten (via Systemd), muss folgender Befehl ausgeführt werden:
 ```console
 pi@raspberrypi ~ $ sudo systemctl enable pigpiod
 Created symlink /etc/systemd/system/multi-user.target.wants/pigpiod.service → /lib/systemd/system/pigpiod.service.
@@ -252,7 +252,7 @@ Zum Starten eignet sich folgender Befehl:
 ```console
 pi@raspberrypi:~ $ sudo systemctl start mosquitto
 ```
-Damit der MQTT-Broker beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
+Um den MQTT-Broker beim Systemstart automatisch zu starten (via Systemd), muss folgender Befehl ausgeführt werden:
 ```console
 pi@raspberrypi ~ $ sudo systemctl enable mosquitto
 Synchronizing state of mosquitto.service with SysV service script with /lib/systemd/systemd-sysv-install.
@@ -322,12 +322,12 @@ Die erfolgreiche Registrierung des Dienstes *smartapplianceenabler* kann wie fol
 pi@raspberrypi ~ $ systemctl list-units|grep smartapplianceenabler
 smartapplianceenabler.service                                                                loaded failed failed    Smart Appliance Enabler
 ```
-Falls die zweite Zeile nicht angezeigt wird, sollte der Raspberry neu gestartet werden.
+Falls die zweite Zeile nicht angezeigt wird, sollte der Raspberry Pi neu gestartet werden.
 
 #### Programm-Download
-Der eigentliche Programmcode befindet sich in der Datei `SmartApplianceEnabler-X.Y.Z.war`, die ebenfalls heruntergeladen werden muss. *X.Y.Z* steht dabei für die aktuelle Versionsnummer (z.B. 1.3.50), die [hinter dem Download-Button](https://github.com/camueller/SmartApplianceEnabler#smart-appliance-enabler) angezeigt wird. Entsprechend dieser Hinweise muss die Version im nachfolgenden Befehl angepasst werden an 2 Stellen (*v1.3.501* und *SmartApplianceEnabler-1.3.50.war*):
+Der eigentliche Programmcode befindet sich in der Datei `SmartApplianceEnabler-X.Y.Z.war`, die ebenfalls heruntergeladen werden muss. *X.Y.Z* steht dabei für die aktuelle Versionsnummer (z.B. 2.1.0), die [hinter dem Download-Button](https://github.com/camueller/SmartApplianceEnabler#smart-appliance-enabler) angezeigt wird. Entsprechend dieser Hinweise muss die Version im nachfolgenden Befehl angepasst werden an 2 Stellen (*2.1.0* und *SmartApplianceEnabler-2.1.0.war*):
 ```console
-pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/releases/download/1.4.19/SmartApplianceEnabler-1.4.19.war -P /opt/sae
+pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/releases/download/2.1.0/SmartApplianceEnabler-2.1.0.war -P /opt/sae
 pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae
 ```
 
@@ -368,7 +368,7 @@ pi@raspberrypi ~ $ sudo systemctl status smartapplianceenabler.service
 ```
 
 ### Update
-Das Update einer vorhandenen Version besteht darin, zunächst das alte Programm zu löschen:
+Zum Update einer vorhandenen Version muss zunächst das alte Programm zu löschen:
 ```console
 pi@raspberrypi ~ $ rm /opt/sae/*.war
 ```

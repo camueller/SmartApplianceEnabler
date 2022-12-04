@@ -110,7 +110,6 @@ Für jede Zähler-Abfrage finden sich im [Log](Logging_DE.md) folgende Zeilen:
 *Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `Http` und drückt Refresh.
 
 ## Geräte mit Tasmota-Firmware als Schalter
-
 Der Schaltzustand kann wie folgt geändert werden:
 
 _Einschalten_

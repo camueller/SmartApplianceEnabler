@@ -14,12 +14,12 @@ Alternatively (or also downstream of the JSON interpretation), a [regular expres
 
 The configuration of the parameters described above must ensure that the *Smart Appliance Enabler* can extract the correct number from the HTTP response.
 
-The value in kWh is required for the `Meter reading` parameter and in W for the `Power` parameter. If the values are supplied in other units, a `factor to value` must be specified, which is multiplied by the supplied value to convert it into the required unit. For example, if the parameter `Power` is supplied in mW, the value `1000` must be specified as the `factor to value`.
+For parameter `Meter reading` the value has to be provided in kWh and for parameter `Power` the value has to be provided in W. If the values are supplied in other units, a `factor to value` must be specified, which is multiplied by the supplied value to convert it into the required unit. For example, if the parameter `Power` is supplied in mW, the value `1000` must be specified as the `factor to value`.
 
 ![HTTP-basierter Zähler](../pics/fe/HttpMeter_EN.png)
 
 ## Log
-If an HTTP counter is used for the device `F-00000001-000000000005-00`, the determined power consumption can be displayed in [Log](Logging_EN.md) with the following command:
+If an HTTP meter is used for the device `F-00000001-000000000005-00`, the determined power consumption can be displayed in [Log](Logging_EN.md) with the following command:
 
 ```console
 sae@raspi:~ $ grep 'Http' /tmp/rolling-2021-01-01.log | grep F-00000001-000000000005-00

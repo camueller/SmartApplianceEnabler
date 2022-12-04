@@ -17,8 +17,7 @@ Für die Konfiguration sollte die Vorlage `go-eCharger` verwendet werden - dadur
 ![Konfiguration des go-eCharger als Schalter](../pics/fe/EVChargerGoeCharger_DE.png)
 
 ### Zähler
-Wie oben geschrieben muss der go-eCharger selbst als Zähler angegeben werden, d.h.
-die IP-Adresse bzw. der Hostname in den URL-Feldern muss auf die des go-eChargers angepasst werden. 
+Wie oben geschrieben muss der go-eCharger selbst als Zähler angegeben werden, d.h. die IP-Adresse bzw. der Hostname in den URL-Feldern muss auf die des go-eChargers angepasst werden. 
 
 Als `Format` muss `JSON` ausgewählt werden, damit die Antworten des go-eCharger korrekt interpretiert werden können.
 

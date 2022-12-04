@@ -1,9 +1,8 @@
-# Images
-For the *Smart Appliance Enabler* there are images for Raspberry Pi and amd64, each containing the appropriate Java version (therefore platform-specific images).
+# Docker images
+For the *Smart Appliance Enabler* docker images are provided for Raspberry Pi and amd64, each containing the appropriate Java version (therefore platform-specific images).
 
 * [avanux/smartapplianceenabler-arm32](https://hub.docker.com/r/avanux/smartapplianceenabler-arm32)
 * [avanux/smartapplianceenabler-amd64](https://hub.docker.com/r/avanux/smartapplianceenabler-amd64)
-
 
 # Docker installation
 Before the *Smart Appliance Enabler* can be operated as a Docker container, Docker must be installed.
@@ -61,7 +60,6 @@ There are two options for configuring as a container:
 The *Smart Appliance Enabler* implements SMA's SEMP protocol. This protocol is based on UPnP, which in turn requires IP multicast. The configurations described below therefore use a [`macvlan` network](https://docs.docker.com/network/macvlan/), with the help of which the Docker container of the *Smart Appliance Enabler* creates its own MAC and IP address received. If this is not possible or desired, the *Smart Appliance Enabler* Docker container must be started with `--net=host`.
 
 ## configuration using `docker-compose` commands
-
 `docker-compose` allows a comfortable configuration of the container via a YAML file.
 
 ### Installation of `docker-compose`
@@ -82,7 +80,6 @@ pi@raspberrypi:~ $ sudo pip3 -v install docker-compose
 The description of the `docker-compose` installation can be found at https://docs.docker.com/compose/install.
 
 ### YAML-Datei
-
 For the *Smart Appliance Enabler* there is a preconfigured YAML file for which a directory must be created in order to download it afterwards:
 ```console
 pi@raspberrypi:~ $ sudo mkdir -p /etc/docker/compose/smartapplianceenabler
@@ -172,7 +169,6 @@ sae    | 17:06:24.708 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherSer
 ```
 
 ## configuration using `docker` commands
-
 ### SAE volume
 The *Smart Appliance Enabler* needs a writable directory in which to store its files. For this purpose, the volume *sae* is created in Docker.
 ```console
@@ -227,7 +223,6 @@ docker run --rm --detach --network macvlan0 --ip 192.168.0.202 --name pigpiod --
 ```
 
 ### Start/Stop/Status of Smart Appliance Enabler
-
 #### Starting the container
 When starting the *Smart Appliance Enabler* in a new container named _sae_ the docker container needs to be assigned an IP address from the docker network `macvlan0`:
 ```console
@@ -246,7 +241,6 @@ sae
 ```
 
 ### Automatic start of container by systemd
-
 Even if the *Smart Appliance Enabler* is operated as a Docker container, it makes sense to manage the container as a [Systemd](https://de.wikipedia.org/wiki/Systemd) service. The file `/lib/systemd/system/smartapplianceenabler-docker.service` is used for this, which is downloaded and configured below:
 ```console
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/lib/systemd/system/smartapplianceenabler-docker.service -P /lib/systemd/system
@@ -300,7 +294,6 @@ Dec 25 17:19:38 raspberrypi docker[9567]: 16:19:38.952 [http-nio-8080-exec-1] IN
 ```
 
 # Useful commands
-
 ## Shell in running Smart Appliance Enabler container
 If you want to execute a command in the running container of the *Smart Appliance Enabler*, you can create a corresponding shell with the following command:
 ```console

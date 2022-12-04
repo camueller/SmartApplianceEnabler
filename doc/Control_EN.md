@@ -11,9 +11,9 @@ The *Smart Appliance Enabler* currently supports the following controls:
 * [PWM switch](PwmSwitch_EN.md)
 * [Always-on switch](AlwaysOnSwitch_EN.md)
 
-According to this selection, the fields that can be configured for the selected switch type are displayed.
+According to this selection, the fields that can be configured for the selected control type are displayed.
 
-If the selected switch type can be combined with [Starting current detection](StartingCurrentDetection_EN.md) and this has been activated by clicking the checkbox, further fields with configuration parameters of the starting current detection are displayed.
+If the selected control type can be combined with [Starting current detection](StartingCurrentDetection_EN.md) and this has been activated by clicking the checkbox, further fields with configuration parameters of the starting current detection are displayed.
 
 To use the SG-Ready function of heat pumps, some switch types can be marked as [switch-on option](SwitchOnOption_EN.md).
 

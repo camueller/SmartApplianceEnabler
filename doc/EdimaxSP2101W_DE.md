@@ -1,5 +1,4 @@
 # Edimax SP-2101W
-
 Der [Edimax SP-2101W](http://www.edimax-de.eu/edimax/merchandise/merchandise_detail/data/edimax/de/home_automation_smart_plug/sp-2101w) ist ein Steckdosenadapter, der mit dem WLAN verbunden ist und das angeschlossene Gerät schalten sowie dessen den aktuellen Stromverbrauch messen kann.
 
 ## SP-2101W als Stromzähler

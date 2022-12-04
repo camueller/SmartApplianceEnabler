@@ -10,12 +10,12 @@ The template `WARP Charger` should be used for the configuration - this will fil
 ![Konfiguration des WARP charger als Wallbox](../pics/fe/EVChargerWarpCharger_EN.png)
 
 ### Meter
-As written above, the WARP Charger itself must be specified as a counter, i.e. the IP address or host name in the URL fields must be adjusted to that of the WARP Charger.
+As written above, the WARP Charger itself must be specified as a meter, i.e. the IP address or host name in the URL fields must be adjusted to that of the WARP Charger.
 
 `JSON` must be selected as `Format` so that the responses of the WARP Charger can be interpreted correctly.
 
 The `Extraction path` field must contain the value `$.energy_abs` so that the *Smart Appliance Enabler* knows where the WARP Charger response contains the energy value.
 
-`Meter reading` is to be selected as the state.
+`Meter reading` is to be selected as the parameter.
 
 ![Konfiguration des WARP charger als Zähler](../pics/fe/EVChargerWarpChargerMeter_EN.png)

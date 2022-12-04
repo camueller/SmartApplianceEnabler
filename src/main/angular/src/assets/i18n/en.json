@@ -467,7 +467,7 @@
   "StatusComponent.state.ERROR": "Error",
   "StatusComponent.stateOfCharge": "State of charge (SOC)",
   "StatusComponent.stateOfChargeCurrent": "Current ",
-  "StatusComponent.stateOfChargeRequested": "Requested ",
+  "StatusComponent.stateOfChargeRequested": "Target ",
   "StatusComponent.stateOfChargeUnit": "%",
   "StatusComponent.chargeLatestEndRequested": "until ",
   "StatusComponent.buttonStart": "Start",

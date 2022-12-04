@@ -1,5 +1,4 @@
 # Meter reporting switch
-
 As the name already suggests, this switch is not switched actively, but only the switching status based on the current power consumption is reported.
 
 Accordingly, there is a parameter to specify the power above which the status is considered "on". Default is 10W.

@@ -1,5 +1,4 @@
 # Master/Slave-Zähler
-
 Der **Master-Zähler** dient zusammen mit dem **Slave-Zähler** dazu, dass sich zwei Appliances im *Smart Appliance Enabler* einen physischen Zähler teilen können. Einer Appliance wird dabei der **Master-Zähler** zugewiesen, der anderen Appliance der **Slave-Zähler**.
 
 ## Master-Zähler

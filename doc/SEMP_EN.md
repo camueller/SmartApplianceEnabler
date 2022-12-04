@@ -1,6 +1,6 @@
 # SEMP
 ## Protocol
-The *Sunny Home Manager* finds the *Smart Appliance Enabler* via the [UPnP protocol](https://de.wikipedia.org/wiki/Universal_Plug_and_Play), which can also be used to easily find multimedia devices. The *Smart Appliance Enabler* uses this protocol to communicate the actual **SEMP-URL** to the *Sunny Home Manager*.
+The *Sunny Home Manager* detects the *Smart Appliance Enabler* via the [UPnP protocol](https://de.wikipedia.org/wiki/Universal_Plug_and_Play), which can also be used to easily detect multimedia devices. The *Smart Appliance Enabler* uses this protocol to communicate the actual **SEMP-URL** to the *Sunny Home Manager*.
 
 The use of the UPnP protocol means that *Sunny Home Manager* and *Smart Appliance Enabler* **are in the same network** and must be able to communicate with each other via multicast!
 
@@ -9,7 +9,7 @@ Normally, the *Smart Appliance Enabler* can correctly determine this URL itself.
 ## SEMP-URL
 <a name="url">
 
-After the *Sunny Home Manager* has found the *Smart Appliance Enabler*, further communication consists **exclusively** of the *Sunny Home Manager* sending the following **SEMP-URL** **every 60 seconds** of the *Smart Appliance Enabler* (where the host name / IP address must be adjusted accordingly):
+After the *Sunny Home Manager* has detected the *Smart Appliance Enabler*, further communication consists **exclusively** of the *Sunny Home Manager* accessing the following **SEMP-URL** of the *Smart Appliance Enabler* (host name / IP address must be adjusted accordingly) **every 60 seconds** :
 ```
 http://raspi:8080/semp
 ```
@@ -27,10 +27,10 @@ Entering this URL, supplemented by the path `/semp` (according to the above exam
 ## SEMP-XML
 <a name="xml">
 
-By entering the [SEMP-URL](#url) in a normal web browser, you can display which information the *Smart Appliance Enabler* transmits to the *Sunny Home Manager*.
+By entering the [SEMP-URL](#url) in a normal web browser the data can be displayed reported by the *Smart Appliance Enabler* to the *Sunny Home Manager*.
 
 The SEMP URL returns an [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language) document according to the SEMP specification, which contains a `DeviceInfo` and a `DeviceStatus` for each device. Optionally, `PlanningRequest` can also be included.
 
-`DeviceInfo`, `DeviceStatus` and `PlanningRequest` each contain an element `DeviceId` which is used to express which device it applies to. The `DeviceId` is identical to the `ID` that was assigned when the device was created in the *Smart Appliance Enabler*.
+`DeviceInfo`, `DeviceStatus` and `PlanningRequest` each contain an element `DeviceId` which is used to express which device it applies to. The `DeviceId` is identical to the `ID` that was assigned when the appliance was created in the *Smart Appliance Enabler*.
 
 When troubleshooting, you will look closely at the *DeviceStatus*, which contains the *DeviceId* of the problematic device.

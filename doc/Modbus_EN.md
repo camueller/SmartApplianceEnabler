@@ -1,6 +1,6 @@
 # Modbus
 Before integrating Modbus devices into the *Smart Appliance Enabler*, it should be checked whether
-- can be communicated with the device via Modbus/TCP
+- communication with the device works via Modbus/TCP
 - the relevant registers provide the expected data
 
 The Windows program [Simply Modbus TCP Client](https://www.simplymodbus.ca/TCPclient.htm) is suitable for this, the demo version of which is functionally not restricted but requires a restart of the program after 6 Modbus messages.
@@ -23,7 +23,7 @@ Establish connection:
 Next enter the `Slave ID` - it is specific to the Modbus device and will remain the same for all requests to that device.
 
 Read register:
-- `First Register` is the register address as a decimal value (if necessary [convert](https://www.rapidtables.com/convert/number/hex-to-decimal.html), if the hexadecimal values ​​are in the device description are specified)
+- `First Register` is the register address as a decimal value (if necessary [convert](https://www.rapidtables.com/convert/number/hex-to-decimal.html), if the hexadecimal values are in the device description are specified)
 - `No. of Regs` is the number of registers or data words and usually 1, max. 4
 - Do not select `2 byte ID`
 - Select `Function code`
@@ -34,29 +34,29 @@ Read register:
 By varying
 - `High byte first`
 - `High word first`
-- Response data type (erste Spalte in der Tabelle rechts)
+- Response data type (first column in the table on the right)
 
-t must be ensured that the correct value is displayed in the `results` column.
+it must be accomplished that the correct value is displayed in the `results` column.
 
 ![SimplyModbusTCPClient](../pics/SimplyModbusTCPClient.png)
 
 # Modbus in Smart Appliance Enabler
 ## General
-A configured [Modbus/TCP](Settings_EN.md#user-content-modbus) must be selected for each counter/switch/wallbox.
+A configured [Modbus/TCP](Settings_EN.md#user-content-modbus) must be selected for each Modbus-based meter/switch/wallbox.
 
 In addition, the **slave address** of the Modbus device must be specified.
 
-In principle, the slave address or register address can be specified as a hexadecimal number (with "0x" at the beginning) or as a decimal number (without "0x" at the beginning).
+In principle, each slave address or register address can be specified as a hexadecimal number (with "0x" at the beginning) or as a decimal number (without "0x" at the beginning).
 
 The following information is required for each Modbus register:
-- Register address
-- Register type or function code
-- Value type: defines the format of the value in the register
+- `Register address`
+- `Register type` or function code
+- `Value type`: defines the format of the value in the register
   Numerical values with high precision sometimes require 2 or 4 data words. In these cases, the byte order (Big Endian / Little Endian) can also be configured.
 
-In addition, a conversion factor can be specified by which the supplied value must be multiplied in order to convert it into the required unit.
+In addition, a `factor to value` can be specified by which the supplied value must be multiplied in order to convert it into the required unit.
 
-Trying out helps to find the right configuration: set a combination of `register address`, `register type` and `value type` to be tested and check in the log which value was determined from the register content. It may also be necessary to vary the number of `data words` and the `byte order`. The aim is to at least determine the correct sequence of digits, in which only the comma is in the wrong place. This can then be corrected by setting a  `factor to value`.
+Trying out helps to find the right configuration: set a combination of `register address`, `register type` and `value type` to be tested and check in the log which value was determined from the register content. It may also be necessary to vary the number of `data words` and the `byte order`. The aim is to at least determine the correct sequence of digits, in which only the comma is in the wrong place. This can then be corrected by setting a `factor to value`.
 
 ## Modbus procokol
 ### Modbus/TCP
@@ -67,20 +67,20 @@ The configuration of Modbus/TCP takes place in the [Settings](Settings_EN.md#use
 
 #### Enable/start of `mbusd` after automatic installation
 With the automatic installation, the `mbusd` is already built and installed, but not started and activated in the boot system to avoid unnecessary entries in the syslog.
-If necessary, this can be done with the following two commands after a **USB-Modbus-Adapter** is connected:
+If necessary, this can be done with the following two commands after a **USB-Modbus-Adapter** has been plugged in:
 ```console
 sae@raspberrypi:/~ $ sudo systemctl start mbusd@ttyUSB0.service
 sae@raspberrypi:/~ $ sudo systemctl enable mbusd@ttyUSB0.service
 ```
 
 #### Manual installation
-If not already installed, must be installed as Git and cmake:
+If not already installed, `git` and `cmake` must be installed:
 ```console
 pi@raspberrypi:/tmp $ sudo apt update
 pi@raspberrypi:/tmp $ sudo apt install git cmake
 ```
 
-Change to the tmp directory for the build:
+Change to the `/tmp` directory for the build:
 ```console
 pi@raspberrypi ~ $ cd /tmp
 ```
@@ -184,7 +184,7 @@ The `systemd` needs to be reinitialized so that it can find the just installed s
 pi@raspberrypi:/tmp/mbusd/build $ sudo systemctl daemon-reload
 ```
 
-Now the configuration for the mbusd can be created, starting from the installed example file:
+Now the configuration for the `mbusd` can be created, starting from the installed example file:
 ```console
 cd /etc/mbusd/
 sudo cp mbusd.conf.example mbusd-ttyUSB0.conf
@@ -209,7 +209,7 @@ Mar 24 18:33:53 raspberrypi systemd[1]: Started Modbus TCP to Modbus RTU (RS-232
 Mar 24 18:33:53 raspberrypi mbusd[2807]: 24 Mar 2019 18:33:53 mbusd-0.3.1 started...
 ```
 
-In order for `mbusd` to be started directly when booting, the service must still be activated:
+In order for `mbusd` to be started directly during boot, the service must still be enabled:
 ```console
 pi@raspberrypi:/etc/mbusd $ sudo systemctl enable mbusd@ttyUSB0.service
 Created symlink /etc/systemd/system/multi-user.target.wants/mbusd@ttyUSB0.service → /lib/systemd/system/mbusd@.service.
@@ -223,7 +223,6 @@ ExecStart=/usr/bin/mbusd -d -v9 -c /etc/mbusd/mbusd-%i.conf -p /dev/%i
 After that there are very detailed log outputs in the file `/var/log/mbus.log`.
 
 ### Verification of the Modbus installation and the mbusd installation
-
 In the event of Modbus problems, the following points should be checked first:
 - Haven't the plus and minus been mixed up in the Modbus wiring?
 - Does the modbus have a 100 ohm resistor at least on one end?
@@ -231,7 +230,6 @@ In the event of Modbus problems, the following points should be checked first:
 After the hardware check, the Modbus/RTU function should be checked first before checking Modbus/TCP.
 
 #### Install mbpoll
-
 The command line tool [mbpoll](https://github.com/epsilonrt/mbpoll) is suitable for checking Modbus/RTU and Modbus/TCP, which is installed as follows:
 ```
 wget -O- http://www.piduino.org/piduino-key.asc | sudo apt-key add -
@@ -243,11 +241,9 @@ sudo apt install mbpoll
 `mbpoll -h` provides instructions for use. Alternatively, these can also be found on the [project homepage](https://github.com/epsilonrt/mbpoll#help).
 
 #### Verification of Modbus/RTU
-
 *Before checking Modbus/RTU, `mbusd` should be stopped so that `mbpoll` can access the USB-Modbus adapter!*
 
-After that it should be possible to read out the register for the meter reading, for example.
-The call for this, for example, looks like this for the `SDM220-Modbus`:
+After that it should be possible to read a register. For example, the call for the `SDM220-Modbus` meter to get the meter reading looks like this:
 - Slave address (`-a`), here in the example: 1
 - Register (`-r`), here in the example: 342 (decimal! - corresponds to 156 hex)
 - Register type (`-t`), here in the example: 32-bit input register with float value
@@ -276,11 +272,9 @@ Data type.............: 32-bit float (big endian), input register table
 ```
 
 #### Verification of Modbus/TCP
-
 *Before checking Modbus/TCP, make sure `mbusd` is running!*
 
-After that it should be possible to read out the register for the meter reading, for example.
-The call for this, for example, looks like this for the `SDM220-Modbus`:
+After that it should be possible to read a register. For example, the call for the `SDM220-Modbus` meter to get the meter reading looks like this:
 - Slave address (`-a`), here in the example: 1
 - Register (`-r`), here in the example: 342 (decimal! - corresponds to 156 hex)
 - Register type (`-t`), here in the example: 32-bit input register with float value

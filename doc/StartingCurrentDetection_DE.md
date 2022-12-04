@@ -12,7 +12,7 @@ Genauso wird der **Abschaltstrom** als Übergang zurück erkannt, wenn der Strom
 
 ![Anlaufstromerkennung](../pics/fe/StartingCurrentDetection_DE.png)
 
-Nach Erkennung des Abschaltstromes wird direkt wieder die Anlaufstromerkennung aktiviert. Dadurch ist es möglich das Gerät innerhalb eines [Zeitplanes](Schedules_DE.md) mehrmals hintereinander laufen zu lassen.
+Nach Erkennung des Abschaltstromes wird direkt wieder die Anlaufstromerkennung aktiviert. Dadurch ist es möglich das Gerät innerhalb eines [Zeitfensters](Schedules_DE.md) mehrmals hintereinander laufen zu lassen.
 
 ## Log
 Wird der Anlaufstrom erkannt, findet sich im Log ein entsprechender Eintrag:

@@ -1,16 +1,14 @@
 # Edimax SP-2101W
-
 The [Edimax SP-2101W](http://www.edimax-de.eu/edimax/merchandise/merchandise_detail/data/edimax/de/home_automation_smart_plug/sp-2101w) is a socket adapter that is connected to the WLAN and that connected device and can measure the current power consumption.
 
 ## SP-2101W as meter
-Die aktuelle Leistungsaufnahme des SP-2101W kann wie folgt abgefragt werden (Passwort hier 12345678):
+The current power consumption of the SP-2101W can be queried as follows (password here 12345678):
 ```
 curl -s -X POST -d '<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="get"><NOW_POWER><Device.System.Power.NowPower></Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>' http://admin:12345678@192.168.69.74:10000/smartplug.cgi
 <?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="get"><NOW_POWER><Device.System.Power.NowPower>52.49</Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>
 ```
 
 When specifying the XML structure required for the query in the *Smart Appliance Enabler*, note that this is _encoded_. For this, e.g. http://coderstoolbox.net/string/#!encoding=xml&action=encode&charset=us_ascii can be used.
-
 
 The above example results in the following field contents in the *Smart Appliance Enabler*:
 

@@ -1,7 +1,7 @@
 # Value extraction
-In the case of queries, the *Smart Appliance Enabler* often receives a comprehensive response (XML, JSON, ...) from which the numerical value actually required must first be extracted.
+In the case of queries, the *Smart Appliance Enabler* often receives a comprehensive response (XML, JSON, ...) from which the numerical value actually must first be extracted.
 
-For this purpose, either a (JSON) path (field name `Path for extraction`) or a regular expression (field name `Regex for extraction`) can be configured at various points in the *Smart Appliance Enabler*.
+For this purpose, either a (JSON) path (field name `Extraction path`) or a regular expression (field name `Regex for extraction`) can be configured at various places in the *Smart Appliance Enabler*.
 
 ## Using JSON path
 This value extraction method only works if the response is in JSON format!
@@ -49,7 +49,7 @@ Value extraction with a [Regular Expression](http://www.regexe.de/hilfe.jsp) alw
 
 This [Java Regex Tester](https://www.freeformatter.com/java-regex-tester.html) can be used to test whether the selected regular expression extracts the desired value from the response.
 
-In addition to the regular expression, you need the answer from which the value is to be extracted. If the *Smart Appliance Enabler* is already communicating with this device, its response can be found in the log.
+In addition to the regular expression, you need the response from which the value is to be extracted. If the *Smart Appliance Enabler* is already communicating with this device, its response can be found in the log.
 
 The names shown in italics refer to the corresponding fields on the Regex Tester page.
 
@@ -80,6 +80,6 @@ If a regular expression is configured, no value should be configured as `Format`
 
 In the *Smart Appliance Enabler* the following must be configured for this example:
 
-`Regex für Extraktion`: `.*"Power":(\d+).*`
+`Extraction regex`: `.*"Power":(\d+).*`
 
-`Format`: leer lassen
+`Format`: leave empty

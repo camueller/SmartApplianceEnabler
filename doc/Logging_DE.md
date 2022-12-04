@@ -1,12 +1,12 @@
 # Logging
 ## Log-Dateien
-Für den *Smart Appliance Enabler* sind folgende Log-Dateien relevant:
+Der *Smart Appliance Enabler* erzeugt folgende Log-Dateien:
 - `/tmp/rolling-<datum>.log` (z.B. `/tmp/rolling-2019-12-30.log`) enthält die Log-Ausgaben des *Smart Appliance Enabler*
 - `/var/log/smartapplianceenabler.log` enthält die `stdout`-Ausgaben des *Smart Appliance Enabler*-Prozesses
 - `/var/log/smartapplianceenabler.err` enthält die `stderr`-Ausgaben des *Smart Appliance Enabler*-Prozesses
 
 ## Log-Ausgaben des *Smart Appliance Enabler*
-Das Logging des *Smart Appliance Enabler* wurde so implementiert, dass es transparent macht, was der *Smart Appliance Enabler* gerade macht. Oft werden auch Werte ausgegeben, bevor sie für Entscheidungen herangezogen werden. Dadurch sollte das Log auch  bestmöglich unterstützen bei einer Fehlersuche.
+Das Logging des *Smart Appliance Enabler* wurde so implementiert, dass es transparent macht, was der *Smart Appliance Enabler* gerade macht. The relevant values are often output before they are used for a decision or the calculation of a new value. Dadurch sollte das Log auch bestmöglich unterstützen bei einer Fehlersuche.
 
 Soweit sich die Log-Einträge auf ein bestimmtes Gerät beziehen, enthalten diese immer die [`ID`](Appliance_DE.md#id) um das Filtern der Log-Einträge zu ermöglichen:
 ```
@@ -123,7 +123,6 @@ java.net.SocketTimeoutException: Read timed out
 *Webmin*: Wenn sich in [View Logfile](#webmin-logs) sich ein Fehler findet, koptiert man sich die Zeit des Log-Eintrages (z.B. `15:37:22`) und fügt diesen für eine erneute Suche `Only show lines with text` ein, wobei man aber den letzten Sekundenwert weglässt (damit wird das vorgenannte Beispiel zu `15:37:2`), damit man auch die Log-Einträge von den Sekunden vor dem Fehler angezeigt bekommt.
 
 ## Version des Smart Appliance Enabler
-
 Direkt nach dem Start loggt der *Smart Appliance Enabler* seine Version. Mit folgendem Befehl kann man diesen Eintrag anzeigen:
 ```console
 sae@raspi:~ $ grep "Running version" /tmp/rolling-2020-12-31.log 

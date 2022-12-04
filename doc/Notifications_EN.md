@@ -5,7 +5,7 @@ A main use case for me is notification when devices are unreachable. It happens 
 
 Before notifications can be configured, there must be a [shell script configured in the settings](Settings_EN.md#user-content-notifications) via which the *Smart Appliance Enabler* sends the notifications.
 
-After a shell script has been configured, the sending of device-specific notifications can be activated for counters and switches by activating the checkbox `Activated`.
+After a shell script has been configured, the sending of device-specific notifications can be activated for meters and switches by activating the checkbox `Activated`.
 
 Without selecting individual events, the notification is for all events:
 

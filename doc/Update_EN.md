@@ -7,7 +7,7 @@ The web application, which is also updated as part of the update, is part of the
 In this case, the web browser's cache for the *Smart Appliance Enabler* URL must be cleared, or possibly completely. After that, the web application should work as usual.
 
 ## Update with the same main version (1.x -> 1.x, 2.x -> 2.x)
-Updating the installed version of the *Smart Appliance Enabler* consists of replacing the `SmartApplianceEnabler-*.war` file in the `/opt/sae` directory. **It should be noted that there is always only one file with the extension `.war` in the directory!** In order to be able to switch back to the old version, you can rename it to `SmartApplianceEnabler-1.6.19, for example. war.old` instead of deleting them.
+Updating the installed version of the *Smart Appliance Enabler* consists of replacing the `SmartApplianceEnabler-*.war` file in the `/opt/sae` directory. **It should be noted that there is always only one file with the extension `.war` in the directory!** In order to be able to switch back to the old version, you can rename it to, for example,`SmartApplianceEnabler-1.6.19.war.old` instead of deleting them.
 
 Before an update, copies of the [configuration files](ConfigurationFiles_EN.md) should be created because they are automatically updated when the new version is started and it is unlikely that it will be possible to switch back to the previously used version.
 
@@ -48,13 +48,13 @@ After that, the update is started as follows:
 curl -sSL https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/upgrade.sh | sudo sh
 ```
 
-The actual update script [upgrade2.sh](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/upgrade2.sh) is downloaded and executed at system startup (in `/etc/rc.local `) registered. A restart is then triggered, i.e. after the Raspberry Pi has finished booting, you have to connect again via SSH or load `webmin` again. You should be patient with `webmin` because network traffic and/or system load can temporarily restrict usability.
+The actual update script [upgrade2.sh](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/install/upgrade2.sh) is downloaded and executed at system startup (in `/etc/rc.local `) registered. A restart is then triggered, meaning that after the Raspberry Pi has finished booting, you have to connect again via SSH or load `webmin` again. You should be patient with `webmin` because network traffic and/or system load can temporarily restrict usability.
 
 If you are logged into the Raspberry Pi via SSH, you can follow the progress of the update in the console with `tail -f /tmp/install.log`. You can also follow the progress of the update in `webmin` - see [Show log files](Webmin_EN.md), whereby `/tmp/install.log` must be entered as the log file.
 
-At the beginning of the update, the Raspberry Pi OS is updated to "Bullseye"** if an older version is still installed. Even with a fast internet connection, this OS update can take an hour or more even on a Raspberry Pi 4! After the OS update, the Raspberry Pi will restart!
+At the beginning of the update, the **Raspberry Pi OS is updated to "Bullseye"** if an older version is still installed. Even with a fast internet connection, this OS update can take an hour or more even on a Raspberry Pi 4! After the OS update, the Raspberry Pi will restart!
 
-If the Raspberry Pi OS has the "Bullseye" version, the [*Smart Appliance Enabler* configuration files](ConfigurationFiles_EN.md) and also the `SmartApplianceEnabler-*.war` file (with file extension `.bak`) are backed up first. . The actual update of the *Smart Appliance Enabler* is then carried out, including the installation of the required packages. The MQTT broker `mosquitto` is also installed and configured automatically.
+If the Raspberry Pi OS has the "Bullseye" version, the [*Smart Appliance Enabler* configuration files](ConfigurationFiles_EN.md) and also the `SmartApplianceEnabler-*.war` file (with file extension `.bak`) are backed up first. The actual update of the *Smart Appliance Enabler* is then carried out, including the installation of the required packages. The MQTT broker `mosquitto` is also installed and configured automatically.
 
 When the update is finished, the **red LED will turn off for one hour**.
 
@@ -75,7 +75,7 @@ JAVA_OPTS="${JAVA_OPTS} -DPIGPIOD_HOST=localhost"
 #### MQTT broker
 **SAE 2.0 cannot run without an MQTT broker**. In theory, any existing MQTT broker should work, but in practice this doesn't seem to be the case. If in doubt, the MQTT broker [Mosquitto should be installed](ManualInstallation_EN.md#mqtt-broker).
 
-If the MQTT broker cannot be reached via `localhost:1883` or username/password are required, these parameters must be configured in the *Smart Appliance Enabler* settings. As long as these are not configured, the web interface of the SAE can be used, but **no data is transmitted to the SHM or switching commands are executed by it**.
+If the MQTT broker cannot be reached via `localhost:1883` or username/password are required, these parameters must be configured in the *Smart Appliance Enabler* settings. As long as these are not configured, the web interface of the SAE can be used, but **no data is transmitted to the SHM or control requests are executed by it**.
 
 #### Configuration files
 It is strongly recommended to back up the `Appliances.xml` configuration file before the update, in case you want to switch back to version 1.6 after all. As soon as a change is saved in *Smart Appliance Enabler* 2.0, the `Appliances.xml` file is overwritten, making it no longer readable for *Smart Appliance Enabler* 1.6.

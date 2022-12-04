@@ -6,7 +6,7 @@ The following chapters should be implemented in the order given.
 ## Operating system
 ### General information
 The operating system for the Raspberry is Linux. The interaction with Linux takes place via the so-called shell (comparable to the DOS box or cmd.exe under Windows). A German-language introduction to this can be found [here](https://wiki.ubuntuusers.de/Shell/Einf%C3%BChrung/).
-Shell commands and the corresponding outputs can be found again and again in the documentation for the *Smart Appliance Enabler*. For better readability, Github provides a color scheme that uses different colors for each element:
+Shell commands and the corresponding outputs can be found everywhere in the documentation for the *Smart Appliance Enabler*. For better readability, Github provides a color scheme that uses different colors for each element:
 * violet: input request or prompt (ends with the $ sign)
 * black: command to be entered (dollar signs and spaces at the beginning are not included!)
 * blue: Output or response to the entered command
@@ -35,10 +35,10 @@ axel@p51:/tmp$ sudo dd bs=4M if=2019-09-26-raspbian-buster-lite.img of=/dev/mmcb
 ```
 The [enlargement of the root file system](#root-filesystem-enlarge) can still be done later.
 
-If the Raspberry does not start with the SD card, it may well be the SD card itself. In this case, just use a different type of SD card (I've had good experiences with SanDisk). A successful start is easily recognized by the fact that the green LED flickers/lights up (= access to the SD card).
+If the Raspberry does not boot from the SD card, it may well be casued by the SD card itself. In this case, just use a different type of SD card (I've had good experiences with SanDisk). A successful start is easily recognized by the fact that the green LED flickers/lights up (= access to the SD card).
 
 ### SSH client
-The interaction with the Raspberry Pi takes place via SSH (Secure Shell), i.e. via a window comparable to the Windows command prompt. While an SSH client is part of the standard equipment on Linux, it has to be installed separately on Windows. Instructions for this can be found in the article [SSH using Windows](https://www.raspberrypi.org/documentation/remote-access/ssh/windows.md).
+The interaction with the Raspberry Pi takes place via SSH (Secure Shell), which is a window comparable to the Windows command prompt. While an SSH client is part of the standard equipment on Linux, it has to be installed separately on Windows. Instructions for this can be found in the article [SSH using Windows](https://www.raspberrypi.org/documentation/remote-access/ssh/windows.md).
 
 ### SSH access
 On newer images, SSH is disabled by default for security reasons. There are various ways of activating (see https://linuxundich.de/raspberry-pi/ssh-auf-dem-raspberry-pi-aktivieren-jetzt-unter-raspian-needed or
@@ -165,9 +165,9 @@ Get:3 http://archive.raspberrypi.org/debian buster/main armhf firmware-atheros a
 If the Raspberry Pi is to be connected via WIFI instead of Ethernet, the SSID and password must be entered in the file `/etc/wpa_supplicant/wpa_supplicant.conf`. A detailed description can be found in [Setting WiFi up via the command line](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md).
 
 ### Change hostname
-Regardless of the hostname via which the Raspberry can be reached in the local network, its default hostname is `raspberry` (also visible in the prompt: `pi@raspberrypi:~ $`). Especially if you have several Raspberrie Pis in the network, you want to see at the prompt which Raspberry you are currently entering the commands on.
+Regardless of the hostname via which the Raspberry Pi can be reached in the local network, its default hostname is `raspberry` (also visible in the prompt: `pi@raspberrypi:~ $`). Especially if you have several Raspberry Pis in the network, you want to see at the prompt which Raspberry you are currently entering the commands on.
 
-The tool `raspi-config` can be used to change the hostname, whereby the menu item _System Options_ and then the menu item _Hostname_ must be selected:
+The `raspi-config` tool can be used to change the hostname by selecting the _System Options_ menu item and then the _Hostname_ menu item:
 ```console
 pi@raspberrypi:~ $ sudo raspi-config
 ```
@@ -204,7 +204,7 @@ pi@raspberrypi:~ $ sudo mkdir /opt/jdk
 pi@raspberrypi:~ $ cd /opt/jdk
 pi@raspberrypi:~ $ dpkg --print-architecture
 ```
-On the Azul [download page](https://www.azul.com/downloads/zulu-community/?version=java-11-lts&package=jdk) copy the download link of the current version for the appropriate architecture (armsf or armhf). . Then download, unpack, clean up and link:
+On the Azul [download page](https://www.azul.com/downloads/zulu-community/?version=java-11-lts&package=jdk) copy the download link of the current version for the appropriate architecture (armsf or armhf). Then download, unpack, clean up and link:
 ```console
 pi@raspberrypi:~ $ sudo wget https://cdn.azul.com/zulu-embedded/bin/zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf.tar.gz
 pi@raspberrypi:~ $ sudo tar -xzvf zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf.tar.gz
@@ -212,7 +212,7 @@ pi@raspberrypi:~ $ sudo rm *.tar.gz
 pi@raspberrypi:~ $ sudo update-alternatives --install /usr/bin/java java /opt/jdk/zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf/bin/java 1
 pi@raspberrypi:~ $ sudo update-alternatives --install /usr/bin/javac javac /opt/jdk/zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf/bin/javac 1
 ```
-Since the old Pi models or the Pi-Zero provide less computing power, the start of the SAE generally takes a little longer, so that the timeout times have to be adjusted to prevent the program from aborting. Use an editor to replace `sleep 1` with `sleep 3` in `/opt/sae/smartapplianceenabler` and change `TimeoutStartSec=90s` to `TimeoutStartSec=180s` in /lib/systemd/system/smartapplianceenabler.service.
+Since the Raspberry Pi 1 models or the Pi-Zero provide less computing power, the start of the SAE generally takes a little longer, so that the timeout times have to be adjusted to prevent the program from aborting. Use an editor to replace `sleep 1` with `sleep 3` in `/opt/sae/smartapplianceenabler` and change `TimeoutStartSec=90s` to `TimeoutStartSec=180s` in /lib/systemd/system/smartapplianceenabler.service.
 
 ## install pigpiod
 If you want the *Smart Appliance Enabler* to access the Raspberry Pi's GPIO ports, the [pigpiod](http://abyz.me.uk/rpi/pigpio/) library must be installed. This can be achieved with the following commands:
@@ -224,7 +224,7 @@ The `pigpiod` is installed by default to only accept local access. Although the 
 ExecStart=/usr/bin/pigpiod
 ```
 
-So that the deamon is also started when the system starts (via systemd), the following command must be executed:
+To start the deamon automatically at system startup (via systemd), the following command must be executed:
 ```console
 pi@raspberrypi ~ $ sudo systemctl enable pigpiod
 Created symlink /etc/systemd/system/multi-user.target.wants/pigpiod.service → /lib/systemd/system/pigpiod.service.
@@ -252,7 +252,7 @@ The following command is suitable for starting:
 ```console
 pi@raspberrypi:~ $ sudo systemctl start mosquitto
 ```
-The following command must be executed so that the MQTT broker is also started when the system starts (via systemd):
+To start the MQTT broker automatically at system startup (via systemd), the following command must be executed:
 ```console
 pi@raspberrypi ~ $ sudo systemctl enable mosquitto
 Synchronizing state of mosquitto.service with SysV service script with /lib/systemd/systemd-sysv-install.
@@ -312,7 +312,7 @@ The following command must be executed so that the *Smart Appliance Enabler* is 
 pi@raspberrypi ~ $ sudo systemctl enable smartapplianceenabler
 Created symlink /etc/systemd/system/multi-user.target.wants/smartapplianceenabler.service → /lib/systemd/system/smartapplianceenabler.service.
 ```
-After making these changes, the systemd needs to be tricked into rereading the service configurations:
+After making these changes, the systemd has to be triggered to reread the service configurations:
 ```console
 pi@raspberrypi ~ $ sudo systemctl daemon-reload
 ```
@@ -321,12 +321,12 @@ Successful registration of the *smartapplianceenabler* service can be verified a
 pi@raspberrypi ~ $ systemctl list-units|grep smartapplianceenabler
 smartapplianceenabler.service                                                                loaded failed failed    Smart Appliance Enabler
 ```
-If the second line is not displayed, the Raspberry should be restarted.
+If the second line is not displayed, the Raspberry Pi should be restarted.
 
 #### Application download
-The actual program code is in the `SmartApplianceEnabler-X.Y.Z.war` file, which must also be downloaded. *X.Y.Z* stands for the current version number (e.g. 1.3.50), which is displayed [behind the download button](https://github.com/camueller/SmartApplianceEnabler#smart-appliance-enabler). According to these notes, the version in the following command must be adjusted in 2 places (*v1.3.501* and *SmartApplianceEnabler-1.3.50.war*):
+The actual program code is contained in the `SmartApplianceEnabler-X.Y.Z.war` file, which must also be downloaded. *X.Y.Z* stands for the current version number (e.g. 2.1.0), which is displayed [behind the download button](https://github.com/camueller/SmartApplianceEnabler#smart-appliance-enabler). According to these notes, the version in the following command must be adjusted in 2 places (*2.1.0* and *SmartApplianceEnabler-2.1.0.war*):
 ```console
-pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/releases/download/1.4.19/SmartApplianceEnabler-1.4.19.war -P /opt/sae
+pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/releases/download/2.1.0/SmartApplianceEnabler-2.1.0.war -P /opt/sae
 pi@raspberrypi ~ $ sudo chown -R sae:sae /opt/sae
 ```
 
@@ -367,7 +367,7 @@ pi@raspberrypi ~ $ sudo systemctl status smartapplianceenabler.service
 ```
 
 ### Update
-Updating an existing version consists in first deleting the old program:
+To update an existing version, you must first delete the old program:
 ```console
 pi@raspberrypi ~ $ rm /opt/sae/*.war
 ```

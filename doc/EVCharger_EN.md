@@ -1,7 +1,5 @@
 # Wallboxes
-
-
-In the *Smart Appliance Enabler*, a wallbox is represented as a complex switch with various configuration parameters and the vehicles.
+In the *Smart Appliance Enabler*, a wallbox is represented as a complex control with various configuration parameters and the vehicles.
 
 In order for the Sunny Home Manager to be able to control the power of wallboxes, **an electricity meter must be configured in the Smart Appliance Enabler** to determine the current power consumption!
 
@@ -17,9 +15,9 @@ The *Smart Appliance Enabler* currently provides templates and configurations fo
 * wallbe feat. new controller
 * [Warp Charger Smart / Pro](WarpCharger_EN.md)
 
-These configurations are contained in the `evcharger-templates.json` file, which is downloaded from https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/run/evcharger-templates.json every time the *Smart Appliance Enabler* is started into the directory pointed to by the variable `SAE_HOME` (usually `/opt/sae`). If the *Smart Appliance Enabler* cannot/may not download the file, the file must be downloaded manually and placed there.
+These configurations are contained in the `evcharger-templates.json` file, which is downloaded from https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/run/evcharger-templates.json into the directory pointed to by the variable `SAE_HOME` (usually `/opt/sae`) every time the *Smart Appliance Enabler* is started . If the *Smart Appliance Enabler* cannot download the file, it must be downloaded manually and placed there.
 
-In addition, the use of other wall boxes should also be possible as long as they are connected via a supported protocol:
+In addition, the use of other wallboxes should also be possible as long as they can be controlled using a supported protocol:
 * [Modbus/TCP](EVChargerModbus_EN.md)
 * HTTP
 
@@ -44,28 +42,27 @@ Regardless of the specific wallbox, the following settings apply to all wallboxe
 - `phases`: Maximum number of phases with which the wallbox can charge. Can be overwritten individually for each vehicle. (default value: 1)
 - `poll interval`: the status of the wallbox is queried at these time intervals (default value: 10s)
 - `Start state detection delay`: After switching on/off, the charging status is not queried for the specified period of time to give the wallbox time to bring about the desired status
-- `force initial charging`:
-  After a connected vehicle is detected, charging starts immediately until the wall box reports back the status 'Charging'. After that, charging is stopped again until a switch-on command is received. Required for Renault Zoe!
+- `Charge current repetition`: If set, the charging current is set repeatedly after the duration specified by the value in seconds has elapsed, despite the value remaining the same. This may be necessary to prevent the wallbox from falling back to a lower current level.
+- `force initial charging`: After a connected vehicle is detected, charging starts immediately until the wall box reports back the status 'Charging'. After that, charging is stopped again until a switch-on command is received. Required for Renault Zoe!
 - `Latitude`: The geographic latitude of the Wallbox is used to identify the vehicle that is close to the Wallbox in the case of multiple configured vehicles.
 - `Longitude`: The geographic longitude of the Wallbox is used to identify the vehicle that is close to the Wallbox in the case of multiple configured vehicles.
 
 ### Vehicles
 <a name="ev">
 
-The configuration of vehicles includes parameters for controlling the loading process and default values for dialogs.
+The configuration of vehicles includes parameters for controlling the charging process and default values for dialogs.
 
-When charging the vehicle, charge loss occur that are counted by the meter, but do not lead to an increase in the energy stored in the vehicle. Therefore a value can be configured for the `Charge loss` (default value: 10%), which is used in the calculation of the requested amount of energy.
+When charging the vehicle, charge loss occur that are counted by the meter, but do not lead to an increase of the energy stored in the vehicle. Therefore a value can be configured for the `Charge loss` (default value: 10%), which is used in the calculation of the requested amount of energy.
 
-For the target SOC a default values can be set:
+For the target SOC default values can be set:
 
-The *default value for manual loading* only contains the pre-assignment of the field for the target SOC in the input mask, which is displayed after clicking on the green traffic light.
+The *default value for manual charging* only contains the pre-assignment of the field for the target SOC in the input mask, which is displayed after clicking on the green traffic light.
 
 If a *default value for excess energy* is set, after connecting the vehicle, excess energy will only be charged up to this value and then the charging process will be stopped.
 
-The AC wall boxes supported by the *Smart Appliance Enabler* cannot determine the current SOC of the vehicle and communicate with the *Smart Appliance Enabler*! In order to determine the energy demand as precisely as possible, however, this value must be known. The *Smart Appliance Enabler* therefore offers the option of integrating a [script for automated querying of the SOC](soc/SOC_EN.md), provided this is supported by the vehicle manufacturer.
+The AC wallboxes supported by the *Smart Appliance Enabler* cannot determine the current SOC of the vehicle and communicate this value to the *Smart Appliance Enabler*! In order to determine the energy demand as precisely as possible, however, this value must be known. The *Smart Appliance Enabler* therefore offers the option of integrating a [script for automated querying of the SOC](soc/SOC_EN.md), provided this is supported by the vehicle manufacturer.
 
-
-If several vehicles are configured, automatic detection of the vehicle is only possible if the [scripts for automated querying of the SOC](soc/SOC_EN.md) can also supply at least one of the following values in addition to the SOC:
+If several vehicles are configured, automatic detection of the vehicle connected to the wallbox is only possible if the [scripts for automated querying of the SOC](soc/SOC_DE.md) can also supply at least one of the following values in addition to the SOC:
 
 - Connection status of the charging cable
 - Time of plugging in the charging cable
@@ -76,14 +73,14 @@ If available, these values must be extracted from the output of the [Script for 
 ![Fahrzeugkonfiguration](../pics/fe/EV_EN.png)
 
 ## Load configuration in Sunny Home Manager
-In the *Sunny Home Manager*, the consumer configuration for a wall box should look like this:
+In the *Sunny Home Manager*, the consumer configuration for a wallbox should look like this:
+
 ![Vebraucherkonfiguration Wallbox](../pics/shm/VerbraucherKonfigurationEVCharger.png)
 
 ## Charging process
-
 If a *SOC script* has been configured, it will **run automatically after connecting the vehicle to the wallbox**.
 
-There is also the option of entering the actual and target state of charge when [manually starting the charging process](Status_EN.md#user-content-click-green-ev).
+There is also the option of entering the current and target SOC when [manually starting the charging process](Status_EN.md#user-content-click-green-ev).
 
 Based on the values for
 - `Battery capcity`: from vehicle configuration
@@ -92,17 +89,17 @@ Based on the values for
 
 ...the **initial energy** is calculated, which is to be requested from the *Sunny Home Manager*.
 
-During the loading process, the **current SOC is calculated** from:
-- `last known SOC`: from the SOC script (start of loading or last execution) or input via traffic lights (at the start of loading)
+During the charging process, the **current SOC is calculated** from:
+- `last known SOC`: from the SOC script (start of charging or last execution) or input via traffic lights (at the start of charging)
 - `charged energy`:  metered by meter
 - `battery capacity`: from the vehicle configuration
-- `charge loss`: initial from the vehicle configuration; if the SOC script is configured, the actual charging losses are calculated and used
+- `charge loss`: initial from the vehicle configuration; if the SOC script is configured, the actual charging loss are calculated and used
 
 The energy requested by the *Sunny Home Manager* is **continuously calculated** from the difference between the calculated SOC and the target SOC.
 
-During the loading process, the **SOC script is executed periodically**. If the calculated SOC either increases by a configured value (default: 20%) or a configured time has passed since the SOC script was last executed, the SOC script is executed again. The calculated SOC is compared with the actual SOC and the actual charging losses are calculated from this. The actual charging losses are taken into account for all subsequent calculations of the SOC until the next execution of the SOC script during the current charging process.
+During the charging process, the **SOC script is executed periodically**. If the calculated SOC either increases by a configured value (default: 20%) or a configured time has passed since the SOC script was last executed, the SOC script is executed again. The calculated SOC is compared with the actual SOC and the actual charge loss are calculated from this. The actual charge loss are taken into account for all subsequent calculations of the SOC until the next execution of the SOC script during the current charging process.
 
-**Without SOC script** and without [entering the current actual state of charge](Status_EN.md#user-content-click-green-ev), the *Smart Appliance Enabler* assumes an actual state of charge of 0% and reports a correspondingly large energy requirement. Although this worsens the planning of the *Sunny Home Manager*, regardless of this, the wallbox stops charging at the latest when the vehicle is fully charged.
+**Without SOC script** and without [entering the current actual state of charge](Status_EN.md#user-content-click-green-ev), the *Smart Appliance Enabler* assumes an current SOC of 0% when the vehicle gets connected and reports a correspondingly large energy requirement. Although this worsens the planning of the *Sunny Home Manager*, regardless of this, the wallbox stops charging at the latest when the vehicle is fully charged.
 
 ### Example
 The course of a charging process using excess energy is illustrated here using excerpts from the log:
@@ -116,16 +113,16 @@ After the vehicle has been connected to the Wallbox:
 2021-05-02 13:04:05,048 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
 2021-05-02 13:04:59,092 DEBUG: SoC: 51.0
 ```
-From the actual SOC (51%), target SOC (80% according to the vehicle configuration) and net battery capacity (36 kWh), the excess energy required (without taking charging losses into account) is calculated at 10.4 kWh:
+From the actual SOC (51%), target SOC (80% according to the vehicle configuration) and net battery capacity (36 kWh), the energy required (without taking charge loss into account) is calculated at 10.4 kWh:
 ```
 2021-05-02 13:05:04,747 DEBUG: energy calculation: 10440Wh evId=1 batteryCapactiy=36000Wh currentSoc=51% targetSoc=80%
 2021-05-02 13:05:32,404 DEBUG: ACTIVE/2021-05-02T13:04:04/2021-05-04T13:04:04::ENABLED/evId=1/soc=51%=>80%/energy=10440Wh/Optional Energy
 ```
-To calculate the SOC, the value configured for the vehicle for charging losses (`chargeLoss`) is first used - here 11%:
+To calculate the SOC, the value configured for the vehicle for charging loss (`chargeLoss`) is used - here 11%:
 ```
 2021-05-02 13:06:25,018 DEBUG: SOC calculation: socCurrent=51% socRetrievedOrInitial=51% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=0Wh chargeLoss=11%
 ```
-The charging process has progressed and the calculated SOC is 20% (default value of the configuration) above the SOC of the last execution of the SOC script - so a new execution is necessary:
+The charging process has progressed and the calculated SOC is 20% above the SOC of the last execution of the SOC script (default value of the configuration) - so a new execution is necessary:
 ```
 2021-05-03 09:26:45,464 DEBUG: SOC calculation: socCurrent=71% socRetrievedOrInitial=51% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7796Wh chargeLoss=11%
 2021-05-03 09:26:45,468 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
@@ -157,7 +154,7 @@ From now on, the newly calculated value of 14% will be used to calculate the SOC
 ```
 2021-05-03 11:48:05,532 DEBUG: SOC calculation: socCurrent=90% socRetrievedOrInitial=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=10Wh chargeLoss=14%
 ```
-The calculated residual amount of energy required to achieve the target SOC is less than 1 kWh for the first time - this is why another execution of the SOC script is triggered to ensure that the vehicle is actually close to reaching the target SOC:
+The calculated remaining amount of energy required to achieve the target SOC is less than 1 kWh for the first time - this is why another execution of the SOC script is triggered to ensure that the vehicle is actually close to reaching the target SOC:
 ```
 2021-05-03 12:55:05,777 DEBUG: energy calculation: 360Wh evId=1 batteryCapactiy=36000Wh currentSoc=99% targetSoc=100%
 2021-05-03 12:55:05,767 DEBUG: SOC calculation: socCurrent=99% socRetrievedOrInitial=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=3515Wh chargeLoss=14%
@@ -166,7 +163,7 @@ The calculated residual amount of energy required to achieve the target SOC is l
 2021-05-03 12:55:05,772 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
 2021-05-03 12:55:58,372 DEBUG: SoC: 98.0
 ```
-The calculated SOC is 99%, the value returned by the SOC script is 98%. The charging losses can be calculated from this: 23% in this phase of charging:
+The calculated SOC is 99%, the value returned by the SOC script is 98%. The charging loss can be calculated from this: 23% in this phase of charging:
 ```
 2021-05-03 12:55:58,436 DEBUG: charge loss calculation: chargeLoss=23% socCurrent=98% socLastRetrieval=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=3552Wh energyReceivedByEv=2880Wh
 ```
@@ -186,7 +183,6 @@ batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=666Wh chargeLos
 ## Log
 
 ### Control requests
-
 If a control request for a wallbox (here `F-00000001-000000000019-00`) is received from the *Sunny Home Manager*, this can be displayed in the [Log](Logging_EN.md) with the following command:
 
 ```console

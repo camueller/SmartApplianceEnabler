@@ -1,5 +1,5 @@
 # Alternate firmware Tasmota
-Adapters with which any device can be switched on and off via WLAN and some of which also have an integrated electricity meter are often based on the microcontroller [ESP8266](https://de.wikipedia.org/wiki/ESP8266).
+Adapters with which any device can be switched on and off via WIFI and some of which also have an integrated electricity meter are often based on the microcontroller [ESP8266](https://de.wikipedia.org/wiki/ESP8266).
 
 Most of the time, these devices can only be used with the adapter manufacturer's cloud services. Fortunately, the alternative firmware [Tasmota](https://github.com/arendst/Sonoff-Tasmota) exists, which was originally developed for various Sonoff adapters, but can now be used for a large number of adapters.
 
@@ -83,20 +83,20 @@ Tasmota returns the response in JSON format, formatted as follows:
 
 The above example results in the following field contents in the *Smart Appliance Enabler*:
 
-| Field                                           | Value                                 |
-|-------------------------------------------------|---------------------------------------|
-| Format                                          | JSON                                  |
-| URL                                             | http://192.168.1.1/cm?cmnd=Status%208 |
-| Extraction path (bei Parameter `meter reading`) | $.StatusSNS.ENERGY.Total              |
-| Extraction path (bei Parameter `power`)         | $.StatusSNS.ENERGY.Power              |
+| Field                                             | Value                                 |
+|---------------------------------------------------|---------------------------------------|
+| Format                                            | JSON                                  |
+| URL                                               | http://192.168.1.1/cm?cmnd=Status%208 |
+| Extraction path (using parameter `meter reading`) | $.StatusSNS.ENERGY.Total              |
+| Extraction path (using parameter `power`)         | $.StatusSNS.ENERGY.Power              |
 
-By default, Tasmota only delivers the `meter reading` with 3 decimal places. In order for the *Smart Appliance Enabler* to be able to calculate the power from meter reading differences as precisely as possible, the Tasmota adapter must be **configured to 5 decimal places**.
+By default, Tasmota only returns the `meter reading` with 3 decimal places. In order for the *Smart Appliance Enabler* to be able to calculate the power from meter reading differences as precisely as possible, the Tasmota adapter must be **configured to 5 decimal places**.
 To do this, go to the Tasmota web console of the adapter and enter the command `EnergyRes 5` and complete the input with `Enter`:
 ```
 17:14:25 RSL: RESULT = {"EnergyRes":5}
 ```
 
-The [Log](Logging_EN.md) contains the following lines for each counter query:
+The [Log](Logging_EN.md) contains the following lines for each meter query:
 ```
 2021-02-08 00:09:54,324 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000014-00: Executing timer task name=PollEnergyMeter id=13049675
 2021-02-08 00:09:54,324 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:107] F-00000001-000000000014-00: Sending GET request url=http://kuehltruhe/cm?cmnd=Status%208
@@ -110,7 +110,6 @@ The [Log](Logging_EN.md) contains the following lines for each counter query:
 *Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `Http` after `Only show lines with text` and press refresh.
 
 ## Devices with Tasmota firmware as switches
-
 The switching state can be changed as follows:
 
 _Switch on_
