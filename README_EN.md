@@ -25,7 +25,7 @@
 # Overview
 **The *Smart Appliance Enabler* is a software for integrating any device ([Wallbox](doc/EVCharger_EN.md), heat pump, washing machine, dishwasher, ...) with the [Sunny Home Manager](https://www.sma.de/produkte/monitoring-control/sunny-home-manager-20.html) by [SMA](http://www.sma.de) to **maximize the use of self-generated electricity obtained by photovoltaic systems**.**
 
-![SmartHomeEnablerSchema](pics/clip/SaeClip.gif)
+![SmartHomeEnablerClip](pics/clip/SaeClip_EN.gif)
 
 For that, the *Smart Appliance Enabler* reports **demands** of these devices to the *Sunny Home Manager* in order to enable optimal planning of self-consumption. According to this planning, the *Smart Appliance Enabler* receives **switching commands**, which it forwards to the devices it manages. If individual, **digital electricity meters** are used for these devices, the power cosumption can be read and reported to the *Sunny Home Manager* to support it in learning the consumption characteristics and visualize power consumption in the [Sunny Portal](https://www.sunnyportal.com/).
 
