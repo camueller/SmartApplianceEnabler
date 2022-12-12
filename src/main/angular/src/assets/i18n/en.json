@@ -465,7 +465,7 @@
   "StatusComponent.state.CHARGING": "Charging",
   "StatusComponent.state.CHARGING_COMPLETED": "Charging completed",
   "StatusComponent.state.ERROR": "Error",
-  "StatusComponent.stateOfCharge": "State of charge (SOC)",
+  "StatusComponent.stateOfCharge": "SOC",
   "StatusComponent.stateOfChargeCurrent": "Current ",
   "StatusComponent.stateOfChargeRequested": "Target ",
   "StatusComponent.stateOfChargeUnit": "%",

@@ -576,7 +576,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         return useOptionalEnergy;
     }
 
-    public TimeframeInterval createTimeframeInterval(LocalDateTime now, Integer evId, Integer socCurrent, Integer socRequested,
+    public TimeframeInterval createTimeframeInterval(LocalDateTime now, Integer evId, Integer socCurrent, Integer socTarget,
                                              LocalDateTime chargeEnd) {
         ElectricVehicle vehicle = this.evHandler.getVehicle(evId);
 
@@ -584,7 +584,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         request.setApplianceId(applianceId);
         request.setEvId(evId);
         request.setBatteryCapacity(vehicle.getBatteryCapacity());
-        request.setSoc(socRequested);
+        request.setSoc(socTarget);
         request.setSocInitial(socCurrent);
         request.setSocCurrent(socCurrent);
         request.setEnabled(true);

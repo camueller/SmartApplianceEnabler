@@ -139,7 +139,7 @@ Ab jetzt wird für die Berechnung des SOC für die Ladeverluste anstelle des fü
 ```
 An dieser Stelle wurde der Soll-SOC für diesen Ladevorgang manuell via Ampel auf 100% erhöht:
 ```
-2021-05-03 09:56:15,985 DEBUG: Received request to update SOC: socCurrent=74 socRequested=100
+2021-05-03 09:56:15,985 DEBUG: Received request to update SOC: socCurrent=74 socTarget=100
 ```
 Der berechnete SOC liegt abermals 20% über dem SOC der letzten Ausführung des SOC-Scripts - also ist eine erneute Ausführung notwendig:
 ```

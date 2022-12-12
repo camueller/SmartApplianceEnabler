@@ -118,7 +118,7 @@ abstract public class TestBase {
                                                          TimeframeIntervalState state,
                                                          Integer socInitial,
                                                          Integer socCurrent,
-                                                         Integer socRequested,
+                                                         Integer socTarget,
                                                          Integer evId,
                                                          Integer batteryCapacity,
                                                          boolean enabled,
@@ -128,7 +128,7 @@ abstract public class TestBase {
         request.setBatteryCapacity(batteryCapacity);
         request.setSocInitial(socInitial);
         request.setSocCurrent(socCurrent);
-        request.setSoc(socRequested);
+        request.setSoc(socTarget);
         request.updateForced();
         TimeframeInterval expected = new TimeframeInterval(interval, request);
         expected.initState(state);
@@ -139,12 +139,12 @@ abstract public class TestBase {
                                                      Interval interval,
                                                      Integer socInitial,
                                                      Integer socCurrent,
-                                                     Integer socRequested,
+                                                     Integer socTarget,
                                                      Integer evId,
                                                      Integer batteryCapacity,
                                                      boolean enabled,
                                                      TimeframeInterval actual) {
-        SocRequest request = new SocRequest(socRequested, evId);
+        SocRequest request = new SocRequest(socTarget, evId);
         request.setBatteryCapacity(batteryCapacity);
         request.setSocInitial(socInitial);
         request.setSocCurrent(socCurrent);

@@ -505,29 +505,29 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
     }
 
     public void updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(LocalDateTime now,  Integer evId, Integer batteryCapacity,
-                                                                       Integer socCurrent, Integer socRequested) {
+                                                                       Integer socCurrent, Integer socTarget) {
         TimeframeInterval timeframeInterval = findOptionalEnergyIntervalForEVCharger();
         if(timeframeInterval != null) {
-            logger.debug("{}: update optional energy timeframe interval with socCurrent={} socRequested={}",
-                    applianceId, socCurrent, socRequested);
+            logger.debug("{}: update optional energy timeframe interval with socCurrent={} socTarget={}",
+                    applianceId, socCurrent, socTarget);
             if(timeframeInterval == getFirstTimeframeInterval()) {
                 timeframeInterval.getInterval().setStart(now);
             }
             OptionalEnergySocRequest request = (OptionalEnergySocRequest) timeframeInterval.getRequest();
             request.setSocInitial(socCurrent);
-            request.setSoc(socRequested);
+            request.setSoc(socTarget);
             request.setEnabled(true);
         }
         else {
-            logger.debug("{}: create optional energy timeframe interval with evId={} batteryCapacity={} socCurrent={} socRequested={}",
-                    applianceId, evId, batteryCapacity, socCurrent, socRequested);
+            logger.debug("{}: create optional energy timeframe interval with evId={} batteryCapacity={} socCurrent={} socTarget={}",
+                    applianceId, evId, batteryCapacity, socCurrent, socTarget);
             timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(now, evId, applianceId);
             if(timeframeInterval != null) {
                 OptionalEnergySocRequest request = (OptionalEnergySocRequest) timeframeInterval.getRequest();
                 request.setSocInitial(socCurrent);
                 request.setSocCurrent(socCurrent);
                 request.setEnabled(true);
-                updateSocRequest((SocRequest) timeframeInterval.getRequest(), batteryCapacity, socRequested);
+                updateSocRequest((SocRequest) timeframeInterval.getRequest(), batteryCapacity, socTarget);
                 addTimeframeInterval(now, timeframeInterval, true, true);
                 updateQueue(now, false);
                 activateTimeframeInterval(now, timeframeInterval);

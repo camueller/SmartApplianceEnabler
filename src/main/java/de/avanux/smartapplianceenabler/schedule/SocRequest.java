@@ -79,7 +79,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         this.soc = soc;
     }
 
-    private Integer getSocOrDefault() {
+    public Integer getSocOrDefault() {
         return this.soc != null ? this.soc : 100;
     }
 

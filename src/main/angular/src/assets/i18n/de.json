@@ -465,7 +465,7 @@
   "StatusComponent.state.CHARGING": "Lädt",
   "StatusComponent.state.CHARGING_COMPLETED": "Fertig",
   "StatusComponent.state.ERROR": "Fehler",
-  "StatusComponent.stateOfCharge": "Ladezustand (SOC)",
+  "StatusComponent.stateOfCharge": "SOC",
   "StatusComponent.stateOfChargeCurrent": "Ist ",
   "StatusComponent.stateOfChargeRequested": "Soll ",
   "StatusComponent.stateOfChargeUnit": "%",

@@ -446,7 +446,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         }
     }
 
-    public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socRequested, LocalDateTime chargeEnd) {
+    public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socTarget, LocalDateTime chargeEnd) {
         if (this.control instanceof ElectricVehicleCharger) {
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
             if(meterMessage != null && meterMessage.energy > 0.1) {
@@ -462,7 +462,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             }
 
             TimeframeInterval timeframeInterval =
-                    evCharger.createTimeframeInterval(now, evId, socCurrent, socRequested, chargeEnd);
+                    evCharger.createTimeframeInterval(now, evId, socCurrent, socTarget, chargeEnd);
             timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true, true);
 
             if(chargeEnd == null) {
@@ -477,7 +477,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         }
     }
 
-    public void updateSoc(LocalDateTime now,  Integer socCurrent, Integer socRequested) {
+    public void updateSoc(LocalDateTime now,  Integer socCurrent, Integer socTarget) {
         if (control instanceof ElectricVehicleCharger) {
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
             ElectricVehicle ev = evCharger.getElectricVehicleHandler().getConnectedVehicle();
@@ -487,7 +487,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                     timeframeIntervalHandler.removeActiveTimeframeInterval(now);
                 }
                 timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
-                        ev.getId(), ev.getBatteryCapacity(), socCurrent, socRequested);
+                        ev.getId(), ev.getBatteryCapacity(), socCurrent, socTarget);
                 var evHandler = evCharger.getElectricVehicleHandler();
                 evHandler.setSocInitial(socCurrent);
                 evHandler.setSocInitialTimestamp(now);

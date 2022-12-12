@@ -648,20 +648,20 @@ public class SaeController {
                                 @RequestParam(value = "applianceid") String applianceId,
                                 @RequestParam(value = "evid") Integer evId,
                                 @RequestParam(value = "socCurrent", required = false) Integer socCurrent,
-                                @RequestParam(value = "socRequested", required = false) Integer socRequested,
+                                @RequestParam(value = "socTarget", required = false) Integer socTarget,
                                 @RequestParam(value = "chargeEnd", required = false) String chargeEndString
     ) {
         synchronized (lock) {
             try {
-                logger.debug("{}: Received energy request: evId={} socCurrent={} socRequested={} chargeEnd={}",
-                        applianceId, evId, socCurrent, socRequested, chargeEndString);
+                logger.debug("{}: Received energy request: evId={} socCurrent={} socTarget={} chargeEnd={}",
+                        applianceId, evId, socCurrent, socTarget, chargeEndString);
                 LocalDateTime chargeEnd = null;
                 if (chargeEndString != null) {
                     chargeEnd = ZonedDateTime.parse(chargeEndString).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
                 }
                 Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
                 if (appliance != null) {
-                    appliance.setEnergyDemand(LocalDateTime.now(), evId, socCurrent, socRequested, chargeEnd);
+                    appliance.setEnergyDemand(LocalDateTime.now(), evId, socCurrent, socTarget, chargeEnd);
                 } else {
                     logger.error("{}: Appliance not found", applianceId);
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -677,15 +677,15 @@ public class SaeController {
     public void updateSoc(HttpServletResponse response,
                           @RequestParam(value = "applianceid") String applianceId,
                           @RequestParam(value = "socCurrent", required = false) Integer socCurrent,
-                          @RequestParam(value = "socRequested", required = false) Integer socRequested
+                          @RequestParam(value = "socTarget", required = false) Integer socTarget
     ) {
         synchronized (lock) {
             try {
-                logger.debug("{}: Received request to update SOC: socCurrent={} socRequested={}",
-                        applianceId, socCurrent, socRequested);
+                logger.debug("{}: Received request to update SOC: socCurrent={} socTarget={}",
+                        applianceId, socCurrent, socTarget);
                 Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
                 if (appliance != null) {
-                    appliance.updateSoc(LocalDateTime.now(), socCurrent, socRequested);
+                    appliance.updateSoc(LocalDateTime.now(), socCurrent, socTarget);
                 } else {
                     logger.error("{}: Appliance not found", applianceId);
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -963,14 +963,18 @@ public class SaeController {
                             }
                             applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
                             int whRemainingToCharge = 0;
-                            if(nextTimeframeInterval != null
-                                    && nextTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
-                                Integer max = nextTimeframeInterval.getRequest().getMax(now);
-                                whRemainingToCharge = max != null ? max : 0;
-                            }
-                            if (nextTimeframeInterval != null && !nextTimeframeInterval.getRequest().isUsingOptionalEnergy(now)) {
-                                applianceStatus.setPlannedEnergyAmount(whAlreadyCharged + whRemainingToCharge);
-                                applianceStatus.setLatestEnd(nextTimeframeInterval.getLatestEndSeconds(now));
+                            if(nextTimeframeInterval != null) {
+                                if(nextTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
+                                    Integer max = nextTimeframeInterval.getRequest().getMax(now);
+                                    whRemainingToCharge = max != null ? max : 0;
+                                }
+                                if(nextTimeframeInterval.getRequest() instanceof SocRequest) {
+                                    applianceStatus.setSocTarget(((SocRequest) nextTimeframeInterval.getRequest()).getSocOrDefault());
+                                }
+                                if (!nextTimeframeInterval.getRequest().isUsingOptionalEnergy(now)) {
+                                    applianceStatus.setPlannedEnergyAmount(whAlreadyCharged + whRemainingToCharge);
+                                    applianceStatus.setLatestEnd(nextTimeframeInterval.getLatestEndSeconds(now));
+                                }
                             }
                         }
                     }

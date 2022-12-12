@@ -34,6 +34,13 @@ export class StatusEvchargerViewComponent implements OnInit {
     return undefined;
   }
 
+  get socInitialTooltip() {
+    if(!this.status.socInitialTimestamp) {
+      return '';
+    }
+    return `${this.toWeekdayStringFromTimestamp(this.status.socInitialTimestamp)} ${this.toHHmmFromTimestamp(this.status.socInitialTimestamp)}`;
+  }
+
   getCurrentChargePower(applianceStatus: Status): number {
     if (applianceStatus.currentChargePower) {
       return this.toKWh(applianceStatus.currentChargePower);

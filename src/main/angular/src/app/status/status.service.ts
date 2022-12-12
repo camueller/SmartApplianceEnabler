@@ -44,13 +44,13 @@ export class StatusService extends SaeService {
   }
 
   requestEvCharge(applianceid: string, evid: string, socCurrent: number|undefined,
-                  socRequested: number|undefined, chargeEnd: string|undefined): Observable<any> {
+                  socTarget: number|undefined, chargeEnd: string|undefined): Observable<any> {
     let url = `${SaeService.API}/evcharge?applianceid=${applianceid}&evid=${evid}`;
     if (socCurrent) {
       url += `&socCurrent=${socCurrent}`;
     }
-    if (socRequested) {
-      url += `&socRequested=${socRequested}`;
+    if (socTarget) {
+      url += `&socTarget=${socTarget}`;
     }
     if (chargeEnd) {
       url += `&chargeEnd=${chargeEnd}`;
@@ -59,13 +59,13 @@ export class StatusService extends SaeService {
     return this.http.put(url, '', {responseType: 'text'});
   }
 
-  updateSoc(applianceid: string, socCurrent: number|undefined, socRequested: number|undefined): Observable<any> {
+  updateSoc(applianceid: string, socCurrent: number|undefined, socTarget: number|undefined): Observable<any> {
     let url = `${SaeService.API}/evcharge?applianceid=${applianceid}`;
     if (socCurrent) {
       url += `&socCurrent=${socCurrent}`;
     }
-    if (socRequested) {
-      url += `&socRequested=${socRequested}`;
+    if (socTarget) {
+      url += `&socTarget=${socTarget}`;
     }
     this.logger.debug('Update SOC using ' + url);
     return this.http.patch(url, '', {responseType: 'text'});

@@ -138,7 +138,7 @@ From now on, the previously calculated value for the actual charge loss will be 
 ```
 At this point, the target SOC for this charging process was increased to 100% manually via traffic lights:
 ```
-2021-05-03 09:56:15,985 DEBUG: Received request to update SOC: socCurrent=74 socRequested=100
+2021-05-03 09:56:15,985 DEBUG: Received request to update SOC: socCurrent=74 socTarget=100
 ```
 The calculated SOC is again 20% above the SOC of the last execution of the SOC script - so a new execution is necessary:
 ```

@@ -181,9 +181,9 @@ export class StatusEvchargerEditComponent implements OnInit {
     this.beforeFormSubmit.emit();
     const evid = this.form.value.electricVehicle;
     const socCurrent = this.form.value.stateOfChargeCurrent;
-    const socRequested = this.form.value.stateOfChargeRequested;
+    const socTarget = this.form.value.stateOfChargeRequested;
     if (this.isChargeModeExcessEnergy) {
-      this.statusService.updateSoc(this.status.id, socCurrent, socRequested).subscribe(() => this.formSubmitted.emit());
+      this.statusService.updateSoc(this.status.id, socCurrent, socTarget).subscribe(() => this.formSubmitted.emit());
     } else {
       let chargeEndTime: string|undefined;
       let chargeEnd: string|undefined;
@@ -191,7 +191,7 @@ export class StatusEvchargerEditComponent implements OnInit {
         chargeEndTime = this.chargeEndTimeComp.updateModelFromForm();
         chargeEnd = TimeUtil.timestringOfNextMatchingDow(this.form.value.chargeEndDow, chargeEndTime);
       }
-      this.statusService.requestEvCharge(this.status.id, evid, socCurrent, socRequested, chargeEnd)
+      this.statusService.requestEvCharge(this.status.id, evid, socCurrent, socTarget, chargeEnd)
         .subscribe(() => this.formSubmitted.emit());
     }
   }

@@ -24,6 +24,7 @@ export class Status {
   stateLastChangedTimestamp: number;
   soc: number;
   socInitial: number;
+  socTarget: number;
   socInitialTimestamp: number;
 
 

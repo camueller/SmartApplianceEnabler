@@ -47,6 +47,7 @@ public class ApplianceStatus {
     private Long socTimestamp;
     private Integer socInitial;
     private Long socInitialTimestamp;
+    private Integer socTarget;
 
 
     public String getId() {
@@ -263,5 +264,13 @@ public class ApplianceStatus {
 
     public void setSocInitialTimestamp(Long socInitialTimestamp) {
         this.socInitialTimestamp = socInitialTimestamp;
+    }
+
+    public Integer getSocTarget() {
+        return socTarget;
+    }
+
+    public void setSocTarget(Integer socTarget) {
+        this.socTarget = socTarget;
     }
 }
