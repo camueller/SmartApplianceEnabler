@@ -100,8 +100,6 @@ export class StatusEvchargerEditComponent implements OnInit {
     }, socValidator);
     if (this.chargeModeSelected === ChargeMode.OPTIMIZED) {
       this.formHandler.addFormControl(this.form, 'chargeEndDow', undefined, Validators.required);
-    } else if (this.chargeModeSelected === ChargeMode.EXCESS_ENERGY) {
-      this.form.get('stateOfChargeRequested').setValue(this.electricVehicleSelected.defaultSocOptionalEnergy);
     }
     this.form.get('electricVehicle').valueChanges.subscribe(evIdSelected => {
       this.electricVehicleSelected = this.getElectricVehicle(evIdSelected);
@@ -155,6 +153,13 @@ export class StatusEvchargerEditComponent implements OnInit {
 
   get isChargeModeExcessEnergy() {
     return this.chargeModeSelected === ChargeMode.EXCESS_ENERGY;
+  }
+
+  get socTargetPlaceholder() {
+    if(this.isChargeModeExcessEnergy) {
+      return this.electricVehicleSelected.defaultSocOptionalEnergy;
+    }
+    return 100;
   }
 
   get hasErrors(): boolean {

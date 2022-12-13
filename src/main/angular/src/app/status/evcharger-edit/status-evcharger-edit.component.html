@@ -27,7 +27,7 @@
     <mat-form-field class="StatusEvchargerEditComponent__soc">
       <mat-label>{{'StatusComponent.stateOfChargeRequested' | translate}}</mat-label>
       <input matInput type="text" formControlName="stateOfChargeRequested"
-             class="StatusEvchargerEditComponent__soc-input" placeholder="100"
+             class="StatusEvchargerEditComponent__soc-input" [placeholder]="socTargetPlaceholder"
              required="{{formHandler.isRequired('stateOfChargeRequested')}}">
     </mat-form-field>
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
