@@ -16,21 +16,21 @@
     </mat-form-field>
   </div>
   <div class="StatusComponent__appliance-details-row">
-    <span class="StatusComponent__appliance-status-label">{{'StatusEvchargerEditComponent.stateOfCharge' | translate}}: </span>
+    <span class="StatusComponent__appliance-status-label">{{'StatusEvchargerEditComponent.soc' | translate}}: </span>
     <mat-form-field class="StatusEvchargerEditComponent__soc">
       <mat-label>{{'StatusComponent.socCurrent' | translate}}</mat-label>
       <input matInput type="text" formControlName="socCurrent"
              class="StatusEvchargerEditComponent__soc-input" placeholder="0"
              required="{{formHandler.isRequired('socCurrent')}}">
     </mat-form-field>
-    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
+    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.socUnit' | translate}}</span>
     <mat-form-field class="StatusEvchargerEditComponent__soc">
       <mat-label>{{'StatusComponent.socTarget' | translate}}</mat-label>
       <input matInput type="text" formControlName="socTarget"
              class="StatusEvchargerEditComponent__soc-input" [placeholder]="socTargetPlaceholder"
              required="{{formHandler.isRequired('socTarget')}}">
     </mat-form-field>
-    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
+    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.socUnit' | translate}}</span>
   </div>
   <div class="StatusComponent__appliance-details-row" *ngIf="isChargeModeOptimized">
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.chargeLatestEndRequested' | translate}}</span>

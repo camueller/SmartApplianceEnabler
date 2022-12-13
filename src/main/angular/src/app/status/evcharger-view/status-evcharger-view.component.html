@@ -7,14 +7,14 @@
     > ({{'StatusEvchargerViewComponent.since' | translate}} {{toHHmmFromTimestamp(status.stateLastChangedTimestamp)}})</span>
   </div>
   <div *ngIf="status.evIdCharging">
-    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfCharge' | translate}}:</span>
+    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.soc' | translate}}:</span>
     <span class="StatusComponent__appliance-status-value"
           matTooltip="{{socInitialTooltip}}"
-    >{{status.socInitial}}{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
+    >{{status.socInitial}}{{'StatusComponent.socUnit' | translate}}</span>
     <span class="StatusComponent__appliance-status-label StatusEvchargerViewComponent__soc-separator">&gt;&gt;&gt;</span>
-    <span class="StatusComponent__appliance-status-value StatusEvchargerViewComponent__soc-current">{{status.soc}}{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
+    <span class="StatusComponent__appliance-status-value StatusEvchargerViewComponent__soc-current">{{status.soc}}{{'StatusComponent.socUnit' | translate}}</span>
     <span class="StatusComponent__appliance-status-label StatusEvchargerViewComponent__soc-separator">&gt;&gt;&gt;</span>
-    <span class="StatusComponent__appliance-status-value">{{status.socTarget}}{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
+    <span class="StatusComponent__appliance-status-value">{{status.socTarget}}{{'StatusComponent.socUnit' | translate}}</span>
   </div>
   <div class="StatusComponent__appliance-status" *ngIf="status.currentChargePower != null">
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyChargePower' | translate}}</span>
