@@ -18,17 +18,17 @@
   <div class="StatusComponent__appliance-details-row">
     <span class="StatusComponent__appliance-status-label">{{'StatusEvchargerEditComponent.stateOfCharge' | translate}}: </span>
     <mat-form-field class="StatusEvchargerEditComponent__soc">
-      <mat-label>{{'StatusComponent.stateOfChargeCurrent' | translate}}</mat-label>
-      <input matInput type="text" formControlName="stateOfChargeCurrent"
+      <mat-label>{{'StatusComponent.socCurrent' | translate}}</mat-label>
+      <input matInput type="text" formControlName="socCurrent"
              class="StatusEvchargerEditComponent__soc-input" placeholder="0"
-             required="{{formHandler.isRequired('stateOfChargeCurrent')}}">
+             required="{{formHandler.isRequired('socCurrent')}}">
     </mat-form-field>
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
     <mat-form-field class="StatusEvchargerEditComponent__soc">
-      <mat-label>{{'StatusComponent.stateOfChargeRequested' | translate}}</mat-label>
-      <input matInput type="text" formControlName="stateOfChargeRequested"
+      <mat-label>{{'StatusComponent.socTarget' | translate}}</mat-label>
+      <input matInput type="text" formControlName="socTarget"
              class="StatusEvchargerEditComponent__soc-input" [placeholder]="socTargetPlaceholder"
-             required="{{formHandler.isRequired('stateOfChargeRequested')}}">
+             required="{{formHandler.isRequired('socTarget')}}">
     </mat-form-field>
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.stateOfChargeUnit' | translate}}</span>
   </div>

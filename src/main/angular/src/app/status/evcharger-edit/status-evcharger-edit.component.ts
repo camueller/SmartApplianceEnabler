@@ -19,14 +19,14 @@ import {ListItem} from '../../shared/list-item';
 import { ElementRef } from '@angular/core';
 
 const socValidator = (control: AbstractControl): { [key: string]: boolean } => {
-  const stateOfChargeCurrent = control.get('stateOfChargeCurrent');
-  const stateOfChargeRequested = control.get('stateOfChargeRequested');
-  if (!stateOfChargeCurrent || !stateOfChargeRequested
-    || !stateOfChargeCurrent.value || !stateOfChargeRequested.value) {
+  const socCurrent = control.get('socCurrent');
+  const socTarget = control.get('socTarget');
+  if (!socCurrent || !socTarget
+    || !socCurrent.value || !socTarget.value) {
     return null;
   }
-  return Number.parseInt(stateOfChargeCurrent.value, 10)
-  < Number.parseInt(stateOfChargeRequested.value, 10) ? null : {nomatch: true};
+  return Number.parseInt(socCurrent.value, 10)
+  < Number.parseInt(socTarget.value, 10) ? null : {nomatch: true};
 };
 
 @Component({
@@ -71,8 +71,8 @@ export class StatusEvchargerEditComponent implements OnInit {
 
   ngOnInit() {
     this.errorMessages = new ErrorMessages('StatusEvchargerEditComponent.error.', [
-      new ErrorMessage('stateOfChargeCurrent', ValidatorType.pattern),
-      new ErrorMessage('stateOfChargeRequested', ValidatorType.pattern),
+      new ErrorMessage('socCurrent', ValidatorType.pattern),
+      new ErrorMessage('socTarget', ValidatorType.pattern),
       new ErrorMessage('chargeEndTime', ValidatorType.pattern),
     ], this.translate);
     this.translate.get('StatusComponent.buttonStart').subscribe(translated => this.submitButtonTextStart = translated);
@@ -94,8 +94,8 @@ export class StatusEvchargerEditComponent implements OnInit {
     this.form = new UntypedFormGroup({
       chargeMode: new UntypedFormControl(this.chargeModeSelected),
       electricVehicle: new UntypedFormControl(this.electricVehicleSelected && this.electricVehicleSelected.id),
-      stateOfChargeCurrent: new UntypedFormControl(this.socString, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
-      stateOfChargeRequested: new UntypedFormControl(this.electricVehicleSelected && this.electricVehicleSelected.defaultSocManual,
+      socCurrent: new UntypedFormControl(this.socString, Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
+      socTarget: new UntypedFormControl(this.electricVehicleSelected && this.electricVehicleSelected.defaultSocManual,
         Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
     }, socValidator);
     if (this.chargeModeSelected === ChargeMode.OPTIMIZED) {
@@ -103,7 +103,7 @@ export class StatusEvchargerEditComponent implements OnInit {
     }
     this.form.get('electricVehicle').valueChanges.subscribe(evIdSelected => {
       this.electricVehicleSelected = this.getElectricVehicle(evIdSelected);
-      this.form.get('stateOfChargeRequested').setValue(this.electricVehicleSelected.defaultSocManual);
+      this.form.get('socTarget').setValue(this.electricVehicleSelected.defaultSocManual);
       this.retrieveSoc();
     });
     this.form.statusChanges.subscribe(() => {
@@ -136,8 +136,8 @@ export class StatusEvchargerEditComponent implements OnInit {
         } else {
           this.socString = undefined;
         }
-        if (this.form.controls.stateOfChargeCurrent) {
-          this.form.controls.stateOfChargeCurrent.setValue(this.socString);
+        if (this.form.controls.socCurrent) {
+          this.form.controls.socCurrent.setValue(this.socString);
         }
       }
     });
@@ -157,9 +157,9 @@ export class StatusEvchargerEditComponent implements OnInit {
 
   get socTargetPlaceholder() {
     if(this.isChargeModeExcessEnergy) {
-      return this.electricVehicleSelected.defaultSocOptionalEnergy;
+      return `${this.electricVehicleSelected?.defaultSocOptionalEnergy ?? 100}`;
     }
-    return 100;
+    return '100';
   }
 
   get hasErrors(): boolean {
@@ -185,8 +185,8 @@ export class StatusEvchargerEditComponent implements OnInit {
   submitForm() {
     this.beforeFormSubmit.emit();
     const evid = this.form.value.electricVehicle;
-    const socCurrent = this.form.value.stateOfChargeCurrent;
-    const socTarget = this.form.value.stateOfChargeRequested;
+    const socCurrent = this.form.value.socCurrent;
+    const socTarget = this.form.value.socTarget;
     if (this.isChargeModeExcessEnergy) {
       this.statusService.updateSoc(this.status.id, socCurrent, socTarget).subscribe(() => this.formSubmitted.emit());
     } else {

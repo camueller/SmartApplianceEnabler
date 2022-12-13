@@ -466,8 +466,8 @@
   "StatusComponent.state.CHARGING_COMPLETED": "Charging completed",
   "StatusComponent.state.ERROR": "Error",
   "StatusComponent.stateOfCharge": "SOC",
-  "StatusComponent.stateOfChargeCurrent": "Current ",
-  "StatusComponent.stateOfChargeRequested": "Target ",
+  "StatusComponent.socCurrent": "Current ",
+  "StatusComponent.socTarget": "Target ",
   "StatusComponent.stateOfChargeUnit": "%",
   "StatusComponent.chargeLatestEndRequested": "until ",
   "StatusComponent.buttonStart": "Start",
@@ -484,8 +484,8 @@
   "StatusEvchargerViewComponent.currently": "currently",
 
   "StatusEvchargerEditComponent.stateOfCharge": "SOC",
-  "StatusEvchargerEditComponent.error.stateOfChargeCurrent_pattern": "The current SOC has to be a percentage",
-  "StatusEvchargerEditComponent.error.stateOfChargeRequested_pattern": "The target SOC has to be a percentage",
+  "StatusEvchargerEditComponent.error.socCurrent_pattern": "The current SOC has to be a percentage",
+  "StatusEvchargerEditComponent.error.socTarget_pattern": "The target SOC has to be a percentage",
   "StatusEvchargerEditComponent.error.chargeEndTime_pattern": "The charge end time has to be specified as 'Hours:Minutes'",
 
   "SettingsComponent.mqttBroker": "MQTT Broker",

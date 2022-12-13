@@ -466,8 +466,8 @@
   "StatusComponent.state.CHARGING_COMPLETED": "Fertig",
   "StatusComponent.state.ERROR": "Fehler",
   "StatusComponent.stateOfCharge": "SOC",
-  "StatusComponent.stateOfChargeCurrent": "Ist ",
-  "StatusComponent.stateOfChargeRequested": "Soll ",
+  "StatusComponent.socCurrent": "Ist ",
+  "StatusComponent.socTarget": "Soll ",
   "StatusComponent.stateOfChargeUnit": "%",
   "StatusComponent.chargeLatestEndRequested": "bis ",
   "StatusComponent.buttonStart": "Start",
@@ -484,8 +484,8 @@
   "StatusEvchargerViewComponent.currently": "aktuell",
 
   "StatusEvchargerEditComponent.stateOfCharge": "SOC",
-  "StatusEvchargerEditComponent.error.stateOfChargeCurrent_pattern": "Der Ist-SOC muss als Prozentwert angegeben werden",
-  "StatusEvchargerEditComponent.error.stateOfChargeRequested_pattern": "Der Soll-SOC muss als Prozentwert angegeben werden",
+  "StatusEvchargerEditComponent.error.socCurrent_pattern": "Der Ist-SOC muss als Prozentwert angegeben werden",
+  "StatusEvchargerEditComponent.error.socTarget_pattern": "Der Soll-SOC muss als Prozentwert angegeben werden",
   "StatusEvchargerEditComponent.error.chargeEndTime_pattern": "Die Uhrzeit muss in 'Stunden:Minuten' angegeben werden",
 
   "SettingsComponent.mqttBroker": "MQTT Broker",
