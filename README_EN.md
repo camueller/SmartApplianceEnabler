@@ -17,7 +17,9 @@
   </p>
 </p>
 
-![Donate](pics/donate.jpeg)
+<a href="https://paypal.me/CarlAxelMueller">
+  <img src="https://github.com/camueller/SmartApplianceEnabler/raw/master/pics/donate.png">
+</a>
 
 **For several years I have put most of my free time into developing, documenting and supporting this open source project. I made a conscious decision to make this software available free of charge and to continuously expand it with features that could be of interest to as many users as possible. By using this software, electricity costs can be significantly reduced by maximizing the use of self-generated electricity. I would consider it an acknowledgment of my work if a portion of this saving were used to help support this project. This can easily be done using [Paypal](https://paypal.me/CarlAxelMueller) or bank transfer (account owner: Axel Mueller, IBAN: DE83 5185 0079 1140 0764 37, BIC: HELADEF1FRI, Details: support for Smart Appliance Enabler)**
 <br><br>
