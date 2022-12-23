@@ -8,36 +8,11 @@ This value extraction method only works if the response is in JSON format!
 
 Whether a response is in JSON format can be seen relatively easily from the curly brackets, which determine its structure.
 
-To determine the JSON path, it helps if you format the JSON response in such a way that the structure is recognizable. For example, [JSON Pretty Print](https://jsonformatter.org/json-pretty-print) is suitable for this, where you enter the unformatted JSON response in the left half of the browser (can be taken from the log if the *Smart Appliance Enabler* already communicated with this device):
-```json
-{"StatusSNS":{"Time":"2019-09-06T20:06:19","ENERGY":{"TotalStartTime":"2019-08-18T11:07:55","Total":0.003,"Yesterday":0.000,"Today":0.003,"Power":26,"ApparentPower":25,"ReactivePower":25,"Factor":0.06,"Voltage":239,"Current":0.106}}}
-```
-If you then press `Make Pretty`, you get the nicely formatted JSON in the right half of the browser:
-```json
-{
-  "StatusSNS": {
-    "Time": "2019-09-06T20:06:19",
-    "ENERGY": {
-      "TotalStartTime": "2019-08-18T11:07:55",
-      "Total": 0.003,
-      "Yesterday": 0,
-      "Today": 0.003,
-      "Power": 26,
-      "ApparentPower": 25,
-      "ReactivePower": 25,
-      "Factor": 0.06,
-      "Voltage": 239,
-      "Current": 0.106
-    }
-  }
-}
-```
-Each last entry is relevant for the path to the desired value before the indentation depth increases. These entries are lined up and separated by a period. At the end of this path there must be the name whose value is to be extracted.
+The JSON path can be determined relatively easily with the [JSON Path Finder](https://jsonpathfinder.com/): Simply insert the JSON on the _left side_ (can be taken from the log if the *Smart Appliance Enabler* already communicated with this device). Then you can open the data structure on the _right side_ and select the desired value. The respective JSON path is then displayed above, beginning with `x`. When entering the path in the *Smart Appliance Enabler*, this `x` must be replaced by a `$`.
 
-For the "Power" value, the path results accordingly as:
-`StatusSNS.ENERGY.Power`
+![JSON Path Finder](../pics/JsonPathFinder.png)
 
-When configuring the path in the *Smart Appliance Enabler*, this path must be preceded by a `$.`, i.e. for the example above, the following must be configured in the *Smart Appliance Enabler*:
+For the example above, the *Smart Appliance Enabler* must be configured:
 
 `Extraction path`: `$.StatusSNS.ENERGY.Power`
 

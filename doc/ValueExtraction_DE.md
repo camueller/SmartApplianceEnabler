@@ -8,36 +8,11 @@ Diese Methode zur Wert-Extraktion funktioniert nur, wenn die Antwort im JSON-For
 
 Ob eine Antwort im JSON-Format vorliegt lässt sich relativ einfach an den geschweiften Klammern erkennen, welche deren Struktur bestimmen. 
 
-Zur Bestimmung des JSON-Pfaded ist es hilfreich, wenn man die JSON-Antwort so formatiert, dass die Struktur erkennbar ist. Dazu eignet sich beispielsweise [JSON Pretty Print](https://jsonformatter.org/json-pretty-print), bei dem man in der linken Browser-Hälfte die unformatierte JSON-Antwort einträgt (kann aus dem Log entnommen werden, wenn der *Smart Appliance Enabler* bereits mit diesem Gerät kommuniziert):
-```json
-{"StatusSNS":{"Time":"2019-09-06T20:06:19","ENERGY":{"TotalStartTime":"2019-08-18T11:07:55","Total":0.003,"Yesterday":0.000,"Today":0.003,"Power":26,"ApparentPower":25,"ReactivePower":25,"Factor":0.06,"Voltage":239,"Current":0.106}}}
-```
-Wenn man danach auf `Make Pretty` drückt, erhält man in der rechten Browser-Hälfte das schön formatierte JSON:
-```json
-{
-  "StatusSNS": {
-    "Time": "2019-09-06T20:06:19",
-    "ENERGY": {
-      "TotalStartTime": "2019-08-18T11:07:55",
-      "Total": 0.003,
-      "Yesterday": 0,
-      "Today": 0.003,
-      "Power": 26,
-      "ApparentPower": 25,
-      "ReactivePower": 25,
-      "Factor": 0.06,
-      "Voltage": 239,
-      "Current": 0.106
-    }
-  }
-}
-```
-Für den Pfad zum gewünschten Wert ist jeweils jeder letzte Eintrag relevant, bevor die Einrücktiefe zunimmt. Diese Einträge werden aneinandergereiht und durch einen Punkt getrennt. Am Ende dieses Pfades muss der Name stehen, dessen Wert extrahiert werden soll.
+Der JSON-Pfad lässt sich relativ einfach mit dem [JSON Path Finder](https://jsonpathfinder.com/) betimmen: Einfach das JSON auf der _linken Seite_ einfügen (kann aus dem Log entnommen werden, wenn der *Smart Appliance Enabler* bereits mit diesem Gerät kommuniziert). Danach kann man auf der _rechten Seite_ die Datenstruktur aufklappen und den gewünschten Wert selektieren. Der jeweilige JSON-Pfad (englisch: path) wird dann oberhalb angezeigt, beginnend mit `x`. Bei der Übernahme des Pfades in den *Smart Appliance Enabler* muss dieses `x` durch ein `$` ersetzt werden.
 
-Für den Wert "Power" ergibt sich der Pfad entsprechend als:
-`StatusSNS.ENERGY.Power`
+![JSON Path Finder](../pics/JsonPathFinder.png)
 
-Bei der Konfiguration des Pfades im *Smart Appliance Enabler* muss diesem Pfad noch ein `$.` vorangestellt werden, d.h. für obiges Beispiel muss im *Smart Appliance Enabler* konfiguriert werden:
+Für obiges Beispiel muss im *Smart Appliance Enabler* konfiguriert werden:
 
 `Pfad für Extraktion`: `$.StatusSNS.ENERGY.Power`
 
