@@ -106,6 +106,7 @@ public class ApplianceManager implements Runnable {
     }
 
     private Appliances loadAppliances() {
+        // FIXME: use FileContentPreProcessor
         return fileHandler.load(Appliances.class, content -> {
             if(content.contains("SmartApplianceEnabler/v1.5") || content.contains("SmartApplianceEnabler/v1.6")) {
                 content = content.replaceAll("gpio=\"0\"", "gpioNew=\"17\"");

@@ -18,6 +18,7 @@
 
 package de.avanux.smartapplianceenabler.util;
 
+// FIXME migrate from ApplianceManager.loadAppliances()
 public interface FileContentPreProcessor {
     String process(String input);
 }
