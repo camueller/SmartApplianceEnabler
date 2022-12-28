@@ -86,7 +86,7 @@ The [configuration](doc/Configuration_EN.md) of the *Smart Appliance Enabler* is
 The status of all controllable devices is clearly displayed in the [Status display](doc/Status_EN.md), whereby the status of each device is visualized by a **traffic light**. The traffic light can also be used for **manual control**.
 
 <a><img align="left" src="pics/mqtt-logo.png"></a>
-In addition, the *Smart Appliance Enabler* supports [Node-RED by exporting flows for the configured devices so that they can be visualized in the Node-RED dashboard](doc/NodeRED_EN.md). In addition, MQTT can be used to integrate the *Smart Appliance Enabler* with other automation platforms.
+In addition, the *Smart Appliance Enabler* supports [Node-RED by exporting flows for the configured devices so that they can be visualized in the Node-RED dashboard](doc/NodeRED_EN.md). In addition, the [MQTT messages of the *Smart Appliance Enabler*](doc/MQTT_EN.md) can be used to integrate with other automation platforms.
 
 In the following video you can get an impression of the configuration of the *Smart Appliance Enabler*. This video was created as part of conducting automated tests to ensure the quality of the *Smart Appliance Enabler*.
 

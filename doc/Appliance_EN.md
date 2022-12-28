@@ -29,7 +29,7 @@ The value for the manufacturer (e.g. `Bosch`) is only used for the display in th
 ### Name
 The name (e.g. `SMI12345XV3`) is only used for the display in the *Smart Appliance Enabler* and in the *Sunny Portal*.
 
-### Typ
+### Type
 The `type` is also a central feature of a appliance.
 
 In order to be able to configure a appliance as a wallbox, `EV charger` must be set here.

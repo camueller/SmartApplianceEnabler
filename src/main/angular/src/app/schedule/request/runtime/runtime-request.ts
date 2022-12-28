@@ -16,7 +16,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export class RuntimeRequest {
+import {Request} from '../request';
+
+export class RuntimeRequest extends Request {
 
   static get TYPE(): string {
     return 'de.avanux.smartapplianceenabler.schedule.RuntimeRequest';
@@ -27,6 +29,7 @@ export class RuntimeRequest {
   max: number;
 
   public constructor(init?: Partial<RuntimeRequest>) {
+    super(init as Request);
     Object.assign(this, init);
   }
 }

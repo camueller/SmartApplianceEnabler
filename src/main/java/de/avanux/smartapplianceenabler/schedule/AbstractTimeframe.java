@@ -27,9 +27,6 @@ abstract public class AbstractTimeframe {
 
     protected TimeframeInterval createTimeframeInterval(Interval interval, Schedule schedule) {
         Request clonedRequest = SerializationUtils.clone(schedule.getRequest());
-        // "enabled" has to be transient since it is not contained in XML; therefore it has to be set after cloning
-        clonedRequest.setEnabled(true);
-
         TimeframeInterval timeframeInterval = new TimeframeInterval(interval, clonedRequest);
         return timeframeInterval;
     }

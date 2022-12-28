@@ -539,16 +539,19 @@
     </xs:complexType>
 
     <xs:complexType name="RuntimeRequestType">
+        <xs:attribute name="enabled" type="xs:boolean" />
         <xs:attribute name="min" type="xs:int"/>
         <xs:attribute name="max" type="xs:int" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="EnergyRequestType">
+        <xs:attribute name="enabled" type="xs:boolean" />
         <xs:attribute name="min" type="xs:int"/>
         <xs:attribute name="max" type="xs:int" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="SocRequestType">
+        <xs:attribute name="enabled" type="xs:boolean" />
         <xs:attribute name="evId" type="xs:int" use="required"/>
         <xs:attribute name="soc" type="xs:int" use="required"/>
     </xs:complexType>

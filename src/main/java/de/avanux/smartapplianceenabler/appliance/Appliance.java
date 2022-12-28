@@ -307,8 +307,18 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             mqttClient.subscribe(Meter.TOPIC, true, (topic, message) -> {
                 meterMessage = (MeterMessage) message;
             });
+            mqttClient.subscribe(MqttEventName.WrappedControlSwitchOnDetected, (topic, message) -> {
+                logger.debug("{} Handling event WrappedControlSwitchOnDetected", id);
+                if(control instanceof StartingCurrentSwitch) {
+                    mqttClient.publish(MqttEventName.EnableRuntimeRequest, new MqttMessage(now));
+                }
+            });
             mqttClient.subscribe(MqttEventName.WrappedControlSwitchOffDetected, (topic, message) -> {
+                logger.debug("{} Handling event WrappedControlSwitchOffDetected", id);
                 publishControlMessage(now, false, null);
+                if(control instanceof StartingCurrentSwitch) {
+                    mqttClient.publish(MqttEventName.DisableRuntimeRequest, new MqttMessage(now));
+                }
             });
         }
         if(meter != null) {

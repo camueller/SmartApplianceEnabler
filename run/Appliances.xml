@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v2.0">
-    <Appliance id="F-00000001-000000000001-00">
-        <MeterReportingSwitch />
-        <MasterElectricityMeter slaveSwitchOn="true">
-            <HttpElectricityMeter contentProtocol="JSON">
-                <HttpRead url="http://speisepumpe/cm?cmnd=Status%208">
-                    <HttpReadValue name="Energy" path="$.StatusSNS.ENERGY.Total"/>
-                </HttpRead>
-                <Notifications/>
-            </HttpElectricityMeter>
-        </MasterElectricityMeter>
-    </Appliance>
     <Appliance id="F-00000001-000000000008-00">
-        <SwitchOption powerThreshold="20" switchOnDetectionDuration="120" switchOffDetectionDuration="60">
+        <StartingCurrentSwitch>
             <HttpSwitch>
                 <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
                     <HttpWriteValue name="On"/>
@@ -21,12 +10,17 @@
                     <HttpWriteValue name="Off"/>
                 </HttpWrite>
             </HttpSwitch>
-        </SwitchOption>
-        <SlaveElectricityMeter masterElectricityMeterApplianceId="F-00000001-000000000001-00"/>
+        </StartingCurrentSwitch>
+        <HttpElectricityMeter pollInterval="20" contentProtocol="JSON">
+            <HttpRead url="http://tasmota/cm?cmnd=Status%208">
+                <HttpReadValue name="Energy" path="$.StatusSNS.ENERGY.Total"/>
+            </HttpRead>
+            <Notifications/>
+        </HttpElectricityMeter>
         <Schedule enabled="true">
             <RuntimeRequest min="0" max="300"/>
             <DayTimeframe>
-                <Start hour="6" minute="0" second="0"/>
+                <Start hour="4" minute="0" second="0"/>
                 <End hour="20" minute="0" second="0"/>
             </DayTimeframe>
         </Schedule>

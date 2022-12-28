@@ -13,4 +13,6 @@
            required="{{formHandler.isRequired('soc')}}">
     <mat-error *ngIf="errors.soc">{{errors.soc}}</mat-error>
   </mat-form-field>
+  <mat-checkbox formControlName="enabledExternally"
+  >{{'ScheduleRequestRuntimeComponent.enabled' | translate}}</mat-checkbox>
 </div>

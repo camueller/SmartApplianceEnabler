@@ -27,16 +27,20 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-@XmlTransient
+@XmlAccessorType(XmlAccessType.FIELD)
 abstract public class AbstractRequest implements Request {
+    @XmlAttribute
+    private Boolean enabled = true;
     private transient String applianceId;
     private transient Meter meter;
     private transient boolean next;
-    private transient boolean enabled;
     private transient boolean enabledBefore;
     private transient int runtimeUntilLastStatusChange;
     private transient LocalDateTime controlStatusChangedAt;

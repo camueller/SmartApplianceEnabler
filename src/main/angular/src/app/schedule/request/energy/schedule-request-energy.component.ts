@@ -74,9 +74,11 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
       [Validators.pattern(InputValidatorPatterns.INTEGER)]);
     this.formHandler.addFormControl(this.form, 'maxEnergy', this.maxEnergy,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.formHandler.addFormControl(this.form, 'enabledExternally', !this.energyRequest.enabled);
   }
 
   updateModelFromForm(): EnergyRequest | undefined {
+    const enabled = !this.form.controls.enabledExternally.value;
     const minEnergy = getValidInt(this.form.controls.minEnergy.value);
     const maxEnergy = getValidInt(this.form.controls.maxEnergy.value);
 
@@ -84,6 +86,7 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
       return undefined;
     }
 
+    this.energyRequest.enabled = enabled;
     this.energyRequest.min = minEnergy;
     this.energyRequest.max = maxEnergy;
     return this.energyRequest;

@@ -88,9 +88,11 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
     this.formHandler.addFormControl(this.form, 'evId', this.evId, Validators.required);
     this.formHandler.addFormControl(this.form, 'soc', this.soc,
       [Validators.required, Validators.pattern(InputValidatorPatterns.PERCENTAGE)]);
+    this.formHandler.addFormControl(this.form, 'enabledExternally', !this.socRequest.enabled);
   }
 
   updateModelFromForm(): SocRequest | undefined {
+    const enabled = !this.form.controls.enabledExternally.value;
     const evId = this.form.controls.evId.value;
     const soc = this.form.controls.soc.value;
 
@@ -98,6 +100,7 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
       return undefined;
     }
 
+    this.socRequest.enabled = enabled;
     this.socRequest.evId = evId;
     this.socRequest.soc = soc;
     return this.socRequest;

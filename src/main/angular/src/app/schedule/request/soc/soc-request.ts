@@ -16,7 +16,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export class SocRequest {
+import {Request} from '../request';
+
+export class SocRequest extends Request {
 
   static get TYPE(): string {
     return 'de.avanux.smartapplianceenabler.schedule.SocRequest';
@@ -27,6 +29,7 @@ export class SocRequest {
   evId: number;
 
   public constructor(init?: Partial<SocRequest>) {
+    super(init as Request);
     Object.assign(this, init);
   }
 }

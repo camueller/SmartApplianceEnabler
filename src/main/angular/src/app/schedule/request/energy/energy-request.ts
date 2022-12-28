@@ -16,7 +16,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export class EnergyRequest {
+import {Request} from '../request';
+
+export class EnergyRequest extends Request {
 
   static get TYPE(): string {
     return 'de.avanux.smartapplianceenabler.schedule.EnergyRequest';
@@ -27,6 +29,7 @@ export class EnergyRequest {
   max: number;
 
   public constructor(init?: Partial<EnergyRequest>) {
+    super(init as Request);
     Object.assign(this, init);
   }
 }

@@ -2,34 +2,8 @@
 <Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1">
     <DeviceInfo>
         <Identification>
-            <DeviceId>F-00000001-000000000001-00</DeviceId>
-            <DeviceName>WP</DeviceName>
-            <DeviceType>HeatPump</DeviceType>
-            <DeviceSerial>123456</DeviceSerial>
-            <DeviceVendor>Viessmann</DeviceVendor>
-        </Identification>
-        <Characteristics>
-            <MaxPowerConsumption>4000</MaxPowerConsumption>
-        </Characteristics>
-        <Capabilities>
-            <CurrentPower>
-                <Method>Measurement</Method>
-            </CurrentPower>
-            <Timestamps>
-                <AbsoluteTimestamps>false</AbsoluteTimestamps>
-            </Timestamps>
-            <Interruptions>
-                <InterruptionsAllowed>true</InterruptionsAllowed>
-            </Interruptions>
-            <Requests>
-                <OptionalEnergy>false</OptionalEnergy>
-            </Requests>
-        </Capabilities>
-    </DeviceInfo>
-    <DeviceInfo>
-        <Identification>
             <DeviceId>F-00000001-000000000008-00</DeviceId>
-            <DeviceName>WP SG Ready</DeviceName>
+            <DeviceName>Tasmota</DeviceName>
             <DeviceType>Other</DeviceType>
             <DeviceSerial>222222</DeviceSerial>
             <DeviceVendor>Viessmann</DeviceVendor>

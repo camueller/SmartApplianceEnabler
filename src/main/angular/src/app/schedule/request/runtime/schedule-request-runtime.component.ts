@@ -80,9 +80,11 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
       [Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
     this.formHandler.addFormControl(this.form, 'maxRuntime', this.maxRuntime,
       [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
+    this.formHandler.addFormControl(this.form, 'enabledExternally', !this.runtimeRequest.enabled);
   }
 
   updateModelFromForm(): RuntimeRequest | undefined {
+    const enabled = !this.form.controls.enabledExternally.value;
     const minRuntime = this.minRuntimeComp.updateModelFromForm();
     const maxRuntime = this.maxRuntimeComp.updateModelFromForm();
 
@@ -91,6 +93,7 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
       return undefined;
     }
 
+    this.runtimeRequest.enabled = enabled;
     this.runtimeRequest.min = minRuntime && minRuntime.length > 0 ? TimeUtil.toSeconds(minRuntime) : undefined;
     this.runtimeRequest.max = TimeUtil.toSeconds(maxRuntime);
     return this.runtimeRequest;

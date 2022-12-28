@@ -405,6 +405,7 @@
   "ScheduleTimeframeConsecutivedaysComponent.error.startTime_pattern": "The start time has to be specified as 'Hours:Minutes'",
   "ScheduleTimeframeConsecutivedaysComponent.error.endTime_pattern": "The end time has to be specified as 'Hours:Minutes'",
 
+  "ScheduleRequestRuntimeComponent.enabled": "enabled externally",
   "ScheduleRequestRuntimeComponent.minRuntime": "Min. runtime [HH:MM]",
   "ScheduleRequestRuntimeComponent.minRuntime.tooltip": "If a minimal runtime is configured this runtime will be guaranteed. It may be extended up to the maximum runtime if excess energy is available. If a value of 0:00 is configured the appliance will only run if excess energy is available.",
   "ScheduleRequestRuntimeComponent.maxRuntime": "Max. runtime [HH:MM]",
@@ -412,6 +413,7 @@
   "ScheduleRequestRuntimeComponent.error.minRuntime_pattern": "The minimal runtime has to be specified as 'Hours:Minutes'",
   "ScheduleRequestRuntimeComponent.error.maxRuntime_pattern": "The maximum runtime has to be specified as 'Hours:Minutes'",
 
+  "ScheduleRequestEnergyComponent.enabled": "enabled externally",
   "ScheduleRequestEnergyComponent.minEnergy": "Min. Energy [Wh]",
   "ScheduleRequestEnergyComponent.minEnergy.tooltip": "If minimal energy is configured this energy will be guaranteed. It may be extended up to the maximum energy if excess energy is available. If a value of 0:00 is configured the appliance will only run if excess energy is available.",
   "ScheduleRequestEnergyComponent.maxEnergy": "Max. Energy [Wh]",
@@ -419,6 +421,7 @@
   "ScheduleRequestEnergyComponent.error.minEnergy_pattern": "The minimal energy has to be specified in Wh",
   "ScheduleRequestEnergyComponent.error.maxEnergy_pattern": "The maximum energy has to be specified in Wh",
 
+  "ScheduleRequestSocComponent.enabled": "enabled externally",
   "ScheduleRequestSocComponent.evId": "Vehicle",
   "ScheduleRequestSocComponent.soc": "Target SOC",
   "ScheduleRequestSocComponent.error.soc_pattern": "SOC has to be a percentage",

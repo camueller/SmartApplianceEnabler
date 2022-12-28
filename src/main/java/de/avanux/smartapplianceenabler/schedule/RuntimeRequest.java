@@ -45,31 +45,6 @@ public class RuntimeRequest extends AbstractRequest {
         setMax(max);
     }
 
-    @Override
-    public void init() {
-        super.init();
-        getMqttClient().subscribe(MqttEventName.WrappedControlSwitchOnDetected, (topic, message) -> {
-            getLogger().debug("{} Handling event StartingCurrentDetected", getApplianceId());
-            if(hasStartingCurrentSwitch()) {
-                resetRuntime();
-                setEnabled(true);
-            }
-        });
-        getMqttClient().subscribe(MqttEventName.WrappedControlSwitchOffDetected, (topic, message) -> {
-            getLogger().debug("{} Handling event FinishedCurrentDetected", getApplianceId());
-            if(hasStartingCurrentSwitch()) {
-                setEnabled(false);
-                resetEnabledBefore();
-            }
-        });
-    }
-
-    public void remove() {
-        super.remove();
-        getMqttClient().unsubscribe(MqttEventName.WrappedControlSwitchOnDetected);
-        getMqttClient().unsubscribe(MqttEventName.WrappedControlSwitchOffDetected);
-    }
-
     protected Logger getLogger() {
         return LoggerFactory.getLogger(RuntimeRequest.class);
     }

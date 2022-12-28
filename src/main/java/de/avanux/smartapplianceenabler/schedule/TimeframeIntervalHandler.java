@@ -64,6 +64,31 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
 
     public void setMqttClient(MqttClient mqttClient) {
         this.mqttClient = mqttClient;
+        mqttClient.subscribe(MqttEventName.EnableRuntimeRequest, (topic, message) -> {
+            logger.debug("{} Handling event EnableRuntimeRequest", applianceId);
+            var timeframe = getFirstTimeframeInterval();
+            if(timeframe != null) {
+                var runtimeRequest = (RuntimeRequest) timeframe.getRequest();
+                runtimeRequest.resetRuntime();
+                runtimeRequest.setEnabled(true);
+            }
+            else {
+                logger.error("No timeframe found.");
+            }
+
+        });
+        mqttClient.subscribe(MqttEventName.DisableRuntimeRequest, (topic, message) -> {
+            logger.debug("{} Handling event DisableRuntimeRequest", applianceId);
+            var timeframe = getFirstTimeframeInterval();
+            if(timeframe != null) {
+                var runtimeRequest = (RuntimeRequest) timeframe.getRequest();
+                runtimeRequest.setEnabled(false);
+                runtimeRequest.resetEnabledBefore();
+            }
+            else {
+                logger.error("No timeframe found.");
+            }
+        });
         mqttClient.subscribe(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC, true, (topic, message) -> {
             if(message instanceof ControlMessage && topic.equals(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC)) {
                 wrappedControlMessage = (ControlMessage) message;

@@ -88,7 +88,7 @@ Die [Konfiguration](doc/Configuration_DE.md) des *Smart Appliance Enabler* erfol
 Der Status aller steuerbaren Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersichtlich dargestellt, wobei der Status jedes Gerätes durch eine **Ampel** visualisiert wird. Die Ampel kann auch zur **manuellen Steuerung** verwendet werden.
 
 <a><img align="left" src="pics/mqtt-logo.png"></a>
-Zusätzlich unterstützt der *Smart Appliance Enabler* [Node-RED indem er für die konfigurierten Geräte Flows exportiert, damit diese im Dashboard von Node-RED visualisiert werden](doc/NodeRED_DE.md). Darüber hinaus kann MQTT zur Integration des *Smart Appliance Enabler* mit anderen Automatisierungsplatformen verwendet werden.
+Zusätzlich unterstützt der *Smart Appliance Enabler* [Node-RED indem er für die konfigurierten Geräte Flows exportiert, damit diese im Dashboard von Node-RED visualisiert werden](doc/NodeRED_DE.md). Darüber hinaus können die [MQTT-Nachrichten des *Smart Appliance Enabler*](doc/MQTT_DE.md) zur Integration des mit anderen Automatisierungsplatformen verwendet werden.
 
 In dem nachfolgenden Video kann man einen Eindruck von der Konfiguration des *Smart Appliance Enabler* gewinnen. Dieses Video wurde im Rahmen der Durchführung automatisierter Tests erstellt, welche die Qualität des *Smart Appliance Enabler* sicherstellen sollen.
 

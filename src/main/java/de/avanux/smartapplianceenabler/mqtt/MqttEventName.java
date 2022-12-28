@@ -21,14 +21,16 @@ package de.avanux.smartapplianceenabler.mqtt;
 public class MqttEventName {
     public static final String TOPIC = "Event";
 
-    public static final MqttEventName WrappedControlSwitchOnDetected = new MqttEventName("WrappedControlSwitchOnDetected");
-    public static final MqttEventName WrappedControlSwitchOffDetected = new MqttEventName("WrappedControlSwitchOffDetected");
-    public static final MqttEventName EVChargerStateChanged = new MqttEventName("EVChargerStateChanged");
+    public static final MqttEventName EnableRuntimeRequest = new MqttEventName("EnableRuntimeRequest");
+    public static final MqttEventName DisableRuntimeRequest = new MqttEventName("DisableRuntimeRequest");
     public static final MqttEventName EVChargerSocChanged = new MqttEventName("EVChargerSocChanged");
+    public static final MqttEventName EVChargerStateChanged = new MqttEventName("EVChargerStateChanged");
     public static final MqttEventName SempDevice2EM = new MqttEventName("SempDevice2EM");
     public static final MqttEventName SempEM2Device = new MqttEventName("SempEM2Device");
     public static final MqttEventName SempGetDeviceInfo = new MqttEventName("SempGetDeviceInfo");
     public static final MqttEventName SempGetDeviceStatus = new MqttEventName("SempGetDeviceStatus");
+    public static final MqttEventName WrappedControlSwitchOffDetected = new MqttEventName("WrappedControlSwitchOffDetected");
+    public static final MqttEventName WrappedControlSwitchOnDetected = new MqttEventName("WrappedControlSwitchOnDetected");
     private String name;
 
     public MqttEventName(String name) {
