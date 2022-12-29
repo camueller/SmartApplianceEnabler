@@ -134,16 +134,21 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public void update() {
-        Integer batteryCapacity = socVariablesInitialized().batteryCapacity;
-        if(batteryCapacity != null && this.forceEnergyCalculation) {
-            this.energy = calculateEnergy(batteryCapacity);
-            this.forceEnergyCalculation = false;
-            if(energy != null && energy <= 0) {
-                // make sure we rely on up-to-date values
+        if(this.forceEnergyCalculation) {
+            Integer batteryCapacity = socVariablesInitialized().batteryCapacity;
+            if(batteryCapacity != null) {
                 this.energy = calculateEnergy(batteryCapacity);
-                if(energy <= 0) {
-                    setEnabled(false);
+                this.forceEnergyCalculation = false;
+                if(energy != null && energy <= 0) {
+                    // make sure we rely on up-to-date values
+                    this.energy = calculateEnergy(batteryCapacity);
+                    if(energy <= 0) {
+                        setEnabled(false);
+                    }
                 }
+            }
+            else {
+                getLogger().warn("{}: Cannot calculate energy since battery capacity is missing", getApplianceId());
             }
         }
     }
