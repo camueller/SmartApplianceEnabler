@@ -198,6 +198,7 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
     public void updateSoc(LocalDateTime now, Request request, boolean isCharging) {
         boolean socChanged = false;
         if(this.socCalculationRequired || isCharging) {
+            socValues.batteryCapacity = getVehicle(this.connectedVehicleId).getBatteryCapacity();
             int calculatedCurrentSoc = calculateCurrentSoc();
             socChanged = this.socValues.current != null && this.socValues.current != calculatedCurrentSoc;
             this.socValues.current = calculatedCurrentSoc;
@@ -310,7 +311,6 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
                 socValues.initial = result.soc.intValue();
                 socValues.initialTimestamp = now;
                 socValues.current = result.soc.intValue();
-                socValues.batteryCapacity = getVehicle(this.connectedVehicleId).getBatteryCapacity();
             }
             socValues.retrieved = result.soc.intValue();
             if(socLastRetrieved != null) {
