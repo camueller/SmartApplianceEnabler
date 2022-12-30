@@ -16,29 +16,29 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {MatSidenav} from '@angular/material/sidenav';
-import {filter, Subscription} from 'rxjs';
-import {MediaChange, MediaObserver} from '@angular/flex-layout';
-import {map} from 'rxjs/operators';
+import {Subject, Subscription, takeUntil} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
 import {LanguageService} from './shared/language-service';
+import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav')
   sidenav: MatSidenav;
   watcher: Subscription;
-  activeMediaQueryAlias = '';
+  destroyed = new Subject<void>();
+  isSmallScreen = false;
 
   constructor(
+    breakpointObserver: BreakpointObserver,
     private route: ActivatedRoute,
-    private mediaObserver: MediaObserver,
     private translate: TranslateService,
     private languageService: LanguageService
   ) {
@@ -50,6 +50,11 @@ export class AppComponent implements OnInit {
     if (currentLanguage !== 'de') {
       this.setLanguage('en')
     }
+
+    breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small])
+      .pipe(takeUntil(this.destroyed))
+      .subscribe(result => this.isSmallScreen = result.matches)
   }
 
   ngOnInit(): void {
@@ -63,21 +68,19 @@ export class AppComponent implements OnInit {
           this.setLanguage(params?.lang)
         }
       });
-    this.watcher = this.mediaObserver.asObservable()
-      .pipe(
-        filter((changes: MediaChange[]) => changes.length > 0),
-        map((changes: MediaChange[]) => changes[0])
-      ).subscribe((change: MediaChange) => {
-        this.activeMediaQueryAlias = change.mqAlias;
-      });
+  }
+
+  ngOnDestroy() {
+    this.destroyed.next();
+    this.destroyed.complete();
   }
 
   get sideNavMode() {
-    return this.activeMediaQueryAlias === 'xs' ? 'over' : 'side';
+    return this.isSmallScreen ? 'over' : 'side';
   }
 
   closeSideNav(force: boolean) {
-    if (force || this.activeMediaQueryAlias === 'xs') {
+    if (force || this.isSmallScreen) {
       this.sidenav.close();
     }
   }

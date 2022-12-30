@@ -13,7 +13,6 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatListModule} from '@angular/material/list';
 import {MatCardModule} from '@angular/material/card';
 import {MessageboxComponent} from './messagebox/messagebox.component';
-import {FlexModule} from '@angular/flex-layout';
 import {TimepickerComponent} from './timepicker/timepicker.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {HelpComponent} from './help/help.component';
@@ -32,7 +31,6 @@ import {SafeurlPipe} from '../shared/safe-url.pipe';
   ],
   imports: [
     CommonModule,
-    FlexModule,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,

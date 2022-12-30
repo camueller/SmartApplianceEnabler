@@ -28,19 +28,17 @@ import {PageNotFoundComponent} from './not-found.component';
 import {SettingsComponent} from './settings/settings.component';
 import {ApplianceResolver} from './appliance/appliance-resolver.service';
 import {AppliancesReloadService} from './appliance/appliances-reload-service';
-import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {SettingsService} from './settings/settings-service';
 import {SettingsResolver} from './settings/settings-resolver.service';
 import {SettingsDefaultsResolver} from './settings/settings-defaults-resolver.service';
 import {DialogService} from './shared/dialog.service';
 import {CanDeactivateGuard} from './shared/can-deactivate-guard.service';
-import {ErrorInterceptor} from './shared/http-error-interceptor';
 import {Logger, Options} from './log/logger';
 import {Level} from './log/level';
 import {MaterialModule} from './material/material.module';
 import {LayoutComponent} from './layout/layout.component';
-import {FlexLayoutModule} from '@angular/flex-layout';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HeaderComponent} from './navigation/header/header.component';
 import {SidenavComponent} from './navigation/sidenav/sidenav.component';
@@ -71,7 +69,6 @@ import {LanguageService} from './shared/language-service';
     BrowserAnimationsModule,
     BrowserModule,
     ControlModule,
-    FlexLayoutModule,
     HttpClientModule,
     MaterialModule,
     MeterModule,
