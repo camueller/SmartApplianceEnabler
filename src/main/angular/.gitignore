@@ -20,14 +20,8 @@
 .settings/
 *.sublime-workspace
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
 # misc
+/.angular
 /.sass-cache
 /connect.lock
 /coverage
@@ -35,6 +29,7 @@
 npm-debug.log
 testem.log
 /typings
+/package-lock.json
 yarn-error.log
 
 # e2e
