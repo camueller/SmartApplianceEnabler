@@ -66,6 +66,7 @@
       <mat-label>{{'ElectricVehicleComponent.script.extractionRegex' | translate}}</mat-label>
       <input matInput type="text" formControlName="scriptExtractionRegex"
              matTooltip="{{'ElectricVehicleComponent.script.extractionRegex.tooltip' | translate}}"
+             [matTooltipDisabled]="'matTooltipDisabled' | env"
              required="{{formHandler.isRequired('scriptExtractionRegex')}}">
       <mat-error *ngIf="errors.scriptExtractionRegex">{{errors.scriptExtractionRegex}}</mat-error>
     </mat-form-field>
@@ -73,6 +74,7 @@
       <mat-label>{{'ElectricVehicleComponent.script.pluginStatusExtractionRegex' | translate}}</mat-label>
       <input matInput type="text" formControlName="pluginStatusExtractionRegex"
              matTooltip="{{'ElectricVehicleComponent.script.pluginStatusExtractionRegex.tooltip' | translate}}"
+             [matTooltipDisabled]="'matTooltipDisabled' | env"
              required="{{formHandler.isRequired('pluginStatusExtractionRegex')}}">
       <mat-error *ngIf="errors.pluginStatusExtractionRegex">{{errors.pluginStatusExtractionRegex}}</mat-error>
     </mat-form-field>
@@ -80,6 +82,7 @@
       <mat-label>{{'ElectricVehicleComponent.script.pluginTimeExtractionRegex' | translate}}</mat-label>
       <input matInput type="text" formControlName="pluginTimeExtractionRegex"
              matTooltip="{{'ElectricVehicleComponent.script.pluginTimeExtractionRegex.tooltip' | translate}}"
+             [matTooltipDisabled]="'matTooltipDisabled' | env"
              required="{{formHandler.isRequired('pluginTimeExtractionRegex')}}">
       <mat-error *ngIf="errors.pluginTimeExtractionRegex">{{errors.pluginTimeExtractionRegex}}</mat-error>
     </mat-form-field>
@@ -87,6 +90,7 @@
       <mat-label>{{'ElectricVehicleComponent.script.latitudeExtractionRegex' | translate}}</mat-label>
       <input matInput type="text" formControlName="latitudeExtractionRegex"
              matTooltip="{{'ElectricVehicleComponent.script.latitudeExtractionRegex.tooltip' | translate}}"
+             [matTooltipDisabled]="'matTooltipDisabled' | env"
              required="{{formHandler.isRequired('latitudeExtractionRegex')}}">
       <mat-error *ngIf="errors.latitudeExtractionRegex">{{errors.latitudeExtractionRegex}}</mat-error>
     </mat-form-field>
@@ -94,6 +98,7 @@
       <mat-label>{{'ElectricVehicleComponent.script.longitudeExtractionRegex' | translate}}</mat-label>
       <input matInput type="text" formControlName="longitudeExtractionRegex"
              matTooltip="{{'ElectricVehicleComponent.script.longitudeExtractionRegex.tooltip' | translate}}"
+             [matTooltipDisabled]="'matTooltipDisabled' | env"
              required="{{formHandler.isRequired('longitudeExtractionRegex')}}">
       <mat-error *ngIf="errors.longitudeExtractionRegex">{{errors.longitudeExtractionRegex}}</mat-error>
     </mat-form-field>
@@ -105,6 +110,7 @@
       <input matInput type="text" formControlName="scriptUpdateSocAfterIncrease"
              placeholder="{{controlDefaults.evChargerDefaults.updateSocAfterIncrease}}"
              matTooltip="{{'ElectricVehicleComponent.script.update.afterIncrease.tooltip' | translate}}"
+             [matTooltipDisabled]="'matTooltipDisabled' | env"
              required="{{formHandler.isRequired('scriptUpdateSocAfterIncrease')}}">
       <mat-error *ngIf="errors.scriptUpdateSocAfterIncrease">{{errors.scriptUpdateSocAfterIncrease}}</mat-error>
     </mat-form-field>

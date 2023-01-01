@@ -16,11 +16,12 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 
-<form class="ApplianceComponent" [formGroup]="form" (ngSubmit)="submitForm()">
+<form class="ApplianceComponent mat-typography" [formGroup]="form" (ngSubmit)="submitForm()">
   <mat-form-field class="ApplianceComponent__id">
     <mat-label>{{'ApplianceComponent.id' | translate}}</mat-label>
     <input matInput type="text" placeholder="F-00000000-000000000000-00" formControlName="id"
            matTooltip="{{'ApplianceComponent.id.tooltip' | translate}}"
+           [matTooltipDisabled]="'matTooltipDisabled' | env"
            required="{{formHandler.isRequired('id')}}">
     <mat-error *ngIf="errors.id">{{errors.id}}</mat-error>
   </mat-form-field>
@@ -64,6 +65,7 @@
         <mat-label>{{'ApplianceComponent.minPowerConsumption' | translate}}</mat-label>
         <input matInput type="text" formControlName="minPowerConsumption"
                matTooltip="{{'ApplianceComponent.minPowerConsumption.tooltip' | translate}}"
+               [matTooltipDisabled]="'matTooltipDisabled' | env"
                required="{{formHandler.isRequired('minPowerConsumption')}}">
         <mat-error *ngIf="errors.minPowerConsumption">{{errors.minPowerConsumption}}</mat-error>
       </mat-form-field>
@@ -71,11 +73,13 @@
         <mat-label>{{'ApplianceComponent.maxPowerConsumption' | translate}}</mat-label>
         <input matInput type="text" formControlName="maxPowerConsumption"
                matTooltip="{{'ApplianceComponent.maxPowerConsumption.tooltip' | translate}}"
+               [matTooltipDisabled]="'matTooltipDisabled' | env"
                required="{{formHandler.isRequired('maxPowerConsumption')}}">
         <mat-error *ngIf="errors.maxPowerConsumption">{{errors.maxPowerConsumption}}</mat-error>
       </mat-form-field>
       <mat-checkbox formControlName="interruptionsAllowed"
                     matTooltip="{{'ApplianceComponent.interruptionsAllowed.tooltip' | translate}}"
+                    [matTooltipDisabled]="'matTooltipDisabled' | env"
       >{{'ApplianceComponent.interruptionsAllowed' | translate}}</mat-checkbox>
     </div>
     <div class="sae__fields" *ngIf="isInterruptionAllowed()">
@@ -83,6 +87,7 @@
         <mat-label>{{'ApplianceComponent.minOnTime' | translate}}</mat-label>
         <input matInput type="text" formControlName="minOnTime"
                matTooltip="{{'ApplianceComponent.minOnTime.tooltip' | translate}}"
+               [matTooltipDisabled]="'matTooltipDisabled' | env"
                required="{{formHandler.isRequired('minOnTime')}}">
         <mat-error *ngIf="errors.minOnTime">{{errors.minOnTime}}</mat-error>
       </mat-form-field>
@@ -90,6 +95,7 @@
         <mat-label>{{'ApplianceComponent.maxOnTime' | translate}}</mat-label>
         <input matInput type="text" formControlName="maxOnTime"
                matTooltip="{{'ApplianceComponent.maxOnTime.tooltip' | translate}}"
+               [matTooltipDisabled]="'matTooltipDisabled' | env"
                required="{{formHandler.isRequired('maxOnTime')}}">
         <mat-error *ngIf="errors.maxOnTime">{{errors.maxOnTime}}</mat-error>
       </mat-form-field>
@@ -97,6 +103,7 @@
         <mat-label>{{'ApplianceComponent.minOffTime' | translate}}</mat-label>
         <input matInput type="text" formControlName="minOffTime"
                matTooltip="{{'ApplianceComponent.minOffTime.tooltip' | translate}}"
+               [matTooltipDisabled]="'matTooltipDisabled' | env"
                required="{{formHandler.isRequired('minOffTime')}}">
         <mat-error *ngIf="errors.minOffTime">{{errors.minOffTime}}</mat-error>
       </mat-form-field>
@@ -104,6 +111,7 @@
         <mat-label>{{'ApplianceComponent.maxOffTime' | translate}}</mat-label>
         <input matInput type="text" formControlName="maxOffTime"
                matTooltip="{{'ApplianceComponent.maxOffTime.tooltip' | translate}}"
+               [matTooltipDisabled]="'matTooltipDisabled' | env"
                required="{{formHandler.isRequired('maxOffTime')}}">
         <mat-error *ngIf="errors.maxOffTime">{{errors.maxOffTime}}</mat-error>
       </mat-form-field>

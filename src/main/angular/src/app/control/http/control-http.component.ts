@@ -47,6 +47,7 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   httpReadComp: HttpReadComponent;
   @Input()
   controlDefaults: ControlDefaults;
+  @Input()
   form: UntypedFormGroup;
   formHandler: FormHandler;
   errors: { [key: string]: string } = {};

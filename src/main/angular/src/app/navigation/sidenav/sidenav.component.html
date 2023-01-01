@@ -1,85 +1,109 @@
-<mat-nav-list class="SidenavComponent">
+<mat-nav-list class="SidenavComponent mat-typography">
   <a mat-list-item (click)="onSidenavClose(true)">
-    <mat-icon>menu</mat-icon><span class="SidenavComponent__nav-caption">{{'AppComponent.closeMenu' | translate}}</span>
+    <div class="SidenavComponent__menu-item">
+      <mat-icon>menu</mat-icon>
+      <span class="SidenavComponent__nav-caption">{{'AppComponent.closeMenu' | translate}}</span>
+    </div>
   </a>
   <a mat-list-item
      routerLink="/status"
      routerLinkActive="SidenavComponent__router-link-active"
      (click)="onSidenavClose()">
-    <mat-icon>traffic</mat-icon><span class="SidenavComponent__nav-caption">{{'AppComponent.status' | translate}}</span>
+    <div class="SidenavComponent__menu-item">
+      <mat-icon>traffic</mat-icon>
+      <span class="SidenavComponent__nav-caption">{{'AppComponent.status' | translate}}</span>
+    </div>
   </a>
   <a mat-list-item
      routerLink="/settings"
      routerLinkActive="SidenavComponent__router-link-active"
      (click)="onSidenavClose()">
-    <mat-icon>settings</mat-icon><span class="SidenavComponent__nav-caption">{{'AppComponent.settings' | translate}}</span>
+    <div class="SidenavComponent__menu-item">
+      <mat-icon>settings</mat-icon>
+      <span class="SidenavComponent__nav-caption">{{'AppComponent.settings' | translate}}</span>
+    </div>
   </a>
   <a mat-list-item
      href="https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/QA_DE.md"
-     class="SidenavComponent__menu-item"
      target="_blank">
-    <mat-icon>build</mat-icon>
-    <span class="SidenavComponent__nav-caption">{{'AppComponent.help' | translate}}</span>
-    <mat-icon class="SidenavComponent__external_link">open_in_new</mat-icon>
+    <div class="SidenavComponent__menu-item">
+      <mat-icon>build</mat-icon>
+      <span class="SidenavComponent__nav-caption">{{'AppComponent.help' | translate}}</span>
+      <mat-icon class="SidenavComponent__external_link">open_in_new</mat-icon>
+    </div>
   </a>
   <a mat-list-item
      href="https://github.com/camueller/SmartApplianceEnabler/discussions"
-     class="SidenavComponent__menu-item"
      target="_blank">
-    <mat-icon>comment</mat-icon>
-    <span class="SidenavComponent__nav-caption">{{'AppComponent.forum' | translate}}</span>
-    <mat-icon class="SidenavComponent__external_link">open_in_new</mat-icon>
+    <div class="SidenavComponent__menu-item">
+      <mat-icon>comment</mat-icon>
+      <span class="SidenavComponent__nav-caption">{{'AppComponent.forum' | translate}}</span>
+      <mat-icon class="SidenavComponent__external_link">open_in_new</mat-icon>
+    </div>
   </a>
   <a mat-list-item
      href="https://github.com/camueller/SmartApplianceEnabler"
-     class="SidenavComponent__menu-item"
      target="_blank">
-    <mat-icon>home</mat-icon>
-    <span class="SidenavComponent__nav-caption">{{'AppComponent.project' | translate}}</span>
-    <mat-icon class="SidenavComponent__external_link">open_in_new</mat-icon>
+    <div class="SidenavComponent__menu-item">
+      <mat-icon>home</mat-icon>
+      <span class="SidenavComponent__nav-caption">{{'AppComponent.project' | translate}}</span>
+      <mat-icon class="SidenavComponent__external_link">open_in_new</mat-icon>
+    </div>
   </a>
 
   <a mat-list-item
      routerLink="/appliance"
      (click)="onSidenavClose()">
-    <mat-icon>add</mat-icon><span class="SidenavComponent__nav-caption">{{'AppComponent.appliance.new' | translate}}</span>
+    <div class="SidenavComponent__menu-item">
+      <mat-icon>add</mat-icon>
+      <div class="SidenavComponent__nav-caption">{{'AppComponent.appliance.new' | translate}}</div>
+    </div>
   </a>
-  <mat-divider *ngIf="hasAppliances"></mat-divider>
+  <mat-divider *ngIf="hasAppliances" class="SidenavComponent__divider"></mat-divider>
   <div *ngFor="let applianceHeader of applianceHeaders; last as last">
     <a mat-list-item
        [routerLink]="['appliance', applianceHeader.id]"
        routerLinkActive="SidenavComponent__router-link-active"
+       class="SidenavComponent__menu-item"
        (click)="onSidenavClose()">
-      <mat-icon>devices_other</mat-icon>
-      <div fxLayout="column">
-        <div class="SidenavComponent__nav-caption appliance-type">{{getTranslatedType(applianceHeader.type)}}</div>
-        <div class="SidenavComponent__appliance-name">{{applianceHeader.vendor}} {{applianceHeader.name}}</div>
+      <div class="SidenavComponent__menu-item">
+        <mat-icon>devices_other</mat-icon>
+        <div class="SidenavComponent__appliance-text">
+          <div class="SidenavComponent__nav-caption">{{getTranslatedType(applianceHeader.type)}}</div>
+          <div class="SidenavComponent__appliance-name">{{applianceHeader.vendor}} {{applianceHeader.name}}</div>
+        </div>
       </div>
     </a>
     <a mat-list-item
        [routerLink]="['meter', applianceHeader.id]"
        routerLinkActive="SidenavComponent__router-link-active"
-       class="SidenavComponent__submenu-item"
+       class="SidenavComponent__submenu-anchor"
        (click)="onSidenavClose()">
-      <mat-icon class="SidenavComponent__submenu-icon" [inline]="true">show_chart</mat-icon>
-      <span class="SidenavComponent__nav-caption">{{'AppComponent.meter' | translate}}</span>
+      <div class="SidenavComponent__submenu-item">
+        <mat-icon class="SidenavComponent__submenu-icon" [inline]="true">show_chart</mat-icon>
+        <span class="SidenavComponent__nav-caption">{{'AppComponent.meter' | translate}}</span>
+      </div>
     </a>
     <a mat-list-item
        [routerLink]="['control', applianceHeader.id]"
        routerLinkActive="SidenavComponent__router-link-active"
-       class="SidenavComponent__submenu-item"
+       class="SidenavComponent__submenu-anchor"
        (click)="onSidenavClose()">
-      <mat-icon class="SidenavComponent__submenu-icon" [inline]="true">power_settings_new</mat-icon>
-      <span class="SidenavComponent__nav-caption">{{getTranslatedControlLabel(applianceHeader.type)}}</span>
+      <div class="SidenavComponent__submenu-item">
+        <mat-icon class="SidenavComponent__submenu-icon" [inline]="true">power_settings_new</mat-icon>
+        <span class="SidenavComponent__nav-caption">{{getTranslatedControlLabel(applianceHeader.type)}}</span>
+      </div>
     </a>
     <a mat-list-item
        [routerLink]="['schedule', applianceHeader.id]"
        routerLinkActive="SidenavComponent__router-link-active"
-       class="SidenavComponent__submenu-item"
+       class="SidenavComponent__submenu-anchor"
        (click)="onSidenavClose()">
-      <mat-icon class="SidenavComponent__submenu-icon" [inline]="true">access_time</mat-icon>
-      <span class="SidenavComponent__nav-caption">{{'AppComponent.schedules' | translate}}</span>
+      <div class="SidenavComponent__submenu-item">
+        <mat-icon class="SidenavComponent__submenu-icon" [inline]="true">access_time</mat-icon>
+        <span class="SidenavComponent__nav-caption">{{'AppComponent.schedules' | translate}}</span>
+      </div>
     </a>
-    <mat-divider *ngIf="!last"></mat-divider>
+    <mat-divider *ngIf="!last" class="SidenavComponent__divider"></mat-divider>
   </div>
 </mat-nav-list>

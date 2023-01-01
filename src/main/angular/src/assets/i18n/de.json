@@ -38,7 +38,7 @@
   "ApplianceComponent.type.DishWasher": "Geschirrspüler",
   "ApplianceComponent.type.Dryer": "Trockner",
   "ApplianceComponent.type.ElectricVehicle": "Elektroauto",
-  "ApplianceComponent.type.EVCharger": "Elektroauto-Ladegerät",
+  "ApplianceComponent.type.EVCharger": "Wallbox",
   "ApplianceComponent.type.Freezer": "Gefrierschrank",
   "ApplianceComponent.type.Fridge": "Kühlschrank",
   "ApplianceComponent.type.Heater": "Heizung",

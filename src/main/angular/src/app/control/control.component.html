@@ -16,7 +16,7 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 
-<div class="ControlComponent" *ngIf="control" xmlns="http://www.w3.org/1999/html">
+<div class="ControlComponent mat-typography" *ngIf="control" xmlns="http://www.w3.org/1999/html">
   <form [formGroup]="form" (ngSubmit)="submitForm()">
     <app-control-evcharger *ngIf="isEvCharger; else notEvCharger"
                            [evCharger]="control.evCharger"

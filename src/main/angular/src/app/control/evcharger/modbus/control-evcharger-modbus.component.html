@@ -7,6 +7,7 @@
         <mat-label>{{'ControlEvchargerModbusComponent.idref' | translate}}</mat-label>
         <mat-select formControlName="idref"
                     matTooltip="{{'ControlEvchargerModbusComponent.idref.tooltip' | translate}}"
+                    [matTooltipDisabled]="'matTooltipDisabled' | env"
                     required="{{formHandler.isRequired('idref')}}">
           <mat-option *ngFor="let modbusSetting of settings.modbusSettings" [value]="modbusSetting.modbusTcpId">
             {{modbusSetting.modbusTcpId}}

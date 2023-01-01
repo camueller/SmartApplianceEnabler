@@ -19,7 +19,7 @@ export function selectorSelectByFormControlName(formControlName: string, selecto
 }
 
 export function selectorSelectedByFormControlName(formControlName: string, selectorPrefix?: string, selectorBase?: string) {
-  return selectorByFormControlName(formControlName, 'mat-select', 'span.mat-select-value-text > span', selectorPrefix, selectorBase);
+  return selectorByFormControlName(formControlName, 'mat-select', 'span.mat-mdc-select-value-text > span', selectorPrefix, selectorBase);
 }
 
 export function selectorStringByFormControlNameOrNgReflectName(formControlName: string, formControlNamePrefix?: string,
@@ -101,8 +101,10 @@ export async function assertSelectOption(t: TestController, selector: Selector, 
   if (isDebug()) { console.log(`optionKey=${optionKey} i18nPrefix=${i18nPrefix}`); }
   await t.expect(await Selector(selector).exists).ok();
   if (optionKey) {
-    const escapedRegex = getTranslation(optionKey, i18nPrefix).replace(/[.*+?^${}()|[\]\\]/g, '.'); // replace regex syntax characters with "."
-    await t.expect(selector.innerText).match(new RegExp(`${escapedRegex}\s?`)); // innertext may return a string with trailing \t - https://github.com/DevExpress/testcafe/issues/5011
+    const escapedRegexDe = getTranslation(optionKey, i18nPrefix).replace(/[.*+?^${}()|[\]\\]/g, '.'); // replace regex syntax characters with "."
+    const escapedRegexEn = getTranslation(optionKey, i18nPrefix, 'en').replace(/[.*+?^${}()|[\]\\]/g, '.'); // replace regex syntax characters with "."
+    // Sometimes "innertext" returns english text even though later it is german; due to this time issue we have to accept either language
+    await t.expect(selector.innerText).match(new RegExp(`(${escapedRegexDe}|${escapedRegexEn})\s?`)); // innertext may return a string with trailing \t - https://github.com/DevExpress/testcafe/issues/5011
   } else {
     await t.expect(selector.exists).notOk();
   }

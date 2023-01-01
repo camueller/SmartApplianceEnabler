@@ -19,14 +19,26 @@
 import {baseUrl} from './page/page';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
 import {generateApplianceId} from './shared/appliance-id-generator';
-import {configurationKey, createAndAssertAppliance, createAndAssertControl, createAndAssertMeter, fixtureName} from './shared/helper';
+import {
+  configurationKey,
+  createAndAssertAppliance,
+  createAndAssertControl,
+  createAndAssertMeter,
+  fixtureName,
+  testSpeed
+} from './shared/helper';
 import {PwmSwitch} from '../../../main/angular/src/app/control/pwm/pwm-switch';
 import {pwmSwitch} from './fixture/control/pwm-switch';
 import {s0Meter} from './fixture/meter/s0-meter';
 import {S0ElectricityMeter} from '../../../main/angular/src/app/meter/s0/s0-electricity-meter';
 import {charger} from './fixture/appliance/charger';
 
-fixture('Charger').page(baseUrl());
+fixture('Charger')
+    .beforeEach(async t => {
+      await t.maximizeWindow();
+      await t.setTestSpeed(testSpeed);
+    })
+    .page(baseUrl());
 
 function createCharger(): ApplianceConfiguration {
   return new ApplianceConfiguration({

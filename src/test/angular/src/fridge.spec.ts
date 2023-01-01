@@ -1,5 +1,12 @@
 import {baseUrl} from './page/page';
-import {configurationKey, createAndAssertAppliance, createAndAssertControl, createAndAssertMeter, fixtureName} from './shared/helper';
+import {
+  configurationKey,
+  createAndAssertAppliance,
+  createAndAssertControl,
+  createAndAssertMeter,
+  fixtureName,
+  testSpeed
+} from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
 import {fridge as fridgeAppliance} from './fixture/appliance/fridge';
 import {generateApplianceId} from './shared/appliance-id-generator';
@@ -8,7 +15,12 @@ import {httpMeter_complete} from './fixture/meter/http-meter';
 import {alwaysOnSwitch} from './fixture/control/always-on-switch';
 import {AlwaysOnSwitch} from '../../../main/angular/src/app/control/alwayson/always-on-switch';
 
-fixture('Fridge').page(baseUrl());
+fixture('Fridge')
+    .beforeEach(async t => {
+      await t.maximizeWindow();
+      await t.setTestSpeed(testSpeed);
+    })
+    .page(baseUrl());
 
 function createFridge(): ApplianceConfiguration {
   return new ApplianceConfiguration({

@@ -38,7 +38,7 @@
   "ApplianceComponent.type.DishWasher": "Dish Washer",
   "ApplianceComponent.type.Dryer": "Dryer",
   "ApplianceComponent.type.ElectricVehicle": "Electric Vehicle",
-  "ApplianceComponent.type.EVCharger": "EV Charger",
+  "ApplianceComponent.type.EVCharger": "Wallbox",
   "ApplianceComponent.type.Freezer": "Freezer",
   "ApplianceComponent.type.Fridge": "Fridge",
   "ApplianceComponent.type.Heater": "Heater",

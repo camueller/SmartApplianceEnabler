@@ -52,6 +52,7 @@ import {NotificationModule} from './notification/notification.module';
 import {VersionService} from './shared/version-service';
 import {ApplianceIdsResolver} from './appliance/appliance-ids-resolver';
 import {LanguageService} from './shared/language-service';
+import {SharedModule} from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import {LanguageService} from './shared/language-service';
     NotificationModule,
     ReactiveFormsModule,
     ScheduleModule,
+    SharedModule,
     StatusModule,
     TranslateModule.forRoot({
       loader: {

@@ -4,6 +4,7 @@ import {AppliancesReloadService} from '../../appliance/appliances-reload-service
 import {ApplianceService} from '../../appliance/appliance.service';
 import {TranslateService} from '@ngx-translate/core';
 import {ApplianceType} from '../../appliance/appliance-type';
+import {EnvPipeService} from '../../shared/env-pipe-service';
 
 @Component({
   selector: 'app-sidenav',
@@ -20,11 +21,13 @@ export class SidenavComponent implements OnInit {
   translatedStrings: { [key: string]: string } = {};
   controlKey = 'AppComponent.control';
   wallboxKey = 'ControlEvchargerComponent.heading';
+  forceSideMenuStayOpen = false;
 
   constructor(
     private applianceService: ApplianceService,
     private appliancesReloadService: AppliancesReloadService,
     private translate: TranslateService,
+    private envPipeService: EnvPipeService
   ) {
   }
 
@@ -39,10 +42,16 @@ export class SidenavComponent implements OnInit {
     ]).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
+    this.envPipeService.getForceSideMenuStayOpen().subscribe(forceSideMenuStayOpen => {
+      this.forceSideMenuStayOpen = forceSideMenuStayOpen;
+    });
+
   }
 
   public onSidenavClose(force?: boolean) {
-    this.sidenavClose.emit(force);
+    if(! this.forceSideMenuStayOpen) {
+      this.sidenavClose.emit(force);
+    }
   }
 
   get hasAppliances() {

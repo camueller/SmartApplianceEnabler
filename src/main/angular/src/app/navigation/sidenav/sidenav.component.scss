@@ -1,41 +1,48 @@
 .SidenavComponent {
+  &__appliance-text {
+    display: flex;
+    flex-direction: column;
+  }
+
   &__appliance-name {
     font-size: 0.875rem;
     padding-left: 0.3rem;
+    width: 0px; // make sure icon is shown also for long names
   }
 
   &__nav-caption {
-    display: inline-block;
     padding-left: 0.3rem;
   }
 
   &__router-link-active {
-    font-weight: bold;
-    background: rgba(0, 0, 0, 0.06);
+    background: rgba(0, 0, 0, 0.08);
   }
 
   &__external_link {
-    font-size: 0.8rem;
+    font-size: smaller;
     padding-left: 0.1rem;
-    line-height: 1.5rem;
   }
 
   &__menu-item {
-    vertical-align: middle;
+    display: flex;
+    align-items: center;
   }
 
   &__submenu-item {
-    height: 2rem !important;
-    font-size: 0.875rem;
-    line-height: 0.875rem;
+    display: flex;
+    align-items: center;
+    height: auto;
+  }
+
+  &__submenu-anchor {
+    height: auto !important;
   }
 
   &__submenu-icon {
-    height: 0.875rem !important;
+    padding: 0.3rem 0;
   }
-}
 
-a {
-  text-decoration: none;
-  color: white;
+  &__divider {
+    margin-bottom: 0.5rem;
+  }
 }

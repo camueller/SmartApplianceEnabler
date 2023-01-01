@@ -11,6 +11,7 @@
     <input matInput type="text" formControlName="offDetectionDelay"
            placeholder="{{controlDefaults.meterReportingSwitchDefaults.offDetectionDelay}}"
            matTooltip="{{'ControlMeterreportingComponent.offDetectionDelay.tooltip' | translate}}"
+           [matTooltipDisabled]="'matTooltipDisabled' | env"
            required="{{formHandler.isRequired('offDetectionDelay')}}">
     <mat-error *ngIf="errors.offDetectionDelay">{{errors.offDetectionDelay}}</mat-error>
   </mat-form-field>

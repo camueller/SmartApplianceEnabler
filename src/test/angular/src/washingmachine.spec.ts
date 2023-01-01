@@ -5,7 +5,7 @@ import {
   createAndAssertControl,
   createAndAssertMeter,
   createAndAssertSchedules,
-  fixtureName
+  fixtureName, testSpeed
 } from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
 import {HttpElectricityMeter} from '../../../main/angular/src/app/meter/http/http-electricity-meter';
@@ -17,7 +17,12 @@ import {HttpSwitch} from '../../../main/angular/src/app/control/http/http-switch
 import {startingCurrentSwitch} from './fixture/control/starting-current-switch';
 import {runtimeRequest_dayTimeframe_weekday_weekend} from './fixture/schedule/runtimeRequest_dayTimeframe_weekday_weekend';
 
-fixture('Washing Machine').page(baseUrl());
+fixture('Washing Machine')
+    .beforeEach(async t => {
+      await t.maximizeWindow();
+      await t.setTestSpeed(testSpeed);
+    })
+    .page(baseUrl());
 
 function createWashingMachine(): ApplianceConfiguration {
   return new ApplianceConfiguration({

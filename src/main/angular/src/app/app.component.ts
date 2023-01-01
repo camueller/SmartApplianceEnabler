@@ -23,6 +23,8 @@ import {Subject, Subscription, takeUntil} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
 import {LanguageService} from './shared/language-service';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
+import {EnvPipe} from './shared/env-pipe';
+import {EnvPipeService} from './shared/env-pipe-service';
 
 @Component({
   selector: 'app-root',
@@ -35,12 +37,14 @@ export class AppComponent implements OnInit, OnDestroy {
   watcher: Subscription;
   destroyed = new Subject<void>();
   isSmallScreen = false;
+  forceSideMenuStayOpen = false;
 
   constructor(
     breakpointObserver: BreakpointObserver,
     private route: ActivatedRoute,
     private translate: TranslateService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private envPipeService: EnvPipeService,
   ) {
     translate.setDefaultLang('de');
     translate.addLangs(['en']);
@@ -64,8 +68,13 @@ export class AppComponent implements OnInit, OnDestroy {
     this.route.queryParams
       .subscribe(params => {
         if(params?.lang) {
-          console.log(`*** Forcing Language ${params?.lang}`);
-          this.setLanguage(params?.lang)
+          console.log(`*** Force Language ${params?.lang}`);
+          this.setLanguage(params?.lang);
+          console.log('*** Disable tooltips; otherwise Testcafe cannot click elements hidden by tooltip');
+          this.envPipeService.setMatTooltipDisabled(true);
+          console.log('*** Force side menu to stay open in order remove timing issues because of menu still open hiding elements to be selected');
+          this.forceSideMenuStayOpen = true;
+          this.envPipeService.setForceSideMenuStayOpen(true);
         }
       });
   }
@@ -80,13 +89,19 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   closeSideNav(force: boolean) {
-    if (force || this.isSmallScreen) {
+    if (!this.forceSideMenuStayOpen && (force || this.isSmallScreen)) {
       this.sidenav.close();
     }
   }
 
   toggleSideNav() {
-    this.sidenav.toggle();
+    if(this.forceSideMenuStayOpen) {
+      if(!this.sidenav.opened) {
+        this.sidenav.toggle();
+      }
+    } else {
+      this.sidenav.toggle();
+    }
   }
 
   private setLanguage(language: string) {

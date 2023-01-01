@@ -45,4 +45,12 @@ export class HeaderComponent implements OnInit {
   public onToggleSidenav = () => {
     this.sidenavToggle.emit();
   }
+
+  public get isHigher() {
+    return !this.isHigheest && (this.betaUpdateVersion || this.stableUpdateVersion);
+  }
+
+  public get isHigheest() {
+    return !!this.betaUpdateVersion && !!this.stableUpdateVersion;
+  }
 }

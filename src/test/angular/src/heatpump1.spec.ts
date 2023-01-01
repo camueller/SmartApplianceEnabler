@@ -1,5 +1,12 @@
 import {baseUrl} from './page/page';
-import {configurationKey, createAndAssertAppliance, createAndAssertControl, createAndAssertMeter, fixtureName} from './shared/helper';
+import {
+  configurationKey,
+  createAndAssertAppliance,
+  createAndAssertControl,
+  createAndAssertMeter,
+  fixtureName,
+  testSpeed
+} from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
 import {S0ElectricityMeter} from '../../../main/angular/src/app/meter/s0/s0-electricity-meter';
 import {switch_} from './fixture/control/switch';
@@ -8,7 +15,12 @@ import {s0Meter} from './fixture/meter/s0-meter';
 import {Switch} from '../../../main/angular/src/app/control/switch/switch';
 import {MasterElectricityMeter} from '../../../main/angular/src/app/meter/master/master-electricity-meter';
 
-fixture('Heat pump').page(baseUrl());
+fixture('Heat pump')
+    .beforeEach(async t => {
+      await t.maximizeWindow();
+      await t.setTestSpeed(testSpeed);
+    })
+    .page(baseUrl());
 
 function createHeatPump(): ApplianceConfiguration {
   return new ApplianceConfiguration({

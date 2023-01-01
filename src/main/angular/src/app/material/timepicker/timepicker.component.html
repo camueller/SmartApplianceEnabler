@@ -6,6 +6,7 @@
          class="clockpicker"
          [required]="required"
          matTooltip="{{tooltip}}"
+         [matTooltipDisabled]="'matTooltipDisabled' | env"
   >
   <mat-error *ngIf="!noErrorOnField && error">{{error}}</mat-error>
 </mat-form-field>

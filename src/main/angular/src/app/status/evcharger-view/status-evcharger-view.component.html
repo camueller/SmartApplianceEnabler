@@ -10,6 +10,7 @@
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.soc' | translate}}:</span>
     <span class="StatusComponent__appliance-status-value"
           matTooltip="{{socInitialTooltip}}"
+          [matTooltipDisabled]="'matTooltipDisabled' | env"
     >{{status.socInitial}}{{'StatusComponent.socUnit' | translate}}</span>
     <span class="StatusComponent__appliance-status-label StatusEvchargerViewComponent__soc-separator">&gt;&gt;&gt;</span>
     <span class="StatusComponent__appliance-status-value StatusEvchargerViewComponent__soc-current">{{status.soc}}{{'StatusComponent.socUnit' | translate}}</span>

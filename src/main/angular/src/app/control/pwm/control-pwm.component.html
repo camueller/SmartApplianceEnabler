@@ -35,6 +35,7 @@
         <mat-label>{{'ControlPwmComponent.minDutyCycle' | translate}}</mat-label>
         <input matInput type="text" formControlName="minDutyCycle"
                matTooltip="{{'ControlPwmComponent.minDutyCycle.tooltip' | translate}}"
+               [matTooltipDisabled]="'matTooltipDisabled' | env"
                required="{{formHandler.isRequired('minDutyCycle')}}">
         <mat-error *ngIf="errors.minDutyCycle">{{errors.minDutyCycle}}</mat-error>
       </mat-form-field>
@@ -42,6 +43,7 @@
         <mat-label>{{'ControlPwmComponent.maxDutyCycle' | translate}}</mat-label>
         <input matInput type="text" formControlName="maxDutyCycle"
                matTooltip="{{'ControlPwmComponent.maxDutyCycle.tooltip' | translate}}"
+               [matTooltipDisabled]="'matTooltipDisabled' | env"
                required="{{formHandler.isRequired('maxDutyCycle')}}">
         <mat-error *ngIf="errors.maxDutyCycle">{{errors.maxDutyCycle}}</mat-error>
       </mat-form-field>

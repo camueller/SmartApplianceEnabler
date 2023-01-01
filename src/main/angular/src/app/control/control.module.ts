@@ -26,6 +26,8 @@ import {ControlPwmComponent} from './pwm/control-pwm.component';
 import {ControlLevelComponent} from './level/control-level.component';
 import {EvChargerTemplateResolver} from './evcharger/ev-charger-template-resolver.service';
 import {ControlSwitchOptionComponent} from './switchoption/control-switchoption.component';
+import {EnvPipe} from '../shared/env-pipe';
+import {SharedModule} from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -51,6 +53,7 @@ import {ControlSwitchOptionComponent} from './switchoption/control-switchoption.
     ModbusModule,
     NotificationModule,
     ReactiveFormsModule,
+    SharedModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

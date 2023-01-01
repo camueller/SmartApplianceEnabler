@@ -6,7 +6,7 @@ import {
   createAndAssertElectricVehicle,
   createAndAssertMeter,
   createAndAssertSchedules,
-  fixtureName
+  fixtureName, testSpeed
 } from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
 import {EvCharger} from '../../../main/angular/src/app/control/evcharger/ev-charger';
@@ -19,7 +19,12 @@ import {tesla_model3} from './fixture/control/electricvehicle/tesla_model3';
 import {socRequest_consecutiveDaysTimeframe} from './fixture/schedule/socRequest_consecutiveDaysTimeframe';
 import evChargerTemplates from '../../../../run/evcharger-templates.json';
 
-fixture('Wallbox go-eCharger').page(baseUrl());
+fixture('Wallbox go-eCharger')
+    .beforeEach(async t => {
+      await t.maximizeWindow();
+      await t.setTestSpeed(testSpeed);
+    })
+    .page(baseUrl());
 
 function createApplianceConfiguration(): ApplianceConfiguration {
   const goECharger = evChargerTemplates.find(template => template.name === 'go-eCharger').template as unknown as EvCharger;

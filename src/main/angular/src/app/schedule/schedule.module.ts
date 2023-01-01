@@ -14,6 +14,7 @@ import {ScheduleTimeframeConsecutivedaysComponent} from './timeframe/consecutive
 import {ScheduleService} from './schedule-service';
 import {ScheduleResolver} from './schedule-resolver.service';
 import {HttpLoaderFactory} from '../shared/http-loader-factory';
+import {SharedModule} from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import {HttpLoaderFactory} from '../shared/http-loader-factory';
     MaterialModule,
     HttpClientModule,
     ReactiveFormsModule,
+    SharedModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

@@ -1,5 +1,12 @@
 import {baseUrl} from './page/page';
-import {configurationKey, createAndAssertAppliance, createAndAssertControl, createAndAssertMeter, fixtureName} from './shared/helper';
+import {
+  configurationKey,
+  createAndAssertAppliance,
+  createAndAssertControl,
+  createAndAssertMeter,
+  fixtureName,
+  testSpeed
+} from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
 import {pump as pumpAppliance} from './fixture/appliance/pump';
 import {modbusMeter_pollInterval} from './fixture/meter/modbus-meter';
@@ -10,7 +17,12 @@ import {ModbusSwitch} from '../../../main/angular/src/app/control/modbus/modbus-
 import {Notifications} from '../../../main/angular/src/app/notification/notifications';
 import {NotificationType} from '../../../main/angular/src/app/notification/notification-type';
 
-fixture('Pump').page(baseUrl());
+fixture('Pump')
+    .beforeEach(async t => {
+      await t.maximizeWindow();
+      await t.setTestSpeed(testSpeed);
+    })
+    .page(baseUrl());
 
 function createPump(): ApplianceConfiguration {
   return new ApplianceConfiguration({

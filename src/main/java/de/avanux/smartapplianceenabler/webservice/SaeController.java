@@ -82,7 +82,7 @@ public class SaeController {
     private static final String INFO_URL = BASE_URL + "/info";
     private static final String TASMOTA_COMMAND_URL = "/cm";
     // only required for development if running via "ng serve"
-    private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
+    private static final String CROSS_ORIGIN_URL = "*";
     private Logger logger = LoggerFactory.getLogger(SaeController.class);
     // the lock ensures that no data is changed or read while appliances are restarted
     private final Object lock = new Object();

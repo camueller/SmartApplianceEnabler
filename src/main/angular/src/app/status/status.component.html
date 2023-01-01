@@ -1,22 +1,24 @@
-<div class="StatusComponent">
+<div class="StatusComponent mat-typography">
   <messagebox [level]="MessageBoxLevel.ERROR" *ngIf="!mqttBrokerAvailable"
   >{{'StatusComponent.message.mqttBrokerNotAvailable' | translate}}</messagebox>
   <div *ngIf="mqttBrokerAvailable">
-    <h1>{{'StatusComponent.title' | translate }}
-      <app-help [helpfile]="'Status'" [cssClass]="'text-top'"></app-help>
+    <h1 class="StatusComponent__title">
+      {{'StatusComponent.title' | translate}}<app-help [helpfile]="'Status'" [cssClass]="'text-top'"></app-help>
       <a class="StatusComponent__nodered-export-button"
          (click)="openDialog()"
          matTooltip="{{'StatusComponent.dashboard.export' | translate}}"
+         [matTooltipDisabled]="'matTooltipDisabled' | env"
       ><mat-icon>redo</mat-icon></a>
       <a class="StatusComponent__nodered-export-button"
          [href]="nodeRedDashboardUrl | safeurl"
          target="_blank"
          matTooltip="{{'StatusComponent.dashboard.open' | translate}}"
+         [matTooltipDisabled]="'matTooltipDisabled' | env"
       ><mat-icon>open_in_new</mat-icon></a>
     </h1>
     <messagebox [level]="MessageBoxLevel.INFO" *ngIf="!hasControllableAppliances"
     >{{'StatusComponent.message.noControllableAppliances' | translate}}</messagebox>
-    <div class="StatusComponent__appliances">
+    <div class="StatusComponent__appliances" *ngIf="hasControllableAppliances">
       <div class="StatusComponent__appliance" *ngFor="let applianceStatus of applianceStatuses">
         <app-traffic-light [key]="applianceStatus"
                            [stateHandler]="getTrafficLightStateHandler(applianceStatus)"
@@ -64,7 +66,7 @@
         </div>
       </div>
     </div>
-    <h3 class="StatusComponent__explanation_headline">{{'StatusComponent.explanation' | translate}}</h3>
+    <h2 class="StatusComponent__explanation_headline">{{'StatusComponent.explanation' | translate}}</h2>
     <div class="StatusComponent__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
     <div class="StatusComponent__explanation_chargemode" *ngIf="hasEvChargerInEditMode()">
       <h4 class="StatusComponent__explanation_headline">{{'StatusComponent.chargeMode' | translate}}</h4>

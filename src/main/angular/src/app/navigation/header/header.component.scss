@@ -11,6 +11,22 @@
     }
   }
 
+  &__layout--higher  {
+    @include media("<=xs") {
+      height: 70px;
+    }
+  }
+
+  &__layout--highest  {
+    @include media("<=xs") {
+      height: 100px;
+    }
+  }
+
+  &__menuicon {
+    bottom: 0;
+  }
+
   &__link {
     text-decoration: none;
   }
@@ -22,15 +38,25 @@
     padding: 0.2rem;
     border-radius: 2px;
     margin-right: 0.3rem;
+
+    @include media("<=xs") {
+      margin-bottom: 4px;
+    }
   }
 
   &__linkboxes {
     display: flex;
     flex-direction: row;
+
+    @include media("<=xs") {
+      flex-direction: column;
+    }
   }
 
   &__title {
     margin-right: 1rem;
+    margin-bottom: 0;
+    font-size: large;
 
     @include media("<=xs") {
       margin-right: 0;

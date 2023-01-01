@@ -9,6 +9,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {HttpLoaderFactory} from '../shared/http-loader-factory';
+import {SharedModule} from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import {HttpLoaderFactory} from '../shared/http-loader-factory';
     CommonModule,
     MaterialModule,
     ReactiveFormsModule,
+    SharedModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

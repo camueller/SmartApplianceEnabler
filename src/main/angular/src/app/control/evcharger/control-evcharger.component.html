@@ -49,6 +49,7 @@
         <input matInput type="text" formControlName="startChargingStateDetectionDelay"
                placeholder="{{controlDefaults.evChargerDefaults.startChargingStateDetectionDelay}}"
                matTooltip="{{'ControlEvchargerComponent.startChargingStateDetectionDelay.tooltip' | translate}}"
+               [matTooltipDisabled]="'matTooltipDisabled' | env"
                required="{{formHandler.isRequired('startChargingStateDetectionDelay')}}">
         <mat-error *ngIf="errors.startChargingStateDetectionDelay">{{errors.startChargingStateDetectionDelay}}</mat-error>
       </mat-form-field>
@@ -56,11 +57,13 @@
         <mat-label>{{'ControlEvchargerComponent.chargePowerRepetition' | translate}}</mat-label>
         <input matInput type="text" formControlName="chargePowerRepetition"
                matTooltip="{{'ControlEvchargerComponent.chargePowerRepetition.tooltip' | translate}}"
+               [matTooltipDisabled]="'matTooltipDisabled' | env"
                required="{{formHandler.isRequired('chargePowerRepetition')}}">
         <mat-error *ngIf="errors.chargePowerRepetition">{{errors.chargePowerRepetition}}</mat-error>
       </mat-form-field>
       <mat-checkbox formControlName="forceInitialCharging"
                     matTooltip="{{'ControlEvchargerComponent.forceInitialCharging.tooltip' | translate}}"
+                    [matTooltipDisabled]="'matTooltipDisabled' | env"
       >{{'ControlEvchargerComponent.forceInitialCharging' | translate}}</mat-checkbox>
     </div>
     <div class="sae__fields">
@@ -68,6 +71,7 @@
         <mat-label>{{'ControlEvchargerComponent.latitude' | translate}}</mat-label>
         <input matInput type="text" formControlName="latitude"
                matTooltip="{{'ControlEvchargerComponent.latitude.tooltip' | translate}}"
+               [matTooltipDisabled]="'matTooltipDisabled' | env"
                required="{{formHandler.isRequired('latitude')}}">
         <mat-error *ngIf="errors.latitude">{{errors.latitude}}</mat-error>
       </mat-form-field>
@@ -75,6 +79,7 @@
         <mat-label>{{'ControlEvchargerComponent.longitude' | translate}}</mat-label>
         <input matInput type="text" formControlName="longitude"
                matTooltip="{{'ControlEvchargerComponent.longitude.tooltip' | translate}}"
+               [matTooltipDisabled]="'matTooltipDisabled' | env"
                required="{{formHandler.isRequired('longitude')}}">
         <mat-error *ngIf="errors.longitude">{{errors.longitude}}</mat-error>
       </mat-form-field>

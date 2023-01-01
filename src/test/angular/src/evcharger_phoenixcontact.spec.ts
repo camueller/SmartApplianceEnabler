@@ -5,7 +5,7 @@ import {
   createAndAssertControl,
   createAndAssertMeter,
   createAndAssertSchedules,
-  fixtureName
+  fixtureName, testSpeed
 } from './shared/helper';
 import {ApplianceConfiguration} from './shared/appliance-configuration';
 import {generateApplianceId} from './shared/appliance-id-generator';
@@ -18,7 +18,12 @@ import {energyRequest_dayTimeframe_nighthly} from './fixture/schedule/energyRequ
 import {modbusMeter_complete} from './fixture/meter/modbus-meter';
 import evChargerTemplates from '../../../../run/evcharger-templates.json';
 
-fixture('Wallbox mit PhoenixContact-Ladecontroller').page(baseUrl());
+fixture('Wallbox mit PhoenixContact-Ladecontroller')
+    .beforeEach(async t => {
+      await t.maximizeWindow();
+      await t.setTestSpeed(testSpeed);
+    })
+    .page(baseUrl());
 
 function createApplianceConfiguration(): ApplianceConfiguration {
   const phoenixContact = evChargerTemplates.find(template => template.name === 'Phoenix Contact EM-CP-PP-ETH').template as unknown as EvCharger;

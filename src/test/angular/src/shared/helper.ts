@@ -37,6 +37,9 @@ import {PwmControlPage} from '../page/control/pwm-control.page';
 import {LevelSwitch} from '../../../../main/angular/src/app/control/level/level-switch';
 import {LevelControlPage} from '../page/control/level-control.page';
 
+// Specifies the test speed. Must be a number between 1 (the fastest) and 0.01 (the slowest).
+export const testSpeed = 1;
+
 export function isDebug() {
   return !!process.env.DEBUG;
 }

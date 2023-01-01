@@ -15,7 +15,7 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
-<form class="SchedulesComponent" [formGroup]="form" (ngSubmit)="submitForm()">
+<form class="SchedulesComponent mat-typography" [formGroup]="form" (ngSubmit)="submitForm()">
   <h1>{{'SchedulesComponent.title' | translate }}<app-help [helpfile]="'Schedules'" [cssClass]="'text-top'"></app-help></h1>
   <div *ngIf="isControlable; else notControllable">
     <div formArrayName="schedules">

@@ -24,6 +24,7 @@
       <mat-label>{{'ControlSwitchOptionComponent.powerThreshold' | translate}}</mat-label>
       <input matInput type="text" formControlName="powerThreshold"
              matTooltip="{{'ControlSwitchOptionComponent.powerThreshold.tooltip' | translate}}"
+             [matTooltipDisabled]="'matTooltipDisabled' | env"
              required="{{formHandler.isRequired('powerThreshold')}}">
       <mat-error *ngIf="errors.powerThreshold">{{errors.powerThreshold}}</mat-error>
     </mat-form-field>
@@ -31,6 +32,7 @@
       <mat-label>{{'ControlSwitchOptionComponent.switchOnDetectionDuration' | translate}}</mat-label>
       <input matInput type="text" formControlName="switchOnDetectionDuration"
              matTooltip="{{'ControlSwitchOptionComponent.switchOnDetectionDuration.tooltip' | translate}}"
+             [matTooltipDisabled]="'matTooltipDisabled' | env"
              required="{{formHandler.isRequired('switchOnDetectionDuration')}}">
       <mat-error *ngIf="errors.switchOnDetectionDuration">{{errors.switchOnDetectionDuration}}</mat-error>
     </mat-form-field>
@@ -38,6 +40,7 @@
       <mat-label>{{'ControlSwitchOptionComponent.switchOffDetectionDuration' | translate}}</mat-label>
       <input matInput type="text" formControlName="switchOffDetectionDuration"
              matTooltip="{{'ControlSwitchOptionComponent.switchOffDetectionDuration.tooltip' | translate}}"
+             [matTooltipDisabled]="'matTooltipDisabled' | env"
              required="{{formHandler.isRequired('switchOffDetectionDuration')}}">
       <mat-error *ngIf="errors.switchOffDetectionDuration">{{errors.switchOffDetectionDuration}}</mat-error>
     </mat-form-field>

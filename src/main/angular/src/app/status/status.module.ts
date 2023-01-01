@@ -14,6 +14,7 @@ import {TrafficLightComponent} from './traffic-light/traffic-light.component';
 import {HttpLoaderFactory} from '../shared/http-loader-factory';
 import {FlowExportComponent} from '../nodered/flow-export/flow-export.component';
 import {ClipboardModule} from '@angular/cdk/clipboard';
+import {SharedModule} from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -25,20 +26,21 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
     StatusViewComponent,
     TrafficLightComponent,
   ],
-  imports: [
-    CommonModule,
-    MaterialModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
-    }),
-    ClipboardModule,
-  ],
+    imports: [
+        ClipboardModule,
+        CommonModule,
+        HttpClientModule,
+        MaterialModule,
+        ReactiveFormsModule,
+        SharedModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        }),
+    ],
   providers: [
     StatusService
   ]

@@ -4,7 +4,9 @@
     <ng-template #stopLightOffClickable>
       <div [class]="bulbClass" *ngIf="isRedClickable(); else stopLightOff"
            (click)="onRedClick()"
-           matTooltip="{{'StatusComponent.tooltipStopLight' | translate}}"></div>
+           matTooltip="{{'StatusComponent.tooltipStopLight' | translate}}"
+           [matTooltipDisabled]="'matTooltipDisabled' | env"
+      ></div>
     </ng-template>
     <ng-template #stopLightOff>
       <div [class]="bulbClass" *ngIf="!isRed()"></div>
@@ -23,6 +25,7 @@
            [class.TrafficLightComponent__goLight-blink]="isGreenBlink()"
            (click)="onGreenClick()"
            matTooltip="{{'StatusComponent.tooltipGoLight' | translate}}"
+           [matTooltipDisabled]="'matTooltipDisabled' | env"
       ></div>
     </div>
     <div *ngIf="!(isGreen() || isGreenBlink())">
@@ -30,6 +33,7 @@
       <div [class]="bulbClass" *ngIf="isGreenClickable()"
            (click)="onGreenClick()"
            matTooltip="{{'StatusComponent.tooltipGoLight' | translate}}"
+           [matTooltipDisabled]="'matTooltipDisabled' | env"
       ></div>
     </div>
   </div>
