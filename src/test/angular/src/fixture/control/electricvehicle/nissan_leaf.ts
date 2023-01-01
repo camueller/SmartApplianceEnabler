@@ -9,5 +9,5 @@ export const nissan_leaf: ElectricVehicle = {
   chargeLoss: 8,
   defaultSocManual: 60,
   defaultSocOptionalEnergy: 90,
-  socScript: {script: '/opt/sae', extractionRegex: '.*(\d+).*'} as SocScript,
+  socScript: {script: '/bin/ls', extractionRegex: '.*(\d+).*'} as SocScript,
 } as ElectricVehicle;

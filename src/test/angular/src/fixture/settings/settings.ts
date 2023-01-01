@@ -9,5 +9,5 @@ export const settings = new Settings({
       modbusTcpPort: 502
     }
   ],
-  notificationCommand: '/opt/sae',
+  notificationCommand: '/bin/ls',
 });
