@@ -25,7 +25,6 @@ export class SchedulesPage {
       await this.clickAddSchedule(t);
       await SchedulePage.setSchedule(t, schedules[i], i);
     }
-    await this.clickSave(t);
   }
   public static async assertSchedules(t: TestController, schedules: Schedule[], evName?: string) {
     await this.waitForPage(t);
