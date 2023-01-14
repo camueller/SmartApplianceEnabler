@@ -237,22 +237,6 @@
 								</goals>
 							</execution>
 							<execution>
-								<id>npm-angular-cli</id>
-								<phase>generate-sources</phase>
-								<configuration>
-									<workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
-									<executable>npm</executable>
-									<arguments>
-										<argument>install</argument>
-										<argument>-g</argument>
-										<argument>@angular/cli</argument>
-									</arguments>
-								</configuration>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-							</execution>
-							<execution>
 								<id>npm-install-ngx-translate-core</id>
 								<phase>generate-sources</phase>
 								<configuration>
