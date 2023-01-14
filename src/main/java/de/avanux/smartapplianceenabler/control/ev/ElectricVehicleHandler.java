@@ -336,6 +336,10 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
             }
             this.socValuesChangedListener.onSocValuesChanged(this.socValues);
         }
+        else if(socValues.batteryCapacity == null) {
+            logger.debug("{}: Unable to determine connected vehicle - using battery capacity of first vehicle", applianceId);
+            socValues.batteryCapacity = getVehicle(getConnectedOrFirstVehicleId()).getBatteryCapacity();
+        }
         this.previousSocScriptExecutionResult = result;
     }
 
