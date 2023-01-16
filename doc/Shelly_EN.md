@@ -58,7 +58,7 @@ The following settings are required for use as an electricity meter (IP address 
 |--------------------------------------------|-----------------------------------------|
 | Format                                     | JSON                                    |
 | URL                                        | http://192.168.1.1/rpc/Shelly.GetStatus |
-| Extraction path (using parameter `Power`)  | $.status:0.apower                       |
+| Extraction path (using parameter `Power`)  | $.switch:0.apower                       |
 
 ## switch usage
 The following settings are required for use as a switch (IP address or host name must be adjusted):

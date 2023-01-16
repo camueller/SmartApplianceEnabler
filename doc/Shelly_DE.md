@@ -58,7 +58,7 @@ Für die Verwendung als Stromzähler sind folgende Einstellungen notwendig (IP-A
 |------------------------------------------------|-----------------------------------------|
 | Format                                         | JSON                                    |
 | URL                                            | http://192.168.1.1/rpc/Shelly.GetStatus |
-| Pfad für Extraktion (bei Parameter `Leistung`) | $.status:0.apower                       |
+| Pfad für Extraktion (bei Parameter `Leistung`) | $.switch:0.apower                       |
 
 ## Verwendung als Schalter
 Für die Verwendung als Schalter sind folgende Einstellungen notwendig (IP-Adresse bzw. Hostname ist anzupassen):
