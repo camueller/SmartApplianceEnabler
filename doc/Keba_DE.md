@@ -21,7 +21,7 @@ Die `Register-Adresse` ist `1036`.
 
 Der `Register-Typ` ist `Holding (FC=3)`.
 
-Der `Wert-Typ` muss auf `Float als Integer` gesetzt werden.
+Der `Wert-Typ` muss auf `Integer als Float` gesetzt werden.
 
 Bei `Datenwörter` muss nichts eingegeben werden.
 

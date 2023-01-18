@@ -330,7 +330,7 @@
   "ModbusReadComponent.valueType.Float64": "Float (64bit)",
   "ModbusReadComponent.valueType.Integer": "Integer",
   "ModbusReadComponent.valueType.Integer32": "Integer (32bit)",
-  "ModbusReadComponent.valueType.Integer2Float": "Float as Integer",
+  "ModbusReadComponent.valueType.Integer2Float": "Integer as Float",
   "ModbusReadComponent.valueType.String": "String",
   "ModbusReadComponent.words": "Words",
   "ModbusReadComponent.byteOrder": "Byte order",
