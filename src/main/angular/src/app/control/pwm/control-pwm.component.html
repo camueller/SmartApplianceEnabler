@@ -31,7 +31,7 @@
                required="{{formHandler.isRequired('pwmFrequency')}}">
         <mat-error *ngIf="errors.pwmFrequency">{{errors.pwmFrequency}}</mat-error>
       </mat-form-field>
-      <mat-form-field class="ControlPwmComponent__dutyCycle">
+      <mat-form-field class="ControlPwmComponent__minDutyCycle">
         <mat-label>{{'ControlPwmComponent.minDutyCycle' | translate}}</mat-label>
         <input matInput type="text" formControlName="minDutyCycle"
                matTooltip="{{'ControlPwmComponent.minDutyCycle.tooltip' | translate}}"
@@ -39,7 +39,7 @@
                required="{{formHandler.isRequired('minDutyCycle')}}">
         <mat-error *ngIf="errors.minDutyCycle">{{errors.minDutyCycle}}</mat-error>
       </mat-form-field>
-      <mat-form-field class="ControlPwmComponent__dutyCycle">
+      <mat-form-field class="ControlPwmComponent__maxDutyCycle">
         <mat-label>{{'ControlPwmComponent.maxDutyCycle' | translate}}</mat-label>
         <input matInput type="text" formControlName="maxDutyCycle"
                matTooltip="{{'ControlPwmComponent.maxDutyCycle.tooltip' | translate}}"

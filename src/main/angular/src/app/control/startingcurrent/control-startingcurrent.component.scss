@@ -1,9 +1,17 @@
 .ControlStartingcurrentComponent {
+  &__powerThreshold {
+    width: 12rem;
+  }
+
   &__startingCurrentDetectionDuration {
-    width: 15rem;
+    width: 18rem;
   }
 
   &__finishedCurrentDetectionDuration {
-    width: 15rem;
+    width: 18rem;
+  }
+
+  &__minRunningTime {
+    width: 9rem;
   }
 }

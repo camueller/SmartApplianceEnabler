@@ -1,22 +1,22 @@
 .ElectricVehicleComponent {
   &__batteryCapacity {
-    width: 8rem;
+    width: 10rem;
   }
 
   &__maxChargePower {
-    width: 8rem;
+    width: 10rem;
   }
 
   &__chargeLoss {
-    width: 6rem;
+    width: 8rem;
   }
 
   &__defaultSocManual {
-    width: 5rem;
+    width: 8rem;
   }
 
   &__defaultSocOptionalEnergy {
-    width: 8rem;
+    width: 10rem;
   }
 
   &__scriptFilename {
@@ -33,6 +33,6 @@
   }
 
   &__scriptUpdateSocAfterIncrease {
-    width: 9rem;
+    width: 11rem;
   }
 }

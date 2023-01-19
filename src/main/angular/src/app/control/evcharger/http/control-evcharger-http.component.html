@@ -32,7 +32,7 @@
                  #httpReadComponents
   ></app-http-read>
 </span>
-<button mat-raised-button type="button" (click)="addHttpRead()">
+<button mat-raised-button type="button" class="ControlEvchargerHttpComponent__addHttpRead" (click)="addHttpRead()">
   {{'ControlEvchargerHttpComponent.button.addHttpRead' | translate}}</button>
 <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerHttpComponent.heading.httpWrite' | translate}}</h2>
 <div class="ControlEvchargerModbusComponent__missingNames" *ngIf="writeValueNamesNotConfigured?.length > 0">
@@ -52,5 +52,5 @@
                   #httpWriteComponents
   ></app-http-write>
 </span>
-<button mat-raised-button type="button" (click)="addHttpWrite()">
+<button mat-raised-button type="button" class="ControlEvchargerHttpComponent__addHttpWrite" (click)="addHttpWrite()">
   {{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>

@@ -11,13 +11,13 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="slaveAddress">
+      <mat-form-field class="MeterModbusComponent__slaveAddress">
         <mat-label>{{'MeterModbusComponent.slaveAddress' | translate}}</mat-label>
         <input matInput type="text" formControlName="slaveAddress"
                required="{{formHandler.isRequired('slaveAddress')}}">
         <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
       </mat-form-field>
-      <mat-form-field class="pollInterval" *ngIf="displayPollInterval">
+      <mat-form-field class="MeterModbusComponent__pollInterval" *ngIf="displayPollInterval">
         <mat-label>{{'MeterModbusComponent.pollInterval' | translate}}</mat-label>
         <input matInput type="text" formControlName="pollInterval"
                placeholder="{{meterDefaults.modbusElectricityMeterDefaults.pollInterval}}"

@@ -2,6 +2,10 @@
 @import '../../../../styles';
 
 .ControlEvchargerModbusComponent {
+  &__addModbusWrite, &__addModbusRead {
+    vertical-align: top;
+  }
+
   &__missingNames {
     margin-top: 1rem;
     margin-bottom: 1rem;

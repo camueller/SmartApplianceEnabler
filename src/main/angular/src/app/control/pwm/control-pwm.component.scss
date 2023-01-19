@@ -18,10 +18,10 @@
 
 .ControlPwmComponent {
   &__pwmFrequency {
-    width: 8rem;
+    width: 10rem;
   }
 
-  &__dutyCycle {
-    width: 8rem;
+  &__minDutyCycle, &__maxDutyCycle {
+    width: 10rem;
   }
 }

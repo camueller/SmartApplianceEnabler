@@ -1,4 +1,12 @@
 .MeterModbusComponent {
+  &__slaveAddress {
+    width: 8rem;
+  }
+
+  &__pollInterval {
+    width: 9rem;
+  }
+
   &__modbusReads {
     padding-bottom: 1rem;
   }

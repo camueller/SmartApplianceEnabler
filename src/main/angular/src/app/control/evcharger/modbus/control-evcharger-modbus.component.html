@@ -1,7 +1,7 @@
 <div class="ControlEvchargerModbusComponent">
   <messagebox [level]="MessageBoxLevel.INFO" *ngIf="settings.modbusSettings?.length === 0"
   >{{'error.modbus_not_configured' | translate}}</messagebox>
-  <div [style]="displayNoneStyle">
+  <div class="ControlEvchargerModbusComponent__content" [style]="displayNoneStyle">
     <div class="sae__fields">
       <mat-form-field class="sae__modbus-name">
         <mat-label>{{'ControlEvchargerModbusComponent.idref' | translate}}</mat-label>
@@ -40,7 +40,7 @@
                        #modbusReadComponents
       ></app-modbus-read>
     </span>
-    <button mat-raised-button type="button" (click)="addModbusRead()">
+    <button mat-raised-button type="button" class="ControlEvchargerModbusComponent__addModbusRead" (click)="addModbusRead()">
       {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
 
 
@@ -49,7 +49,7 @@
       <messagebox [level]="MessageBoxLevel.ERROR"
       >{{'ControlEvchargerComponent.message.missingWrite' | translate}}: {{writeValueNamesNotConfigured}}</messagebox>
     </div>
-    <span formArrayName="modbusWrites">
+    <div formArrayName="modbusWrites">
       <app-modbus-write *ngFor="let modbusWrite of evModbusControl.modbusWrites; index as i; last as l"
                         [formGroupName]="i"
                         [form]="getModbusWriteFormGroup(i)"
@@ -61,8 +61,8 @@
                         (nameChanged)="onValueNameChanged(i, $event)"
                         #modbusWriteComponents
       ></app-modbus-write>
-    </span>
-    <button mat-raised-button type="button" (click)="addModbusWrite()">
-      {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
+      <button mat-raised-button type="button" class="ControlEvchargerModbusComponent__addModbusWrite" (click)="addModbusWrite()">
+        {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
+    </div>
   </div>
 </div>

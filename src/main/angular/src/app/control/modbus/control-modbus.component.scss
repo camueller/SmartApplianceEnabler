@@ -1,3 +1,9 @@
 .ControlModbusComponent {
+  &__slaveAddress {
+    width: 8rem;
+  }
 
+  &__addModbusWrite {
+    vertical-align: top;
+  }
 }
