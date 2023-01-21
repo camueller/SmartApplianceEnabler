@@ -9,10 +9,6 @@ library identifier: 'icheko-jenkins-shared-lib@master',
 pipeline {
     agent any
 
-    tools {
-        maven "Maven"
-    }
-
     parameters {
         booleanParam(name: 'DOCKER_PUSH', defaultValue: false, description: 'Push docker image to Dockerhub?')
         booleanParam(name: 'BETA_RELEASE', defaultValue: false, description: 'Is this a beta release?')
@@ -26,6 +22,11 @@ pipeline {
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                scmSkip(deleteBuild: true, skipPattern:'.*\\[ci skip\\].*')
+            }
+        }
         stage('Build') {
             steps {
                 sh "mvn clean -B -Pweb"
