@@ -101,8 +101,8 @@ export async function assertSelectOption(t: TestController, selector: Selector, 
   if (isDebug()) { console.log(`optionKey=${optionKey} i18nPrefix=${i18nPrefix}`); }
   await t.expect(await Selector(selector).exists).ok();
   if (optionKey) {
-    const escapedRegexDe = getTranslation(optionKey, i18nPrefix).replace(/[.*+?^${}()|[\]\\]/g, '.'); // replace regex syntax characters with "."
-    const escapedRegexEn = getTranslation(optionKey, i18nPrefix, 'en').replace(/[.*+?^${}()|[\]\\]/g, '.'); // replace regex syntax characters with "."
+    const escapedRegexDe = buildEscaptedRegexString(getTranslation(optionKey, i18nPrefix));
+    const escapedRegexEn = buildEscaptedRegexString(getTranslation(optionKey, i18nPrefix, 'en'));
     // Sometimes "innertext" returns english text even though later it is german; due to this time issue we have to accept either language
     await t.expect(selector.innerText).match(new RegExp(`(${escapedRegexDe}|${escapedRegexEn})\s?`)); // innertext may return a string with trailing \t - https://github.com/DevExpress/testcafe/issues/5011
   } else {
@@ -124,13 +124,22 @@ export async function selectOptionMulti(t: TestController, selector: Selector, v
 export async function assertSelectOptionMulti(t: TestController, selector: Selector, values: any[], i18nPrefix?: string) {
   if (values) {
     await t.expect(await Selector(selector).exists).ok();
+    const escapedRegexDe = buildEscaptedRegexString(buildSelectOptionsString(values, i18nPrefix))
+    const escapedRegexEn = buildEscaptedRegexString(buildSelectOptionsString(values, i18nPrefix, 'en'));
     const actualSelectedOptionsString = await selector.innerText;
-    const expectedNotificationTypes = [];
-    values?.forEach(value => {
-      expectedNotificationTypes.push(getTranslation(value, i18nPrefix));
-    });
-    const expectedNotificationTypesString = expectedNotificationTypes.join(', ');
-    await t.expect(actualSelectedOptionsString.trim()).eql(expectedNotificationTypesString);
+    await t.expect(actualSelectedOptionsString.trim()).match(new RegExp(`(${escapedRegexDe}|${escapedRegexEn})\s?`)); // innertext may return a string with trailing \t - https://github.com/DevExpress/testcafe/issues/5011
   }
+}
+
+function buildSelectOptionsString(values: any[], i18nPrefix?: string, lang?: string) {
+  const selectOptionStrings = [];
+  values?.forEach(value => {
+    selectOptionStrings.push(getTranslation(value, i18nPrefix, lang));
+  });
+  return selectOptionStrings.join(', ');
+}
+
+function buildEscaptedRegexString(input: string) {
+  return input.replace(/[.*+?^${}()|[\]\\]/g, '.'); // replace regex syntax characters with "."
 }
 
