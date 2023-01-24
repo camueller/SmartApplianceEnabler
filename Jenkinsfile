@@ -29,8 +29,8 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh "mvn clean -B -Pweb"
-                sh "mvn package -B -Pweb"
+                sh 'mvn clean -B -Pweb'
+                sh 'mvn package -B -Pweb'
             }
         }
         stage('Dockerize') {
@@ -86,20 +86,26 @@ pipeline {
             }
             steps {
                 dir('docker') {
-                    sh "cp ../target/SmartApplianceEnabler*.war sae-amd64/"
+                    sh 'cp ../target/SmartApplianceEnabler*.war sae-amd64/'
                     sh "sed -i 's#@project.version@#'\"$VERSION\"'#' ./sae-amd64/Dockerfile"
-                    sh "docker build --tag=avanux/smartapplianceenabler-amd64:$VERSION ./sae-amd64"
-                    sh "docker tag avanux/smartapplianceenabler-amd64:$VERSION avanux/smartapplianceenabler-amd64:$DOCKER_TAG"
+                    sh 'docker build --tag=avanux/smartapplianceenabler:amd64 ./sae-amd64'
                 }
                 withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh "echo $PASSWORD | docker login --username $USERNAME --password-stdin"
+                    sh 'echo $PASSWORD | docker login --username $USERNAME --password-stdin'
                     dir('docker') {
-                        sh "docker push avanux/smartapplianceenabler-amd64:$VERSION"
-                        sh "docker push avanux/smartapplianceenabler-amd64:$DOCKER_TAG"
+                        sh 'docker push avanux/smartapplianceenabler:amd64'
                     }
                 }
                 sh 'scp target/SmartApplianceEnabler-"$VERSION".war jenkins@raspi2:/home/jenkins/'
                 build 'SmartApplianceEnabler-arm32'
+
+                sh 'docker manifest create avanux/smartapplianceenabler:$VERSION --amend avanux/smartapplianceenabler:amd64 --amend avanux/smartapplianceenabler:arm'
+                sh 'docker manifest annotate avanux/smartapplianceenabler:$VERSION avanux/smartapplianceenabler:arm --variant v7'
+                sh 'docker manifest push avanux/smartapplianceenabler:$VERSION'
+
+                sh 'docker manifest create avanux/smartapplianceenabler:$DOCKER_TAG --amend avanux/smartapplianceenabler:amd64 --amend avanux/smartapplianceenabler:arm'
+                sh 'docker manifest annotate avanux/smartapplianceenabler:$DOCKER_TAG avanux/smartapplianceenabler:arm --variant v7'
+                sh 'docker manifest push avanux/smartapplianceenabler:$DOCKER_TAG'
             }
         }
     }

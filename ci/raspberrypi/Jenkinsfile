@@ -7,21 +7,19 @@ pipeline {
     }
 
     stages {
-        stage('Dockerize') {
+        stage('Publish-arm') {
             steps {
                 dir('docker') {
                     sh 'rm -f sae-arm32/*.war'
                     sh 'mv ../../../SmartApplianceEnabler-"$VERSION".war sae-arm32/'
                     sh "sed -i 's#@project.version@#'\"$VERSION\"'#' ./sae-arm32/Dockerfile"
-                    sh "docker build --tag=avanux/smartapplianceenabler-arm32:$VERSION ./sae-arm32"
-                    sh "docker tag avanux/smartapplianceenabler-arm32:$VERSION avanux/smartapplianceenabler-arm32:$DOCKER_TAG"
+                    sh "docker build --tag=avanux/smartapplianceenabler:arm ./sae-arm32"
                     sh "git reset --hard" /* revert changes on Dockerfile */
                 }
                 withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh "echo $PASSWORD | docker login --username $USERNAME --password-stdin"
                     dir('docker') {
-                        sh "docker push avanux/smartapplianceenabler-arm32:$VERSION"
-                        sh "docker push avanux/smartapplianceenabler-arm32:$DOCKER_TAG"
+                        sh "docker push avanux/smartapplianceenabler:arm"
                     }
                 }
 
