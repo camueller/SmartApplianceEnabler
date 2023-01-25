@@ -188,9 +188,15 @@ curl -X POST -d '<EM2Device xmlns="http://www.sma.de/communication/schema/SEMP/v
 
 #### Testcafe
 ##### Lokal
-Unter Verwendung des lokalen Browsers werden die Tests wie folgt gestartet, woebi das `SKIP_MQTT_CONFIGURATION=true` dazu dient, die Anpssung der MQTT-Konfiguration zu überspringen:
+Unter Verwendung des lokalen Browsers werden die Tests mit folgenden Parametern gestartet: 
+
+- `SKIP_MQTT_CONFIGURATION=true`: Überspringen der Anpssung der MQTT-Konfiguration
+- `E2E_TEST_URL=http://localhost:4200/?lang=de`: schaltet die Anwendung in den Test-Modus für deutsche Sprache:
+  - Anzeige der deutschen Texte
+  - Deaktivieren der Tooltips, damit die selektierten Elemente nicht durch Tooltips verdeckt sind
+
 ```console
-$ SKIP_MQTT_CONFIGURATION=true ./node_modules/.bin/testcafe chrome "src/*.spec.ts"
+$ SKIP_MQTT_CONFIGURATION=true E2E_TEST_URL=http://localhost:4200/?lang=de ./node_modules/.bin/testcafe chrome "src/*.spec.ts"
  Running tests in:
  - Chrome 92.0.4515.159 / Linux 0.0
 
@@ -237,7 +243,7 @@ $ SKIP_MQTT_CONFIGURATION=true ./node_modules/.bin/testcafe chrome "src/*.spec.t
 
 Um mehr Informationen (z.B. CSS-Selectoren) zu sehen, muss `DEBUG=true` gesetzt werden:
 ```console
-$ SKIP_MQTT_CONFIGURATION=true DEBUG=true testcafe chrome "src/washingmachine.spec.ts"
+$ SKIP_MQTT_CONFIGURATION=true E2E_TEST_URL=http://localhost:4200/?lang=de DEBUG=true testcafe chrome "src/washingmachine.spec.ts"
  Running tests in:
  - Chrome 81.0.4044.92 / Linux 0.0
 
