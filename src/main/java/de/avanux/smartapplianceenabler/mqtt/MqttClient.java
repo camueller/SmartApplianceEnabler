@@ -153,6 +153,7 @@ public class MqttClient {
                 client.setCallback(new MqttCallbackExtended() {
                     @Override
                     public void connectComplete(boolean reconnect, String serverURI) {
+                        logger.trace("{}: MQTT connecton completed. reconnect={}", loggerId, reconnect);
                         if(reconnect) {
                             messageHandlerForSubscribedTopic.keySet().forEach(fullTopic -> {
                                 subscribe(fullTopic, messageHandlerForSubscribedTopic.get(fullTopic));
