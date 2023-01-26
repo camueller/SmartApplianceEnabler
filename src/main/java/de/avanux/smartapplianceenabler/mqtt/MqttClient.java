@@ -152,14 +152,17 @@ public class MqttClient {
             try {
                 client.setCallback(new MqttCallbackExtended() {
                     @Override
-                    public void connectComplete(boolean b, String s) {
-                        messageHandlerForSubscribedTopic.keySet().forEach(fullTopic -> {
-                            subscribe(fullTopic, messageHandlerForSubscribedTopic.get(fullTopic));
-                        });
+                    public void connectComplete(boolean reconnect, String serverURI) {
+                        if(reconnect) {
+                            messageHandlerForSubscribedTopic.keySet().forEach(fullTopic -> {
+                                subscribe(fullTopic, messageHandlerForSubscribedTopic.get(fullTopic));
+                            });
+                        }
                     }
 
                     @Override
                     public void connectionLost(Throwable throwable) {
+                        logger.error("{}: MQTT connecton lost {}", loggerId, throwable);
                     }
 
                     @Override
