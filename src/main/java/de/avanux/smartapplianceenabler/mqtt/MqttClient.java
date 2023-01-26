@@ -21,8 +21,7 @@ package de.avanux.smartapplianceenabler.mqtt;
 import com.owlike.genson.Genson;
 import com.owlike.genson.GensonBuilder;
 import com.owlike.genson.reflect.VisibilityFilter;
-import org.eclipse.paho.client.mqttv3.IMqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +39,7 @@ public class MqttClient {
     private String loggerId;
     private String applianceId;
     private static Map<String, Integer> counterForClientId = new HashMap();
+    private static Map<String, MqttMessageHandler> messageHandlerForSubscribedTopic = new HashMap();
     public final static int MQTT_PUBLISH_PERIOD = 20;
     private IMqttClient client;
     private static org.eclipse.paho.client.mqttv3.MqttClient instance;
@@ -108,8 +108,6 @@ public class MqttClient {
         }
         options.setAutomaticReconnect(true);
         options.setCleanSession(true);
-        options.setConnectionTimeout(1000);
-//        options.setWill(getApplianceTopic(applianceId, "will"), "unexpected error".getBytes(), 0 ,true);
         return options;
     }
 
@@ -152,8 +150,30 @@ public class MqttClient {
     private synchronized boolean connect() {
         if(! shutdownInProgress) {
             try {
-                if(! client.isConnected()) {
-                    client.connect(getOptions(mqttBroker.getUsername(), mqttBroker.getPassword()));
+                client.setCallback(new MqttCallbackExtended() {
+                    @Override
+                    public void connectComplete(boolean b, String s) {
+                        messageHandlerForSubscribedTopic.keySet().forEach(fullTopic -> {
+                            subscribe(fullTopic, messageHandlerForSubscribedTopic.get(fullTopic));
+                        });
+                    }
+
+                    @Override
+                    public void connectionLost(Throwable throwable) {
+                    }
+
+                    @Override
+                    public void messageArrived(String s, org.eclipse.paho.client.mqttv3.MqttMessage mqttMessage) throws Exception {
+                    }
+
+                    @Override
+                    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+                    }
+                });
+                synchronized (this) {
+                    if(! client.isConnected()) {
+                        client.connect(getOptions(mqttBroker.getUsername(), mqttBroker.getPassword()));
+                    }
                 }
                 boolean connectResult = client.isConnected();
                 if(! connectResult) {
@@ -269,13 +289,18 @@ public class MqttClient {
         String fullTopic = expandTopic
                 ? (set ? getApplianceTopicForSet(applianceId, topic) : getApplianceTopic(applianceId, topic))
                 : topic;
+        if(connect()) {
+            subscribe(fullTopic, messageHandler);
+            messageHandlerForSubscribedTopic.put(fullTopic, messageHandler);
+        }
+    }
+
+    private void subscribe(String fullTopic, MqttMessageHandler messageHandler) {
         try {
-            if(connect()) {
-                client.subscribe(fullTopic, (receivedTopic, receivedMessage) -> {
-                    receiveMessage(receivedTopic, receivedMessage, messageHandler);
-                });
-                logger.debug("{}: Messages subscribed: topic={}", loggerId, fullTopic);
-            }
+            client.subscribe(fullTopic, (receivedTopic, receivedMessage) -> {
+                receiveMessage(receivedTopic, receivedMessage, messageHandler);
+            });
+            logger.debug("{}: Messages subscribed: topic={}", loggerId, fullTopic);
         }
         catch (Exception e) {
             logger.error("{}: Error subscribing to messages topic={}", loggerId, fullTopic, e);
@@ -320,6 +345,7 @@ public class MqttClient {
     private void unsubscribeMessage(String fullTopic) {
         try {
             if(connect()) {
+                messageHandlerForSubscribedTopic.remove(fullTopic);
                 client.unsubscribe(fullTopic);
                 logger.debug("{}: Messages unsubscribed: topic={}", loggerId, fullTopic);
             }
