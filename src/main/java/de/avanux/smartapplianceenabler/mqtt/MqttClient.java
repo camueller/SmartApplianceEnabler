@@ -39,7 +39,7 @@ public class MqttClient {
     private String loggerId;
     private String applianceId;
     private static Map<String, Integer> counterForClientId = new HashMap();
-    private static Map<String, MqttMessageHandler> messageHandlerForSubscribedTopic = new HashMap();
+    private Map<String, MqttMessageHandler> messageHandlerForSubscribedTopic = new HashMap();
     public final static int MQTT_PUBLISH_PERIOD = 20;
     private IMqttClient client;
     private static org.eclipse.paho.client.mqttv3.MqttClient instance;
