@@ -156,7 +156,7 @@ public class MqttClient {
                         logger.trace("{}: MQTT connecton completed. reconnect={}", loggerId, reconnect);
                         if(reconnect) {
                             messageHandlerForSubscribedTopic.keySet().forEach(fullTopic -> {
-                                subscribe(fullTopic, messageHandlerForSubscribedTopic.get(fullTopic));
+                                subscribeCachedMessageHandler(fullTopic);
                             });
                         }
                     }
@@ -293,16 +293,16 @@ public class MqttClient {
         String fullTopic = expandTopic
                 ? (set ? getApplianceTopicForSet(applianceId, topic) : getApplianceTopic(applianceId, topic))
                 : topic;
+        messageHandlerForSubscribedTopic.put(fullTopic, messageHandler);
         if(connect()) {
-            subscribe(fullTopic, messageHandler);
-            messageHandlerForSubscribedTopic.put(fullTopic, messageHandler);
+            subscribeCachedMessageHandler(fullTopic);
         }
     }
 
-    private void subscribe(String fullTopic, MqttMessageHandler messageHandler) {
+    private void subscribeCachedMessageHandler(String fullTopic) {
         try {
             client.subscribe(fullTopic, (receivedTopic, receivedMessage) -> {
-                receiveMessage(receivedTopic, receivedMessage, messageHandler);
+                receiveMessage(receivedTopic, receivedMessage, messageHandlerForSubscribedTopic.get(fullTopic));
             });
             logger.debug("{}: Messages subscribed: topic={}", loggerId, fullTopic);
         }
@@ -348,8 +348,8 @@ public class MqttClient {
 
     private void unsubscribeMessage(String fullTopic) {
         try {
+            messageHandlerForSubscribedTopic.remove(fullTopic);
             if(connect()) {
-                messageHandlerForSubscribedTopic.remove(fullTopic);
                 client.unsubscribe(fullTopic);
                 logger.debug("{}: Messages unsubscribed: topic={}", loggerId, fullTopic);
             }
