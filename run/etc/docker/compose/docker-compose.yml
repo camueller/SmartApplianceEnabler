@@ -23,10 +23,7 @@ services:
       - /dev/gpiochip0
     privileged: true
   sae:
-    # anpassen, falls der Smart Appliance Enabler nicht auf einem Raspberry Pi läuft
-    # Beispiel: image: avanux/smartapplianceenabler-arm32 (für Raspberry Pi)
-    # Beispiel: image: avanux/smartapplianceenabler-amd64 (für PC / NAS)
-    image: avanux/smartapplianceenabler-arm32
+    image: avanux/smartapplianceenabler
     container_name: sae
     restart: unless-stopped
     depends_on:

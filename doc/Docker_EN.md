@@ -1,8 +1,7 @@
 # Docker images
-For the *Smart Appliance Enabler* docker images are provided for Raspberry Pi and amd64, each containing the appropriate Java version (therefore platform-specific images).
+For the *Smart Appliance Enabler* docker images are provided for `arm` (including Raspberry Pi) and `amd64`, each containing the appropriate Java version (therefore platform-specific images).
 
-* [avanux/smartapplianceenabler-arm32](https://hub.docker.com/r/avanux/smartapplianceenabler-arm32)
-* [avanux/smartapplianceenabler-amd64](https://hub.docker.com/r/avanux/smartapplianceenabler-amd64)
+The repository for these images is [avanux/smartapplianceenabler](https://hub.docker.com/r/avanux/smartapplianceenabler)
 
 # Docker installation
 Before the *Smart Appliance Enabler* can be operated as a Docker container, Docker must be installed.
@@ -226,12 +225,12 @@ docker run --rm --detach --network macvlan0 --ip 192.168.0.202 --name pigpiod --
 #### Starting the container
 When starting the *Smart Appliance Enabler* in a new container named _sae_ the docker container needs to be assigned an IP address from the docker network `macvlan0`:
 ```console
-pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --network macvlan0 --ip 192.168.0.200 --publish 8080:8080 --privileged --name=sae avanux/smartapplianceenabler-arm32
+pi@raspberrypi:~ $ docker run -v sae:/opt/sae/data --network macvlan0 --ip 192.168.0.200 --publish 8080:8080 --privileged --name=sae avanux/smartapplianceenabler
 ```
 
 Properties can also be set via the Docker variable _JAVA_OPTS_:
 ```console
-pi@raspberrypi:~ $ docker ... -e JAVA_OPTS="-Dserver.port=9000" avanux/smartapplianceenabler-arm32
+pi@raspberrypi:~ $ docker ... -e JAVA_OPTS="-Dserver.port=9000" avanux/smartapplianceenabler
 ```
 
 #### Stopping the container
@@ -279,7 +278,7 @@ sae@raspberrypi:~/docker $ sudo systemctl status smartapplianceenabler-docker
     Tasks: 11 (limit: 2200)
    Memory: 23.0M
    CGroup: /system.slice/smartapplianceenabler-docker.service
-           └─9567 /usr/bin/docker run -v sae:/opt/sae/data --network macvlan0 --ip 192.168.0.200 --publish 8080:8080 --privileged --name=sae avanux/smartapplianceenabler-arm32
+           └─9567 /usr/bin/docker run -v sae:/opt/sae/data --network macvlan0 --ip 192.168.0.200 --publish 8080:8080 --privileged --name=sae avanux/smartapplianceenabler
 
 Dec 25 17:19:13 raspberrypi docker[9567]: 16:19:13.925 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
 Dec 25 17:19:13 raspberrypi docker[9567]: 16:19:13.930 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]

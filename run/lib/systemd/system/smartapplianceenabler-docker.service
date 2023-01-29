@@ -5,7 +5,7 @@ BindsTo=docker.service
 ReloadPropagatedFrom=docker.service
 
 [Service]
-ExecStart=/usr/bin/docker run -v sae:/opt/sae/data --net=host --device /dev/mem:/dev/mem --privileged --name=sae avanux/smartapplianceenabler-arm32
+ExecStart=/usr/bin/docker run -v sae:/opt/sae/data --net=host --device /dev/mem:/dev/mem --privileged --name=sae avanux/smartapplianceenabler
 ExecStop=/usr/bin/docker stop sae
 ExecStopPost=/usr/bin/docker rm -f sae
 ExecReload=/bin/docker restart sae

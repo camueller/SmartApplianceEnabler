@@ -37,7 +37,7 @@ pipeline {
             steps {
                 dir('docker') {
                     sh "cp ../target/SmartApplianceEnabler*.war sae-ci/SmartApplianceEnabler.war"
-                    sh "docker build --tag=avanux/smartapplianceenabler-amd64:ci ./sae-ci"
+                    sh "docker build --tag=avanux/smartapplianceenabler:ci ./sae-ci"
                 }
             }
         }
@@ -46,7 +46,7 @@ pipeline {
                 sh "docker stop sae || true"
                 sh "docker volume rm -f sae"
                 sh "docker volume create sae"
-                sh "docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae avanux/smartapplianceenabler-amd64:ci"
+                sh "docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae avanux/smartapplianceenabler:ci"
                 dir('src/test/angular') {
                     sh "npm i"
                     sh "npm run test:chrome"
@@ -58,7 +58,7 @@ pipeline {
                 sh "docker stop sae || true"
                 sh "docker volume rm -f sae"
                 sh "docker volume create sae"
-                sh "docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae avanux/smartapplianceenabler-amd64:ci"
+                sh "docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae avanux/smartapplianceenabler:ci"
                 dir('src/test/angular') {
                     sh "npm run test:firefox"
                 }
@@ -69,7 +69,7 @@ pipeline {
                 sh "docker stop sae || true"
                 sh "docker volume rm -f sae"
                 sh "docker volume create sae"
-                sh "docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae avanux/smartapplianceenabler-amd64:ci"
+                sh "docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae avanux/smartapplianceenabler:ci"
                 dir('src/test/angular') {
                     sh "npm run test:safari"
                 }
