@@ -248,7 +248,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     if (!this.isAlwaysOnSwitch) {
       this.form.setErrors({'typeChanged': true});
     }
-    if (!this.control.type) {
+    if (!this.control.type || this.isMeterReportingSwitch) {
       this.control.startingCurrentSwitchUsed = false;
       this.control.switchOptionUsed = false;
     } else if (this.isAlwaysOnSwitch) {

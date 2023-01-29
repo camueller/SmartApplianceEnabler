@@ -60,9 +60,9 @@ export class ControlMeterreportingComponent implements OnChanges, OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.form = this.parent.form;
-    if (changes.switch_) {
-      if (changes.switch_.currentValue) {
-        this.meterReportingSwitch = changes.switch_.currentValue;
+    if (changes.meterReportingSwitch) {
+      if (changes.meterReportingSwitch.currentValue) {
+        this.meterReportingSwitch = changes.meterReportingSwitch.currentValue;
       } else {
         this.meterReportingSwitch = new MeterReportingSwitch();
       }
