@@ -22,19 +22,19 @@ export class ConsecutiveDaysTimeframePage {
   }
   public static async assertConsecutiveDaysTimeframe(t: TestController, consecutiveDaysTimeframe: ConsecutiveDaysTimeframe,
                                                   selectorPrefix: string) {
-    await this.assertStartDayOfWeek(t, consecutiveDaysTimeframe.start.dayOfWeek, selectorPrefix);
+    await this.assertStartDayOfWeek(t, consecutiveDaysTimeframe.start.dayOfWeek, selectorPrefix, 'daysOfWeek_');
     await this.assertStartTime(t, TimeUtil.timestringFromTimeOfDay(consecutiveDaysTimeframe.start.time), selectorPrefix);
 
-    await this.assertEndDayOfWeek(t, consecutiveDaysTimeframe.end.dayOfWeek, selectorPrefix);
+    await this.assertEndDayOfWeek(t, consecutiveDaysTimeframe.end.dayOfWeek, selectorPrefix, 'daysOfWeek_');
     await this.assertEndTime(t, TimeUtil.timestringFromTimeOfDay(consecutiveDaysTimeframe.end.time), selectorPrefix);
   }
 
   public static async setStartDayOfWeek(t: TestController, startDayOfWeek: number, selectorPrefix: string) {
     await selectOption(t, selectorSelectByFormControlName('startDayOfWeek', selectorPrefix), startDayOfWeek.toString());
   }
-  public static async assertStartDayOfWeek(t: TestController, startDayOfWeek: number, selectorPrefix: string) {
+  public static async assertStartDayOfWeek(t: TestController, startDayOfWeek: number, selectorPrefix: string, i18nPrefix?: string) {
     await assertSelectOption(t, selectorSelectedByFormControlName('startDayOfWeek', selectorPrefix),
-      ConsecutiveDaysTimeframePage.toDayOfWeekString(startDayOfWeek));
+      ConsecutiveDaysTimeframePage.toDayOfWeekString(startDayOfWeek, i18nPrefix), i18nPrefix);
   }
 
   public static async setStartTime(t: TestController, startTime: string, selectorPrefix: string) {
@@ -48,9 +48,9 @@ export class ConsecutiveDaysTimeframePage {
   public static async setEndDayOfWeek(t: TestController, endDayOfWeek: number, selectorPrefix: string) {
     await selectOption(t, selectorSelectByFormControlName('endDayOfWeek', selectorPrefix), endDayOfWeek.toString());
   }
-  public static async assertEndDayOfWeek(t: TestController, endDayOfWeek: number, selectorPrefix: string) {
+  public static async assertEndDayOfWeek(t: TestController, endDayOfWeek: number, selectorPrefix: string, i18nPrefix?: string) {
     await assertSelectOption(t, selectorSelectedByFormControlName('endDayOfWeek', selectorPrefix),
-      ConsecutiveDaysTimeframePage.toDayOfWeekString(endDayOfWeek));
+      ConsecutiveDaysTimeframePage.toDayOfWeekString(endDayOfWeek, i18nPrefix), i18nPrefix);
   }
 
   public static async setEndTime(t: TestController, endTime: string, selectorPrefix: string) {
@@ -61,24 +61,24 @@ export class ConsecutiveDaysTimeframePage {
     await assertInput(t, selectorInputByFormControlName('endTime', selectorPrefix), endTime);
   }
 
-  private static toDayOfWeekString(dow: number) {
+  private static toDayOfWeekString(dow: number, i18nPrefix?: string) {
     switch (dow) {
       case 1:
-        return getTranslation('monday', 'daysOfWeek_');
+        return getTranslation('monday', i18nPrefix);
       case 2:
-        return getTranslation('tuesday', 'daysOfWeek_');
+        return getTranslation('tuesday', i18nPrefix);
       case 3:
-        return getTranslation('wednesday', 'daysOfWeek_');
+        return getTranslation('wednesday', i18nPrefix);
       case 4:
-        return getTranslation('thursday', 'daysOfWeek_');
+        return getTranslation('thursday', i18nPrefix);
       case 5:
-        return getTranslation('friday', 'daysOfWeek_');
+        return getTranslation('friday', i18nPrefix);
       case 6:
-        return getTranslation('saturday', 'daysOfWeek_');
+        return getTranslation('saturday', i18nPrefix);
       case 7:
-        return getTranslation('sunday', 'daysOfWeek_');
+        return getTranslation('sunday', i18nPrefix);
       case 8:
-        return getTranslation('holiday', 'daysOfWeek_');
+        return getTranslation('holiday', i18nPrefix);
     }
   }
 }
