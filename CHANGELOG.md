@@ -12,6 +12,36 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [2.2.0](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.2.0) - 03.02.2023
+
+### Neu
+- MQTT
+  - über eine MQTT-Nachricht kann die Anforderung des ersten Zeitfensters auf `enabled` gesetzt werden - siehe [#384](https://github.com/camueller/SmartApplianceEnabler/issues/384).
+  - alle [MQTT-Nachrichten wurden dokomentiert](https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/MQTT_DE.md)
+
+### Gefixt
+- Web-Oberfläche
+  - Änderung des Schalter-Typs auf "Zählerbasierter Zustandsmelder" war nicht möglich - siehe [#450](https://github.com/camueller/SmartApplianceEnabler/issues/450)
+- Wallbox
+  - das SOC-Script wurde nicht ausgeführt, wenn die Wallbox direkt nach dem Verbinden mit dem Fahrzeug sofort in den Status `Fahrzeug lädt` gewechselt ist
+  - beim Laden mit Zeitplan ohne konfiguriertes SOC-Script wurde die geladene Energiemenge nicht berücksichtigt - siehe [#416](https://github.com/camueller/SmartApplianceEnabler/issues/416)
+  - nachdem der Ziel-SOC erreicht wurde, verharrte der SAE im Status `Fertig`, auch wenn der Ziel-SOC für Überschussenergie noch nicht erreicht war
+- MQTT
+  - nach einem Verlust der Verbindung zum MQTT-Broker (z.B. durch dessen Restart) hat der SAE nicht erneut die Nachrichten gemeldet, an denen er interessiert ist. Dadurch wurden dem SHM keine aktuellen Werte mehr gemeldet. Siehe [#447](https://github.com/camueller/SmartApplianceEnabler/issues/447)
+
+### Geändert
+- Docker
+  - die Docker-Images für `amd64` und `arm` liegen ab dieser Version in dem gemeinsamen Repository [avanux/smartapplianceenabler](https://hub.docker.com/repository/docker/avanux/smartapplianceenabler). Dementsprechend müssen aktuelle Scripte für `systemd`/`docker-compose` verwendet werden.
+- Web-Oberfläche
+  - die Hilfe-Links (mit Fragezeichen-Symbol) führen in Abhängigkeit der Browser-Einstellungen auf deutsche oder englische Seiten. Dabei wurde auch Fehler [#414](https://github.com/camueller/SmartApplianceEnabler/issues/414) behoben
+  - das Web-Framework "Angular" wurde auf Version 15 aktualisert. In diesem Zusammenhang habe ich das Aussehen diverser Elemente vereinheitlicht.
+- Wallbox
+  - die Anzeige des SOC ist kompakter und beinhaltet auch den Ziel-SOC
+  - das SOC-Script wurde nicht ausgeführt, wenn die Wallbox direkt nach dem Verbinden mit dem Fahrzeug sofort in den Status `Fahrzeug lädt` gewechselt ist
+  - wenn es bei der Ausführung des SOC-Scripts einen Fehler gibt und deshalb das verbundene Fahrzeug nicht identifiziert werden kann, wird nachfolgend die Batteriekapazität des ersten Fahrzeugs verwendet
+- Modbus
+  - "Float als Integer" umbenannt zu "Integer als Float"
+
 ## [2.1.0](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.1.0) - 24.11.2022
 
 ### Neu

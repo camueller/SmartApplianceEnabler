@@ -216,7 +216,7 @@ Standardmäßig haben alle Ereignisse haben folgende `Inhalt`:
 
 ### EnableRuntimeRequest
 #### Kontext
-Wenn `EnableRuntimeRequest` empfangen wird, wird die Anfrage des ersten Zeitfensters auf `enabled` gesetzt.
+Wenn `EnableRuntimeRequest` empfangen wird, wird die Anforderung des ersten Zeitfensters auf `enabled` gesetzt.
 
 Anforderungen sind jedoch standardmäßig aktiviert, außer sie sind mit „externe Aktivierung“ gekennzeichnet.
 
@@ -230,7 +230,7 @@ _Beispiel_
 
 ### DisableRuntimeRequest
 #### Kontext
-Wenn `DisableRuntimeRequest` empfangen wird, wird die Anfrage des ersten Zeitfensters auf `disabled` gesetzt.
+Wenn `DisableRuntimeRequest` empfangen wird, wird die Anforderung des ersten Zeitfensters auf `disabled` gesetzt.
 
 #### Topic
 `/sae/<appliance_id>/Event/DisableRuntimeRequest`
