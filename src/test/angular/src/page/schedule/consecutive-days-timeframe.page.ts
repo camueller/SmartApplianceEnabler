@@ -64,21 +64,21 @@ export class ConsecutiveDaysTimeframePage {
   private static toDayOfWeekString(dow: number, i18nPrefix?: string) {
     switch (dow) {
       case 1:
-        return getTranslation('monday', i18nPrefix);
+        return 'monday';
       case 2:
-        return getTranslation('tuesday', i18nPrefix);
+        return 'tuesday';
       case 3:
-        return getTranslation('wednesday', i18nPrefix);
+        return 'wednesday';
       case 4:
-        return getTranslation('thursday', i18nPrefix);
+        return 'thursday';
       case 5:
-        return getTranslation('friday', i18nPrefix);
+        return 'friday';
       case 6:
-        return getTranslation('saturday', i18nPrefix);
+        return 'saturday';
       case 7:
-        return getTranslation('sunday', i18nPrefix);
+        return 'sunday';
       case 8:
-        return getTranslation('holiday', i18nPrefix);
+        return 'holiday';
     }
   }
 }
