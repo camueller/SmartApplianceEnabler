@@ -17,6 +17,7 @@
  */
 
 import {Selector} from 'testcafe';
+import {assertInput, clickButton, selectorButton, selectorInputByFormControlName} from '../shared/form';
 
 export class StatusPage {
 
@@ -25,10 +26,25 @@ export class StatusPage {
   }
 
   public static async waitForPage(t: TestController): Promise<void> {
-    await t.expect(this. pageExists(t)).ok();
+    await t.expect(await this.pageExists(t)).ok();
   }
 
   public static async pageExists(t: TestController): Promise<boolean> {
-    return (await this.pageSelector(t)).exists;
+    return await (await this.pageSelector(t)).exists;
+  }
+
+  public static async openFlowExportDialog(t: TestController): Promise<void> {
+    await clickButton(t, '.StatusComponent__nodered-export-button');
+  }
+
+  public static async closeFlowExportDialog(t: TestController): Promise<void> {
+    await clickButton(t, '.FlowExportComponent__close-button');
+  }
+
+  public static async assertFlowExportDialogContent(t: TestController): Promise<void> {
+    const exportJsonSelector = await Selector('#exportJson');
+    await t.expect(await exportJsonSelector.exists).ok();
+    const actual = await exportJsonSelector.innerText;
+    await t.expect(actual.toString()).contains('"type": "ui_tab"');
   }
 }
