@@ -4,11 +4,11 @@
   <img src="https://github.com/camueller/SmartApplianceEnabler/blob/master/pics/logo-384x384.png">
   <h3 align="center">Smart Appliance Enabler</h3>
   <p align="center">
-    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/2.2.0/SmartApplianceEnabler-2.2.0.war">
-      <img src="https://img.shields.io/badge/Download-2.2.0-brightgreen.svg">
+    <a href="https://github.com/camueller/SmartApplianceEnabler/releases/download/2.2.1/SmartApplianceEnabler-2.2.1.war">
+      <img src="https://img.shields.io/badge/Download-2.2.1-brightgreen.svg">
     </a>
     <a href="https://hub.docker.com/repository/docker/avanux/smartapplianceenabler">
-      <img src="https://img.shields.io/badge/Docker-2.2.0-blue">
+      <img src="https://img.shields.io/badge/Docker-2.2.1-blue">
     </a>
     <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html">
       <img src="https://img.shields.io/badge/license-GPLv2-blue.svg">

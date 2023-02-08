@@ -12,6 +12,12 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [2.2.1](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.2.1) - 08.02.2023
+
+### Gefixt
+- Web-Oberfläche
+  - Export der NodeRED-Flows war nicht möglich
+
 ## [2.2.0](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.2.0) - 03.02.2023
 
 ### Neu
