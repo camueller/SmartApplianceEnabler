@@ -27,3 +27,5 @@ Der kostenpflichtige Support wird von mir mit
 in Rechnung gestellt, also in etwa der Betrag, den auch jeder Sanitär-/Heizungstechniker in Rechnung stellt. Da ich bei Installation und Konfiguration rund um den *Smart Appliance Enabler* genau weiss, was zu tun ist, ist mit ein oder zwei Stunden in den meisten Fällen schon alles erreicht.
 
 Von der Rechnung können 20 Prozent bei der Einkommensteuererklärung als **haushaltsnahe Dienstleistung** abgerechnet werden, solange die Gesamtsumme aller Rechnungen den Betrag von 4.000 Euro/Jahr nicht übersteigt.
+
+Anfragen für kostenpflichtigen Support bitte an **axel.mueller@avanux.de**

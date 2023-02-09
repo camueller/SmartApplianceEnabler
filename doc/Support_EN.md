@@ -25,3 +25,5 @@ The paid support will be charged with
 **65 Euro/hour incl. VAT**
 
 which is roughly the amount that every plumbing/heating engineer bills. Since I know exactly what to do when it comes to installing and configuring the *Smart Appliance Enabler*, in most cases everything is already done in one or two hours.
+
+Please send inquiries for paid support to **axel.mueller@avanux.de**
