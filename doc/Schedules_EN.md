@@ -14,6 +14,8 @@ In addition to the time frame, a schedule also has a `request type`, which (exce
 
 The time window should be significantly larger than the runtime to enable the *Sunny Home Manager* to plan optimally. In order to ensure planning at all, the time window must be 30 minutes longer than the running time. For example, a schedule with `start time 8:00 am / end time 8:00 pm / run time 12 hours` does not meet this minimum requirement, while the schedule `start time 7:00 am / end time 8:00 pm / run time 12 hours` does.
 
+A schedule is only taken into account if it is 'enabled'. This allows you to deactivate devices that are used seasonally (e.g. swimming pool filter pump) instead of deleting them and creating them again later. If a schedule is marked with `external activation`, it will also be ignored until it is activated externally (e.g. by an MQTT message).
+
 It is also possible to create several schedules for one appliance. Care must be taken that the schedules **do not overlap**, for example "schedule 1" must end at 13:59 if "schedule 2" is to start at 14:00.
 
 _Example of a daily schedule_
