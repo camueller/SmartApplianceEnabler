@@ -947,6 +947,7 @@ public class SaeController {
                             applianceStatus.setSocInitial(evHandler.getSocInitial());
                             applianceStatus.setSocInitialTimestamp(evHandler.getSocInitialTimestamp());
                             applianceStatus.setSoc(evHandler.getSocCurrent());
+                            applianceStatus.setSocTarget(evHandler.getSocCurrent());
 
                             int whAlreadyCharged = 0;
                             int chargePower = 0;
