@@ -167,7 +167,7 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
             return on;
         }
         else {
-            logger.warn("{}: Meter not set.", applianceId);
+            logger.warn("{}: No meter values received (yet).", applianceId);
         }
         return false;
     }
