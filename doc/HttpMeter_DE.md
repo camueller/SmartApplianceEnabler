@@ -14,7 +14,7 @@ Alternativ (oder auch nachgelagert zur JSON-Interpretation) kann ein [Regulärer
 
 Durch die Konfiguration der zuvor beschriebenen Parameter muss sichergestellt sein, dass der *Smart Appliance Enabler* aus der HTTP-Antwort die richtige Zahl extrahieren kann.
 
-Für den Parameter `Zählerstand` wird der Wert in kWh und für den Parameter `Leistung` in W benötigt. Falls die Werte in anderen Einheiten geliefert werden, muss ein muss ein `Umrechnungsfaktor` angegeben werden, der mit dem gelieferten Wert multipliziert wird, um ihn in die benötigte Einheit umzurechnen. Wird beispielsweise der Parameter `Leistung` in mW geliefert, muss als `Umrechnungsfaktor` der Wert `1000` angegeben werden.
+Für den Parameter `Zählerstand` wird der Wert in kWh und für den Parameter `Leistung` in W benötigt. Falls die Werte in anderen Einheiten geliefert werden, muss ein muss ein `Umrechnungsfaktor` angegeben werden, der mit dem gelieferten Wert multipliziert wird, um ihn in die benötigte Einheit umzurechnen. Wird beispielsweise der Parameter `Leistung` in mW geliefert, muss als `Umrechnungsfaktor` der Wert `0.001` angegeben werden.
 
 ![HTTP-basierter Zähler](../pics/fe/HttpMeter_DE.png)
 

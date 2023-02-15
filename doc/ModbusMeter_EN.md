@@ -5,7 +5,7 @@ If possible, `Meter reading` should be set as the parameter, because the *Smart 
 
 If `Power` is set as the parameter, this value is queried several times per minute in order to calculate the average from these values. The interval between these queries can be specified with the `poll Interval` - the default value is 20 seconds.
 
-For parameter `Meter reading` the value has to be provided in kWh and for parameter `Power` the value has to be provided in W. If the values are supplied in other units, a `factor to value` must be specified, which is multiplied by the supplied value to convert it into the required unit. For example, if the parameter `Power` is supplied in mW, the value `1000` must be specified as the `factor to value`.
+For parameter `Meter reading` the value has to be provided in kWh and for parameter `Power` the value has to be provided in W. If the values are supplied in other units, a `factor to value` must be specified, which is multiplied by the supplied value to convert it into the required unit. For example, if the parameter `Power` is supplied in mW, the value `0.001` must be specified as the `factor to value`.
 
 ![Modbus-basierter Zähler](../pics/fe/ModbusMeter_EN.png)
 

@@ -14,7 +14,7 @@ Alternatively (or also downstream of the JSON interpretation), a [regular expres
 
 The configuration of the parameters described above must ensure that the *Smart Appliance Enabler* can extract the correct number from the HTTP response.
 
-For parameter `Meter reading` the value has to be provided in kWh and for parameter `Power` the value has to be provided in W. If the values are supplied in other units, a `factor to value` must be specified, which is multiplied by the supplied value to convert it into the required unit. For example, if the parameter `Power` is supplied in mW, the value `1000` must be specified as the `factor to value`.
+For parameter `Meter reading` the value has to be provided in kWh and for parameter `Power` the value has to be provided in W. If the values are supplied in other units, a `factor to value` must be specified, which is multiplied by the supplied value to convert it into the required unit. For example, if the parameter `Power` is supplied in mW, the value `0.001` must be specified as the `factor to value`.
 
 ![HTTP-basierter Zähler](../pics/fe/HttpMeter_EN.png)
 

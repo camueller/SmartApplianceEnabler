@@ -82,23 +82,23 @@ Die Beschreibung der Installation `docker-compose` findet sich unter https://doc
 Für den *Smart Appliance Enabler* existiert eine vorkonfigurierte YAML-Datei, für die ein Verzeichnis angelegt werden muss, um sie danach herunterzuladen:
 ```console
 pi@raspberrypi:~ $ sudo mkdir -p /etc/docker/compose/smartapplianceenabler
-pi@raspberrypi:~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/docker/compose/docker-compose.yaml -P /etc/docker/compose/smartapplianceenabler
+pi@raspberrypi:~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/docker/compose/docker-compose.yml -P /etc/docker/compose/smartapplianceenabler
 ```
 Hinweise zu den notwendigen Anpassungen finden sich als Kommentare in der Datei selbst.
 Das Docker-Volume `sae` wird automatisch beim Start erstellt, falls noch nicht vorhanden.
 
 ### `systemd` mit `docker-compose`
-Auch wenn der *Smart Appliance Enabler* als Docker-Container betrieben wird, bietet es sich an, den Container als Service des [Systemd](https://de.wikipedia.org/wiki/Systemd) zu verwalten. Dazu dient die Datei ```/lib/systemd/system/smartapplianceenabler-docker-compose.service```, die nachfolgend heruntergeladen und konfiguriert wird:
+Auch wenn der *Smart Appliance Enabler* als Docker-Container betrieben wird, bietet es sich an, den Container als Service des [Systemd](https://de.wikipedia.org/wiki/Systemd) zu verwalten. Dazu dient die Datei ```/etc/systemd/system/smartapplianceenabler-docker-compose.service```, die nachfolgend heruntergeladen und konfiguriert wird:
 ```console
-$ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/lib/systemd/system/smartapplianceenabler-docker-compose.service -P /lib/systemd/system
-$ sudo chown root.root /lib/systemd/system/smartapplianceenabler-docker-compose.service
-$ sudo chmod 755 /lib/systemd/system/smartapplianceenabler-docker-compose.service
+$ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/systemd/system/smartapplianceenabler-docker-compose.service -P /etc/systemd/system
+$ sudo chown root.root /etc/systemd/system/smartapplianceenabler-docker-compose.service
+$ sudo chmod 644 /etc/systemd/system/smartapplianceenabler-docker-compose.service
 ```
  
 Damit der *Smart Appliance Enabler* beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
 ```console
 pi@raspberrypi ~ $ sudo systemctl enable smartapplianceenabler-docker-compose.service
-Created symlink /etc/systemd/system/multi-user.target.wants/smartapplianceenabler-docker-compose.service → /lib/systemd/system/smartapplianceenabler-docker-compose.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/smartapplianceenabler-docker-compose.service → /etc/systemd/system/smartapplianceenabler-docker-compose.service.
 ```
 Nach diesen Änderungen muss der Systemd dazu gebracht werden, die Service-Konfigurationen neu zu lesen:
 ```console
@@ -122,7 +122,7 @@ Wenn der Container mit dem *Smart Appliance Enabler* läuft, sollte der Status `
 ```console
 sae@raspi:~ $ sudo systemctl status smartapplianceenabler-docker-compose.service
 ● smartapplianceenabler-docker-compose.service - Smart Appliance Enabler Container
-Loaded: loaded (/lib/systemd/system/smartapplianceenabler-docker-compose.service; enabled; vendor preset: enabled)
+Loaded: loaded (/etc/systemd/system/smartapplianceenabler-docker-compose.service; enabled; vendor preset: enabled)
 Active: active (running) since Sat 2020-12-26 13:04:45 CET; 5 days ago
 Main PID: 30810 (docker-compose)
 Tasks: 3 (limit: 2063)
@@ -134,7 +134,7 @@ Dec 26 13:05:40 raspi docker-compose[30810]: sae    | 13:05:40.696 [http-nio-808
 ```
 
 ### Befehle mit `docker-compose`
-Für alle nachfolgenden Befehle muss man sich im Verzeichnis mit der zum *Smart Appliance Enabler* gehörenden `docker-compose.yaml`-Datei befinden (normalerweise `/etc/docker/compose/smartapplianceenabler`)!
+Für alle nachfolgenden Befehle muss man sich im Verzeichnis mit der zum *Smart Appliance Enabler* gehörenden `docker-compose.yml`-Datei befinden (normalerweise `/etc/docker/compose/smartapplianceenabler`)!
 
 #### Starten der Container
 ```console
@@ -240,17 +240,17 @@ sae
 ```
 
 ### Automatisches Starten des Containers durch Systemd
-Auch wenn der *Smart Appliance Enabler* als Docker-Container betrieben wird, bietet es sich an, den Container als Service des [Systemd](https://de.wikipedia.org/wiki/Systemd) zu verwalten. Dazu dient die Datei `/lib/systemd/system/smartapplianceenabler-docker.service`, die nachfolgend heruntergeladen und konfiguriert wird:
+Auch wenn der *Smart Appliance Enabler* als Docker-Container betrieben wird, bietet es sich an, den Container als Service des [Systemd](https://de.wikipedia.org/wiki/Systemd) zu verwalten. Dazu dient die Datei `/etc/systemd/system/smartapplianceenabler-docker.service`, die nachfolgend heruntergeladen und konfiguriert wird:
 ```console
-pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/lib/systemd/system/smartapplianceenabler-docker.service -P /lib/systemd/system
-pi@raspberrypi ~ $ sudo chown root.root /lib/systemd/system/smartapplianceenabler-docker.service
-pi@raspberrypi ~ $ sudo chmod 755 /lib/systemd/system/smartapplianceenabler-docker.service
+pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/systemd/system/smartapplianceenabler-docker.service -P /etc/systemd/system
+pi@raspberrypi ~ $ sudo chown root.root /etc/systemd/system/smartapplianceenabler-docker.service
+pi@raspberrypi ~ $ sudo chmod 755 /etc/systemd/system/smartapplianceenabler-docker.service
 ```
  
 Damit der *Smart Appliance Enabler* beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
 ```console
 pi@raspberrypi ~ $ sudo systemctl enable smartapplianceenabler-docker.service
-Created symlink /etc/systemd/system/multi-user.target.wants/smartapplianceenabler.service → /lib/systemd/system/smartapplianceenabler.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/smartapplianceenabler.service → /etc/systemd/system/smartapplianceenabler.service.
 ```
 Nach diesen Änderungen muss der Systemd dazu gebracht werden, die Service-Konfigurationen neu zu lesen:
 ```console
@@ -271,7 +271,7 @@ sudo systemctl stop smartapplianceenabler-docker
 ```console
 sae@raspberrypi:~/docker $ sudo systemctl status smartapplianceenabler-docker
 ● smartapplianceenabler-docker.service - Smart Appliance Enabler Container
-   Loaded: loaded (/lib/systemd/system/smartapplianceenabler-docker.service; enabled; vendor preset: enabled)
+   Loaded: loaded (/etc/systemd/system/smartapplianceenabler-docker.service; enabled; vendor preset: enabled)
    Active: active (running) since Wed 2019-12-25 17:18:25 CET; 2min 38s ago
   Process: 9566 ExecStartPre=/bin/sleep 1 (code=exited, status=0/SUCCESS)
  Main PID: 9567 (docker)

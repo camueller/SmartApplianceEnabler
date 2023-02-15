@@ -54,9 +54,7 @@ The following information is required for each Modbus register:
 - `Value type`: defines the format of the value in the register
   Numerical values with high precision sometimes require 2 or 4 data words. In these cases, the byte order (Big Endian / Little Endian) can also be configured.
 
-In addition, a `factor to value` can be specified by which the supplied value must be multiplied in order to convert it into the required unit.
-
-Trying out helps to find the right configuration: set a combination of `register address`, `register type` and `value type` to be tested and check in the log which value was determined from the register content. It may also be necessary to vary the number of `data words` and the `byte order`. The aim is to at least determine the correct sequence of digits, in which only the comma is in the wrong place. This can then be corrected by setting a `factor to value`.
+Trying out helps to find the right configuration: set a combination of `register address`, `register type` and `value type` to be tested and check in the log which value was determined from the register content. It may also be necessary to vary the number of `data words` and the `byte order`. The aim is to at least determine the correct sequence of digits, in which only the comma is in the wrong place. This can then be corrected by [setting a factor to value](ModbusMeter_EN.md).
 
 ## Modbus procokol
 ### Modbus/TCP

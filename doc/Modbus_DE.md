@@ -54,9 +54,7 @@ Für jedes Modbus-Register sind folgende Angaben erforderlich:
 - `Wert-Typ`: legt fest, welches Format der Wert im Register hat
 Zahlenwerte mit hoher Genauigkeit benötigen manchmal 2 oder 4 Datenwörter. In diesen Fällen kann auch die Byte-Reihenfolge (Big Endian / Little Endian) konfiguriert werden.
 
-Außerdem kann ein `Umrechnungsfaktor` angegeben werden, mit dem der gelieferte Wert multipliziert werden muss, um ihn in die benötigte Einheit umzurechnen.
-
-Beim Finden der richtigen Konfiguration hilft Ausprobieren: Eine zu testende Kombination aus `Register-Adresse`, `Register-Typ` und `Wert-Typ` einstellen und im Log prüfen, welcher Wert aus dem Registerinhalt ermittelt wurde. Ggf. muss auch die Anzahl der `Datenwörter` und die `Byte-Reihefolge` variiert werden. Ziel ist, zumindest die richtige Ziffernfolge zu ermitteln, bei der nur noch das Komma an der falschen Stelle steht. Dies kann man abschliessend durch Setzen eines Umrechnungsfaktors korrigieren. 
+Beim Finden der richtigen Konfiguration hilft Ausprobieren: Eine zu testende Kombination aus `Register-Adresse`, `Register-Typ` und `Wert-Typ` einstellen und im Log prüfen, welcher Wert aus dem Registerinhalt ermittelt wurde. Ggf. muss auch die Anzahl der `Datenwörter` und die `Byte-Reihefolge` variiert werden. Ziel ist, zumindest die richtige Ziffernfolge zu ermitteln, bei der nur noch das Komma an der falschen Stelle steht. Dies kann man abschliessend durch [Setzen eines Umrechnungsfaktors](ModbusMeter_DE.md) korrigieren. 
 
 ## Modbus-Protokoll
 ### Modbus/TCP
