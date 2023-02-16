@@ -9,9 +9,17 @@ Die nachfolgende Abbildung zeigt die PWM-Einstellungen für ein Modellbau-Servo:
 
 Bei der Konfiguration des GPIO-Anschlusses sollten unbedingt die [Hinweise zum Raspberry Pi und zur Numerierung der GPIO-Anschlüsse](Raspberry_DE.md) beachtet werden!
 
-Für die Konfiguration des PWM-Signals sind mindestens die `PWM-Frequenz` und der `Max. Tastgrad` angeben werden. Letzteres ist das Verhältnis von Impulsdauer zur Periodendauer (in Prozent) und drückt die maximale Leistungsaufnahme aus. 
+Das nachfolgende Bild zeigt in blauer Farbe verschiedene Tastgrade (0% bis 100%), wobei der min. Tastgrad 0% und der max. Tastgrad 100% ist. In Abhängigkeit von Gerät bzw. Steuerung kann es erforderlich sein, einen min. Tastgrad nicht zu unterschreiten (rote Farbe: ca. 25%) und/oder einen max. Tastgrad nicht zu überschreiten (grüne Farbe: ca. 60%).
 
-Optional kann bei Bedarf auch der `Min. Tastgrad` angegeben werden, der das Verhältnis von Impulsdauer zur Periodendauer (in Prozent) bei minimaler Leistungsaufnahme ausdrückt.
+![PWM Switch](../pics//pwm.png)
+
+Der für die Steuerung durch den *Smart Appliance Enabler* nutzbare Bereich beginnt beim min. Tastgrad und endet beim max. Tastgrad.
+
+Im einfachsten Fall ist der min. Tastgrad 0% und der max. Tastgrad 100%. Hier kann der *Smart Appliance Enabler* den Leistungsaufnahmebereich zwischen min. Leistungsaufnahme (im einfachsten Fall 0W) und max. Leistungsaufnahme auf diese 100% mappen.
+
+Komplizierter ist es, wenn ein min. Tastgrad (rote Farbe: ca. 25%) und ein max. Tastgrad (grüne Farbe: ca. 60%) zu berücksichtigen sind. Damit stehen nur 60%-25%=35% Tastgrad zur Verfügung, um die Spanne zwischen min. Leistungsaufnahme (z.B. 1000W) und max. Leistungsaufnahme (z.B. 4000W) abzubilden. Dabei entspricht eine Leistungsaufnahme von 1000W einem Tastgrad von 25% und eine Leistungsaufnahme von 4000W einem Tastgrad von 60%. 
+
+Für die Konfiguration des PWM-Signals muss mindestens die `PWM-Frequenz` angeben werden.
 
 ## Log
 Wird ein Gerät (hier `F-00000001-000000000001-00`) mit konfiguriertem PWM-Schalter gesteuert, kann man die Steuerbefehle im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
