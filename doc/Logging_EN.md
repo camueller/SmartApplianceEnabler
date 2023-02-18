@@ -14,10 +14,14 @@ If the log entries refer to a specific device, they always contain the [`ID`](Ap
 ```
 
 ## Log level
-The *log level* is set to `debug` by default, in order to have detailed information in the event of an error. If you want to log less, you can change the log level to `info` in the file `/opt/sae/logback-spring.xml`:
+The log level can be changed in the file `/opt/sae/logback-spring.xml`:
 ```
 <logger name="de.avanux" level="debug" additivity="false">
 ```
+The following values are possible:
+- `debug` is set by default and should contain sufficiently detailed information in most cases
+- `info` can be set if you want significantly less information in the log file
+- `trace` can be set to log everything that is possible
 
 ## Storage of log files
 By default, only the logs of the last 7 days are saved. If necessary, this can be changed in the file `/opt/sae/logback-spring.xml`:

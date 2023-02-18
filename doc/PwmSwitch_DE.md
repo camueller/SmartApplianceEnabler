@@ -11,7 +11,7 @@ Bei der Konfiguration des GPIO-Anschlusses sollten unbedingt die [Hinweise zum R
 
 Das nachfolgende Bild zeigt in blauer Farbe verschiedene Tastgrade (0% bis 100%), wobei der min. Tastgrad 0% und der max. Tastgrad 100% ist. In Abhängigkeit von Gerät bzw. Steuerung kann es erforderlich sein, einen min. Tastgrad nicht zu unterschreiten (rote Farbe: ca. 25%) und/oder einen max. Tastgrad nicht zu überschreiten (grüne Farbe: ca. 60%).
 
-![PWM Switch](../pics//pwm.png)
+![PWM signal](../pics//pwm.png)
 
 Der für die Steuerung durch den *Smart Appliance Enabler* nutzbare Bereich beginnt beim min. Tastgrad und endet beim max. Tastgrad.
 

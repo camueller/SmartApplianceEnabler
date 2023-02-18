@@ -14,10 +14,14 @@ Soweit sich die Log-Einträge auf ein bestimmtes Gerät beziehen, enthalten dies
 ```
 
 ## Log-Level
-Der *Log-Level* steht standardmässig auf `debug`, um im Fehlerfall detaillierte Informationen zu haben. Falls weniger geloggt werden soll, kann der Log-Level auf `info` geändert werden in der Datei `/opt/sae/logback-spring.xml`:
+Der Log-Level kann geändert werden in der Datei `/opt/sae/logback-spring.xml`:
 ```
 <logger name="de.avanux" level="debug" additivity="false">
 ```
+Dabei sind folgende Werte möglich:
+- `debug` ist standardmäßig eingestellt und sollte in den meisten Fällen ausreichend detailliete Informationen beinhalten
+- `info` kann man einstellen, wenn deutlich weniger Informationen in der Log-Datei haben möchte
+- `trace` kann man einstellen, wenn wirklich alles zu Loggen, was möglich ist
 
 ## Aufbewahrung der Log-Dateien
 Standardmässig werden nur die Logs der letzten 7 Tage gespeichert. Bei Bedarf kann das geändert werden in der Datei `/opt/sae/logback-spring.xml`:

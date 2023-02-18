@@ -9,9 +9,17 @@ The figure below shows the PWM settings for a model making servo:
 
 When configuring the GPIO connection, it is essential to observe the [Notes on the Raspberry Pi and the numbering of the GPIO connections](Raspberry_EN.md)!
 
-For the configuration of the PWM signal at least the `PWM frequency` and the `Max. duty cycle` can be specified. The latter is the ratio of the pulse duration to the period duration (in percent) and expresses the maximum power consumption.
+The following image shows different duty cycles (0% to 100%) in blue, with the minimum duty cycle being 0% and the maximum duty cycle being 100%. Depending on the device or controller, it may be necessary not to fall below a minimum duty cycle (red color: approx. 25%) and/or not to exceed a maximum duty cycle (green color: approx. 60%).
 
-Optionally, if required, the `Min. Duty cycle` can be specified, which expresses the ratio of pulse duration to period duration (in percent) at minimum power consumption.
+![PWM signal](../pics//pwm.png)
+
+The range that can be used for control by the *Smart Appliance Enabler* starts at the minimum duty cycle and ends at the maximum duty cycle.
+
+In the simplest case, the minimum duty cycle is 0% and the maximum duty cycle is 100%. Here the *Smart Appliance Enabler* can map the power consumption range between min. power consumption (in the simplest case 0W) and max. power consumption to this 100%.
+
+It is more complicated if a minimum duty cycle (red color: approx. 25%) and a maximum duty cycle (green color: approx. 60%) have to be taken into account. This means that only 60%-25%=35% duty cycle is available to map the range between min. power consumption (e.g. 1000W) and max. power consumption (e.g. 4000W). A power consumption of 1000W corresponds to a duty cycle of 25% and a power consumption of 4000W to a duty cycle of 60%.
+
+At least the `PWM frequency` must be specified for the configuration of the PWM signal.
 
 ## Log
 If a device (here `F-00000001-000000000001-00`) is controlled with a configured PWM switch, the control commands can be displayed in [Log](Logging_EN.md) with the following command:
