@@ -287,7 +287,7 @@
                                 <phase>generate-sources</phase>
                                 <configuration>
                                     <workingDirectory>${project.basedir}/src/main/angular</workingDirectory>
-                                    <executable>ng</executable>
+                                    <executable>${project.basedir}/src/main/angular/node_modules/.bin/ng</executable>
                                     <arguments>
                                         <argument>build</argument>
                                         <argument>--configuration=production</argument>
