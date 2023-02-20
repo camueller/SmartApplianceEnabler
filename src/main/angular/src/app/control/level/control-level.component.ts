@@ -203,7 +203,7 @@ export class ControlLevelComponent implements OnChanges, OnInit {
     this.controlIds.push(nextId.toString());
     this.controlsFormArray.push(new UntypedFormGroup({}))
     for(let i=0; i<this.powerLevelFormArray?.length ?? 0; i++) {
-      this.formHandler.addFormControlToFormArray(this.powerLevelFormArray, i, nextId.toString(), [Validators.required]);
+      this.formHandler.addFormControlToFormArray(this.powerLevelFormArray, i, nextId.toString());
     }
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
