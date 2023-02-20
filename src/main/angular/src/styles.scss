@@ -7,20 +7,12 @@ html, body {
   height: 100%;
 }
 
-h1 {
-  font-size: 1.5rem;
-}
-
 h2 {
-  font-size: 1.2rem;
-  margin-top: 0;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem !important;
 }
 
 h3 {
-  font-size: 1rem;
-  margin-top: 0;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem !important;
 }
 
 mat-form-field, mat-checkbox {
@@ -78,7 +70,7 @@ button {
   }
 
   &__heading-extra-top-margin {
-    margin-top: 1.25rem;
+    margin-top: 1.25rem !important;
   }
 
   &__hostname {
