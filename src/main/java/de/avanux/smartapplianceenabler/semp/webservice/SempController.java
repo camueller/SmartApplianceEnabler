@@ -311,7 +311,9 @@ public class SempController {
                         }
                     }
                 }
-                appliance.setApplianceState(now, deviceControl.isOn(),
+                String applianceControlTopic = MqttClient.getApplianceTopic(appliance.getId(), Control.TOPIC);
+                ControlMessage controlMessage = this.controlMessages.get(applianceControlTopic);
+                appliance.setApplianceState(now, deviceControl.isOn(), controlMessage != null ? controlMessage.on : false,
                         deviceControl.getRecommendedPowerConsumption(),
                         "Setting appliance state to " + (deviceControl.isOn() ? "ON" : "OFF"));
             } else {

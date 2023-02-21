@@ -441,15 +441,20 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             );
     }
 
-    public void setApplianceState(LocalDateTime now, boolean switchOn, Integer power, String logMessage) {
+    public void setApplianceState(LocalDateTime now, boolean switchOn, boolean currentlySwitchedOn, Integer power, String logMessage) {
         if(control != null) {
             logger.debug("{}: {}", id, logMessage);
-            if(control instanceof VariablePowerConsumer && power == null) {
-                var minPower = ((VariablePowerConsumer) control).getMinPower();
-                power = minPower != null ? minPower : 0;
-                logger.debug("{}: power value not provided. Will use configured minimum power: {}W", id, power);
+            if(switchOn && power == null && currentlySwitchedOn) {
+                logger.debug("{}: Ignoring switch-on command without power value provided while already switched on", id);
             }
-            publishControlMessage(now, switchOn, power);
+            else {
+                if(control instanceof VariablePowerConsumer && switchOn && power == null) {
+                    var minPower = ((VariablePowerConsumer) control).getMinPower();
+                    power = minPower != null ? minPower : 0;
+                    logger.debug("{}: power value not provided. Will use configured minimum power: {}W", id, power);
+                }
+                publishControlMessage(now, switchOn, power);
+            }
         }
         else {
             logger.warn("{}: Appliance configuration does not contain control.", id);
@@ -479,7 +484,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                 // if no charge end is provided we switch on immediately with full power
                 DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(this.id);
                 int chargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
-                setApplianceState(now, true, chargePower,"Switching on ev charger with maximum power");
+                setApplianceState(now, true, false, chargePower,"Switching on ev charger with maximum power");
             }
         }
         else {
@@ -561,7 +566,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     public void activeIntervalChanged(LocalDateTime now, String applianceId, TimeframeInterval deactivatedInterval,
                                       TimeframeInterval activatedInterval, boolean wasRunning) {
         if(deactivatedInterval != null) {
-            setApplianceState(now, false, null, "Switching off since timeframe interval was deactivated");
+            setApplianceState(now, false, true, null, "Switching off since timeframe interval was deactivated");
             if(meter != null && !(control instanceof ElectricVehicleCharger)) {
                 meter.resetEnergyMeter();
             }
