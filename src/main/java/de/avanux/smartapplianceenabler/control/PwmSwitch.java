@@ -112,7 +112,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
                 getPigpioInterface().setPWMFrequency(getPin(), pwmFrequency);
                 range = getPigpioInterface().getPWMRealRange(getPin());
                 getPigpioInterface().setPWMRange(getPin(), range);
-                setDutyCycle(now, 0);
+                on(now, false, null);
                 logger.debug("{}: using GPIO {} with pwmFrequency={} minDutyCycle={} maxDutyCycle={} range={}",
                         getApplianceId(), getPin(), pwmFrequency, minDutyCycle, maxDutyCycle, range);
             } catch (Exception e) {
@@ -136,12 +136,10 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
                     if(message instanceof VariablePowerConsumerMessage) {
                         VariablePowerConsumerMessage controlMessage = (VariablePowerConsumerMessage) message;
                         if(controlMessage.on) {
-                            if(controlMessage.power != null) {
-                                setPower(now, controlMessage.power);
-                            }
+                            this.on(controlMessage.getTime(), true, controlMessage.power);
                         }
                         else {
-                            this.setPower(controlMessage.getTime(), 0);
+                            this.on(controlMessage.getTime(), false, null);
                         }
                     }
                 });
@@ -193,6 +191,14 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
             return getPigpioInterface().getPWMDutyCycle(getPin());
         }
         return 0;
+    }
+
+    public void on(LocalDateTime now, boolean switchOn, Integer power) {
+        if(!switchOn || power == 0) {
+            setDutyCycle(now, 0);
+        } else {
+            setPower(now, power != null ? power : this.minPowerConsumption);
+        }
     }
 
     public boolean isOn() {
