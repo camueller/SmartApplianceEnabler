@@ -167,6 +167,9 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     @Override
     public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping {}", getApplianceId(), getClass().getSimpleName());
+        if(this.mqttPublishTimerTask != null) {
+            this.mqttPublishTimerTask.cancel();
+        }
         if(isPigpioInterfaceAvailable()) {
             try {
                 disableListener();

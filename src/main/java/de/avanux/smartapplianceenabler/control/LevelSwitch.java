@@ -193,6 +193,9 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
     public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping ...", this.applianceId);
         this.controls.forEach(control -> control.stop(now));
+        if(this.mqttPublishTimerTask != null) {
+            this.mqttPublishTimerTask.cancel();
+        }
         if(mqttClient != null) {
             mqttClient.disconnect();
         }

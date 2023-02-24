@@ -152,6 +152,9 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     @Override
     public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping ...", getApplianceId());
+        if(this.mqttPublishTimerTask != null) {
+            this.mqttPublishTimerTask.cancel();
+        }
         if(mqttClient != null) {
             mqttClient.disconnect();
         }

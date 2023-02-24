@@ -164,6 +164,9 @@ public abstract class WrappedControl implements Control, ApplianceIdConsumer, No
     @Override
     public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping ...", this.applianceId);
+        if(this.mqttPublishTimerTask != null) {
+            this.mqttPublishTimerTask.cancel();
+        }
         if(this.control != null) {
             this.control.stop(now);
         }

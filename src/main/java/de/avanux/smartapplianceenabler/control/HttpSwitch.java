@@ -184,6 +184,9 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     @Override
     public void stop(LocalDateTime now) {
+        if(this.mqttPublishTimerTask != null) {
+            this.mqttPublishTimerTask.cancel();
+        }
         if(mqttClient != null) {
             mqttClient.disconnect();
         }

@@ -129,6 +129,9 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
 
     @Override
     public void stop(LocalDateTime now) {
+        if(this.mqttPublishTimerTask != null) {
+            this.mqttPublishTimerTask.cancel();
+        }
         if(mqttClient != null) {
             mqttClient.disconnect();
         }

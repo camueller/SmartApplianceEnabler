@@ -130,6 +130,9 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     @Override
     public void stop(LocalDateTime now) {
         logger.debug("{}: Stopping {} for {}", getApplianceId(), getClass().getSimpleName(), getPin());
+        if(this.mqttPublishTimerTask != null) {
+            this.mqttPublishTimerTask.cancel();
+        }
         if(mqttClient != null) {
             mqttClient.disconnect();
         }
