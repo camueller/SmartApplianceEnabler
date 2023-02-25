@@ -8,7 +8,7 @@
 - Im Anlagenlogbuch erscheinen oft Einträge wie z.B.: "EM-Gateway nicht gefunden", "EM-Gerät nicht gefunden". ---> [SP3](#sp3)
 
 ### Sunny Home Manager
-- Das Gerät wird nicht eingeschaltet ---> [SEMP3](#semp3), [SEMP4](#semp4), [SAE4](#sae4)
+- Das Gerät wird nicht eingeschaltet ---> [SEMP3](#semp3), [SEMP4](#semp4), [SAE4](#sae4), [SAE7](#sae7)
 
 ### Smart Appliance Enabler
 - Läuft der *Smart Appliance Enabler*? ---> [SAE1](#sae1)
@@ -103,3 +103,9 @@ In der [Server-Konfiguration](ConfigurationFiles_DE.md#user-content-etc-default-
 
 ### SAE6
 Die gesamte Konfiguration des *Smart Appliance Enabler* ist in [zwei XML-Dateien enthalten](ConfigurationFiles_DE.md). Diese kann man [auf einen anderen Computer sichern](ConfigurationFiles_DE.md#user-content-scp).
+
+### SAE7
+Ist für das Gerät ein [Zeitplan zur Nutzung von Überschussenergie](Schedules_DE.md) konfiguriert, wird der *Sunny Home Manager* nur dann einen Einschaltbefehl senden, wenn genügend Überschuss vorhanden ist und erwartbar ist, dass dies entsprechend der konfigurierten Bedingungen auch so bleibt. Für maximale Chancen auf einen Einschaltbefehl sollten diese Bedingungen anfangs nicht restriktiv sein. Deshalb sollte mit folgenden Werten gestartet werden:
+- [Appliance-Konfiguration: Min. Einschaltdauer](Appliance_DE.md) leer lassen
+- [Appliance-Konfiguration: Unterbrechnung erlaubt](Appliance_DE.md) aktivieren
+ 

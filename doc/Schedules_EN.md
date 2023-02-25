@@ -34,9 +34,9 @@ The *Smart Appliance Enabler* reports the device runtime requirement for the nex
 In the case of loads with variable power consumption, the *Sunny Home Manager* also specifies the currently permissible power consumption.
 
 The *Smart Appliance Enabler* supports the use of the following switch types or devices with variable power consumption:
-* [Step switch](LevelSwitch_DE.md)
-* [PWM switch](PwmSwitch_DE.md)
-* [wallboxes](EVCharger_DE.md)
+* [Level switch](LevelSwitch_EN.md)
+* [PWM switch](PwmSwitch_EN.md)
+* [Wallboxes](EVCharger_EN.md)
 
 For consumers with variable power consumption, two other are available for **request type**:
 

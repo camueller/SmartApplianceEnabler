@@ -7,7 +7,7 @@
 - Entries such as: "EM gateway not found", "EM device not found" often appear in the system logbook. ---> [SP3](#sp3)
 
 ### Sunny Home Manager
-- The device does not turn on ---> [SEMP3](#semp3), [SEMP4](#semp4), [SAE4](#sae4)
+- The device does not turn on ---> [SEMP3](#semp3), [SEMP4](#semp4), [SAE4](#sae4), [SAE7](#sae7)
 
 ### Smart Appliance Enabler
 - Is the *Smart Appliance Enabler* running? ---> [SAE1](#sae1)
@@ -101,3 +101,9 @@ The default port can be changed in the [Server Configuration](ConfigurationFiles
 
 ### SAE6
 The entire configuration of the *Smart Appliance Enabler* is contained in [two XML files](ConfigurationFiles_EN.md). This can be [backed up on another computer] (ConfigurationFiles_EN.md#user-content-scp).
+
+### SAE7
+If a [schedule for the use of surplus energy](Schedules_EN.md) is configured for the device, the *Sunny Home Manager* will only send a switch-on command if there is sufficient surplus and it can be expected that this will remain the case according to the configured conditions. For maximum chances of a switch-on command, these conditions should not be restrictive initially. Therefore, you should start with the following values:
+- [Appliance Configuration: Min. switch-on time](Appliance_DE.md) leave empty
+- [Appliance Configuration: Interruption allowed](Appliance_DE.md) should be enabled
+ 
