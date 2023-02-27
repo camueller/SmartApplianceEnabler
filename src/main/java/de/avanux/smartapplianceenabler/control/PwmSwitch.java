@@ -62,6 +62,17 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     private transient MqttClient mqttClient;
     private transient MqttMessage mqttMessageSent;
 
+    public PwmSwitch() {
+    }
+
+    public PwmSwitch(String id, int pwmFrequency, double minDutyCycle, double maxDutyCycle, int range) {
+        this.id = id;
+        this.pwmFrequency = pwmFrequency;
+        this.minDutyCycle = minDutyCycle;
+        this.maxDutyCycle = maxDutyCycle;
+        this.range = range;
+    }
+
     @Override
     public String getId() {
         return id;
@@ -167,8 +178,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
 
     public void setPower(LocalDateTime now, int power) {
         logger.info("{}: Setting power to {}W", getApplianceId(), power);
-        int dutyCycle = Double.valueOf(((power / (double) this.maxPowerConsumption * (this.maxDutyCycle - this.minDutyCycle) / 100) + (this.minDutyCycle / 100)) * range).intValue();
-        setDutyCycle(now, dutyCycle);
+        setDutyCycle(now, calculateDutyCycle(power));
         publishControlMessage(now, power);
         if(this.notificationHandler != null) {
             this.notificationHandler.sendNotification(isOn() ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
@@ -177,6 +187,10 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
 
     private int getPower() {
         return Double.valueOf(((getDutyCycle() / (double) range - minDutyCycle / 100) / ((this.maxDutyCycle - this.minDutyCycle) / 100)) * maxPowerConsumption).intValue();
+    }
+
+    protected int calculateDutyCycle(int power) {
+        return Double.valueOf((((double) power / (double) this.maxPowerConsumption) * (this.maxDutyCycle - this.minDutyCycle) / 100.0) * range).intValue();
     }
 
     private void setDutyCycle(LocalDateTime now, int dutyCycle) {
