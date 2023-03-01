@@ -53,6 +53,9 @@ Hard resetting via RTS pin...
 ## Upgrading the firmware
 If Tasmota firmware is already on the adapter, you can update it via the menu item `Firmware update`. If an error occurs (`Upload buffer comparison differs`), you should first upload the `tasmota-minimal.bin` and only then the desired full version. [Source](https://www.schimmer-media.de/forum/index.php?thread/223-sonoff-basic-update-nicht-m%C3%B6glich/)
 
+## Calibrating the firmware
+[Tasmota firmware should be calibrated](https://tasmota.github.io/docs/Power-Monitoring-Calibration/) before use, since correct measurements are affected by hardware and timing differences.
+
 ## Devices running Tasmota firmware as electricity meters
 The following command can be used to query the status of Tasmota adapters, which also includes the meter reading and power:
 ```console
