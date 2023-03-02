@@ -246,7 +246,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     private void publishControlMessage(LocalDateTime now, boolean on) {
         MqttMessage message = new ControlMessage(now, on);
         if(!message.equals(mqttMessageSent)) {
-            mqttClient.publish(mqttTopic, message, true);
+            mqttClient.publish(mqttTopic, message, false);
             mqttMessageSent = message;
         }
     }

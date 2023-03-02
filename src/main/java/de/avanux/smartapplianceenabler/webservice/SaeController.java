@@ -555,7 +555,7 @@ public class SaeController {
                             LocalDateTime now = LocalDateTime.now();
                             Control control = appliance.getControl();
                             if(control != null) {
-                                mqttClient.publish(Control.TOPIC, new ControlMessage(now, false), true, true);
+                                mqttClient.publish(Control.TOPIC, new ControlMessage(now, false), true, false);
                             }
                             activateTimeframe(now, applianceId, runtimeSeconds, latestEndSeconds, true);
                         } else {

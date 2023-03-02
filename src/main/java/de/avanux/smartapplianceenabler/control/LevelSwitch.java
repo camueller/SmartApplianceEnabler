@@ -208,7 +208,7 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
     private void setWrappedControlOn(LocalDateTime now, String controlId, boolean switchOn) {
         logger.debug("{}: Setting wrapped control switch {} to {}", applianceId, controlId, (switchOn ? "on" : "off"));
         String topic = getWrappedControlTopic(controlId);
-        mqttClient.publish(topic, new ControlMessage(now, switchOn), true, true);
+        mqttClient.publish(topic, new ControlMessage(now, switchOn), true, false);
     }
 
     @Override
@@ -262,7 +262,7 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
     private void publishControlMessage(LocalDateTime now, Integer power) {
         MqttMessage message = new VariablePowerConsumerMessage(now, isOn(), power, null);
         if(!message.equals(mqttMessageSent)) {
-            mqttClient.publish(Control.TOPIC, message, true);
+            mqttClient.publish(Control.TOPIC, message, false);
             mqttMessageSent = message;
         }
     }

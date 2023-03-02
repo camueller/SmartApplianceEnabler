@@ -360,7 +360,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
 
         var message = getControl() instanceof VariablePowerConsumer ?
                 new VariablePowerConsumerMessage(now, on, power, null) : new ControlMessage(now, on);
-        mqttClient.publish(Control.TOPIC, message, true, true);
+        mqttClient.publish(Control.TOPIC, message, true, false);
     }
 
     public void setHolidays(List<LocalDate> holidays) {

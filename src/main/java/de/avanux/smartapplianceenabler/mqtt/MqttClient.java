@@ -262,7 +262,7 @@ public class MqttClient {
                     if(connect()) {
                         message.setType(message.getClass().getSimpleName());
                         String serializedMessage = genson.serialize(message);
-                        logger.trace("{}: Publish message: topic={} payload={}", loggerId, fullTopic, serializedMessage);
+                        logger.trace("{}: Publish message: topic={} payload={} retained={}", loggerId, fullTopic, serializedMessage, retained);
                         client.publish(fullTopic, createMessage(serializedMessage.getBytes(), retained));
                     }
                 }

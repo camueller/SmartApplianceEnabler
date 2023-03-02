@@ -235,7 +235,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     private void publishControlMessage(LocalDateTime now, Integer power) {
         MqttMessage message = new VariablePowerConsumerMessage(now, isOn(), power, null);
         if(!message.equals(mqttMessageSent)) {
-            mqttClient.publish(Control.TOPIC, message, true);
+            mqttClient.publish(Control.TOPIC, message, false);
             mqttMessageSent = message;
         }
     }

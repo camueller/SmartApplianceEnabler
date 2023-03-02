@@ -330,7 +330,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         )).toArray(TimeframeIntervalQueueEntry[]::new);
 
         TimeframeIntervalQueueMessage message = new TimeframeIntervalQueueMessage(now, queueEntries);
-        mqttClient.publish(TOPIC, message, true);
+        mqttClient.publish(TOPIC, message, false);
     }
 
     private Optional<TimeframeInterval> getActivatableTimeframeInterval(LocalDateTime now, boolean ignoreStartTime) {

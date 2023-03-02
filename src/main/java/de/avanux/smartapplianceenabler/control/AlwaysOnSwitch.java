@@ -86,7 +86,7 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
     @Override
     public void start(LocalDateTime now, Timer timer) {
         MqttMessage message = new ControlMessage(now, true);
-        mqttClient.publish(Control.TOPIC, message, true);
+        mqttClient.publish(Control.TOPIC, message, false);
     }
 
     @Override

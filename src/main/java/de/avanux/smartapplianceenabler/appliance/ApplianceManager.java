@@ -642,7 +642,7 @@ public class ApplianceManager implements Runnable {
         ApplianceInfo applianceInfo = getApplianceInfo(applianceId);
         ApplianceInfoMessage message = new ApplianceInfoMessage(LocalDateTime.now(), applianceInfo);
         String topic = MqttClient.getApplianceTopic(applianceId, TOPIC);
-        mqttClient.publish(topic, false, message, false, true);
+        mqttClient.publish(topic, false, message, false, false);
     }
 
     public ApplianceInfo getApplianceInfo(String applianceId) {

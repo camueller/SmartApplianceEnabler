@@ -180,7 +180,7 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     private void publishControlMessage(LocalDateTime now, boolean on) {
         MqttMessage message = new ControlMessage(now, isOn());
         if(!message.equals(mqttMessageSent)) {
-            mqttClient.publish(mqttTopic, message, true);
+            mqttClient.publish(mqttTopic, message, false);
             mqttMessageSent = message;
         }
     }

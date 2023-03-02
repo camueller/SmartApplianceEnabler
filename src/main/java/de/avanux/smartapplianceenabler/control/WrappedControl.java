@@ -212,13 +212,13 @@ public abstract class WrappedControl implements Control, ApplianceIdConsumer, No
 
     protected void setApplianceOn(LocalDateTime now, boolean switchOn) {
         logger.debug("{}: Setting wrapped appliance switch to {}", applianceId, (switchOn ? "on" : "off"));
-        mqttClient.publish(WRAPPED_CONTROL_TOPIC, new ControlMessage(now, switchOn), true, true);
+        mqttClient.publish(WRAPPED_CONTROL_TOPIC, new ControlMessage(now, switchOn), true, false);
     }
 
     protected void publishControlMessage(boolean on) {
         MqttMessage message = buildControlMessage(on);
         if(!message.equals(mqttMessageSent)) {
-            mqttClient.publish(Control.TOPIC, message, true);
+            mqttClient.publish(Control.TOPIC, message, false);
             mqttMessageSent = message;
         }
     }

@@ -769,17 +769,17 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
                 chargePower,
                 useOptionalEnergy
         );
-        mqttClient.publish(Control.TOPIC, message, true);
+        mqttClient.publish(Control.TOPIC, message, false);
     }
 
     private void publishEVChargerStateChangedEvent(LocalDateTime now, EVChargerState previousState,
                                                    EVChargerState newState, Integer evId) {
         EVChargerStateChangedEvent event = new EVChargerStateChangedEvent(now, previousState, newState, evId);
-        mqttClient.publish(MqttEventName.EVChargerStateChanged, event, true);
+        mqttClient.publish(MqttEventName.EVChargerStateChanged, event, false);
     }
 
     private void publishEVChargerSocChangedEvent(LocalDateTime now, SocValues socValues) {
         EVChargerSocChangedEvent event = new EVChargerSocChangedEvent(now, socValues, this.evHandler.getChargeLoss());
-        mqttClient.publish(MqttEventName.EVChargerSocChanged, event, true);
+        mqttClient.publish(MqttEventName.EVChargerSocChanged, event, false);
     }
 }

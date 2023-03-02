@@ -91,6 +91,6 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
 
     private void publishControlMessage(LocalDateTime now, boolean on) {
         MqttMessage message = new ControlMessage(now, on);
-        mqttClient.publish(mqttTopic, message, true);
+        mqttClient.publish(mqttTopic, message, false);
     }
 }
