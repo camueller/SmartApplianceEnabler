@@ -145,8 +145,8 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         return null;
     }
 
-    public ElectricVehicle getVehicle(int evId) {
-        if(this.vehicles != null) {
+    public ElectricVehicle getVehicle(Integer evId) {
+        if(evId != null && this.vehicles != null) {
             for(ElectricVehicle electricVehicle : this.vehicles) {
                 if(electricVehicle.getId() == evId) {
                     return electricVehicle;
@@ -191,14 +191,21 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         }
     }
 
+    private void setSocValuesBatteryCapacityFromConnectedVehicle() {
+        var ev = getVehicle(this.connectedVehicleId);
+        if(ev != null) {
+            socValues.batteryCapacity = ev.getBatteryCapacity();
+        }
+    }
+
     public void setSocCalculationRequired(boolean socCalculationRequired) {
         this.socCalculationRequired = socCalculationRequired;
     }
 
     public void updateSoc(LocalDateTime now, Request request, boolean isCharging) {
         boolean socChanged = false;
-        if(this.socCalculationRequired || isCharging) {
-            socValues.batteryCapacity = getVehicle(this.connectedVehicleId).getBatteryCapacity();
+        if(socValues != null && (this.socCalculationRequired || isCharging)) {
+            setSocValuesBatteryCapacityFromConnectedVehicle();
             int calculatedCurrentSoc = calculateCurrentSoc();
             socChanged = this.socValues.current != null && this.socValues.current != calculatedCurrentSoc;
             this.socValues.current = calculatedCurrentSoc;
@@ -306,6 +313,7 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
                 return;
             }
             logger.debug("{}: Using SOC script execution result", applianceId);
+            setSocValuesBatteryCapacityFromConnectedVehicle();
             Integer socLastRetrieved = socValues.retrieved != null ? socValues.retrieved : socValues.initial;
             if(socValues.initial == null) {
                 socValues.initial = result.soc.intValue();
