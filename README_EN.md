@@ -115,7 +115,7 @@ All information about the [development](doc/Development_DE.md) of the *Smart App
 <br><br>
 
 # Thanks and appreciation
-The *Smart Appliance Enabler* project was **supported by [SMA](http://www.sma.de)** by providing a [Sunny Home Manager 2.0](https://www.sma.de/products/monitoring-control/sunny-home-manager-20.html)!
+The *Smart Appliance Enabler* project was **supported by [SMA](http://www.sma.de)** by providing a [Sunny Home Manager 2.0](https://www.sma.de/produkte/monitoring-control/sunny-home-manager)!
 
 The *Smart Appliance Enabler* would not exist without the following tools and frameworks, whose developers I would like to thank and acknowledge:
 * [Angular](https://angular.io) for the web frontend
