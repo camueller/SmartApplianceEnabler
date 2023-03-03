@@ -14,28 +14,9 @@ Unter Verwendung der `war`-Datei wird ein amd64-Docker-Image speziell für die n
 Wenn die Pipeline mit dem Flag "push to dockerhub" ausgeführt wird, wird ein amd64-Docker-Image für das Release gebaut und zu [Docker-Hub](https://hub.docker.com/) gepusht. Ausserdem wird auf einem Raspberry, auf dem ein Jenkins-Slave läuft, ein arm32-Docker-Image gebaut und ebenfalls zu Docker-Hub gepusht. 
 
 ### Jenkins
-Von Jenkins gibt es [offizielle Docker-Images](https://github.com/jenkinsci/docker), wobei ich aktuell die `2.361.4-lts` verwende.
-
-Damit es nicht zu folgendem Fehler kommt:
+Von Jenkins gibt es [offizielle Docker-Images](https://github.com/jenkinsci/docker). Dabei wird Jenkins wie folgt gestartet:
 ```console
-Error: spawn ps ENOENT
-    at Process.ChildProcess._handle.onexit (node:internal/child_process:282:19)
-    at onErrorNT (node:internal/child_process:477:16)
-    at processTicksAndRejections (node:internal/process/task_queues:83:21)
-    at runNextTicks (node:internal/process/task_queues:65:3)
-    at processImmediate (node:internal/timers:437:9)
-    at process.topLevelDomainCallback (node:domain:152:15)
-    at process.callbackTrampoline (node:internal/async_hooks:128:24)
-```
-... must entsprechend dieses [Hinweises](https://github.com/bahmutov/start-server-and-test/issues/132#issuecomment-448581335) `procps` installiert werden.
-
-Aktuell muss dazu das offizielle Jenkins-Docker-Image erweitert werden um `procps`. Dazu habe ich ein [Dockerfile](https://github.com/camueller/SmartApplianceEnabler/blob/master/ci/docker/Dockerfile) erstellt, mit dem das Image wie folgt gebaut wird:
-```console
-docker build --tag=avanux/jenkins:2.361.4 ./docker
-```
-Unter Verwendung dieses Images wird Jenkins wie folgt gestartet:
-```console
-sudo docker run --name jenkins -d --rm --publish 8080:8080 --volume jenkins-docker-certs:/certs/client --volume jenkins-data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):$(which docker) -e PATH=/var/jenkins_home/.local/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin -e TZ=Europe/Berlin avanux/jenkins:2.361.4
+sudo docker run --name jenkins -d --rm --publish 8080:8080 --volume jenkins-docker-certs:/certs/client --volume jenkins-data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):$(which docker) -e PATH=/var/jenkins_home/.local/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin -e TZ=Europe/Berlin jenkins/jenkins
 ```
 
 Damit der Jenkins-Docker-Container selbst mit dem Docker-Daemon kommunizieren kann, wird der Docker-Socket und das Docker-Executable jeweils als Volume in den Jenkins-Docker-Container gereicht. Damit der Zugriff auf den Docker-Socket aus dem Jenkins-Docker-Container erlaubt wird, habe ich die Zugriffsrechte darauf erweitert:
@@ -45,7 +26,6 @@ sudo chmod o+rw /var/run/docker.sock
 
 Jenkins nutzt als Home-Verzeichnis das Volume `jenkins-data`, das im Container unter `/var/jenkins_home` gemounted wird. Neben den Jenkins-Daten finden sich dort auch Maven- und NPM-Repository. Damit sich aus Jenkins heraus Tools aufrufen lassen, wird dem `PATH` das Verzeichnis `/var/jenkins_home/.local/bin` vorangestellt. In diesem können Links für diese Tools platziert werden:
 ```console
-lrwxrwxrwx 1 jenkins jenkins   62 Jan 18 14:24 ng -> /var/jenkins_home/node/lib/node_modules/@angular/cli/bin/ng.js
 lrwxrwxrwx 1 jenkins jenkins   31 Jan 17 18:20 node -> /var/jenkins_home/node/bin/node
 lrwxrwxrwx 1 jenkins jenkins   30 Jan 17 18:20 npm -> /var/jenkins_home/node/bin/npm
 lrwxrwxrwx 1 jenkins jenkins   30 Jan 17 18:21 npx -> /var/jenkins_home/node/bin/npx
