@@ -40,7 +40,7 @@ public class VariablePowerConsumerMessage extends ControlMessage {
 
     @Override
     public String toString() {
-        return "EvChargerMessage{" +
+        return "VariablePowerConsumerMessage{" +
                 "on=" + on +
                 ", power=" + power +
                 ", useOptionalEnergy=" + useOptionalEnergy +
