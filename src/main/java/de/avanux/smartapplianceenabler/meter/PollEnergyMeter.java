@@ -100,7 +100,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
                 && this.currentEnergyCounter != null && this.currentEnergyCounterTimestamp != null) {
             double diffEnergy = currentEnergyCounter - previousEnergyCounter;
             long diffTime = Duration.between(previousEnergyCounterTimestamp, currentEnergyCounterTimestamp).toMillis();
-            // diffEnergy kWh * 1000W/kW * 3600s/1h * 1000ms/1s / diffTime ms
+            // power W = diffEnergy kWh * 1000W/kW * 3600s/1h * 1000ms/1s / diffTime ms
             double power = diffEnergy * 1000.0 * 3600.0 * 1000.0 / diffTime;
             logger.debug("{}: Calculating power from energy: power={} currentEnergyCounter={} previousEnergyCounter={} diffEnergy={} diffTime={}",
                     applianceId, (int) power, energyFormat.format(currentEnergyCounter), energyFormat.format(previousEnergyCounter),
