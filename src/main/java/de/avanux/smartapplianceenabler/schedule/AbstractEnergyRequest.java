@@ -33,10 +33,6 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
     private transient EVChargerState evChargerState;
     private transient boolean socScript;
 
-    public AbstractEnergyRequest() {
-        setEnabled(false);
-    }
-
     protected Logger getLogger() {
         return LoggerFactory.getLogger(AbstractEnergyRequest.class);
     }
