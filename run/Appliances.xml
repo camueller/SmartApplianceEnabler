@@ -9,6 +9,9 @@
                 <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
                     <HttpWriteValue name="Off"/>
                 </HttpWrite>
+                <HttpRead url="http://tasmota/cm?cmnd=Power">
+                    <HttpReadValue name="On" extractionRegex=":.ON"/>
+                </HttpRead>
             </HttpSwitch>
         </StartingCurrentSwitch>
         <HttpElectricityMeter pollInterval="20" contentProtocol="JSON">
