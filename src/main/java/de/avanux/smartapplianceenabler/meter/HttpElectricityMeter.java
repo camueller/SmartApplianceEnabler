@@ -213,27 +213,38 @@ public class HttpElectricityMeter implements Meter, ApplianceLifeCycle, Validate
 
     @Override
     public void startEnergyMeter() {
-        if(pollEnergyMeter != null) {
-            logger.debug("{}: Start energy meter ...", applianceId);
-            Double energy = this.pollEnergyMeter.startEnergyCounter();
-            logger.debug("{}: Current energy meter value: {} kWh", applianceId, energy);
+        logger.debug("{}: Start energy meter ...", applianceId);
+        Double energy = 0.0;
+        if(pollPowerMeter != null) {
+            energy = pollPowerMeter.startEnergyCounter();
         }
+        if(pollEnergyMeter != null) {
+            energy = pollEnergyMeter.startEnergyCounter();
+        }
+        logger.debug("{}: Current energy meter value: {}kWh", applianceId, energy);
     }
 
     @Override
     public void stopEnergyMeter() {
-        if(pollEnergyMeter != null) {
-            logger.debug("{}: Stop energy meter ...", applianceId);
-            Double energy = this.pollEnergyMeter.stopEnergyCounter();
-            logger.debug("{}: Current energy meter value: {} kWh", applianceId, energy);
+        logger.debug("{}: Stop energy meter ...", applianceId);
+        Double energy = null;
+        if(pollPowerMeter != null) {
+            energy = pollPowerMeter.stopEnergyCounter();
         }
+        if(pollEnergyMeter != null) {
+            energy = pollEnergyMeter.stopEnergyCounter();
+        }
+        logger.debug("{}: Current energy meter value: {}kWh", applianceId, energy);
     }
 
     @Override
     public void resetEnergyMeter() {
         logger.debug("{}: Reset energy meter ...", applianceId);
+        if(pollPowerMeter != null) {
+            pollPowerMeter.reset();
+        }
         if(pollEnergyMeter != null) {
-            this.pollEnergyMeter.reset();
+            pollEnergyMeter.reset();
         }
     }
 
