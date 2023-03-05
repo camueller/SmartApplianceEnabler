@@ -133,7 +133,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     public void init() {
         logger.debug("{}: Initializing ...", applianceId);
         mqttClient = new MqttClient(applianceId, getClass());
-        this.requestCache = new RequestCache<ParentWithChild<HttpRead, HttpReadValue>, Boolean>(applianceId, 20);
+        this.requestCache = new RequestCache<ParentWithChild<HttpRead, HttpReadValue>, Boolean>(applianceId, 10);
         if(this.httpConfiguration != null) {
             this.httpTransactionExecutor.setConfiguration(this.httpConfiguration);
         }
@@ -230,6 +230,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
             if(response != null) {
                 int statusCode = response.getStatusLine().getStatusCode();
                 this.httpTransactionExecutor.closeResponse(response);
+                this.requestCache.clear();
                 if(statusCode == HttpStatus.SC_OK) {
                     publishControlMessage(now, switchOn);
                     if(this.notificationHandler != null && switchOn != on) {
