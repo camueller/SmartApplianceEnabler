@@ -357,7 +357,6 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     }
 
     private void publishControlMessage(LocalDateTime now, boolean on, Integer power) {
-
         var message = getControl() instanceof VariablePowerConsumer ?
                 new VariablePowerConsumerMessage(now, on, power, null) : new ControlMessage(now, on);
         mqttClient.publish(Control.TOPIC, message, true, false);
@@ -569,6 +568,11 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             setApplianceState(now, false, true, null, "Switching off since timeframe interval was deactivated");
             if(meter != null && !(control instanceof ElectricVehicleCharger)) {
                 meter.resetEnergyMeter();
+            }
+        }
+        if(activatedInterval != null) {
+            if(meter instanceof MasterElectricityMeter) {
+                ((MasterElectricityMeter) meter).setTimeframeIntervalChanged(true);
             }
         }
     }
