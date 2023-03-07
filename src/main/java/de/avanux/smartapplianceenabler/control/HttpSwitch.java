@@ -205,7 +205,12 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
                 Boolean response = this.requestCache.get(onRead);
                 if(response == null) {
                     response = this.httpHandler.getBooleanValue(onRead, getContentContentProtocolHandler(), false);
-                    this.requestCache.put(onRead, response);
+                    if(response != null) {
+                        this.requestCache.put(onRead, response);
+                    } else {
+                        // fall back to internal state if no response was received (possibly because of an exception)
+                        return on;
+                    }
                 }
                 else {
                     logger.debug("{}: Cached response: {}", applianceId, response);
