@@ -36,7 +36,7 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     private Integer min;
     @XmlAttribute
     private Integer max;
-    private transient MeterMessage meterMessage;
+    private transient double energyMetered;
 
     public EnergyRequest() {
     }
@@ -54,7 +54,10 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     public void init() {
         super.init();
         getMqttClient().subscribe(Meter.TOPIC, true, (topic, message) -> {
-            meterMessage = (MeterMessage) message;
+            var energy = ((MeterMessage) message).energy;
+            if(energy > energyMetered) {
+                energyMetered = energy;
+            }
         });
     }
 
@@ -89,10 +92,7 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     }
 
     private int getMeteredEnergy() {
-        if(meterMessage != null) {
-            return isActive() ? Double.valueOf(meterMessage.energy * 1000.0f).intValue() : 0;
-        }
-        return 0;
+        return isActive() ? Double.valueOf(energyMetered * 1000.0f).intValue() : 0;
     }
 
     @Override
