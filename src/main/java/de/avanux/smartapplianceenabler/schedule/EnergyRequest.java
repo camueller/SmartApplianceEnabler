@@ -54,9 +54,11 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     public void init() {
         super.init();
         getMqttClient().subscribe(Meter.TOPIC, true, (topic, message) -> {
-            var energy = ((MeterMessage) message).energy;
-            if(energy > energyMetered) {
-                energyMetered = energy;
+            if(isActive()) {
+                var energy = ((MeterMessage) message).energy;
+                if(energy > energyMetered) {
+                    energyMetered = energy;
+                }
             }
         });
     }
@@ -92,7 +94,7 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     }
 
     private int getMeteredEnergy() {
-        return isActive() ? Double.valueOf(energyMetered * 1000.0f).intValue() : 0;
+        return Double.valueOf(energyMetered * 1000.0f).intValue();
     }
 
     @Override
