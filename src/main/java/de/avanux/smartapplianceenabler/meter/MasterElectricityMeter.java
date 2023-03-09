@@ -49,7 +49,6 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
     private transient String applianceId;
     private transient boolean isMasterControlOn;
     private transient boolean isSlaveControlOn;
-    private transient boolean timeframeIntervalChanged;
     private transient MqttClient mqttClient;
     final static public String WRAPPED_METER_TOPIC = "Wrapped" + Meter.TOPIC;
 
@@ -67,10 +66,6 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
 
     public void setSlaveElectricityMeter(SlaveElectricityMeter slaveMeter) {
         this.slaveMeter = slaveMeter;
-    }
-
-    public void setTimeframeIntervalChanged(boolean timeframeIntervalChanged) {
-        this.timeframeIntervalChanged = timeframeIntervalChanged;
     }
 
     @Override
@@ -106,11 +101,6 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
                 mqttClient.subscribe(slaveControlTopic, false, (topic, message) -> {
                     if(message instanceof ControlMessage) {
                         isSlaveControlOn = ((ControlMessage) message).on;
-                        if(this.timeframeIntervalChanged) {
-                            // ignore energy already consumed by master
-                            meter.resetEnergyMeter();
-                            timeframeIntervalChanged = false;
-                        }
                     }
                 });
             }
@@ -150,16 +140,19 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
 
     @Override
     public void startEnergyMeter() {
+        logger.debug("{}: Start energy meter ...", applianceId);
         meter.startEnergyMeter();
     }
 
     @Override
     public void stopEnergyMeter() {
+        logger.debug("{}: Stop energy meter ...", applianceId);
         meter.stopEnergyMeter();
     }
 
     @Override
     public void resetEnergyMeter() {
+        logger.debug("{}: Reset energy meter ...", applianceId);
         meter.resetEnergyMeter();
     }
 

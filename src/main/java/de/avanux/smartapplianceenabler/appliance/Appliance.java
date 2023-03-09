@@ -215,6 +215,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                 Appliance masterAppliance = ApplianceManager.getInstance().getAppliance(slaveMeter.getMasterElectricityMeterApplianceId());
                 MasterElectricityMeter masterMeter = (MasterElectricityMeter) masterAppliance.getMeter();
                 masterMeter.setSlaveElectricityMeter((SlaveElectricityMeter) meter);
+                slaveMeter.setMasterElectricityMeter(masterMeter);
             }
             if(meter instanceof NotificationProvider && notificationCommand != null) {
                 NotificationHandler notificationHandler = new NotificationHandler(
@@ -566,13 +567,10 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                                       TimeframeInterval activatedInterval, boolean wasRunning) {
         if(deactivatedInterval != null) {
             setApplianceState(now, false, true, null, "Switching off since timeframe interval was deactivated");
-            if(meter != null && !(control instanceof ElectricVehicleCharger)) {
-                meter.resetEnergyMeter();
-            }
         }
         if(activatedInterval != null) {
-            if(meter instanceof MasterElectricityMeter) {
-                ((MasterElectricityMeter) meter).setTimeframeIntervalChanged(true);
+            if(meter != null && !(control instanceof ElectricVehicleCharger)) {
+                meter.resetEnergyMeter();
             }
         }
     }

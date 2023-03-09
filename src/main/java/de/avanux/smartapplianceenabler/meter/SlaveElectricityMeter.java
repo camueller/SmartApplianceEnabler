@@ -36,6 +36,7 @@ public class SlaveElectricityMeter implements ApplianceIdConsumer, Meter, Valida
     @XmlAttribute
     private String masterElectricityMeterApplianceId;
     private transient String applianceId;
+    private transient MasterElectricityMeter masterElectricityMeter;
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -48,6 +49,10 @@ public class SlaveElectricityMeter implements ApplianceIdConsumer, Meter, Valida
 
     public String getMasterElectricityMeterApplianceId() {
         return masterElectricityMeterApplianceId;
+    }
+
+    public void setMasterElectricityMeter(MasterElectricityMeter masterElectricityMeter) {
+        this.masterElectricityMeter = masterElectricityMeter;
     }
 
     @Override
@@ -76,13 +81,25 @@ public class SlaveElectricityMeter implements ApplianceIdConsumer, Meter, Valida
 
     @Override
     public void startEnergyMeter() {
+        logger.debug("{}: Start energy meter ...", applianceId);
+        if(this.masterElectricityMeter != null) {
+            this.masterElectricityMeter.startEnergyMeter();
+        }
     }
 
     @Override
     public void stopEnergyMeter() {
+        logger.debug("{}: Stop energy meter ...", applianceId);
+        if(this.masterElectricityMeter != null) {
+            this.masterElectricityMeter.stopEnergyMeter();
+        }
     }
 
     @Override
     public void resetEnergyMeter() {
+        logger.debug("{}: Reset energy meter ...", applianceId);
+        if(this.masterElectricityMeter != null) {
+            this.masterElectricityMeter.resetEnergyMeter();
+        }
     }
 }
