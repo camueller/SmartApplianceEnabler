@@ -1,15 +1,32 @@
 package de.avanux.smartapplianceenabler;
 
 import de.avanux.smartapplianceenabler.appliance.Appliance;
+import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
+import de.avanux.smartapplianceenabler.mqtt.MqttMessageHandler;
 import de.avanux.smartapplianceenabler.schedule.*;
+import org.mockito.Mockito;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 abstract public class TestBase {
+
+    protected MqttClient mqttClient = Mockito.mock(MqttClient.class);
+
+    public void mqttMessageArrived(String topic, boolean expandTopic, MqttMessage... messages) {
+        Mockito.doAnswer(invocation -> {
+            var messageHandler = (MqttMessageHandler) invocation.getArgument(2);
+            Arrays.asList(messages).forEach(message -> messageHandler.messageArrived(Meter.TOPIC, message));
+            return null;
+        }).when(mqttClient).subscribe(Mockito.eq(topic), Mockito.eq(expandTopic), Mockito.any(MqttMessageHandler.class));
+
+    }
 
     protected LocalDateTime toYesterday(Integer hour, Integer minute, Integer second) {
         return toDay(-1, hour, minute, second);

@@ -18,84 +18,95 @@
 
 package de.avanux.smartapplianceenabler.meter;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class PollPowerMeterTest {
-    private PollPowerMeter cut;
+    PollPowerMeter sut;
+
+    PollPowerExecutor pollPowerExecutor = Mockito.mock(PollPowerExecutor.class);
     LocalDateTime now;
 
     @BeforeEach
-    public void setup() throws Exception {
-        cut = new PollPowerMeter();
+    void setup() {
+        sut = new PollPowerMeter();
+        sut.setApplianceId("F-001");
+        sut.start(null, null, pollPowerExecutor);
+        Mockito.when(pollPowerExecutor.pollPower()).thenReturn(4000.0);
+
         now = LocalDateTime.now();
     }
 
-//    @Test
-//    public void getAveragePower_4Values_3ValuesInInterval() {
-//        cut.addValue(now                , 2.0);
-//        cut.addValue(now.plusSeconds(20), 4.0);
-//        cut.addValue(now.plusSeconds(40), 2.0);
-//        cut.addValue(now.plusSeconds(60), 4.0);
-//        Assertions.assertEquals(3, getAveragePower(70));
-//    }
-//
-//    @Test
-//    public void getAveragePower_3Values_2ValuesInInterval() {
-//        cut.addValue(now                , 2.0);
-//        cut.addValue(now.plusSeconds(30), 4.0);
-//        cut.addValue(now.plusSeconds(60), 2.0);
-//        Assertions.assertEquals(3, getAveragePower(75));
-//    }
-//
-//    @Test
-//    public void getAveragePower_2Values_1ValueInInterval() {
-//        cut.addValue(now                , 2.0);
-//        cut.addValue(now.plusSeconds(30), 4.0);
-//        Assertions.assertEquals(4, getAveragePower(75));
-//    }
-//
-//    @Test
-//    public void getAveragePower_1Values_1ValueInInterval() {
-//        cut.addValue(now.plusSeconds(30), 4.0);
-//        Assertions.assertEquals(4, getAveragePower(75));
-//    }
-//
-//    @Test
-//    public void getAveragePower_1Values_0ValueInInterval() {
-//        cut.addValue(now, 2.0);
-//        Assertions.assertEquals(0, getAveragePower(75));
-//    }
+    @Nested
+    @DisplayName("After one poll")
+    class AfterOnePoll {
+        @Test
+        void powerReturnedButEnergyIsZero() {
+            pollPower(now, 4000, 0.0);
+        }
+    }
 
-//    @Test
-//    public void getAveragePower_0Values_0ValueInInterval() {
-//        Assertions.assertEquals(0, getAveragePower(75));
-//    }
+    @Nested
+    @DisplayName("After more than one poll")
+    class AfterMoreThanOnePoll {
 
-//    private int getAveragePower(int secondsAfterNow) {
-//        return cut.getAveragePower(now.plusSeconds(secondsAfterNow));
-//    }
+        @Nested
+        @DisplayName("Not started")
+        class NotStarted {
+            @Test
+            void powerReturnedButEnergyIsZero() {
+                pollPower(now, 4000, 0.0);
+                pollPower(now.plusHours(1), 4000, 0.0);
+            }
+        }
 
-//    @Test
-//    public void getMinPower() {
-//        cut.addValue(now                , 1.0);
-//        cut.addValue(now.plusSeconds(20), 3.0);
-//        cut.addValue(now.plusSeconds(40), 2.0);
-//        cut.addValue(now.plusSeconds(60), 4.0);
-//        int power = cut.getMinPower(now.plusSeconds(75));
-//        Assertions.assertEquals(2, power);
-//    }
-//
-//    @Test
-//    public void getMaxPower() {
-//        cut.addValue(now                , 8.0);
-//        cut.addValue(now.plusSeconds(20), 3.0);
-//        cut.addValue(now.plusSeconds(40), 4.0);
-//        cut.addValue(now.plusSeconds(60), 2.0);
-//        int power = cut.getMaxPower(now.plusSeconds(75));
-//        Assertions.assertEquals(4, power);
-//    }
+        @Nested
+        @DisplayName("Started")
+        class Started {
+            @Test
+            void powerReturnedAndCalculatedEnergyReturned() {
+                sut.startEnergyCounter();
+                pollPower(now, 4000, 0.0);
+                pollPower(now.plusHours(1), 4000, 4.0);
+            }
+        }
+
+        @Nested
+        @DisplayName("Started and Stopped")
+        class StartedAndStopped {
+            @Test
+            void energyOnlyChangesWhileStarted() {
+                sut.startEnergyCounter();
+                pollPower(now, 4000, 0.0);
+                pollPower(now.plusHours(1), 4000, 4.0);
+                sut.stopEnergyCounter();
+                pollPower(now.plusHours(2), 4000, 4.0);
+                sut.startEnergyCounter();
+                pollPower(now.plusHours(3), 4000, 8.0);
+            }
+        }
+
+        @Test
+        void afterResetEnergyStartsAtZero() {
+            sut.startEnergyCounter();
+            pollPower(now, 4000, 0.0);
+            pollPower(now.plusHours(1), 4000, 4.0);
+            sut.stopEnergyCounter();
+            sut.reset();
+            sut.startEnergyCounter();
+            pollPower(now.plusHours(2), 4000, 0.0);
+            pollPower(now.plusHours(3), 4000, 4.0);
+        }
+    }
+
+    private void pollPower(LocalDateTime now, int averagePower, Double energy) {
+        var listener = new OnMeterUpdateAsserter(now, averagePower, energy);
+        sut.addMeterUpateListener(listener);
+        sut.pollPower(now);
+        sut.removeMeterUpateListener(listener);
+    }
 }

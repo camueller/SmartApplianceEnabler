@@ -22,83 +22,97 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PollEnergyMeterTest {
 
-    private PollEnergyMeter pollEnergyMeter;
-    private TestPollEnergyExecutor testPollEnergyExecutor = new TestPollEnergyExecutor();
+    private PollEnergyMeter sut;
+    PollEnergyExecutor pollEnergyExecutor = Mockito.mock(PollEnergyExecutor.class);
+    LocalDateTime now;
 
-    public PollEnergyMeterTest() {
-        this.pollEnergyMeter = new PollEnergyMeter();
-        this.pollEnergyMeter.setApplianceId(getClass().getSimpleName());
-//        this.pollEnergyMeter.setPollEnergyExecutor(this.testPollEnergyExecutor);
+    @BeforeEach
+    void setup() {
+        sut = new PollEnergyMeter();
+        sut.setApplianceId("F-001");
+        sut.start(null, pollEnergyExecutor);
+        Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(0.0);
+
+        now = LocalDateTime.now();
     }
 
-    @Test
-    public void getEnergy_initial() {
-        assertEquals(0.0f, this.pollEnergyMeter.getEnergy(), 0.01f);
+    @Nested
+    @DisplayName("After one poll")
+    class AfterOnePoll {
+        @Test
+        void powerReturnedButEnergyIsZero() {
+            pollEnergy(now, 0, 0.0, 1.0);
+        }
     }
 
-    @Test
-    public void getAveragePower() {
-        LocalDateTime now = LocalDateTime.now();
-        // 0.1 kWh/min = 6 kWh/h = 6000W
-//        this.pollEnergyMeter.addValue(now                , 1.1);
-//        this.pollEnergyMeter.addValue(now.plusSeconds(60), 1.2);
-//        assertEquals(6000, this.pollEnergyMeter.getAveragePower(), 1.5);
-    }
+    @Nested
+    @DisplayName("After more than one poll")
+    class AfterMoreThanOnePoll {
 
-    @Test
-    public void getEnergy_pollValueIncreases() {
-        this.testPollEnergyExecutor.addEnergy(10.0f);
-        assertEquals(0.0f, this.pollEnergyMeter.getEnergy(), 0.01f);
-    }
-
-//    @Test
-//    public void getEnergy_started_pollValueIncreases() {
-//        this.pollEnergyMeter.startEnergyCounter();
-//        this.testPollEnergyExecutor.addEnergy(10.0f);
-//        assertEquals(10.0f, this.pollEnergyMeter.getEnergy(), 0.01f);
-//    }
-
-//    @Test
-//    public void getEnergy_started_pollValueIncreases_stopped_started_pollValueIncreases() {
-//        assertEquals(0.0f, this.pollEnergyMeter.getEnergy(), 0.01f);
-//        this.pollEnergyMeter.startEnergyCounter();
-//        assertEquals(0.0f, this.pollEnergyMeter.getEnergy(), 0.01f);
-//        this.testPollEnergyExecutor.addEnergy(10.0f);
-//        this.pollEnergyMeter.stopEnergyCounter();
-//        assertEquals(10.0f, this.pollEnergyMeter.getEnergy(), 0.01f);
-//        this.pollEnergyMeter.startEnergyCounter();
-//        this.testPollEnergyExecutor.addEnergy(5.0f);
-//        assertEquals(15.0f, this.pollEnergyMeter.getEnergy(), 0.01f);
-//    }
-
-//    @Test
-//    public void calculatePower_afterReset() {
-//        LocalDateTime now = LocalDateTime.now();
-//        this.pollEnergyMeter.addValue(now.plusHours(1), 5.0f); // after 1h: 5 kWh
-//        this.pollEnergyMeter.addValue(now.plusHours(1).plusSeconds(10), 0.0f); // after 1h and 10s: 0 kWh
-//
-//        assertEquals(0, this.pollEnergyMeter.getEnergy(), 0.01);
-//    }
-
-    private class TestPollEnergyExecutor implements PollEnergyExecutor {
-
-        public static final float INITIAL_POLL_VALUE = 100.0f;
-        private double value = INITIAL_POLL_VALUE;
-
-
-        public void addEnergy(double energy) {
-            this.value += energy;
+        @Nested
+        @DisplayName("Not started")
+        class NotStarted {
+            @Test
+            void powerReturnedButEnergyIsZero() {
+                pollEnergy(now, 0, 0.0, 1.0);
+                pollEnergy(now.plusHours(1), 4000, 0.0, 5.0);
+            }
         }
 
-        @Override
-        public Double pollEnergy(LocalDateTime now) {
-            return this.value;
+        @Nested
+        @DisplayName("Started")
+        class Started {
+            @Test
+            void powerReturnedAndCalculatedEnergyReturned() {
+                pollEnergy(now, 0, 0.0, 1.0);
+                sut.startEnergyCounter();
+                pollEnergy(now.plusHours(1), 4000, 4.0, 5.0);
+            }
         }
+
+        @Nested
+        @DisplayName("Started and Stopped")
+        class StartedAndStopped {
+            @Test
+            void energyOnlyChangesWhileStarted() {
+                pollEnergy(now, 0, 0.0, 1.0);
+                sut.startEnergyCounter();
+                pollEnergy(now.plusHours(1), 4000, 4.0, 5.0);
+                sut.stopEnergyCounter();
+                pollEnergy(now.plusHours(2), 2000, 4.0, 7.0);
+                sut.startEnergyCounter();
+                pollEnergy(now.plusHours(3), 2000, 6.0, 9.0);
+            }
+        }
+
+        @Test
+        void afterResetEnergyStartsAtZero() {
+            pollEnergy(now, 0, 0.0, 1.0);
+            sut.startEnergyCounter();
+            pollEnergy(now.plusHours(1), 4000, 4.0, 5.0);
+            sut.stopEnergyCounter();
+            sut.reset();
+            pollEnergy(now.plusHours(2), 0, 0.0, 5.0);
+            sut.startEnergyCounter();
+            pollEnergy(now.plusHours(3), 2000, 2.0, 7.0);
+        }
+    }
+
+    private void pollEnergy(LocalDateTime now, int averagePower, Double energy, Double energyMeter) {
+        Mockito.when(pollEnergyExecutor.pollEnergy(Mockito.any())).thenReturn(energyMeter);
+        var listener = new OnMeterUpdateAsserter(now, averagePower, energy);
+        sut.addMeterUpateListener(listener);
+        sut.pollEnergy(now);
+        sut.removeMeterUpateListener(listener);
     }
 }

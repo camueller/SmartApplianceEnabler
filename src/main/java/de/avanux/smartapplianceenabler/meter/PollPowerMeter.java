@@ -63,26 +63,16 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     public void start(Timer timer, Integer pollInterval, PollPowerExecutor pollPowerExecutor) {
         this.pollPowerExecutor = pollPowerExecutor;
         if(timer != null) {
-            this.pollTimerTask = buildPollPowerTask(pollInterval, pollPowerExecutor);
+            this.pollTimerTask = buildPollPowerTask(pollInterval);
             timer.schedule(this.pollTimerTask, 0, this.pollTimerTask.getPeriod());
         }
     }
 
-    private GuardedTimerTask buildPollPowerTask(Integer pollInterval, PollPowerExecutor pollPowerExecutor) {
+    private GuardedTimerTask buildPollPowerTask(Integer pollInterval) {
         return new GuardedTimerTask(this.applianceId, "PollPowerMeter", pollInterval * 1000) {
             @Override
             public void runTask() {
-                LocalDateTime now = LocalDateTime.now();
-                Double power = pollPowerExecutor.pollPower();
-                if(power != null) {
-                    previousPowerTimestamp = currentPowerTimestamp;
-                    currentPower = power;
-                    currentPowerTimestamp = now;
-                    updateTotalEnergy();
-                }
-                meterUpdateListeners.forEach(
-                    listener -> listener.onMeterUpdate(now, power != null ? power.intValue() : 0, totalEnergy)
-                );
+                pollPower(LocalDateTime.now());
             }
         };
     }
@@ -90,6 +80,21 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     public void cancelTimer() {
         if(this.pollTimerTask != null) {
             this.pollTimerTask.cancel();
+        }
+    }
+
+    protected void pollPower(LocalDateTime now) {
+        if(pollPowerExecutor != null) {
+            Double power = pollPowerExecutor.pollPower();
+            if(power != null) {
+                previousPowerTimestamp = currentPowerTimestamp;
+                currentPower = power;
+                currentPowerTimestamp = now;
+                updateTotalEnergy();
+            }
+            meterUpdateListeners.forEach(
+                    listener -> listener.onMeterUpdate(now, power != null ? power.intValue() : 0, totalEnergy)
+            );
         }
     }
 
@@ -146,13 +151,18 @@ public class PollPowerMeter implements ApplianceIdConsumer {
         this.startEnergyCounter = null;
         this.totalEnergy = 0.0;
         this.previousPowerTimestamp = null;
+        this.currentPowerTimestamp = null;
     }
 
     public boolean isStarted() {
         return started;
     }
 
-    public void addPowerUpateListener(MeterUpdateListener listener) {
+    public void addMeterUpateListener(MeterUpdateListener listener) {
         this.meterUpdateListeners.add(listener);
+    }
+
+    public void removeMeterUpateListener(MeterUpdateListener listener) {
+        this.meterUpdateListeners.remove(listener);
     }
 }

@@ -73,17 +73,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         return new GuardedTimerTask(this.applianceId, "PollEnergyMeter", Meter.AVERAGING_INTERVAL * 1000) {
             @Override
             public void runTask() {
-                if(pollEnergyExecutor != null) {
-                    LocalDateTime now = LocalDateTime.now();
-                    Double energy = pollEnergyExecutor.pollEnergy(now);
-                    if(energy != null) {
-                        previousEnergyCounter = currentEnergyCounter;
-                        previousEnergyCounterTimestamp = currentEnergyCounterTimestamp;
-                        currentEnergyCounter = energy;
-                        currentEnergyCounterTimestamp = now;
-                    }
-                    meterUpdateListeners.forEach(listener -> listener.onMeterUpdate(now, getAveragePower(), getEnergy()));
-                }
+                pollEnergy(LocalDateTime.now());
             }
         };
     }
@@ -92,6 +82,19 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
         if(this.pollTimerTask != null) {
             this.pollTimerTask.cancel();
             this.pollTimerTask = null;
+        }
+    }
+
+    protected void pollEnergy(LocalDateTime now) {
+        if(pollEnergyExecutor != null) {
+            Double energy = pollEnergyExecutor.pollEnergy(now);
+            if(energy != null) {
+                previousEnergyCounter = currentEnergyCounter;
+                previousEnergyCounterTimestamp = currentEnergyCounterTimestamp;
+                currentEnergyCounter = energy;
+                currentEnergyCounterTimestamp = now;
+            }
+            meterUpdateListeners.forEach(listener -> listener.onMeterUpdate(now, getAveragePower(), getEnergy()));
         }
     }
 
@@ -167,5 +170,9 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
 
     public void addMeterUpateListener(MeterUpdateListener listener) {
         this.meterUpdateListeners.add(listener);
+    }
+
+    public void removeMeterUpateListener(MeterUpdateListener listener) {
+        this.meterUpdateListeners.remove(listener);
     }
 }

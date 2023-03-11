@@ -21,54 +21,72 @@ package de.avanux.smartapplianceenabler.schedule;
 import de.avanux.smartapplianceenabler.TestBase;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
-import de.avanux.smartapplianceenabler.mqtt.MqttClient;
-import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
-import de.avanux.smartapplianceenabler.mqtt.MqttMessageHandler;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDateTime;
 
-@ExtendWith(MockitoExtension.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class EnergyRequestTest extends TestBase {
     private EnergyRequest sut;
-    private MqttClient mqttClient = Mockito.mock(MqttClient.class);
     private TimeframeIntervalStateProvider timeframeIntervalStateProvider = Mockito.mock(TimeframeIntervalStateProvider.class);
 
-    public EnergyRequestTest() {
+    @BeforeEach
+    void setup() {
         sut = new EnergyRequest();
         sut.setMqttClient(mqttClient);
         sut.setTimeframeIntervalStateProvider(timeframeIntervalStateProvider);
     }
 
-    @Test
-    @DisplayName("don't decrease energyMetered because of metehr reset caused by timeframe interval change")
-    public void init() {
-        sut.setMin(5000);
-        sut.setMax(10000);
-        var mqttMessage1 = new MeterMessage(LocalDateTime.now(), 1000, 1.5);
-        var mqttMessage2 = new MeterMessage(LocalDateTime.now(), 1000, 0);
-        Mockito.doAnswer(invocation -> {
-            var messageHandler = (MqttMessageHandler) invocation.getArgument(2);
-            messageHandler.messageArrived(Meter.TOPIC, mqttMessage1);
-            messageHandler.messageArrived(Meter.TOPIC, mqttMessage2);
-            return null;
-        }).when(mqttClient).subscribe(Mockito.any(String.class), Mockito.any(Boolean.class), Mockito.any(MqttMessageHandler.class));
-        Mockito.when(timeframeIntervalStateProvider.getState()).thenReturn(TimeframeIntervalState.ACTIVE);
+    @Nested
+    @DisplayName("TimeframeIntervalState.ACTIVE")
+    class TimeframeIntervalStateActive {
 
-        sut.init();
+        @BeforeEach
+        void init() {
+            Mockito.when(timeframeIntervalStateProvider.getState()).thenReturn(TimeframeIntervalState.ACTIVE);
+        }
 
-        assertEquals(3500, sut.getMin(LocalDateTime.now()));
-        assertEquals(8500, sut.getMax(LocalDateTime.now()));
+        @Test
+        @DisplayName("don't decrease energyMetered because of meter reset caused by timeframe interval change")
+        public void energyMeteredDecrease() {
+            sut.setMin(5000);
+            sut.setMax(10000);
+            mqttMessageArrived(Meter.TOPIC, true,
+                    new MeterMessage(LocalDateTime.now(), 1000, 1.5),
+                    new MeterMessage(LocalDateTime.now(), 1000, 0)
+            );
+
+            sut.init();
+
+            assertEquals(3500, sut.getMin(LocalDateTime.now()));
+            assertEquals(8500, sut.getMax(LocalDateTime.now()));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("TimeframeIntervalState.QUEUED")
+    class TimeframeIntervalStateQueued {
+
+        @BeforeEach
+        void setup() {
+            Mockito.when(timeframeIntervalStateProvider.getState()).thenReturn(TimeframeIntervalState.QUEUED);
+        }
+
+        @Test
+        @DisplayName("energyMetered should remain unchanged if if meter message is received")
+        public void energyMeteredDecrease() {
+            sut.setMin(5000);
+            sut.setMax(10000);
+            mqttMessageArrived(Meter.TOPIC, true, new MeterMessage(LocalDateTime.now(), 1000, 1.5));
+
+            sut.init();
+
+            assertEquals(5000, sut.getMin(LocalDateTime.now()));
+            assertEquals(10000, sut.getMax(LocalDateTime.now()));
+        }
+
     }
 }
