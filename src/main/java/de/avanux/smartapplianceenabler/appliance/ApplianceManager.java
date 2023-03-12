@@ -33,21 +33,19 @@ import de.avanux.smartapplianceenabler.modbus.ModbusRead;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
 import de.avanux.smartapplianceenabler.mqtt.ApplianceInfoMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
-import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.schedule.Schedule;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
 import de.avanux.smartapplianceenabler.util.FileHandler;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
+import de.avanux.smartapplianceenabler.util.Holder;
 import de.avanux.smartapplianceenabler.webservice.ApplianceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.pigpioj.PigpioInterface;
-import uk.pigpioj.PigpioJ;
 
-import java.io.IOException;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,7 +59,7 @@ public class ApplianceManager implements Runnable {
     private Device2EM device2EM;
     private Appliances appliances;
     private Timer timer;
-    private GuardedTimerTask holidaysDownloaderTimerTask;
+    private GuardedTimerTask midnightTimerTask;
     private Integer autoclearSeconds;
     private boolean initializationCompleted;
     private transient MqttClient mqttClient;
@@ -261,11 +259,11 @@ public class ApplianceManager implements Runnable {
         }
         mqttClient = new MqttClient("", getClass());
 
-        boolean holidaysUsed = false;
+        final Holder<Boolean> holidaysUsed = new Holder<>(false);
         for (Appliance appliance : getAppliances()) {
             publishApplianceInfoMessage(appliance.getId());
             if(appliance.hasTimeframeForHolidays()) {
-                holidaysUsed = true;
+                holidaysUsed.value = true;
             }
             logger.debug("{}: Initializing appliance ...", appliance.getId());
             try {
@@ -294,40 +292,18 @@ public class ApplianceManager implements Runnable {
             }
         }
 
-        if(holidaysUsed) {
-            logger.debug("Holidays are used.");
-            /**
-             * Once a day check availability of holidays file - the year might have changed!
-             * Download it if it is not available. If it is available (either downloaded or just placed there)
-             * load holidays from the file pass them on to all appliances.
-             */
-            this.holidaysDownloaderTimerTask = new GuardedTimerTask(null,
-                    "HolidaysDownloader", 24 * 60 * 60 * 1000) {
-                @Override
-                public void runTask() {
-                    FileHandler fileHandler = new FileHandler();
-                    if(! fileHandler.isHolidayFileAvailable()) {
-                        HolidaysDownloader downloader = new HolidaysDownloader();
-                        String downloadUrl = appliances.getConfigurationValue(ConfigurationParam.HOLIDAYS_URL.getVal());
-                        if(downloadUrl != null) {
-                            downloader.setUrl(downloadUrl);
-                        }
-                        Map<LocalDate, String> holidayWithName = downloader.downloadHolidays();
-                        fileHandler.saveHolidays(holidayWithName);
-                    }
-
-                    List<LocalDate> holidays = fileHandler.loadHolidays();
-                    if(holidays != null) {
-                        for (Appliance appliance : getAppliances()) {
-                            appliance.setHolidays(holidays);
-                        }
-                    }
-                }
-            };
-            timer.schedule(this.holidaysDownloaderTimerTask, 0, this.holidaysDownloaderTimerTask.getPeriod());
-        }
-        else {
-            logger.debug("Holidays are NOT used.");
+        LocalDateTime nextMidnight = LocalDate.now().atStartOfDay().plusDays(1);
+        ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset(LocalDateTime.now());
+        var dateNextMidnight = Date.from(nextMidnight.toInstant(zoneOffset));
+        this.midnightTimerTask = new GuardedTimerTask(null,
+                "Midnight", 24 * 60 * 60 * 1000) {
+            @Override
+            public void runTask() {
+                atMidnight(holidaysUsed.value);
+            }
+        };
+        if(timer != null) {
+            timer.schedule(this.midnightTimerTask, dateNextMidnight, this.midnightTimerTask.getPeriod());
         }
 
         var evChargerTemplatesDownloaderTimerTask = new TimerTask() {
@@ -345,6 +321,20 @@ public class ApplianceManager implements Runnable {
         }
 
         initializationCompleted = true;
+    }
+
+    private void atMidnight(boolean holidaysUsed) {
+        if(holidaysUsed) {
+            logger.debug("Holidays are used.");
+            downloadHolidays();
+        }
+        else {
+            logger.debug("Holidays are NOT used.");
+        }
+
+        for (Appliance appliance : getAppliances()) {
+            appliance.atMidnight();
+        }
     }
 
     public void save(boolean writeDevice2EM, boolean writeAppliances) {
@@ -699,5 +689,30 @@ public class ApplianceManager implements Runnable {
         deviceInfo.setCharacteristics(characteristics);
         deviceInfo.setCapabilities(capabilities);
         return deviceInfo;
+    }
+
+    /**
+     * Once a day check availability of holidays file - the year might have changed!
+     * Download it if it is not available. If it is available (either downloaded or just placed there)
+     * load holidays from the file pass them on to all appliances.
+     */
+    private void downloadHolidays() {
+        FileHandler fileHandler = new FileHandler();
+        if(! fileHandler.isHolidayFileAvailable()) {
+            HolidaysDownloader downloader = new HolidaysDownloader();
+            String downloadUrl = appliances.getConfigurationValue(ConfigurationParam.HOLIDAYS_URL.getVal());
+            if(downloadUrl != null) {
+                downloader.setUrl(downloadUrl);
+            }
+            Map<LocalDate, String> holidayWithName = downloader.downloadHolidays();
+            fileHandler.saveHolidays(holidayWithName);
+        }
+
+        List<LocalDate> holidays = fileHandler.loadHolidays();
+        if(holidays != null) {
+            for (Appliance appliance : getAppliances()) {
+                appliance.setHolidays(holidays);
+            }
+        }
     }
 }

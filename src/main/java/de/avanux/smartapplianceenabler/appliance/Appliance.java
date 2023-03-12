@@ -243,7 +243,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             );
             ((NotificationProvider) control).setNotificationHandler(notificationHandler);
         }
-        if(control instanceof ElectricVehicleCharger) {
+        if(isElectricVehicleCharger()) {
             ElectricVehicleCharger evCharger = ((ElectricVehicleCharger) control);
             evCharger.setAppliance(this);
         }
@@ -325,6 +325,9 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         if(meter != null) {
             logger.info("{}: Starting {}", id, meter.getClass().getSimpleName());
             meter.start(now, timer);
+            if(isEnergyMeteredDaily()) {
+                meter.startEnergyMeter();
+            }
         }
         if(control != null) {
             logger.info("{}: Starting {}", id, control.getClass().getSimpleName());
@@ -351,6 +354,13 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         }
         if(mqttClient != null) {
             mqttClient.disconnect();
+        }
+    }
+
+    public void atMidnight() {
+        logger.debug("{}: Running midnight procdure ...", id);
+        if(meter != null && isEnergyMeteredDaily()) {
+            meter.resetEnergyMeter();
         }
     }
 
@@ -397,6 +407,11 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         return false;
     }
 
+    public boolean isEnergyMeteredDaily() {
+        var hasSchedules = schedules != null ? this.schedules.size() > 0 : false;
+        return !(hasSchedules || isElectricVehicleCharger() || (this.meter instanceof MasterElectricityMeter));
+    }
+
     private Set<GpioControllable> getGpioControllables() {
         Set<GpioControllable> controllables = new HashSet<GpioControllable>();
         if(meter != null) {
@@ -438,6 +453,10 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             );
     }
 
+    public boolean isElectricVehicleCharger() {
+        return this.control instanceof ElectricVehicleCharger;
+    }
+
     public void setApplianceState(LocalDateTime now, boolean switchOn, boolean currentlySwitchedOn, Integer power, String logMessage) {
         if(control != null) {
             logger.debug("{}: {}", id, logMessage);
@@ -459,7 +478,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     }
 
     public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socTarget, LocalDateTime chargeEnd) {
-        if (this.control instanceof ElectricVehicleCharger) {
+        if (isElectricVehicleCharger()) {
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
             if(meterMessage != null && meterMessage.energy > 0.1) {
                 logger.debug("{}: skipping ev charger configuration to continue charging process already started", id);
@@ -490,7 +509,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     }
 
     public void updateSoc(LocalDateTime now,  Integer socCurrent, Integer socTarget) {
-        if (control instanceof ElectricVehicleCharger) {
+        if (isElectricVehicleCharger()) {
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
             ElectricVehicle ev = evCharger.getElectricVehicleHandler().getConnectedVehicle();
             if(ev != null) {
@@ -538,7 +557,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                     slaves.add((ModbusSwitch) wrappedControl);
                 }
             }
-            else if(control instanceof ElectricVehicleCharger) {
+            else if(isElectricVehicleCharger()) {
                 EVChargerControl evChargerControl = ((ElectricVehicleCharger) control).getControl();
                 if(evChargerControl instanceof EVModbusControl) {
                     slaves.add((EVModbusControl) evChargerControl);
@@ -566,7 +585,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             setApplianceState(now, false, true, null, "Switching off since timeframe interval was deactivated");
         }
         if(activatedInterval != null) {
-            if(meter != null && !(control instanceof ElectricVehicleCharger)) {
+            if(meter != null && !isElectricVehicleCharger()) {
                 meter.resetEnergyMeter();
             }
         }
