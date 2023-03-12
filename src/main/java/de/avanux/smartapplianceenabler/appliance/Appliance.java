@@ -325,9 +325,6 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         if(meter != null) {
             logger.info("{}: Starting {}", id, meter.getClass().getSimpleName());
             meter.start(now, timer);
-            if(control instanceof AlwaysOnSwitch || control instanceof MeterReportingSwitch) {
-                meter.startEnergyMeter();
-            }
         }
         if(control != null) {
             logger.info("{}: Starting {}", id, control.getClass().getSimpleName());
