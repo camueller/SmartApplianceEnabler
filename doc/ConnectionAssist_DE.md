@@ -4,20 +4,13 @@ Der [*SMA Connection Assist*](https://www.sma.de/produkte/monitoring-control/sma
 
 ## Installation und Ausführung
 
-Zunächst musst der *SMA Connection Assist* heruntergeladen werden, wobei in die jar-Datei heruntergeladen werden muss (auch für Windows): 
-https://www.sma.de/produkte/monitoring-control/sma-connection-assist.html
+Zunächst musst der [*SMA Connection Assist* heruntergeladen](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/run/connection-assist.jar) werden.
 
-Um diese auszuführen, muss eine Java-Runtime auf Eurem PC installiert sein - ggf. könnt Ihr sie hier herunterladen (Standardeinstellungen ausgewählt lassen): https://adoptopenjdk.net/
+Um diesen auszuführen, muss eine Java-Runtime auf Eurem PC installiert sein - ggf. könnt Ihr sie hier herunterladen (Standardeinstellungen ausgewählt lassen): https://adoptopenjdk.net/
 
 In dem Verzeichnis, in sich die heruntergeladene  jar-Datei des *SMA Connection Assist* befindet, muss dieser wie folgt gestartet werden (Versionsnummer ggf. anpassen!):
 ```console
-java -jar SMA-Connection-Assist-1.0.11.R.jar -discoverHoman
-```
-
-Alternativ kann man sich ein Shell-Scrip erstellen, damit man diesen Befehl nicht immer wieder eintippen muss:
-```console
-#!/bin/sh
-/data/opt/jdk-11/bin/java -jar SMA-Connection-Assist-1.0.11.R.jar -discoverHoman
+java -jar connection-assist.jar -discoverHoman
 ```
 
 Der *SMA Connection Assist* läuft im installierten Standard-Webbrowser des Systems. Darin wird zunächst diese Seite angezeigt:
