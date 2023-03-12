@@ -90,24 +90,21 @@ public class PollPowerMeter implements ApplianceIdConsumer {
                 previousPowerTimestamp = currentPowerTimestamp;
                 currentPower = power;
                 currentPowerTimestamp = now;
-                updateTotalEnergy();
             }
             meterUpdateListeners.forEach(
-                    listener -> listener.onMeterUpdate(now, power != null ? power.intValue() : 0, totalEnergy)
+                    listener -> listener.onMeterUpdate(now, power != null ? power.intValue() : 0, getTotalEnergy())
             );
         }
     }
 
-    public void updateTotalEnergy() {
+    public double getTotalEnergy() {
         double diffEnergy = calculateDiffEnergy();
         if(this.started) {
             this.totalEnergy += diffEnergy;
         }
-        else {
-            diffEnergy = this.totalEnergy;
-        }
         logger.trace("{}: totalEnergy={}Wh diffEnergy={}Wh started={}",
                 applianceId, energyFormat.format(totalEnergy), energyFormat.format(diffEnergy), started);
+        return this.totalEnergy;
     }
 
     private double calculateDiffEnergy() {
