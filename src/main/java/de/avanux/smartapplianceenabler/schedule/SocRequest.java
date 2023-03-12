@@ -126,8 +126,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
                     setEnabled(true);
                 }
                 this.socValues = new SocValues(event.socValues);
-                this.forceEnergyCalculation = true;
-                update();
+                updateForced();
             }
         });
     }

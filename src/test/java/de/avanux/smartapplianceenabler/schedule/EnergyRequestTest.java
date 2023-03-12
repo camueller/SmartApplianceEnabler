@@ -35,6 +35,7 @@ public class EnergyRequestTest extends TestBase {
     @BeforeEach
     void setup() {
         sut = new EnergyRequest();
+        sut.setApplianceId("F-001");
         sut.setMqttClient(mqttClient);
         sut.setTimeframeIntervalStateProvider(timeframeIntervalStateProvider);
     }
@@ -53,7 +54,7 @@ public class EnergyRequestTest extends TestBase {
         public void energyMeteredDecrease() {
             sut.setMin(5000);
             sut.setMax(10000);
-            mqttMessageArrived(Meter.TOPIC, true,
+            mqttMessageArrivedOnSubscribe(Meter.TOPIC, true,
                     new MeterMessage(LocalDateTime.now(), 1000, 1.5),
                     new MeterMessage(LocalDateTime.now(), 1000, 0)
             );
@@ -63,7 +64,6 @@ public class EnergyRequestTest extends TestBase {
             assertEquals(3500, sut.getMin(LocalDateTime.now()));
             assertEquals(8500, sut.getMax(LocalDateTime.now()));
         }
-
     }
 
     @Nested
@@ -80,7 +80,7 @@ public class EnergyRequestTest extends TestBase {
         public void energyMeteredDecrease() {
             sut.setMin(5000);
             sut.setMax(10000);
-            mqttMessageArrived(Meter.TOPIC, true, new MeterMessage(LocalDateTime.now(), 1000, 1.5));
+            mqttMessageArrivedOnSubscribe(Meter.TOPIC, true, new MeterMessage(LocalDateTime.now(), 1000, 1.5));
 
             sut.init();
 
