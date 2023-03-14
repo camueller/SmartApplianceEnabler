@@ -145,10 +145,18 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     }
 
     public void reset() {
+        logger.debug("{}: Reset energy counter", applianceId);
+        var wasStarted = this.started;
+        if(wasStarted) {
+            stopEnergyCounter();
+        }
         this.startEnergyCounter = null;
         this.totalEnergy = 0.0;
         this.previousPowerTimestamp = null;
         this.currentPowerTimestamp = null;
+        if(wasStarted) {
+            startEnergyCounter();
+        }
     }
 
     public boolean isStarted() {
