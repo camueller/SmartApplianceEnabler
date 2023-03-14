@@ -100,16 +100,19 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
 
     @Override
     public void startEnergyMeter() {
+        logger.debug("{}: Start energy meter ...", getApplianceId());
         this.pulseEnergyMeter.startEnergyCounter();
     }
 
     @Override
     public void stopEnergyMeter() {
+        logger.debug("{}: Stop energy meter ...", getApplianceId());
         this.pulseEnergyMeter.stopEnergyCounter();
     }
 
     @Override
     public void resetEnergyMeter() {
+        logger.debug("{}: Reset energy meter ...", getApplianceId());
         this.pulseEnergyMeter.resetEnergyCounter();
     }
 

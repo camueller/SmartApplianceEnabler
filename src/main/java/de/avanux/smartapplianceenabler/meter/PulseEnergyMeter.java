@@ -55,14 +55,17 @@ public class PulseEnergyMeter implements ApplianceIdConsumer {
     }
 
     public void startEnergyCounter() {
+        logger.debug("{}: Start energy counter", applianceId);
         started = true;
     }
 
     public void stopEnergyCounter() {
+        logger.debug("{}: Stop energy counter: pulses={}", applianceId, pulseCounter);
         started = false;
     }
 
     public void resetEnergyCounter() {
+        logger.debug("{}: Reset energy counter", applianceId);
         pulseCounter = 0;
     }
 
