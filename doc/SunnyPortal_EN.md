@@ -33,13 +33,7 @@ If you get the error message instead
 ### Maximum number of devices in Sunny Portal
 <a name="max-devices">
 
-The Sunny Home Manager currently supports *a maximum of 12 devices*. In addition to the devices that are addressed with the SEMP protocol, the total number also includes, for example, SMA Bluetooth radio-controlled sockets - i.e. all devices that are displayed in the consumer overview in Sunny Portal. This limit can be increased to 22 if you create all devices at once, as long as you have created fewer than 12 devices in *Sunny Portal*. Devices that are not yet required are then simply created as placeholders (any manufacturer/designation/serial number, type: other, max. power consumption: 100 W, without meter/switch) and the data is simply changed if you actually have a device instead of the placeholder would like. If you have more than 12 devices in the *Sunny Portal*, you must not deactivate the devices there, as they cannot be activated again. Instead, you should only adjust the configuration in the *Smart Appliance Enabler* accordingly.
-
-In order to create the devices at once, you have to select all new devices in the `Overview of new devices` and then press the `Add` button.
-
-Source: https://www.photovoltaikforum.com/thread/104060-ger%C3%A4te-mit-home-manager-koppeln-via-semp-ethernet/?postID=1774797#post1774797
-
-![Mehr als 12 Geräte](../pics/shm/MehrAls12Geraete.png)
+The Sunny Home Manager currently supports *a maximum of 12 devices*. In addition to the devices that are addressed with the SEMP protocol, the total number also includes, for example, SMA Bluetooth radio-controlled sockets - i.e. all devices that are displayed in the consumer overview in Sunny Portal.
 
 ## Load balance and control
 From now on, the new device should be listed in the *Load balance and control* with its consumption:
