@@ -239,6 +239,8 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
                 Object registerValue = executor.getValueTransformer().getValue();
                 if(registerValue instanceof Double) {
                     return (Double) registerValue;
+                } else if(registerValue instanceof Integer) {
+                    return ((Integer) registerValue).doubleValue();
                 }
             }
             else {

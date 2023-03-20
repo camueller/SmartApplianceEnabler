@@ -37,6 +37,7 @@ public class IntegerValueTransformer extends ValueTransformerBase implements Val
         if(byteValues != null) {
             if (byteValues.length == 1) {
                 value = byteValues[0];
+                logger.debug("{}: transformed value={}", applianceId, value);
             }
             else if (byteValues.length == 2) {
                 value = byteValues[0] << 16 | byteValues[1];
