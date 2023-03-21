@@ -12,6 +12,21 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [2.2.2](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.2.2) - 21.03.2023
+
+### Gefixt
+- Web-Oberfläche
+  - Nachträgliches Hinzufügen von Schaltern zum Stufenschalter ist jetzt möglich
+- Wallbox
+  - Beim Überschussladen wurde teilweise nur mit minimaler Leistung geladen, weil der SHM keine Leistungsvorgabe gemacht hat. In diesen Fällen bleibt jetzt die aktuelle Leistung unverändert, wenn gerade geladen wird. Die minimal Leistung wird lediglich dann gesetzt, wenn gerade nicht geladen wird und die Leistungsvorgabe fehlt.
+- diverse Fixes für PWM-Schalter und Stufenschalter
+- nach Restart des SAE aufgrund von Konfigurationsänderungen über die Web-Oberfläche konnte es zu mehrfachem Versand von MQTT-Nachrichten kommen 
+- nach Restart des SAE aufgrund von Konfigurationsänderungen über die Web-Oberfläche konnte es zu Problemen aufgrund der Zustellung zuvor mit dem "Retained"-Flag versandter Nachrichten kommen. Ab jetzt versendet der SAE alle Nachrichten ohne "Retained"-Flag
+- Energieanforderungen durch PWM-Schalter oder Stufenschalter waren nicht aktivert und wurden demzufolge nicht an den SHM gemeldet
+- direkt nach dem Ein-/Ausschalten konnte es bei HTTP-Schaltern zur Verwendung eines falschen Schalterzustands kommen
+- gezählte Energiemengen werden um Mitternacht zurückgesetzt (ausser für Geräte mit Zeitplänen und auch nicht für Wallboxen)
+- Modbus-Zähler haben keinen Wert für Leistung geliefert, wenn der Wert-Type des Registers Integer ist
+
 ## [2.2.1](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.2.1) - 08.02.2023
 
 ### Gefixt
