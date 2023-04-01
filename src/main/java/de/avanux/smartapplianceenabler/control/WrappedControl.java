@@ -50,7 +50,6 @@ public abstract class WrappedControl implements Control, ApplianceIdConsumer, No
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
-    private transient MqttMessage mqttMessageSent;
     final static public String WRAPPED_CONTROL_TOPIC = "Wrapped" + Control.TOPIC;
 
     @Override
@@ -217,10 +216,7 @@ public abstract class WrappedControl implements Control, ApplianceIdConsumer, No
 
     protected void publishControlMessage(boolean on) {
         MqttMessage message = buildControlMessage(on);
-        if(!message.equals(mqttMessageSent)) {
-            mqttClient.publish(Control.TOPIC, message, false);
-            mqttMessageSent = message;
-        }
+        mqttClient.publish(Control.TOPIC, message, false);
     }
 
     abstract protected MqttMessage buildControlMessage(boolean on);
