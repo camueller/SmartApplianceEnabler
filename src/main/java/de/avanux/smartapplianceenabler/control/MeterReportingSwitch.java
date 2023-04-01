@@ -187,9 +187,7 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
 
     private void publishControlMessage(LocalDateTime now, boolean on) {
         MqttMessage message = new ControlMessage(now, on);
-        if(!message.equals(mqttMessageSent)) {
-            mqttClient.publish(mqttPublishTopic, message, false);
-            mqttMessageSent = message;
-        }
+        mqttClient.publish(mqttPublishTopic, message, false);
+        mqttMessageSent = message;
     }
 }
