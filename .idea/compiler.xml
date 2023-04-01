@@ -9,9 +9,6 @@
         <module name="SmartApplianceEnabler" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="SmartApplianceEnabler" target="11" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-source 7" />
