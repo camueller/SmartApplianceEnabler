@@ -64,14 +64,18 @@ public class MqttClient {
         }
         clientIdBuilder.append(clazz.getSimpleName());
 
-        var counter = counterForClientId.get(clientIdBuilder.toString());
-        if(counter != null) {
-            counter++;
+        if(applianceId.length() > 0) {
+            var counter = counterForClientId.get(clientIdBuilder.toString());
+            if (counter != null) {
+                counter++;
+            } else {
+                counter = 0;
+            }
+            counterForClientId.put(clientIdBuilder.toString(), counter);
+            clientIdBuilder.append("-").append(counter);
         } else {
-            counter = 0;
+            clientIdBuilder.append("-").append(this.hashCode());
         }
-        counterForClientId.put(clientIdBuilder.toString(), counter);
-        clientIdBuilder.append("-").append(counter);
 
         var brokerUri = buildBrokerUri(mqttBroker.getResolvedHost(), mqttBroker.getResolvedPort());
         logger.info("Using MQTT broker " + brokerUri);
