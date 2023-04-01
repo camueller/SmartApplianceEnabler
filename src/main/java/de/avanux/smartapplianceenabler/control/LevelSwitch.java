@@ -60,7 +60,6 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
     private transient NotificationHandler notificationHandler;
     private transient MqttClient mqttClient;
     private transient GuardedTimerTask mqttPublishTimerTask;
-    private transient MqttMessage mqttMessageSent;
     final private static String WRAPPED_CONTROL_TOPIC_ID_SEPARATOR = "-";
 
     @Override
@@ -262,9 +261,6 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
 
     private void publishControlMessage(LocalDateTime now, Integer power) {
         MqttMessage message = new VariablePowerConsumerMessage(now, isOn(), power, null);
-        if(!message.equals(mqttMessageSent)) {
-            mqttClient.publish(Control.TOPIC, message, false);
-            mqttMessageSent = message;
-        }
+        mqttClient.publish(Control.TOPIC, message, false);
     }
 }

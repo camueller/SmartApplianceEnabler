@@ -52,7 +52,6 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     private transient NotificationHandler notificationHandler;
     private transient GuardedTimerTask mqttPublishTimerTask;
     private transient MqttClient mqttClient;
-    private transient MqttMessage mqttMessageSent;
     private transient String mqttTopic = Control.TOPIC;
     private transient boolean publishControlStateChangedEvent = true;
 
@@ -179,9 +178,6 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
     private void publishControlMessage(LocalDateTime now, boolean on) {
         MqttMessage message = new ControlMessage(now, isOn());
-        if(!message.equals(mqttMessageSent)) {
-            mqttClient.publish(mqttTopic, message, false);
-            mqttMessageSent = message;
-        }
+        mqttClient.publish(mqttTopic, message, false);
     }
 }
