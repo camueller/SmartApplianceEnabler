@@ -14,8 +14,8 @@
                 </HttpRead>
             </HttpSwitch>
         </StartingCurrentSwitch>
-        <!--MqttElectricityMeter topic="tele/tasmota/SENSOR" contentProtocol="JSON" name="Energy" path="$.ENERGY.Total" timePath="$.Time"-->
-        <MqttElectricityMeter topic="tele/tasmota/SENSOR" contentProtocol="JSON" name="Power" path="$.ENERGY.Power" timePath="$.Time">
+        <!--MqttElectricityMeter topic="tele/tasmota/SENSOR" name="Energy" path="$.ENERGY.Total" timePath="$.Time"-->
+        <MqttElectricityMeter topic="tele/tasmota/SENSOR" name="Power" path="$.ENERGY.Power" timePath="$.Time">
             <Notifications/>
         </MqttElectricityMeter>
         <Schedule enabled="true">

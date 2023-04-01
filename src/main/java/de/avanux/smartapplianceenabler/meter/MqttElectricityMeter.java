@@ -29,7 +29,6 @@ import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
-import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ValueExtractor;
 import org.slf4j.Logger;
@@ -47,8 +46,6 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
 
     @XmlAttribute
     private String topic;
-    @XmlAttribute
-    private String contentProtocol;
 
     @XmlAttribute
     private String name;
@@ -96,7 +93,7 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     @Override
     public void validate() throws ConfigurationException {
         logger.debug("{}: Validating configuration", applianceId);
-        logger.debug("{}: configured: topic={} contentProtocol={}", applianceId, topic, contentProtocol);
+        logger.debug("{}: configured: topic={}", applianceId, topic);
         logger.debug("{}: {} configured: path={} factorToValue={} timePath={}",
                 applianceId,
                 name,
@@ -113,11 +110,9 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
                     applianceId, MeterValueName.Power.name(), MeterValueName.Energy.name());
             throw new ConfigurationException();
         }
-        if(ContentProtocolType.JSON.equals(contentProtocol)) {
-            if(path == null) {
-                logger.error("{}: Missing 'path' property", applianceId);
-                throw new ConfigurationException();
-            }
+        if(path == null) {
+            logger.error("{}: Missing 'path' property", applianceId);
+            throw new ConfigurationException();
         }
     }
 
@@ -216,9 +211,7 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
 
     public ContentProtocolHandler getContentContentProtocolHandler() {
         if(this.contentContentProtocolHandler == null) {
-            if(ContentProtocolType.JSON.name().equals(this.contentProtocol)) {
-                this.contentContentProtocolHandler = new JsonContentProtocolHandler();
-            }
+            this.contentContentProtocolHandler = new JsonContentProtocolHandler();
         }
         return this.contentContentProtocolHandler;
     }

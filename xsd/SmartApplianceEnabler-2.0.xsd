@@ -464,7 +464,6 @@
             <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="topic" type="xs:string" use="required" />
-        <xs:attribute name="contentProtocol" type="ContentProtcolType" />
         <xs:attribute name="name" type="ReadValueNameType" use="required" />
         <xs:attribute name="path" type="xs:string" />
         <xs:attribute name="timePath" type="xs:string" />
