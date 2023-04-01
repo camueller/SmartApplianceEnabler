@@ -23,6 +23,7 @@ import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.Environment;
 import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import de.avanux.smartapplianceenabler.util.RegexUtil;
+import de.avanux.smartapplianceenabler.util.ValueExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,10 +32,12 @@ public class HttpHandler implements ApplianceIdConsumer {
     private transient Logger logger = LoggerFactory.getLogger(HttpHandler.class);
     private transient String applianceId;
     private transient HttpTransactionExecutor httpTransactionExecutor;
+    private transient ValueExtractor valueExtractor = new ValueExtractor();
 
     @Override
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
+        this.valueExtractor.setApplianceId(applianceId);
     }
 
     public void setHttpTransactionExecutor(HttpTransactionExecutor httpTransactionExecutor) {
@@ -44,48 +47,13 @@ public class HttpHandler implements ApplianceIdConsumer {
     public Double getDoubleValue(ParentWithChild<HttpRead, HttpReadValue> read,
                                  ContentProtocolHandler contentProtocolHandler,
                                  Double defaultValue) {
-        if(Environment.isHttpDisabled()) {
-            return defaultValue;
-        }
-        String protocolHandlerValue = getValue(read, contentProtocolHandler);
-        if(protocolHandlerValue != null) {
-            String valueExtractionRegex = read.child().getExtractionRegex();
-            String extractedValue = null;
-            if(valueExtractionRegex != null) {
-                extractedValue = RegexUtil.getMatchingGroup1(protocolHandlerValue, valueExtractionRegex);
-            }
-            String parsableString = (extractedValue != null ? extractedValue : protocolHandlerValue)
-                    .replace(',', '.');
-            Double value;
-            Double factorToValue = read.child().getFactorToValue();
-            if(factorToValue != null) {
-                value = Double.parseDouble(parsableString) * factorToValue;
-            }
-            else {
-                value = Double.parseDouble(parsableString);
-            }
-            logger.debug("{}: value={} protocolHandlerValue={} valueExtractionRegex={} extractedValue={} factorToValue={}",
-                    applianceId, value, protocolHandlerValue, valueExtractionRegex, extractedValue, factorToValue);
-            return value;
-        }
-        return null;
+        return this.valueExtractor.getDoubleValue(getValue(read, contentProtocolHandler), read.child().getExtractionRegex(), read.child().getFactorToValue(), defaultValue);
     }
 
     public boolean getBooleanValue(ParentWithChild<HttpRead, HttpReadValue> read,
                                    ContentProtocolHandler contentProtocolHandler,
                                    boolean defaultValue) {
-        if(Environment.isHttpDisabled()) {
-            return defaultValue;
-        }
-        String protocolHandlerValue = getValue(read, contentProtocolHandler);
-        if(protocolHandlerValue != null) {
-            String valueExtractionRegex = read.child().getExtractionRegex();
-            boolean match = RegexUtil.isMatch(protocolHandlerValue, valueExtractionRegex);
-            logger.debug("{}: match={} protocolHandlerValue={} valueExtractionRegex={}",
-                    applianceId, match, protocolHandlerValue, valueExtractionRegex);
-            return match;
-        }
-        return false;
+        return this.valueExtractor.getBooleanValue(getValue(read, contentProtocolHandler), read.child().getExtractionRegex(), defaultValue);
     }
 
     private String getValue(ParentWithChild<HttpRead, HttpReadValue> read,

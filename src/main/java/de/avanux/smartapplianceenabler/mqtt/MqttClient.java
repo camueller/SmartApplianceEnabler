@@ -39,7 +39,7 @@ public class MqttClient {
     private String loggerId;
     private String applianceId;
     private static Map<String, Integer> counterForClientId = new HashMap();
-    private Map<String, MqttMessageHandler> messageHandlerForSubscribedTopic = new HashMap();
+    private Map<String, IMessageHandler> messageHandlerForSubscribedTopic = new HashMap();
     public final static int MQTT_PUBLISH_PERIOD = 20;
     private IMqttClient client;
     private static org.eclipse.paho.client.mqttv3.MqttClient instance;
@@ -303,10 +303,23 @@ public class MqttClient {
         }
     }
 
+    public void subscribe(String topic, RawMqttMessageHandler messageHandler) {
+        messageHandlerForSubscribedTopic.put(topic, messageHandler);
+        if(connect()) {
+            subscribeCachedMessageHandler(topic);
+        }
+    }
+
     private void subscribeCachedMessageHandler(String fullTopic) {
         try {
             client.subscribe(fullTopic, (receivedTopic, receivedMessage) -> {
-                receiveMessage(receivedTopic, receivedMessage, messageHandlerForSubscribedTopic.get(fullTopic));
+                var messageHandler = messageHandlerForSubscribedTopic.get(fullTopic);
+                if(messageHandler instanceof RawMqttMessageHandler) {
+                    ((RawMqttMessageHandler) messageHandler).messageArrived(receivedTopic, receivedMessage.getPayload());
+                }
+                else if(messageHandler instanceof MqttMessageHandler) {
+                    receiveMessage(receivedTopic, receivedMessage, (MqttMessageHandler) messageHandlerForSubscribedTopic.get(fullTopic));
+                }
             });
             logger.debug("{}: Messages subscribed: topic={}", loggerId, fullTopic);
         }

@@ -42,6 +42,7 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
     @XmlElements({
             @XmlElement(name = "S0ElectricityMeter", type = S0ElectricityMeter.class),
             @XmlElement(name = "ModbusElectricityMeter", type = ModbusElectricityMeter.class),
+            @XmlElement(name = "MqttElectricityMeter", type = MqttElectricityMeter.class),
             @XmlElement(name = "HttpElectricityMeter", type = HttpElectricityMeter.class),
     })
     private Meter meter;

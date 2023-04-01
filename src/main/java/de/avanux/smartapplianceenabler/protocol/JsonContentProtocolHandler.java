@@ -27,9 +27,10 @@ public class JsonContentProtocolHandler implements ContentProtocolHandler {
     private DocumentContext context;
 
     @Override
-    public void parse(String content) {
+    public ContentProtocolHandler parse(String content) {
         Configuration conf = Configuration.defaultConfiguration();
         this.context = JsonPath.using(conf).parse(content);
+        return this;
     }
 
     @Override

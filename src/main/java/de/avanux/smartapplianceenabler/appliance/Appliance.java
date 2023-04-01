@@ -70,6 +70,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     @XmlElements({
             @XmlElement(name = "HttpElectricityMeter", type = HttpElectricityMeter.class),
             @XmlElement(name = "ModbusElectricityMeter", type = ModbusElectricityMeter.class),
+            @XmlElement(name = "MqttElectricityMeter", type = MqttElectricityMeter.class),
             @XmlElement(name = "S0ElectricityMeter", type = S0ElectricityMeter.class),
             @XmlElement(name = "MasterElectricityMeter", type = MasterElectricityMeter.class),
             @XmlElement(name = "SlaveElectricityMeter", type = SlaveElectricityMeter.class),

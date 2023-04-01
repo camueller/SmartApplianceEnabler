@@ -143,8 +143,8 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     }
 
     public Double stopEnergyCounter() {
-        double stopEnergyCounter = this.pollEnergyExecutor.pollEnergy(LocalDateTime.now());
-        if(this.startEnergyCounter != null) {
+        Double stopEnergyCounter = this.pollEnergyExecutor.pollEnergy(LocalDateTime.now());
+        if(this.startEnergyCounter != null && stopEnergyCounter != null) {
             if(this.totalEnergy != null) {
                 this.totalEnergy += stopEnergyCounter - this.startEnergyCounter;
             }

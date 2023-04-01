@@ -14,12 +14,10 @@
                 </HttpRead>
             </HttpSwitch>
         </StartingCurrentSwitch>
-        <HttpElectricityMeter pollInterval="20" contentProtocol="JSON">
-            <HttpRead url="http://tasmota/cm?cmnd=Status%208">
-                <HttpReadValue name="Energy" path="$.StatusSNS.ENERGY.Total"/>
-            </HttpRead>
+        <!--MqttElectricityMeter topic="tele/tasmota/SENSOR" contentProtocol="JSON" name="Energy" path="$.ENERGY.Total" timePath="$.Time"-->
+        <MqttElectricityMeter topic="tele/tasmota/SENSOR" contentProtocol="JSON" name="Power" path="$.ENERGY.Power" timePath="$.Time">
             <Notifications/>
-        </HttpElectricityMeter>
+        </MqttElectricityMeter>
         <Schedule enabled="true">
             <RuntimeRequest min="0" max="300"/>
             <DayTimeframe>
@@ -29,6 +27,6 @@
         </Schedule>
     </Appliance>
     <Connectivity>
-        <MqttBroker host="localhost" port="1883"/>
+        <MqttBroker host="raspi2" port="1883"/>
     </Connectivity>
 </Appliances>

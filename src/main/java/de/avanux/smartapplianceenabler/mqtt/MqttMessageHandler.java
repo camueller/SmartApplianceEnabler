@@ -18,6 +18,6 @@
 
 package de.avanux.smartapplianceenabler.mqtt;
 
-public interface MqttMessageHandler {
+public interface MqttMessageHandler extends IMessageHandler {
     void messageArrived(String topic, MqttMessage message);
 }

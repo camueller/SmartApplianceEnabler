@@ -94,10 +94,11 @@
                 <xs:element name="LevelSwitch" type="LevelSwitchType" />
             </xs:choice>
             <xs:choice>
-                <xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" />
-                <xs:element name="ModbusElectricityMeter" type="ModbusElectricityMeterType" minOccurs="0" />
                 <xs:element name="HttpElectricityMeter" type="HttpElectricityMeterType" minOccurs="0" />
                 <xs:element name="MasterElectricityMeter" type="MasterElectricityMeterType" minOccurs="0" />
+                <xs:element name="ModbusElectricityMeter" type="ModbusElectricityMeterType" minOccurs="0" />
+                <xs:element name="MqttElectricityMeter" type="MqttElectricityMeterType" minOccurs="0" />
+                <xs:element name="S0ElectricityMeter" type="S0ElectricityMeterType" minOccurs="0" />
                 <xs:element name="SlaveElectricityMeter" type="SlaveElectricityMeterType" minOccurs="0" />
             </xs:choice>
             <xs:element name="Schedule" type="ScheduleType" minOccurs="0" maxOccurs="unbounded" />
@@ -428,16 +429,6 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:complexType name="ModbusElectricityMeterType">
-        <xs:sequence>
-            <xs:element name="ModbusRead" type="ModbusReadType" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
-        </xs:sequence>
-        <xs:attribute name="idref" type="xs:NCName" use="required" />
-        <xs:attribute name="slaveAddress" type="xs:int" use="required" />
-        <xs:attribute name="pollInterval" type="xs:int" />
-    </xs:complexType>
-
     <xs:complexType name="HttpElectricityMeterType">
         <xs:sequence>
             <xs:element name="HttpConfiguration" type="HttpConfigurationType" minOccurs="0" />
@@ -456,6 +447,28 @@
         </xs:sequence>
         <xs:attribute name="masterSwitchOn" type="xs:boolean" />
         <xs:attribute name="slaveSwitchOn" type="xs:boolean" />
+    </xs:complexType>
+
+    <xs:complexType name="ModbusElectricityMeterType">
+        <xs:sequence>
+            <xs:element name="ModbusRead" type="ModbusReadType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="idref" type="xs:NCName" use="required" />
+        <xs:attribute name="slaveAddress" type="xs:int" use="required" />
+        <xs:attribute name="pollInterval" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="MqttElectricityMeterType">
+        <xs:sequence>
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="topic" type="xs:string" use="required" />
+        <xs:attribute name="contentProtocol" type="ContentProtcolType" />
+        <xs:attribute name="name" type="ReadValueNameType" use="required" />
+        <xs:attribute name="path" type="xs:string" />
+        <xs:attribute name="timePath" type="xs:string" />
+        <xs:attribute name="factorToValue" type="xs:double" />
     </xs:complexType>
 
     <xs:complexType name="SlaveElectricityMeterType">
