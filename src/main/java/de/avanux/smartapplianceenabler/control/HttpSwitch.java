@@ -158,6 +158,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
+        logger.debug("{}: Starting ...", applianceId);
         if(mqttClient != null) {
             this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
                     MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
@@ -183,6 +184,7 @@ public class HttpSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
 
     @Override
     public void stop(LocalDateTime now) {
+        logger.debug("{}: Stopping ...", applianceId);
         if(this.mqttPublishTimerTask != null) {
             this.mqttPublishTimerTask.cancel();
         }
