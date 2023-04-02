@@ -156,7 +156,8 @@ public abstract class WrappedControl implements Control, ApplianceIdConsumer, No
                     }
                 }
             };
-            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
+            // initial publishControlMessage() is triggered by initial "switch off" in on(false)
+            timer.schedule(this.mqttPublishTimerTask, this.mqttPublishTimerTask.getPeriod(), this.mqttPublishTimerTask.getPeriod());
         }
     }
 

@@ -116,7 +116,8 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
                     }
                 }
             };
-            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
+            // initial publishControlMessage() is triggered by initial "switch off" in on(false)
+            timer.schedule(this.mqttPublishTimerTask, this.mqttPublishTimerTask.getPeriod(), this.mqttPublishTimerTask.getPeriod());
             mqttClient.subscribe(mqttTopic, true, true, (topic, message) -> {
                 if(message instanceof ControlMessage) {
                     ControlMessage controlMessage = (ControlMessage) message;
