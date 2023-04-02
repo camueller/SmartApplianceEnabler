@@ -144,7 +144,7 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
         if(mqttClient != null) {
             mqttClient.subscribe(topic, (topic, message) -> {
                 var messageString = new String(message, StandardCharsets.UTF_8);
-                logger.debug("{}: MQTT message received: {}", applianceId, messageString);
+                logger.trace("{}: MQTT message received: {}", applianceId, messageString);
 
                 var contentHandler = getContentContentProtocolHandler();
                 contentHandler.parse(messageString);

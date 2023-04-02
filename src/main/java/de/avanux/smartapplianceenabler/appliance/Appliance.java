@@ -59,6 +59,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             @XmlElement(name = "MeterReportingSwitch", type = MeterReportingSwitch.class),
             @XmlElement(name = "MockSwitch", type = MockSwitch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
+            @XmlElement(name = "MqttSwitch", type = MqttSwitch.class),
             @XmlElement(name = "LevelSwitch", type = LevelSwitch.class),
             @XmlElement(name = "StartingCurrentSwitch", type = StartingCurrentSwitch.class),
             @XmlElement(name = "Switch", type = Switch.class),

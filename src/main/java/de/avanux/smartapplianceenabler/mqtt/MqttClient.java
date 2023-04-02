@@ -26,6 +26,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -260,14 +261,18 @@ public class MqttClient {
     }
 
     private void publishMessage(String fullTopic, MqttMessage message, boolean retained) {
+        message.setType(message.getClass().getSimpleName());
+        String serializedMessage = genson.serialize(message);
+        publishMessage(fullTopic, serializedMessage.getBytes(), retained);
+    }
+
+    public void publishMessage(String fullTopic, byte[] message, boolean retained) {
         if(executor != null) {
             executor.submit(() -> {
                 try {
                     if(connect()) {
-                        message.setType(message.getClass().getSimpleName());
-                        String serializedMessage = genson.serialize(message);
-                        logger.trace("{}: Publish message: topic={} payload={} retained={}", loggerId, fullTopic, serializedMessage, retained);
-                        client.publish(fullTopic, createMessage(serializedMessage.getBytes(), retained));
+                        logger.trace("{}: Publish message: topic={} payload={} retained={}", loggerId, fullTopic, new String(message, StandardCharsets.UTF_8), retained);
+                        client.publish(fullTopic, createMessage(message, retained));
                     }
                 }
                 catch (Exception e) {

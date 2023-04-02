@@ -87,6 +87,7 @@
                 <xs:element name="HttpSwitch" type="HttpSwitchType" />
                 <xs:element name="MockSwitch" type="MockSwitchType" />
                 <xs:element name="ModbusSwitch" type="ModbusSwitchType" />
+                <xs:element name="MqttSwitch" type="MqttSwitchType" />
                 <xs:element name="ElectricVehicleCharger" type="ElectricVehicleChargerType" />
                 <xs:element name="PwmSwitch" type="PwmSwitchType" />
                 <xs:element name="StartingCurrentSwitch" type="StartingCurrentSwitchType" />
@@ -138,6 +139,19 @@
         <xs:attribute name="id" type="xs:int" />
         <xs:attribute name="idref" type="xs:NCName" use="required" />
         <xs:attribute name="slaveAddress" type="xs:int" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="MqttSwitchType">
+        <xs:sequence>
+            <xs:element name="Notifications" type="NotificationsType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:int" />
+        <xs:attribute name="topic" type="xs:string" use="required" />
+        <xs:attribute name="onPayload" type="xs:string" use="required" />
+        <xs:attribute name="offPayload" type="xs:string" use="required" />
+        <xs:attribute name="statusTopic" type="xs:string" />
+        <xs:attribute name="statusExtractionRegex" type="xs:string" />
+        <xs:attribute name="contentProtocol" type="ContentProtcolType" />
     </xs:complexType>
 
     <xs:complexType name="HttpSwitchType">
@@ -370,6 +384,7 @@
             <xs:element name="HttpSwitch" type="HttpSwitchType" minOccurs="0" />
             <xs:element name="MockSwitch" type="MockSwitchType" minOccurs="0" />
             <xs:element name="ModbusSwitch" type="ModbusSwitchType" minOccurs="0" />
+            <xs:element name="MqttSwitch" type="MqttSwitchType" minOccurs="0" />
             <xs:element name="Switch" type="SwitchType" minOccurs="0" />
         </xs:sequence>
         <xs:attribute name="powerThreshold" type="xs:int" />

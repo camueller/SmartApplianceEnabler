@@ -41,6 +41,7 @@ public abstract class WrappedControl implements Control, ApplianceIdConsumer, No
     @XmlElements({
             @XmlElement(name = "HttpSwitch", type = HttpSwitch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
+            @XmlElement(name = "MqttSwitch", type = MqttSwitch.class),
             @XmlElement(name = "Switch", type = Switch.class)
     })
     private Control control;

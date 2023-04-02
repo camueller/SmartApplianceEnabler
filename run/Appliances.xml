@@ -2,17 +2,9 @@
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v2.0">
     <Appliance id="F-00000001-000000000008-00">
         <StartingCurrentSwitch>
-            <HttpSwitch>
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20On">
-                    <HttpWriteValue name="On"/>
-                </HttpWrite>
-                <HttpWrite url="http://tasmota/cm?cmnd=Power%20Off">
-                    <HttpWriteValue name="Off"/>
-                </HttpWrite>
-                <HttpRead url="http://tasmota/cm?cmnd=Power">
-                    <HttpReadValue name="On" extractionRegex=":.ON"/>
-                </HttpRead>
-            </HttpSwitch>
+            <MqttSwitch topic="cmnd/tasmota/Power" onPayload="ON" offPayload="OFF" statusTopic="stat/tasmota/POWER" statusExtractionRegex="ON">
+                <Notifications/>
+            </MqttSwitch>
         </StartingCurrentSwitch>
         <!--MqttElectricityMeter topic="tele/tasmota/SENSOR" name="Energy" path="$.ENERGY.Total" timePath="$.Time"-->
         <MqttElectricityMeter topic="tele/tasmota/SENSOR" name="Power" path="$.ENERGY.Power" timePath="$.Time">
