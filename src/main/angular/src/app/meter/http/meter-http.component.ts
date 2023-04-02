@@ -35,8 +35,6 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   httpReadComp: HttpReadComponent;
   @Input()
   meterDefaults: MeterDefaults;
-  @Input()
-  isEvCharger: boolean;
   readValueName: MeterValueName;
   contentProtocols = [undefined, ContentProtocol.JSON.toUpperCase()];
   form: UntypedFormGroup;

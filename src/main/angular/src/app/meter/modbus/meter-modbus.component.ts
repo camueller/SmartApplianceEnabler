@@ -49,8 +49,6 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   @Input()
   modbusSettings: ModbusSetting[];
   @Input()
-  isEvCharger: boolean;
-  @Input()
   applianceId: string;
   form: UntypedFormGroup;
   formHandler: FormHandler;

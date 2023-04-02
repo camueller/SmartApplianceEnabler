@@ -41,13 +41,11 @@
                     [meterDefaults]="meterDefaults"
                     [settingsDefaults]="settingsDefaults"
                     [modbusSettings]="settings.modbusSettings"
-                    [isEvCharger]="isEvCharger"
                     [applianceId]="applianceId"
   ></app-meter-modbus>
   <app-meter-http *ngIf="isHttpElectricityMeter"
                   [httpElectricityMeter]="meter.httpElectricityMeter"
                   [meterDefaults]="meterDefaults"
-                  [isEvCharger]="isEvCharger"
   ></app-meter-http>
   <app-meter-master *ngIf="meter.isMasterMeter"
                     [form]="form"
