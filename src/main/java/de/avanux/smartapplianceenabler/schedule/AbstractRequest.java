@@ -164,6 +164,7 @@ abstract public class AbstractRequest implements Request {
         getMqttClient().subscribe(Control.TOPIC, true, (topic, message) -> {
             if(message instanceof ControlMessage) {
                 controlMessage = (ControlMessage) message;
+                getLogger().trace("{}: MQTT message received: {}", applianceId, controlMessage);
                 if (isActive() || isExpired()) {
                     if (controlMessage.on) {
                         enabledBefore = true;
