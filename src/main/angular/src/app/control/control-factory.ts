@@ -33,6 +33,7 @@ import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 import {PwmSwitch} from './pwm/pwm-switch';
 import {LevelSwitch} from './level/level-switch';
 import {SwitchOption} from './switchoption/switch-option';
+import {MqttSwitch} from './mqtt/mqtt-switch';
 
 export class ControlFactory {
 
@@ -87,6 +88,8 @@ export class ControlFactory {
       control.switch_ = this.createSwitch(rawControl);
     } else if (control.type === ModbusSwitch.TYPE) {
       control.modbusSwitch = this.createModbusSwitch(rawControl);
+    } else if (control.type === MqttSwitch.TYPE) {
+      control.mqttSwitch = this.createMqttSwitch(rawControl);
     } else if (control.type === LevelSwitch.TYPE) {
       control.levelSwitch = this.createLevelSwitch(rawControl);
     } else if (control.type === PwmSwitch.TYPE) {
@@ -109,6 +112,8 @@ export class ControlFactory {
       return control.switch_;
     } else if (control.type === ModbusSwitch.TYPE) {
       return control.modbusSwitch;
+    } else if (control.type === MqttSwitch.TYPE) {
+      return control.mqttSwitch;
     } else if (control.type === LevelSwitch.TYPE) {
       return control.levelSwitch;
     } else if (control.type === PwmSwitch.TYPE) {
@@ -147,6 +152,10 @@ export class ControlFactory {
 
   createModbusSwitch(rawModbusSwitch: any): ModbusSwitch {
     return new ModbusSwitch(rawModbusSwitch);
+  }
+
+  createMqttSwitch(rawModbusSwitch: any): MqttSwitch {
+    return new MqttSwitch(rawModbusSwitch);
   }
 
   createHttpSwitch(rawHttpSwitch: any): HttpSwitch {

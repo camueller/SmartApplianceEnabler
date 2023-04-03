@@ -1,0 +1,35 @@
+<div class="ControlMqttComponent">
+  <ng-content></ng-content>
+  <div class="sae__fields">
+    <mat-form-field class="sae__mqttTopic">
+      <mat-label>{{'ControlMqttComponent.topic' | translate}}</mat-label>
+      <input matInput type="text" formControlName="topic"
+             required="{{formHandler.isRequired('topic')}}">
+      <mat-error *ngIf="errors.topic">{{errors.topic}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="ControlMqttComponent__onPayload">
+      <mat-label>{{'ControlMqttComponent.onPayload' | translate}}</mat-label>
+      <input matInput type="text" formControlName="onPayload"
+             required="{{formHandler.isRequired('onPayload')}}">
+      <mat-error *ngIf="errors.onPayload">{{errors.onPayload}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="ControlMqttComponent__offPayload">
+      <mat-label>{{'ControlMqttComponent.offPayload' | translate}}</mat-label>
+      <input matInput type="text" formControlName="offPayload"
+             required="{{formHandler.isRequired('offPayload')}}">
+      <mat-error *ngIf="errors.offPayload">{{errors.offPayload}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="sae__mqttTopic">
+      <mat-label>{{'ControlMqttComponent.statusTopic' | translate}}</mat-label>
+      <input matInput type="text" formControlName="statusTopic"
+             required="{{formHandler.isRequired('statusTopic')}}">
+      <mat-error *ngIf="errors.statusTopic">{{errors.statusTopic}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="sae__regex">
+      <mat-label>{{'ControlMqttComponent.statusExtractionRegex' | translate}}</mat-label>
+      <input matInput type="text" formControlName="statusExtractionRegex"
+             required="{{formHandler.isRequired('statusExtractionRegex')}}">
+      <mat-error *ngIf="errors.statusExtractionRegex">{{errors.statusExtractionRegex}}</mat-error>
+    </mat-form-field>
+  </div>
+</div>

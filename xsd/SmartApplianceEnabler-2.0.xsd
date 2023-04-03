@@ -64,7 +64,7 @@
         </xs:keyref>
         <!-- SwitchStatus idref -->
         <xs:key name="SwitchID">
-            <xs:selector xpath="sae:Appliance/sae:LevelSwitch/sae:HttpSwitch|sae:Appliance/sae:LevelSwitch/sae:ModbusSwitch|sae:Appliance/sae:LevelSwitch/sae:Switch" />
+            <xs:selector xpath="sae:Appliance/sae:LevelSwitch/sae:HttpSwitch|sae:Appliance/sae:LevelSwitch/sae:ModbusSwitch|sae:Appliance/sae:LevelSwitch/sae:MqttSwitch|sae:Appliance/sae:LevelSwitch/sae:Switch" />
             <xs:field xpath="@id" />
         </xs:key>
         <xs:keyref name="SwitchStatusIDRef_HttpSwitchId" refer="SwitchID">
@@ -409,6 +409,7 @@
             <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="HttpSwitch" type="HttpSwitchType" minOccurs="0" />
                 <xs:element name="ModbusSwitch" type="ModbusSwitchType" minOccurs="0" />
+                <xs:element name="MqttSwitch" type="MqttSwitchType" minOccurs="0" />
                 <xs:element name="Switch" type="SwitchType" minOccurs="0" />
             </xs:choice>
             <xs:element name="PowerLevel" type="PowerLevelType" minOccurs="0" maxOccurs="unbounded"/>

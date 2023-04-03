@@ -43,6 +43,9 @@
                     [modbusSettings]="settings.modbusSettings"
                     [applianceId]="applianceId"
   ></app-meter-modbus>
+  <app-meter-mqtt *ngIf="isMqttElectricityMeter"
+                  [mqttElectricityMeter]="meter.mqttElectricityMeter"
+  ></app-meter-mqtt>
   <app-meter-http *ngIf="isHttpElectricityMeter"
                   [httpElectricityMeter]="meter.httpElectricityMeter"
                   [meterDefaults]="meterDefaults"

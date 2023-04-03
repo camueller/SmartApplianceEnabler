@@ -57,6 +57,8 @@ import {ControlHttpComponent} from '../http/control-http.component';
 import {ControlModbusComponent} from '../modbus/control-modbus.component';
 import {ControlSwitchComponent} from '../switch/control-switch.component';
 import {SwitchStatus} from './switch-status';
+import {MqttSwitch} from '../mqtt/mqtt-switch';
+import {ControlMqttComponent} from '../mqtt/control-mqtt.component';
 
 @Component({
   selector: 'app-control-level',
@@ -82,6 +84,8 @@ export class ControlLevelComponent implements OnChanges, OnInit {
   controlHttpComps: QueryList<ControlHttpComponent>;
   @ViewChildren('controlModbusComponents')
   controlModbusComps: QueryList<ControlModbusComponent>;
+  @ViewChildren('controlMqttComponents')
+  controlMqttComps: QueryList<ControlMqttComponent>;
   @Input()
   form: UntypedFormGroup;
   formHandler: FormHandler;
@@ -116,7 +120,7 @@ export class ControlLevelComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
-    const controlTypeKeys = [Switch.TYPE, HttpSwitch.TYPE];
+    const controlTypeKeys = [Switch.TYPE, HttpSwitch.TYPE, MqttSwitch.TYPE];
     if(this.modbusConfigured) {
       controlTypeKeys.push(ModbusSwitch.TYPE);
     }
@@ -180,6 +184,10 @@ export class ControlLevelComponent implements OnChanges, OnInit {
     return this.realControlType === simpleControlType(ModbusSwitch.TYPE);
   }
 
+  get isRealControlTypeMqtt() {
+    return this.realControlType === simpleControlType(MqttSwitch.TYPE);
+  }
+
   getControlFormGroup(index: number) {
     return this.controlsFormArray.controls[index];
   }
@@ -199,6 +207,10 @@ export class ControlLevelComponent implements OnChanges, OnInit {
       const modbusSwitch = new ModbusSwitch({id: nextId.toString()});
       modbusSwitch.modbusWrites = [ModbusWrite.createWithSingleChild()];
       this.levelSwitch.controls.push(modbusSwitch)
+    }
+    else if(this.isRealControlTypeMqtt) {
+      const mqttSwitch = new MqttSwitch({id: nextId.toString()});
+      this.levelSwitch.controls.push(mqttSwitch)
     }
     this.controlIds.push(nextId.toString());
     this.controlsFormArray.push(new UntypedFormGroup({}))
@@ -248,7 +260,7 @@ export class ControlLevelComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): LevelSwitch | undefined {
-    let controls: (Switch | HttpSwitch | ModbusSwitch)[] = [];
+    let controls: (Switch | HttpSwitch | ModbusSwitch | MqttSwitch)[] = [];
     if(this.isRealControlTypeSwitch) {
       this.controlSwitchComps.forEach(controlSwitchComponent => {
         const controlSwitch = controlSwitchComponent.updateModelFromForm();
@@ -268,6 +280,13 @@ export class ControlLevelComponent implements OnChanges, OnInit {
         const controlModbus = controlModbusComponent.updateModelFromForm();
         if(controlModbus) {
           controls.push(controlModbus);
+        }
+      });
+    } else if(this.isRealControlTypeMqtt) {
+      this.controlMqttComps.forEach(controlMqttComponent => {
+        const controlMqtt = controlMqttComponent.updateModelFromForm();
+        if(controlMqtt) {
+          controls.push(controlMqtt);
         }
       });
     }

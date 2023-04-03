@@ -28,6 +28,7 @@ import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 import {PwmSwitch} from './pwm/pwm-switch';
 import {LevelSwitch} from './level/level-switch';
 import {SwitchOption} from './switchoption/switch-option';
+import {MqttSwitch} from './mqtt/mqtt-switch';
 
 export class Control {
   type: string;
@@ -40,6 +41,7 @@ export class Control {
   switch_?: Switch;
   modbusSwitch?: ModbusSwitch;
   mockSwitch?: MockSwitch;
+  mqttSwitch?: MqttSwitch;
   httpSwitch?: HttpSwitch;
   levelSwitch?: LevelSwitch;
   pwmSwitch?: PwmSwitch;

@@ -72,6 +72,19 @@
       </div>
     </app-control-modbus>
   </div>
+  <div formArrayName="controls" *ngIf="isRealControlTypeMqtt">
+    <app-control-mqtt *ngFor="let control of levelSwitch.controls; index as i; last as l"
+                        [formGroup]="getControlFormGroup(i)"
+                        [mqttSwitch]="control"
+                        #controlMqttComponents
+    >
+      <div class="sae__fields-with-button">
+        <h2>{{'ControlLevelComponent.control.heading' | translate}} {{control.id}}</h2>
+        <button mat-raised-button type="button" class="ControlLevelComponent__removeControl" (click)="removeControl(i)">
+          {{'ControlLevelComponent.button.removeControl' | translate}}</button>
+      </div>
+    </app-control-mqtt>
+  </div>
 
   <button mat-raised-button type="button" class="ControlLevelComponent__addControl"
           (click)="addControl()">{{'ControlLevelComponent.button.addControl' | translate}}</button>

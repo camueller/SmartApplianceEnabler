@@ -1,0 +1,37 @@
+<div class="MeterMqttComponent">
+  <div class="sae__fields">
+    <mat-form-field class="sae__mqttTopic">
+      <mat-label>{{'MeterMqttComponent.topic' | translate}}</mat-label>
+      <input matInput type="text" formControlName="topic"
+             required="{{formHandler.isRequired('topic')}}">
+      <mat-error *ngIf="errors.topic">{{errors.topic}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="sae__value-name">
+      <mat-label>{{'MeterMqttComponent.name' | translate}}</mat-label>
+      <mat-select formControlName="name" required="{{formHandler.isRequired('name')}}" (ngModelChange)="onNameChanged($event)">
+        <mat-option *ngFor="let valueName of valueNames" [value]="valueName">
+          {{getTranslatedValueName(valueName)}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="sae__contentPath">
+      <mat-label>{{'MeterMqttComponent.path' | translate}}</mat-label>
+      <input matInput type="text" formControlName="path"
+             required="{{formHandler.isRequired('path')}}">
+      <mat-error *ngIf="errors.path">{{errors.path}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="sae__contentPath">
+      <mat-label>{{'MeterMqttComponent.timePath' | translate}}</mat-label>
+      <input matInput type="text" formControlName="timePath"
+             required="{{formHandler.isRequired('timePath')}}">
+      <mat-error *ngIf="errors.timePath">{{errors.timePath}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="sae__factorToValue">
+      <mat-label>{{'MeterMqttComponent.factorToValue' | translate}}</mat-label>
+      <input matInput type="text" formControlName="factorToValue"
+             placeholder="1"
+             required="{{formHandler.isRequired('factorToValue')}}">
+      <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
+    </mat-form-field>
+  </div>
+</div>

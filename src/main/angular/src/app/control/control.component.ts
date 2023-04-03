@@ -58,6 +58,8 @@ import {ControlLevelComponent} from './level/control-level.component';
 import {EvChargerTemplate} from './evcharger/ev-charger-template';
 import {SwitchOption} from './switchoption/switch-option';
 import {ControlSwitchOptionComponent} from './switchoption/control-switchoption.component';
+import {MqttSwitch} from './mqtt/mqtt-switch';
+import {ControlMqttComponent} from './mqtt/control-mqtt.component';
 
 @Component({
   selector: 'app-control',
@@ -75,6 +77,8 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   controlMeterreportingComp: ControlMeterreportingComponent;
   @ViewChild(ControlModbusComponent)
   controlModbusComp: ControlModbusComponent;
+  @ViewChild(ControlMqttComponent)
+  controlMqttComp: ControlMqttComponent;
   @ViewChild(ControlPwmComponent)
   controlPwmComp: ControlPwmComponent;
   @ViewChild(ControlStartingcurrentComponent)
@@ -134,7 +138,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
       if (this.appliance.type === 'EVCharger') {
         this.control.type = EvCharger.TYPE;
       }
-      const controlTypeKeys = [MeterReportingSwitch.TYPE, Switch.TYPE, HttpSwitch.TYPE, AlwaysOnSwitch.TYPE, LevelSwitch.TYPE, PwmSwitch.TYPE];
+      const controlTypeKeys = [MeterReportingSwitch.TYPE, Switch.TYPE, HttpSwitch.TYPE, MqttSwitch.TYPE, AlwaysOnSwitch.TYPE, LevelSwitch.TYPE, PwmSwitch.TYPE];
       if(this.settings.modbusSettings) {
         controlTypeKeys.splice(3, 0, ModbusSwitch.TYPE);
       }
@@ -211,6 +215,10 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
 
   get isModbusSwitch() {
     return this.control && this.control.type === ModbusSwitch.TYPE;
+  }
+
+  get isMqttSwitch() {
+    return this.control && this.control.type === MqttSwitch.TYPE;
   }
 
   get isHttpSwitch() {
@@ -331,6 +339,9 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     }
     else if (this.controlModbusComp) {
       this.control.modbusSwitch = this.controlModbusComp.updateModelFromForm();
+    }
+    else if (this.controlMqttComp) {
+      this.control.mqttSwitch = this.controlMqttComp.updateModelFromForm();
     }
     else if (this.controlHttpComp) {
       this.control.httpSwitch = this.controlHttpComp.updateModelFromForm();

@@ -20,13 +20,14 @@ import {Switch} from '../switch/switch';
 import {ModbusSwitch} from '../modbus/modbus-switch';
 import {HttpSwitch} from '../http/http-switch';
 import {PowerLevel} from './power-level';
+import {MqttSwitch} from '../mqtt/mqtt-switch';
 
 export class LevelSwitch {
   static get TYPE(): string {
     return 'de.avanux.smartapplianceenabler.control.LevelSwitch';
   }
   '@class' = LevelSwitch.TYPE;
-  controls?: (Switch | HttpSwitch | ModbusSwitch)[];
+  controls?: (Switch | HttpSwitch | ModbusSwitch | MqttSwitch)[];
   powerLevels?: PowerLevel[];
 
   public constructor(init?: Partial<LevelSwitch>) {

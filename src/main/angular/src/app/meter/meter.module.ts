@@ -17,12 +17,14 @@ import { HttpLoaderFactory } from '../shared/http-loader-factory';
 import {NotificationModule} from '../notification/notification.module';
 import {MeterMasterComponent} from './master/meter-master.component';
 import {MeterSlaveComponent} from './slave/meter-slave.component';
+import {MeterMqttComponent} from './mqtt/meter-mqtt.component';
 
 @NgModule({
   declarations: [
     MeterComponent,
     MeterMasterComponent,
     MeterModbusComponent,
+    MeterMqttComponent,
     MeterHttpComponent,
     MeterS0Component,
     MeterSlaveComponent,

@@ -47,6 +47,7 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
     @XmlElements({
             @XmlElement(name = "HttpSwitch", type = HttpSwitch.class),
             @XmlElement(name = "ModbusSwitch", type = ModbusSwitch.class),
+            @XmlElement(name = "MqttSwitch", type = MqttSwitch.class),
             @XmlElement(name = "Switch", type = Switch.class)
     })
     private List<Control> controls;
