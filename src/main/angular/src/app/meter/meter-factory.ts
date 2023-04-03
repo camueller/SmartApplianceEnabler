@@ -24,6 +24,7 @@ import {ModbusElectricityMeter} from './modbus/modbus-electricity-meter';
 import {HttpElectricityMeter} from './http/http-electricity-meter';
 import {MasterElectricityMeter} from './master/master-electricity-meter';
 import {SlaveElectricityMeter} from './slave/master-electricity-meter';
+import {MqttElectricityMeter} from './mqtt/mqtt-electricity-meter';
 
 export class MeterFactory {
 
@@ -69,6 +70,8 @@ export class MeterFactory {
       meter.s0ElectricityMeter = this.createS0ElectricityMeter(rawMeter);
     } else if (meter.type === ModbusElectricityMeter.TYPE) {
       meter.modbusElectricityMeter = this.createModbusElectricityMeter(rawMeter);
+    } else if (meter.type === MqttElectricityMeter.TYPE) {
+      meter.mqttElectricityMeter = this.createMqttElectricityMeter(rawMeter);
     } else if (meter.type === HttpElectricityMeter.TYPE) {
       meter.httpElectricityMeter = this.createHttpElectricityMeter(rawMeter);
     } else if (meter.type === SlaveElectricityMeter.TYPE) {
@@ -81,6 +84,8 @@ export class MeterFactory {
       return meter.s0ElectricityMeter;
     } else if (meter.type === ModbusElectricityMeter.TYPE) {
       return meter.modbusElectricityMeter;
+    } else if (meter.type === MqttElectricityMeter.TYPE) {
+      return meter.mqttElectricityMeter;
     } else if (meter.type === HttpElectricityMeter.TYPE) {
       return meter.httpElectricityMeter;
     } else if (meter.type === SlaveElectricityMeter.TYPE) {
@@ -112,6 +117,10 @@ export class MeterFactory {
   }
 
   createModbusElectricityMeter(rawMeter: any): ModbusElectricityMeter {
+    return rawMeter;
+  }
+
+  createMqttElectricityMeter(rawMeter: any): MqttElectricityMeter {
     return rawMeter;
   }
 

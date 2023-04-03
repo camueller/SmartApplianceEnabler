@@ -62,6 +62,9 @@
                           [modbusSettings]="settings.modbusSettings"
                           [settingsDefaults]="settingsDefaults"
       ></app-control-modbus>
+      <app-control-mqtt *ngIf="isMqttSwitch"
+                        [mqttSwitch]="control.mqttSwitch"
+      ></app-control-mqtt>
       <app-control-http *ngIf="isHttpSwitch"
                         [form]="form"
                         [httpSwitch]="control.httpSwitch"

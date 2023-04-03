@@ -68,6 +68,7 @@
   "MeterComponent.isMasterMeter": "Master meter",
   "de.avanux.smartapplianceenabler.meter.S0ElectricityMeter": "S0",
   "de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter": "Modbus",
+  "de.avanux.smartapplianceenabler.meter.MqttElectricityMeter": "MQTT",
   "de.avanux.smartapplianceenabler.meter.HttpElectricityMeter": "HTTP",
   "de.avanux.smartapplianceenabler.meter.SlaveElectricityMeter": "Slave meter",
 
@@ -90,6 +91,15 @@
   "MeterModbusComponent.error.slaveAddress_pattern": "The slave address has to be a number",
   "MeterModbusComponent.error.factorToValue_pattern": "The factor-to-value has to be a (float) number",
   "MeterModbusComponent.error.pollInterval_pattern": "The poll interval has to be a number",
+
+  "MeterMqttComponent.topic": "Topic",
+  "MeterMqttComponent.name": "Parameter",
+  "MeterMqttComponent.Power": "Power",
+  "MeterMqttComponent.Energy": "Meter reading",
+  "MeterMqttComponent.path": "Value extraction path",
+  "MeterMqttComponent.timePath": "Time extraction path",
+  "MeterMqttComponent.factorToValue": "Factor to value",
+  "MeterMqttComponent.error.factorToValue_pattern": "The factor-to-value has to be a (float) number",
 
   "MeterHttpComponent.pollInterval": "Poll interval [s]",
   "MeterHttpComponent.contentProtocol": "Format",
@@ -150,8 +160,9 @@
   "de.avanux.smartapplianceenabler.control.HttpSwitch": "HTTP",
   "de.avanux.smartapplianceenabler.control.LevelSwitch": "Level switch",
   "de.avanux.smartapplianceenabler.control.MeterReportingSwitch": "Meter based state detector",
-  "de.avanux.smartapplianceenabler.control.ModbusSwitch": "Modbus",
   "de.avanux.smartapplianceenabler.control.MockSwitch": "Mock switch",
+  "de.avanux.smartapplianceenabler.control.ModbusSwitch": "Modbus",
+  "de.avanux.smartapplianceenabler.control.MqttSwitch": "MQTT",
   "de.avanux.smartapplianceenabler.control.PwmSwitch": "PWM",
   "de.avanux.smartapplianceenabler.control.Switch": "GPIO",
 
@@ -202,6 +213,12 @@
   "ControlModbusComponent.slaveAddress": "Slave address",
   "ControlModbusComponent.button.addModbusWrite": "Add register",
   "ControlModbusComponent.error.slaveAddress_pattern": "The slave address has to be a number",
+
+  "ControlMqttComponent.topic": "Topic",
+  "ControlMqttComponent.onPayload": "Payload for switch-on",
+  "ControlMqttComponent.offPayload": "Payload for switch-off",
+  "ControlMqttComponent.statusTopic": "State topic",
+  "ControlMqttComponent.statusExtractionRegex": "Regex for state extraction",
 
   "ControlLevelComponent.type": "Real type",
   "ControlLevelComponent.control.heading": "Control",

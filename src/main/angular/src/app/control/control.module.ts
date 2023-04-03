@@ -28,6 +28,7 @@ import {EvChargerTemplateResolver} from './evcharger/ev-charger-template-resolve
 import {ControlSwitchOptionComponent} from './switchoption/control-switchoption.component';
 import {EnvPipe} from '../shared/env-pipe';
 import {SharedModule} from '../shared/shared.module';
+import {ControlMqttComponent} from './mqtt/control-mqtt.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import {SharedModule} from '../shared/shared.module';
     ControlHttpComponent,
     ControlMeterreportingComponent,
     ControlModbusComponent,
+    ControlMqttComponent,
     ControlLevelComponent,
     ControlPwmComponent,
     ControlStartingcurrentComponent,

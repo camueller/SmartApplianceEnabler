@@ -68,6 +68,7 @@
   "MeterComponent.isMasterMeter": "Master-Zähler",
   "de.avanux.smartapplianceenabler.meter.S0ElectricityMeter": "S0",
   "de.avanux.smartapplianceenabler.meter.ModbusElectricityMeter": "Modbus",
+  "de.avanux.smartapplianceenabler.meter.MqttElectricityMeter": "MQTT",
   "de.avanux.smartapplianceenabler.meter.HttpElectricityMeter": "HTTP",
   "de.avanux.smartapplianceenabler.meter.SlaveElectricityMeter": "Slave-Zähler",
 
@@ -90,6 +91,15 @@
   "MeterModbusComponent.error.slaveAddress_pattern": "Die Slave-Adresse muss eine Zahl sein",
   "MeterModbusComponent.error.factorToValue_pattern": "Der Faktor muss eine (Gleitkomma-) Zahl sein",
   "MeterModbusComponent.error.pollInterval_pattern": "Das Abfrage-Intervall muss eine Zahl sein",
+
+  "MeterMqttComponent.topic": "Topic",
+  "MeterMqttComponent.name": "Parameter",
+  "MeterMqttComponent.Power": "Leistung",
+  "MeterMqttComponent.Energy": "Zählerstand",
+  "MeterMqttComponent.path": "Pfad für Wert-Extraktion",
+  "MeterMqttComponent.timePath": "Pfad für Zeit-Extraktion",
+  "MeterMqttComponent.factorToValue": "Umrechnungsfaktor",
+  "MeterMqttComponent.error.factorToValue_pattern": "Der Faktor muss eine (Gleitkomma-) Zahl sein",
 
   "MeterHttpComponent.pollInterval": "Abfrage-Intervall [s]",
   "MeterHttpComponent.contentProtocol": "Format",
@@ -152,6 +162,7 @@
   "de.avanux.smartapplianceenabler.control.MeterReportingSwitch": "Zählerbasierter Zustandsmelder",
   "de.avanux.smartapplianceenabler.control.MockSwitch": "Testschalter",
   "de.avanux.smartapplianceenabler.control.ModbusSwitch": "Modbus",
+  "de.avanux.smartapplianceenabler.control.MqttSwitch": "MQTT",
   "de.avanux.smartapplianceenabler.control.PwmSwitch": "PWM",
   "de.avanux.smartapplianceenabler.control.Switch": "GPIO",
 
@@ -202,6 +213,12 @@
   "ControlModbusComponent.slaveAddress": "Slave-Adresse",
   "ControlModbusComponent.button.addModbusWrite": "Weiteres Register",
   "ControlModbusComponent.error.slaveAddress_pattern": "Die Slave-Adresse muss eine Zahl sein",
+
+  "ControlMqttComponent.topic": "Topic",
+  "ControlMqttComponent.onPayload": "Payload für Einschalten",
+  "ControlMqttComponent.offPayload": "Payload für Ausschalten",
+  "ControlMqttComponent.statusTopic": "Status-Topic",
+  "ControlMqttComponent.statusExtractionRegex": "Regex für Status-Extraktion",
 
   "ControlLevelComponent.type": "Realer Schaltertyp",
   "ControlLevelComponent.control.heading": "Schalter",

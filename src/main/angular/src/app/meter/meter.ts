@@ -22,6 +22,7 @@ import {HttpElectricityMeter} from './http/http-electricity-meter';
 import {Notifications} from '../notification/notifications';
 import {MasterElectricityMeter} from './master/master-electricity-meter';
 import {SlaveElectricityMeter} from './slave/master-electricity-meter';
+import {MqttElectricityMeter} from './mqtt/mqtt-electricity-meter';
 
 export class Meter {
   type: string;
@@ -30,6 +31,7 @@ export class Meter {
   slaveElectricityMeter?: SlaveElectricityMeter;
   s0ElectricityMeter?: S0ElectricityMeter;
   modbusElectricityMeter?: ModbusElectricityMeter;
+  mqttElectricityMeter?: MqttElectricityMeter;
   httpElectricityMeter?: HttpElectricityMeter;
   notifications?: Notifications;
 

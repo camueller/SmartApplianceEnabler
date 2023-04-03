@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Appliances xmlns="http://github.com/camueller/SmartApplianceEnabler/v2.0">
     <Appliance id="F-00000001-000000000008-00">
-        <StartingCurrentSwitch>
-            <MqttSwitch topic="cmnd/tasmota/Power" onPayload="ON" offPayload="OFF" statusTopic="stat/tasmota/POWER" statusExtractionRegex="ON">
-                <Notifications/>
-            </MqttSwitch>
-        </StartingCurrentSwitch>
-        <!--MqttElectricityMeter topic="tele/tasmota/SENSOR" name="Energy" path="$.ENERGY.Total" timePath="$.Time"-->
+        <MqttSwitch topic="cmnd/tasmota/Power" onPayload="ON" offPayload="OFF" statusTopic="stat/tasmota/POWER" statusExtractionRegex="ON">
+            <Notifications/>
+        </MqttSwitch>
         <MqttElectricityMeter topic="tele/tasmota/SENSOR" name="Power" path="$.ENERGY.Power" timePath="$.Time">
             <Notifications/>
         </MqttElectricityMeter>
         <Schedule enabled="true">
-            <RuntimeRequest min="0" max="300"/>
+            <RuntimeRequest min="0" max="300" enabled="true"/>
             <DayTimeframe>
                 <Start hour="4" minute="0" second="0"/>
                 <End hour="20" minute="0" second="0"/>

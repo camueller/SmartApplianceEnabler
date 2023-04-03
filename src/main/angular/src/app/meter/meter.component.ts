@@ -47,6 +47,8 @@ import {MasterElectricityMeter} from './master/master-electricity-meter';
 import {MeterMasterComponent} from './master/meter-master.component';
 import {SlaveElectricityMeter} from './slave/master-electricity-meter';
 import {MeterSlaveComponent} from './slave/meter-slave.component';
+import {MqttElectricityMeter} from './mqtt/mqtt-electricity-meter';
+import {MeterMqttComponent} from './mqtt/meter-mqtt.component';
 
 @Component({
   selector: 'app-meter',
@@ -58,6 +60,8 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   meterS0Comp: MeterS0Component;
   @ViewChild(MeterModbusComponent)
   meterModbusComp: MeterModbusComponent;
+  @ViewChild(MeterMqttComponent)
+  meterMqttComp: MeterMqttComponent;
   @ViewChild(MeterHttpComponent)
   meterHttpComp: MeterHttpComponent;
   @ViewChild(MeterMasterComponent)
@@ -105,7 +109,7 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
       this.settingsDefaults = data.settingsDefaults;
       this.isEvCharger = data.appliance.type === ApplianceType.EV_CHARGER.toString();
 
-      const meterTypeKeys = [S0ElectricityMeter.TYPE, HttpElectricityMeter.TYPE];
+      const meterTypeKeys = [S0ElectricityMeter.TYPE, HttpElectricityMeter.TYPE, MqttElectricityMeter.TYPE];
       if (this.settings.modbusSettings) {
         meterTypeKeys.push(ModbusElectricityMeter.TYPE);
       }
@@ -149,6 +153,10 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
 
   get isModbusElectricityMeter() {
     return this.form.controls.meterType.value === simpleMeterType(ModbusElectricityMeter.TYPE);
+  }
+
+  get isMqttElectricityMeter() {
+    return this.form.controls.meterType.value === simpleMeterType(MqttElectricityMeter.TYPE);
   }
 
   get isHttpElectricityMeter() {
@@ -208,6 +216,9 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
     }
     if (this.meterModbusComp) {
       this.meter.modbusElectricityMeter = this.meterModbusComp.updateModelFromForm();
+    }
+    if (this.meterMqttComp) {
+      this.meter.mqttElectricityMeter = this.meterMqttComp.updateModelFromForm();
     }
     if (this.meterHttpComp) {
       this.meter.httpElectricityMeter = this.meterHttpComp.updateModelFromForm();
