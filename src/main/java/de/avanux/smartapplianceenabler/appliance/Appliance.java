@@ -444,15 +444,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     }
 
     public boolean isControllable() {
-        return control != null &&
-            (
-                control instanceof Switch
-                || control instanceof HttpSwitch
-                || control instanceof ModbusSwitch
-                || control instanceof MockSwitch
-                || control instanceof StartingCurrentSwitch
-                || control instanceof VariablePowerConsumer
-            );
+        return control != null && control.isControllable();
     }
 
     public boolean isElectricVehicleCharger() {

@@ -126,11 +126,6 @@ public class StartingCurrentSwitch extends WrappedControl implements TimeframeIn
         }
     }
 
-    @Override
-    public boolean isControllable() {
-        return true;
-    }
-
     public boolean isOn() {
         return on;
     }
