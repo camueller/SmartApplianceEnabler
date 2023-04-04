@@ -1,7 +1,7 @@
 # Modbus switches
 The general notes on using [Modbus in the SmartApplianceEnabler](Modbus_EN.md) apply to Modbus switches.
 
-For a Modbus switch, register address and type must be entered.
+For a Modbus switch, `register address` and `register type` must be entered.
 
 For Modbus switches, the actions `switch on` and `switch off` must be configured. This can be achieved either via one register with different values or via two registers.
 

@@ -8,7 +8,7 @@ If possible, `Meter reading` should be set as the parameter, because the *Smart 
 
 If `Power` is set as the parameter, this value is queried several times per minute in order to calculate the average from these values. The interval between these queries can be specified with the `Query Interval` - the default value is 20 seconds.
 
-If the HTTP response is delivered in **JSON format**, this should be set as `Format` because then by specifying the `Extraction path` the numerical value can be extracted from the HTTP response very easily.
+If the HTTP response is delivered in **JSON format**, this should be set as `Format` because then by specifying the `Extraction path` the numerical value can be [extracted from the HTTP response](ValueExtraction_EN.md) very easily.
 
 Alternatively (or also downstream of the JSON interpretation), a [regular expression for extraction](ValueExtraction_EN.md) can be specified if the numerical value has to be extracted from a text (XML, ...). This also applies if the HTTP response appears to only contain the number, but it also contains a line break (CR/LF).
 

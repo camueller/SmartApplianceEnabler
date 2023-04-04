@@ -87,6 +87,7 @@ The power consumption of the device, which is transmitted to the *Sunny Home Man
 - [S0](SOMeter_EN.md#log)
 - [HTTP](HttpMeter_EN.md#log): if the HTTP response contains more than the "bare" number value, a [Regular expression for extraction](ValueExtraction_EN.md) must be configured!
 - [Modbus](ModbusMeter_EN.md#log)
+- [MQTT](MqttMeter_DE.md#log): if the MQTT response contains more than the "bare" number value, a [Regular expression for extraction](ValueExtraction_EN.md) must be configured!
 
 ### SAE4
 If a control request is received from the *Sunny Home Manager*, this is passed on to the control configured for the device in the *Smart Appliance Enabler*. Depending on its type, you can see the control request in the log:

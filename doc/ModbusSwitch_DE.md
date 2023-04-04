@@ -1,7 +1,7 @@
 # Modbus-Schalter
 Für Modbus-Schalter gelten die allgemeinen Hinweise zur Verwendung von [Modbus im SmartApplianceEnabler](Modbus_DE.md).
 
-Für einen Modbus-Schalter müssen Register-Adresse und -Typ eingegeben werden.
+Für einen Modbus-Schalter müssen `Register-Adresse` und `Register-Typ` eingegeben werden.
 
 Für Modbus-Schalter müssen die Aktionen `Einschalten` und `Auschalten` konfiguriert werden. Das kann wahlweise über ein Register mit unterschiedlichen Werten oder über zwei Register erreicht werden.
 

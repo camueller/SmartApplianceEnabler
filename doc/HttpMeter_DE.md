@@ -8,7 +8,7 @@ Nach Möglichkeit sollte als Parameter `Zählerstand` eingstellt werden, weil de
 
 Wird als Parameter `Leistung` eingestellt, erfolgt die Abfrage dieses Wertes mehrmals pro Minute, um aus diesen Werten den Durschnitt zu berechnen. Der zeitliche Abstand zwischen diesen Abfragen kann mit dem `Abfrage-Intervall` festgelegt werden - der Standardwert sind 20 Sekunden. 
 
-Wenn die HTTP-Antwort im **JSON-Format** geliefert wird, sollte das als `Format` eingestellt werden, weil dann durch die Angabe des `Pfad für Extraktion` der Zahlenwert sehr leicht aus der HTTP-Anwort extrahieren lässt.
+Wenn die HTTP-Antwort im **JSON-Format** geliefert wird, sollte das als `Format` eingestellt werden, weil dann durch die Angabe des `Pfad für Extraktion` der Zahlenwert sehr leicht [aus der HTTP-Anwort extrahieren](ValueExtraction_DE.md) lässt.
 
 Alternativ (oder auch nachgelagert zur JSON-Interpretation) kann ein [Regulärer Ausdruck zum Extrahieren](ValueExtraction_DE.md) angegeben werden, falls der Zahlenwert aus einem Text (XML, ...) extrahiert werden muss. Dies gilt auch, wenn die HTTP-Antwort scheinbar nur die Zahl enthält, diese aber auch einen Zeilenumbruch (CR/LF) beinhaltet.
 

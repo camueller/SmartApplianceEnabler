@@ -5,7 +5,9 @@ For HTTP-based switches, the actions `Switch on` and `Switch off` must be config
 
 Normally, the *Smart Appliance Enabler* knows the state of the device because it sends the commands to turn it on and off and remembers the state. However, this does apply if the device is also switched by other means. In this case, 'Read control state using HTTP' must be activated and another URL can be specified to determine the switching status. A [Regular expression](ValueExtraction_EN.md) must be specified, which must "match" if the switching state is "switched on". For example, if this returns "true" (without quotation marks), then "(true)" (without quotation marks) must be entered as the regular expression.
 
-`Data` can be specified for all URLs, which are sent with the request. If data is provided, the `Content-Type` of that data should also be specified in the appropriate input field.
+Für alle URLs lässt sich der `Wert` angeben, der mit der Anfrage gesendet werden soll.
+
+If required, the `Content-Type` can also be specified.
 
 ![HTTP Switch](../pics/fe/HttpSwitch_EN.png)
 

@@ -88,7 +88,7 @@ Die Leistungaufname des Gerätes, die an den *Sunny Home Manager* übermittelt w
 - [S0](SOMeter_DE.md#log)
 - [HTTP](HttpMeter_DE.md#log): wenn die HTTP-Response mehr als den "nackten" Zahlenwert enthält, muss ein [Regulärer Ausdruck zum Extrahieren](ValueExtraction_DE.md) konfiguriert werden!
 - [Modbus](ModbusMeter_DE.md#log)
-
+- [MQTT](MqttMeter_DE.md#log): wenn die MQTT-Response mehr als den "nackten" Zahlenwert enthält, muss ein [Regulärer Ausdruck zum Extrahieren](ValueExtraction_DE.md) konfiguriert werden!
 
 ### SAE4
 Wenn ein Schaltbefehl vom *Sunny Home Manager* empfangen wird, wird dieser an den für das Gerät im *Smart Appliance Enabler* konfigurierten Schalter weitergegeben. In Abhängigkeit In Abhängkeit von dessen Typ kann man im Log den Schaltbefehl sehen:  
