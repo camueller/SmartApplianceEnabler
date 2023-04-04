@@ -43,6 +43,7 @@ abstract public class AbstractRequest implements Request {
     private transient boolean next;
     private transient boolean enabledBefore;
     private transient int runtimeUntilLastStatusChange;
+    private transient ControlMessage lastControlMessage;
     private transient LocalDateTime controlStatusChangedAt;
     private transient Boolean acceptControlRecommendations;
     private transient TimeframeIntervalStateProvider timeframeIntervalStateProvider;
@@ -164,7 +165,7 @@ abstract public class AbstractRequest implements Request {
         getMqttClient().subscribe(Control.TOPIC, true, (topic, message) -> {
             if(message instanceof ControlMessage) {
                 controlMessage = (ControlMessage) message;
-                if (isActive() || isExpired()) {
+                if ((isActive() || isExpired()) && (lastControlMessage == null || lastControlMessage.on != controlMessage.on)) {
                     if (controlMessage.on) {
                         enabledBefore = true;
                         if (meter != null) {
@@ -178,6 +179,7 @@ abstract public class AbstractRequest implements Request {
                     }
                     controlStatusChangedAt = controlMessage.getTime();
                 }
+                lastControlMessage = controlMessage;
             }
         });
     }
