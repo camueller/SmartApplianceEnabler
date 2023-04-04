@@ -263,10 +263,10 @@ public class MqttClient {
     private void publishMessage(String fullTopic, MqttMessage message, boolean retained) {
         message.setType(message.getClass().getSimpleName());
         String serializedMessage = genson.serialize(message);
-        publishMessage(fullTopic, serializedMessage.getBytes(), retained);
+        publishMessage(fullTopic, serializedMessage.getBytes(), retained, null);
     }
 
-    public void publishMessage(String fullTopic, byte[] message, boolean retained) {
+    public void publishMessage(String fullTopic, byte[] message, boolean retained, OnErrorCallback onErrorCallback) {
         if(executor != null) {
             executor.submit(() -> {
                 try {
@@ -277,6 +277,9 @@ public class MqttClient {
                 }
                 catch (Exception e) {
                     logger.error("{}: Error sending message", loggerId, e);
+                    if(onErrorCallback != null) {
+                        onErrorCallback.onError(e);
+                    }
                 }
             });
         }
@@ -379,5 +382,9 @@ public class MqttClient {
         catch (Exception e) {
             logger.error("{}: Error unsubscribing to messages topic={}", loggerId, fullTopic, e);
         }
+    }
+
+    public interface OnErrorCallback {
+        void onError(Throwable t);
     }
 }

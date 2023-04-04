@@ -194,7 +194,14 @@ public class MqttSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
         if(Environment.isHttpDisabled()) {
             return true;
         }
-        mqttClient.publishMessage(topic, switchOn ? onPayload.getBytes() : offPayload.getBytes(), false);
+        mqttClient.publishMessage(topic, switchOn ? onPayload.getBytes() : offPayload.getBytes(), false, new MqttClient.OnErrorCallback() {
+            @Override
+            public void onError(Throwable t) {
+                if(notificationHandler != null) {
+                    notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
+                }
+            }
+        });
         publishControlMessage(now, switchOn);
         if(this.notificationHandler != null && switchOn != on) {
             this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);

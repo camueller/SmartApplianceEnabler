@@ -111,7 +111,7 @@ public class HttpTransactionExecutor {
                 }
             }
             catch(IOException e) {
-                logger.error("{}: Error executing GET request.", applianceId, e);
+                logger.error("{}: Error executing HTTP request.", applianceId, e);
                 if(this.notificationHandler != null) {
                     this.notificationHandler.sendNotification(NotificationType.COMMUNICATION_ERROR);
                 }
