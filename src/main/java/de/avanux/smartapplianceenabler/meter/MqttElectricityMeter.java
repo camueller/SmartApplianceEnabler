@@ -218,12 +218,12 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
 
     @Override
     public Double pollPower() {
-        return value;
+        return value != null ? value : 0.0;
     }
 
     @Override
     public Double pollEnergy(LocalDateTime now) {
-        return value;
+        return value != null ? value : 0.0;
     }
 
     @Override
