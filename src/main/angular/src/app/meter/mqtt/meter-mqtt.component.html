@@ -14,6 +14,14 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{'MeterMqttComponent.contentProtocol' | translate}}</mat-label>
+      <mat-select formControlName="contentProtocol" (ngModelChange)="onContentProtocolChanged($event)" required="{{formHandler.isRequired('contentProtocol')}}">
+        <mat-option *ngFor="let contentProtocol of contentProtocols" [value]="contentProtocol">
+          {{contentProtocol}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
     <mat-form-field class="sae__contentPath">
       <mat-label>{{'MeterMqttComponent.path' | translate}}</mat-label>
       <input matInput type="text" formControlName="path"

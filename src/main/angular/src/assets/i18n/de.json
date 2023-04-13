@@ -96,6 +96,7 @@
   "MeterMqttComponent.name": "Parameter",
   "MeterMqttComponent.Power": "Leistung",
   "MeterMqttComponent.Energy": "Zählerstand",
+  "MeterMqttComponent.contentProtocol": "Format",
   "MeterMqttComponent.path": "Pfad für Wert-Extraktion",
   "MeterMqttComponent.timePath": "Pfad für Zeit-Extraktion",
   "MeterMqttComponent.factorToValue": "Umrechnungsfaktor",

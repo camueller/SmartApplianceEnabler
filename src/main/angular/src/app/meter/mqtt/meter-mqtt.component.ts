@@ -12,6 +12,7 @@ import {Logger} from '../../log/logger';
 import {ValueNameChangedEvent} from '../value-name-changed-event';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {getValidFloat, getValidString} from '../../shared/form-util';
+import {ContentProtocol} from '../../shared/content-protocol';
 
 @Component({
   selector: 'app-meter-mqtt',
@@ -27,6 +28,7 @@ export class MeterMqttComponent implements OnChanges, OnInit {
   mqttElectricityMeter: MqttElectricityMeter;
   @Input()
   meterDefaults: MeterDefaults;
+  contentProtocols = [undefined, ContentProtocol.JSON.toUpperCase()];
   readValueName: MeterValueName;
   form: UntypedFormGroup;
   formHandler: FormHandler;
@@ -59,7 +61,6 @@ export class MeterMqttComponent implements OnChanges, OnInit {
     this.errorMessages = new ErrorMessages('MeterMqttComponent.error.', [
       new ErrorMessage('topic', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('name', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
-      new ErrorMessage('path', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
       new ErrorMessage('factorToValue', ValidatorType.pattern)
     ], this.translate);
     this.expandParentForm();
@@ -69,7 +70,6 @@ export class MeterMqttComponent implements OnChanges, OnInit {
     this.translate.get(this.valueNameTextKeys).subscribe(translatedStrings => {
       this.translatedStrings = translatedStrings;
     });
-    console.log('mqttElectricityMeter=', this.mqttElectricityMeter);
   }
 
   get valueNames() {
@@ -93,13 +93,23 @@ export class MeterMqttComponent implements OnChanges, OnInit {
     }
   }
 
+  onContentProtocolChanged(value: string) {
+    if (value === ContentProtocol.JSON) {
+      this.form.controls.path?.enable();
+      this.form.controls.timePath?.enable();
+    } else {
+      this.form.controls.path?.disable();
+      this.form.controls.timePath?.disable();
+    }
+  }
+
   expandParentForm() {
     this.formHandler.addFormControl(this.form, 'topic', this.mqttElectricityMeter.topic,
       [Validators.required]);
     this.formHandler.addFormControl(this.form, 'name', this.mqttElectricityMeter.name,
       [Validators.required]);
-    this.formHandler.addFormControl(this.form, 'path', this.mqttElectricityMeter.path,
-      [Validators.required]);
+    this.formHandler.addFormControl(this.form, 'contentProtocol', this.mqttElectricityMeter.contentProtocol);
+    this.formHandler.addFormControl(this.form, 'path', this.mqttElectricityMeter.path);
     this.formHandler.addFormControl(this.form, 'timePath', this.mqttElectricityMeter.timePath);
     this.formHandler.addFormControl(this.form, 'factorToValue', this.mqttElectricityMeter.factorToValue,
       [Validators.pattern(InputValidatorPatterns.FLOAT)]);
@@ -108,16 +118,18 @@ export class MeterMqttComponent implements OnChanges, OnInit {
   updateModelFromForm(): MqttElectricityMeter | undefined {
     const topic = getValidString(this.form.controls.topic.value);
     const name = getValidString(this.form.controls.name.value);
-    const path = getValidString(this.form.controls.path.value);
-    const timePath = getValidString(this.form.controls.timePath.value);
+    const contentProtocol = this.form.controls.contentProtocol.value;
+    const path = !!contentProtocol ? getValidString(this.form.controls.path.value) : undefined;
+    const timePath = !!contentProtocol ? getValidString(this.form.controls.timePath.value) : undefined;
     const factorToValue = getValidFloat(this.form.controls.factorToValue.value);
 
-    if (!(topic || name || path || timePath || factorToValue)) {
+    if (!(topic || name || contentProtocol || path || timePath || factorToValue)) {
       return undefined;
     }
 
     this.mqttElectricityMeter.topic = topic;
     this.mqttElectricityMeter.name = name;
+    this.mqttElectricityMeter.contentProtocol = contentProtocol;
     this.mqttElectricityMeter.path = path;
     this.mqttElectricityMeter.timePath = timePath;
     this.mqttElectricityMeter.factorToValue = factorToValue;

@@ -25,6 +25,7 @@ export class MqttElectricityMeter {
   '@class' = MqttElectricityMeter.TYPE;
   topic: string;
   name: string;
+  contentProtocol?: string;
   path: string;
   timePath?: string;
   factorToValue?: number;

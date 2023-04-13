@@ -29,6 +29,7 @@ import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
+import de.avanux.smartapplianceenabler.protocol.ContentProtocolType;
 import de.avanux.smartapplianceenabler.protocol.JsonContentProtocolHandler;
 import de.avanux.smartapplianceenabler.util.ValueExtractor;
 import org.slf4j.Logger;
@@ -43,20 +44,18 @@ import java.util.Timer;
 public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validateable, PollPowerExecutor, PollEnergyExecutor, MeterUpdateListener, ApplianceIdConsumer, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(MqttElectricityMeter.class);
-
     @XmlAttribute
     private String topic;
-
     @XmlAttribute
     private String name;
+    @XmlAttribute
+    private String contentProtocol;
     @XmlAttribute
     private String path;
     @XmlAttribute
     private Double factorToValue;
-
     @XmlAttribute
     private String timePath;
-
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     private transient String applianceId;
@@ -94,9 +93,10 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     public void validate() throws ConfigurationException {
         logger.debug("{}: Validating configuration", applianceId);
         logger.debug("{}: configured: topic={}", applianceId, topic);
-        logger.debug("{}: {} configured: path={} factorToValue={} timePath={}",
+        logger.debug("{}: {} configured: contentProtocol={} path={} factorToValue={} timePath={}",
                 applianceId,
                 name,
+                contentProtocol,
                 path,
                 factorToValue,
                 timePath);
@@ -146,13 +146,19 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
                 var messageString = new String(message, StandardCharsets.UTF_8);
                 logger.trace("{}: MQTT message received: {}", applianceId, messageString);
 
+                var time = now;
+                var inputValue = messageString;
                 var contentHandler = getContentContentProtocolHandler();
-                contentHandler.parse(messageString);
+                if(contentHandler != null) {
+                    contentHandler.parse(messageString);
 
-                var timeString = contentHandler.readValue(timePath);
-                var time = timeString != null ? LocalDateTime.parse(timeString) : now;
+                    var timeString = contentHandler.readValue(timePath);
+                    if(timeString != null) {
+                        time = LocalDateTime.parse(timeString);
+                    }
 
-                var inputValue = contentHandler.readValue(path);
+                    inputValue = contentHandler.readValue(path);
+                }
                 value = valueExtractor.getDoubleValue(inputValue, null, factorToValue, 0.0);
                 if(MeterValueName.Power.name().equals(name)) {
                     pollPowerMeter.pollPower(time);
@@ -211,7 +217,9 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
 
     public ContentProtocolHandler getContentContentProtocolHandler() {
         if(this.contentContentProtocolHandler == null) {
-            this.contentContentProtocolHandler = new JsonContentProtocolHandler();
+            if(ContentProtocolType.JSON.name().equals(this.contentProtocol)) {
+                this.contentContentProtocolHandler = new JsonContentProtocolHandler();
+            }
         }
         return this.contentContentProtocolHandler;
     }

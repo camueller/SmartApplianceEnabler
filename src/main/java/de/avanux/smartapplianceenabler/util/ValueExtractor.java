@@ -24,11 +24,22 @@ import de.avanux.smartapplianceenabler.protocol.ContentProtocolHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class ValueExtractor implements ApplianceIdConsumer {
 
     private transient Logger logger = LoggerFactory.getLogger(ValueExtractor.class);
+    private transient DecimalFormat doubleFormat;
 
     private transient String applianceId;
+
+    public ValueExtractor() {
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        doubleFormat = (DecimalFormat) nf;
+        doubleFormat.applyPattern("#.#####");
+    }
 
     @Override
     public void setApplianceId(String applianceId) {
@@ -56,7 +67,7 @@ public class ValueExtractor implements ApplianceIdConsumer {
                 value = Double.parseDouble(parsableString);
             }
             logger.debug("{}: value={} inputValue={} valueExtractionRegex={} extractedValue={} factorToValue={}",
-                    applianceId, value, inputValue, valueExtractionRegex, extractedValue, factorToValue);
+                    applianceId, doubleFormat.format(value), inputValue, valueExtractionRegex, extractedValue, factorToValue);
             return value;
         }
         return null;
