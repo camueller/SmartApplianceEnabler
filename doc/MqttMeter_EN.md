@@ -1,6 +1,10 @@
 # MQTT meter
 
-For an MQTT meter, its `Topic` must be specified as well as the `Parameter`, which can be `Meter reading` or `Power` depending on the values present in the MQTT message. The `value extraction path` must also be specified in order to be able to extract the [numerical value from the MQTT message in JSON format](ValueExtraction_EN.md).
+In order for MQTT messages to be used as a data source, a current MQTT message should ideally be sent every 60 (but no more frequently than every 20) seconds.
+
+For an MQTT meter, its `Topic` must be specified as well as the `Parameter`, which can be `Meter reading` or `Power` depending on the values present in the MQTT message.
+
+If no `Format` is specified, the MQTT message may only contain the numeric value. If `JSON` is specified, the `value extraction path` must also be specified in order to be able to [extract the numerical value from the MQTT message in JSON format] (ValueExtraction_DE.md).
 
 If the optional `time extraction path` is specified, the time extracted from the MQTT message is used instead of the current time for further processing.
 

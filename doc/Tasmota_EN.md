@@ -56,7 +56,67 @@ If Tasmota firmware is already on the adapter, you can update it via the menu it
 ## Calibrating the firmware
 [Tasmota firmware should be calibrated](https://tasmota.github.io/docs/Power-Monitoring-Calibration/) before use, since correct measurements are affected by hardware and timing differences.
 
+## Using Tasmota adapters in Smart Appliance Enabler
+The *Smart Appliance Enabler* can communicate with Tasmota adapters via MQTT or HTTP. However, MQTT is recommended because it uses fewer resources on the adapter itself and also in the network and is more stable.
+
+## Configure the firmware
+### Use of Daylight Saving Time
+Daylight Saving Time is not enabled by default in Tasmota. In order to use daylight saving time for time specifications, you have to enter the command `timezone 99` on the Tasmota web console of the adapter and complete the input with `Enter`:
+```
+10:46:24 CMD: time zone 99
+10:46:24 MQT: stat/tasmota/RESULT = {"Timezone":99}
+```
+
+### Number of decimal places for the meter reading (only required when using "meter reading" as parameter)
+By default, Tasmota only delivers the `meter reading` with 3 decimal places. In order for the *Smart Appliance Enabler* to be able to calculate the power from meter reading differences as precisely as possible, the Tasmota adapter must be **configured to 5 decimal places**. To do this, go to the Tasmota web console of the adapter and enter the command `EnergyRes 5` and complete the input with `Enter`:
+```
+17:14:25 CMD: EnergyRes 5
+17:14:25 RSL: RESULT = {"EnergyRes":5}
+```
+### MQTT (only when using MQTT as communication protocol)
+First, the Tasmota adapter must be [configured to use MQTT](https://tasmota.github.io/docs/MQTT/), which mainly concerns `Host` and `Port` of the MQTT broker and the `Topic`.
+
+#### Frequency of MQTT messages
+By default, Tasmota only sends the telemetry data (including the meter reading and the current power consumption) every 5 minutes. In order to send these every 60 seconds, you have to enter the command `TelePeriod 60` on the Tasmota web console of the adapter and complete the input with `Enter`:
+```
+10:50:37 CMD: TelePeriod 60
+10:50:37 MQT: stat/tasmota/RESULT = {"TelePeriod":60}
+```
+
 ## Devices running Tasmota firmware as electricity meters
+### MQTT
+Tasmota sends the telemetry data in JSON format, formatted as follows:
+```
+{
+  "Time": "2023-04-13T11:15:37",
+  "ENERGY": {
+    "TotalStartTime": "2021-03-29T17:27:44",
+    "Total": 0.00512,
+    "Yesterday": 0.00021,
+    "Today": 0.00512,
+    "Period": 0,
+    "Power": 0,
+    "ApparentPower": 0,
+    "ReactivePower": 0,
+    "Factor": 0,
+    "Voltage": 236,
+    "Current": 0
+  }
+}
+```
+The example above results in the following field contents in the *Smart Appliance Enabler* (whereby the parameter `meter reading` is recommended and "tasmota" must be replaced by the topic name configured for the Tasmota adapter):
+
+| Feld                                                    | Wert                  |
+|---------------------------------------------------------|-----------------------|
+| Topic                                                   | tele/tasmota/SENSOR   |           
+| Format                                                  | JSON                  |
+| Value extraction path (using parameter `meter reading`) | $.ENERGY.Total        |
+| Value extraction path (using parameter `power`)         | $.ENERGY.Power        |
+| Time extraction path                                    | $.Time                |
+
+**Attention:** In order to specify a time extraction, the time must be specified as local time (not UTC!) in the MQTT messages.
+
+### HTTP
 The following command can be used to query the status of Tasmota adapters, which also includes the meter reading and power:
 ```console
 pi@raspberrypi:~ $ curl http://192.168.1.1/cm?cmnd=Status%208
@@ -93,26 +153,20 @@ The above example results in the following field contents in the *Smart Applianc
 | Extraction path (using parameter `meter reading`) | $.StatusSNS.ENERGY.Total              |
 | Extraction path (using parameter `power`)         | $.StatusSNS.ENERGY.Power              |
 
-By default, Tasmota only returns the `meter reading` with 3 decimal places. In order for the *Smart Appliance Enabler* to be able to calculate the power from meter reading differences as precisely as possible, the Tasmota adapter must be **configured to 5 decimal places**.
-To do this, go to the Tasmota web console of the adapter and enter the command `EnergyRes 5` and complete the input with `Enter`:
-```
-17:14:25 RSL: RESULT = {"EnergyRes":5}
-```
-
-The [Log](Logging_EN.md) contains the following lines for each meter query:
-```
-2021-02-08 00:09:54,324 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000014-00: Executing timer task name=PollEnergyMeter id=13049675
-2021-02-08 00:09:54,324 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:107] F-00000001-000000000014-00: Sending GET request url=http://kuehltruhe/cm?cmnd=Status%208
-2021-02-08 00:09:54,459 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:168] F-00000001-000000000014-00: Response code is 200
-2021-02-08 00:09:54,462 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:86] F-00000001-000000000014-00: url=http://kuehltruhe/cm?cmnd=Status%208 httpMethod=GET data=null path=$.StatusSNS.ENERGY.Total
-2021-02-08 00:09:54,463 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:89] F-00000001-000000000014-00: Response: {"StatusSNS":{"Time":"2021-02-08T00:09:54","ENERGY":{"TotalStartTime":"2020-01-05T17:01:57","Total":56.00865,"Yesterday":0.53820,"Today":0.00005,"Power":0,"ApparentPower":5,"ReactivePower":5,"Factor":0.06,"Voltage":237,"Current":0.021}}}
-2021-02-08 00:09:54,464 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:58] F-00000001-000000000014-00: value=56.00865 protocolHandlerValue=56.00865 valueExtractionRegex=null extractedValue=56.00865
-2021-02-08 00:09:54,465 DEBUG [Timer-0] d.a.s.m.PollEnergyMeter [PollEnergyMeter.java:120] F-00000001-000000000014-00: Adding value: timestamp=2021-02-08T00:09:54.324795 value=56.00865
-```
-
-*Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `Http` after `Only show lines with text` and press refresh.
 
 ## Devices with Tasmota firmware as switches
+### MQTT
+Using MQTT as a switch results in the following field contents in the *Smart Appliance Enabler* (where "tasmota" must be replaced with the topic name configured for the Tasmota adapter):
+
+| Field                      | Value              |
+|----------------------------|--------------------|
+| Topic                      | cmnd/tasmota/Power |
+| Payload for swich-on       | ON                 |
+| Payload for swich-off      | OFF                |
+| State topic                | stat/tasmota/POWER |
+| Regex for state extraktion | ON                 |
+
+### HTTP
 The switching state can be changed as follows:
 
 _Switch on_
@@ -138,15 +192,6 @@ The above example results in the following field contents in the *Smart Applianc
 | Action "Switch-on"      | http://192.168.1.1/cm?cmnd=Power%20On  |                  |
 | Action "Switch off"     | http://192.168.1.1/cm?cmnd=Power%20Off |                  |
 | Parameter "Switched on" | http://192.168.1.1/cm?cmnd=Power       | :.ON             |
-
-The [Log](Logging_EN.md) contains the following lines for each switching process:
-```
-2020-01-06 14:51:22,817 INFO [http-nio-8080-exec-4] d.a.s.c.HttpSwitch [HttpSwitch.java:128] F-00000001-000000000001-00: Switching on
-2020-01-06 14:51:22,817 DEBUG [http-nio-8080-exec-4] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: Sending GET request url=http://192.168.1.1/cm?cmnd=Power%20On
-2020-01-06 14:51:22,984 DEBUG [http-nio-8080-exec-4] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:160] F-00000001-000000000001-00: Response code is 200
-```
-
-*Webmin*: In [View Logfile](Logging_EN.md#webmin-logs) enter `Http` after `Only show lines with text` and press refresh.
 
 ## Create runtime request on keypress
 Tasmota allows you to create rules that are triggered on specific events.

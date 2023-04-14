@@ -1,6 +1,10 @@
 # MQTT-basierte Zähler
 
-Für einen MQTT-Zähler muss dessen `Topic` angegeben werden sowie der `Parameter`, welcher `Zählerstand` oder `Leistung` sein kann inAbhängikeit von den in der MQTT-Nachricht vorhandenen Werten. Auch der `Pfad für die Wert-Extraktion` muss angegeben werden um den [Zahlenwert aus der MQTT-Nachricht im JSON-Format extrahieren zu können](ValueExtraction_DE.md).
+Damit MQTT-Nachrichten als Datenquelle verwendet werden können, sollte eine aktuelle MQTT-Nachricht idealerweise alle 60 (aber nicht häufiger als alle 20) Sekunden verschickt werden.
+
+Für einen MQTT-Zähler muss dessen `Topic` angegeben werden sowie der `Parameter`, welcher `Zählerstand` oder `Leistung` sein kann in Abhängikeit von den in der MQTT-Nachricht vorhandenen Werten.
+
+Wenn kein `Format` angegeben wird, darf die MQTT-Nachricht nur den Zahlenwert beinhalten. Wird `JSON` angegeben, muss auch der `Pfad für die Wert-Extraktion` angegeben werden um den [Zahlenwert aus der MQTT-Nachricht im JSON-Format extrahieren zu können](ValueExtraction_DE.md).
 
 Wird der optionale `Pfad für die Zeit-Extraktion` angegeben, wird die aus der MQTT-Nachricht extrahierte Zeit anstelle der aktuellen Zeit für die weitere Verarbeitung verwendet.
 
@@ -9,7 +13,7 @@ Für den Parameter `Zählerstand` wird der Wert in kWh und für den Parameter `L
 ![MQTT-basierter Zähler](../pics/fe/MqttMeter_DE.png)
 
 ## Log
-Wird ein HTTP-Zähler für das Gerät `F-00000001-000000000005-00` verwendet, kann man die ermittelte Leistungsaufnahme im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
+Wird ein MQTT-Zähler für das Gerät `F-00000001-000000000005-00` verwendet, kann man die ermittelte Leistungsaufnahme im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
 
 ```console
 2023-04-04 18:01:33,964 TRACE [MQTT Call: F-00000001-000000000005-00-MqttElectricityMeter-0] d.a.s.m.MqttElectricityMeter [MqttElectricityMeter.java:147] F-00000001-000000000005-00: MQTT message received: {"Time":"2023-04-04T17:01:33","Switch1":"ON","ENERGY":{"TotalStartTime":"2020-01-05T12:41:22","Total":14.68792,"Yesterday":0.00001,"Today":0.00869,"Period":1,"Power":32,"ApparentPower":35,"ReactivePower":16,"Factor":0.89,"Voltage":238,"Current":0.148}}

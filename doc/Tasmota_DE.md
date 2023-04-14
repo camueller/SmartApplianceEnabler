@@ -56,7 +56,67 @@ Wenn sich auf dem Adapter bereits Tasmota-Firmware befindet, kann man diese übe
 ## Kalibrieren der Firmware
 Vor der Benutzung sollte die [Tasmota-Firmware kalibriert](https://tasmota.github.io/docs/Power-Monitoring-Calibration/) werden, da korrekte Messungen durch Hardware- und Timing-Unterschiede beeinflusst werden.
 
+## Verwendung von Tasmota-Adaptern im Smart Appliance Enabler
+Der *Smart Appliance Enabler* kann mit Tasmota-Adaptern via MQTT oder HTTP kommunizieren. Es empfiehlt sich allerdings MQTT, da es auf dem Adapter selbst und auch im Netzwerk weniger Resourcen beansprucht und stabiler ist. 
+
+## Konfigurieren der Firmware
+### Verwendung von Sommerzeit
+Die Verwendung von Sommerzeit ist in Tasmota standardmässig nicht aktiv. Um bei Zeitangaben die Sommerzeit zu nutzen muss man auf der Tasmota-Web-Konsole des Adapters den Befehl `timezone 99` eingeben und die Eingabe mit `Enter` abschliessen:
+```
+10:46:24 CMD: timezone 99
+10:46:24 MQT: stat/tasmota/RESULT = {"Timezone":99}
+```
+
+### Anzahl der Nachkommastellen für den Zählerstand (nur erforderlich bei Verwendung von "Zählerstand" als Parameter)
+Der `Zählerstand` wird standardmässig von Tasmota nur mit 3 Nachkommastellen geliefert. Damit der *Smart Appliance Enabler* aus Zählertandsdifferenzen die Leistung möglich genau berechnen kann, muss der Tasmota-Adapter **auf 5 Nachkomstellen konfiguriert** werden. Dazu geht man auf die Tasmota-Web-Konsole des Adapters und gibt den Befehl `EnergyRes 5` ein und schliesst die Eingabe mit `Enter` ab:
+```
+17:14:25 CMD: EnergyRes 5
+17:14:25 RSL: RESULT = {"EnergyRes":5}
+```
+### MQTT (nur bei Verwendung von MQTT als Kommunikationsprotokoll)
+Zunächst muss der Tasmota-Adapter für die [Nutzung von MQTT konfiguriert](https://tasmota.github.io/docs/MQTT/) werden, was vor allem `Host` und `Port` des MQTT-Brokers sowie das `Topic` betrifft.
+
+#### Häufigkeit der MQTT-Nachrichten
+Die Telemetriedaten (dazu gehören der Zählerstand und die aktuelle Leistungsaufnahme) werden von Tasmota standardmässig nur alle 5 Minuten versendet. Um diese alle 60 Sekunden zu versenden muss man auf der Tasmota-Web-Konsole des Adapters den Befehl `TelePeriod 60` eingeben und die Eingabe mit `Enter` abschliessen:
+```
+10:50:37 CMD: TelePeriod 60
+10:50:37 MQT: stat/tasmota/RESULT = {"TelePeriod":60}
+```
+
 ## Geräte mit Tasmota-Firmware als Stromzähler 
+### MQTT
+Tasmota versendet die Telemetriedaten im JSON-Format, die formatiert wie folgt aussieht:
+```
+{
+  "Time": "2023-04-13T11:15:37",
+  "ENERGY": {
+    "TotalStartTime": "2021-03-29T17:27:44",
+    "Total": 0.00512,
+    "Yesterday": 0.00021,
+    "Today": 0.00512,
+    "Period": 0,
+    "Power": 0,
+    "ApparentPower": 0,
+    "ReactivePower": 0,
+    "Factor": 0,
+    "Voltage": 236,
+    "Current": 0
+  }
+}
+```
+Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabler* (wobei Parameter `Zählerstand` empfohlen wird und "tasmota" durch für den Tasmota-Adapter konfigurierten Topic-Namen ersetzt werden muss):
+
+| Feld                                              | Wert                  |
+|---------------------------------------------------|-----------------------|
+| Topic                                             | tele/tasmota/SENSOR   |           
+| Format                                            | JSON                  |
+| Pfad für Extraktion (bei Parameter `Zählerstand`) | $.ENERGY.Total        |
+| Pfad für Extraktion (bei Parameter `Leistung`)    | $.ENERGY.Power        |
+| Pfad für Zeit-Extraktion                          | $.Time                |
+
+**Achtung:** Voraussetzung für die Angabe einer Zeit-Extraktion ist die Angabe der Zeit als lokale Ortszeit (nicht UTC!) in den MQTT-Nachrichten.
+
+### HTTP
 Mit dem folgenden Befehl kann der Status von Tasmota-Adaptern abgefragt werden, der auch den Zählerstand und die Leistung beinhaltet:
 ```console
 pi@raspberrypi:~ $ curl http://192.168.1.1/cm?cmnd=Status%208
@@ -93,26 +153,20 @@ Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabl
 | Pfad für Extraktion (bei Parameter `Zählerstand`) | $.StatusSNS.ENERGY.Total              |
 | Pfad für Extraktion (bei Parameter `Leistung`)    | $.StatusSNS.ENERGY.Power              |
 
-Der `Zählerstand` wird standardmässig von Tasmota nur mit 3 Nachkommastellen geliefert. Damit der *Smart Appliance Enabler* aus Zählertandsdifferenzen die Leistung möglich genau berechnen kann, muss der Tasmota-Adapter **auf 5 Nachkomstellen konfiguriert** werden.
-Dazu geht man auf die Tasmota-Web-Konsole des Adapters und gibt den Befehl `EnergyRes 5` ein und schliesst die Eingabe mit `Enter` ab:
-```
-17:14:25 RSL: RESULT = {"EnergyRes":5}
-```
-
-Für jede Zähler-Abfrage finden sich im [Log](Logging_DE.md) folgende Zeilen:
-```
-2021-02-08 00:09:54,324 DEBUG [Timer-0] d.a.s.u.GuardedTimerTask [GuardedTimerTask.java:54] F-00000001-000000000014-00: Executing timer task name=PollEnergyMeter id=13049675
-2021-02-08 00:09:54,324 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:107] F-00000001-000000000014-00: Sending GET request url=http://kuehltruhe/cm?cmnd=Status%208
-2021-02-08 00:09:54,459 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:168] F-00000001-000000000014-00: Response code is 200
-2021-02-08 00:09:54,462 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:86] F-00000001-000000000014-00: url=http://kuehltruhe/cm?cmnd=Status%208 httpMethod=GET data=null path=$.StatusSNS.ENERGY.Total
-2021-02-08 00:09:54,463 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:89] F-00000001-000000000014-00: Response: {"StatusSNS":{"Time":"2021-02-08T00:09:54","ENERGY":{"TotalStartTime":"2020-01-05T17:01:57","Total":56.00865,"Yesterday":0.53820,"Today":0.00005,"Power":0,"ApparentPower":5,"ReactivePower":5,"Factor":0.06,"Voltage":237,"Current":0.021}}}
-2021-02-08 00:09:54,464 DEBUG [Timer-0] d.a.s.h.HttpHandler [HttpHandler.java:58] F-00000001-000000000014-00: value=56.00865 protocolHandlerValue=56.00865 valueExtractionRegex=null extractedValue=56.00865
-2021-02-08 00:09:54,465 DEBUG [Timer-0] d.a.s.m.PollEnergyMeter [PollEnergyMeter.java:120] F-00000001-000000000014-00: Adding value: timestamp=2021-02-08T00:09:54.324795 value=56.00865
-```
-
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `Http` und drückt Refresh.
 
 ## Geräte mit Tasmota-Firmware als Schalter
+### MQTT
+Für die Verwendung von MQTT als Schalter ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabler* (wobei "tasmota" durch für den Tasmota-Adapter konfigurierten Topic-Namen ersetzt werden muss):
+
+| Feld                         | Wert               |
+|------------------------------|--------------------|
+| Topic                        | cmnd/tasmota/Power |
+| Payload beim Einschalten     | ON                 |
+| Payload beim Ausschalten     | OFF                |
+| Status-Topic                 | stat/tasmota/POWER |
+| Regex für Status-Extraktion  | ON                 |
+
+### HTTP
 Der Schaltzustand kann wie folgt geändert werden:
 
 _Einschalten_
@@ -133,20 +187,11 @@ $ curl http://192.168.1.1/cm?cmnd=Power
 
 Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabler*:
 
-| Feld                      | URL                                    | Regex für Extraktion |
-|---------------------------| ----                                   | ----                 |
-| Aktion "Einschalten"      | http://192.168.1.1/cm?cmnd=Power%20On  |                      |
-| Aktion "Ausschalten"      | http://192.168.1.1/cm?cmnd=Power%20Off |                      |
-| Parameter "Eingeschaltet" | http://192.168.1.1/cm?cmnd=Power       | :.ON                 |
-
-Für jeden Schaltvorgang finden sich im [Log](Logging_DE.md) folgende Zeilen:
-```
-2020-01-06 14:51:22,817 INFO [http-nio-8080-exec-4] d.a.s.c.HttpSwitch [HttpSwitch.java:128] F-00000001-000000000001-00: Switching on
-2020-01-06 14:51:22,817 DEBUG [http-nio-8080-exec-4] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:105] F-00000001-000000000001-00: Sending GET request url=http://192.168.1.1/cm?cmnd=Power%20On
-2020-01-06 14:51:22,984 DEBUG [http-nio-8080-exec-4] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:160] F-00000001-000000000001-00: Response code is 200
-```
-
-*Webmin*: In [View Logfile](Logging_DE.md#webmin-logs) gibt man hinter `Only show lines with text` ein `Http` und drückt Refresh.
+| Feld                      | URL                                     | Regex für Extraktion  |
+|---------------------------|-----------------------------------------|-----------------------|
+| Aktion "Einschalten"      | http://192.168.1.1/cm?cmnd=Power%20On   |                       |
+| Aktion "Ausschalten"      | http://192.168.1.1/cm?cmnd=Power%20Off  |                       |
+| Parameter "Eingeschaltet" | http://192.168.1.1/cm?cmnd=Power        | :.ON                  |
 
 ## Laufzeitanforderung bei Tastendruck erstellen
 Tasmota ermöglicht das Anlegen von Regeln, die bei bestimmten Ereignissen ausgelöst werden.
