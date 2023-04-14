@@ -115,7 +115,7 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
 
     public double getEnergy() {
         double energy = 0.0f;
-        if(this.startEnergyCounter != null) {
+        if(this.currentEnergyCounter != null && this.startEnergyCounter != null) {
             if(this.totalEnergy != null) {
                 energy = this.totalEnergy + currentEnergyCounter - this.startEnergyCounter;
             }
