@@ -25,6 +25,7 @@ import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.Notifications;
+import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,7 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
     private transient String applianceId;
     private transient NotificationHandler notificationHandler;
     private transient MqttClient mqttClient;
+    private transient GuardedTimerTask mqttPublishTimerTask;
 
     @Override
     public String getId() {
@@ -85,12 +87,28 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
 
     @Override
     public void start(LocalDateTime now, Timer timer) {
-        MqttMessage message = new ControlMessage(now, true);
-        mqttClient.publish(Control.TOPIC, message, false);
+        if(mqttClient != null) {
+            this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
+                    MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
+                @Override
+                public void runTask() {
+                    try {
+                        publishControlMessage(LocalDateTime.now(), true);
+                    }
+                    catch(Exception e) {
+                        logger.error("{}: Error publishing MQTT message", applianceId, e);
+                    }
+                }
+            };
+            timer.schedule(this.mqttPublishTimerTask, 0, this.mqttPublishTimerTask.getPeriod());
+        }
     }
 
     @Override
     public void stop(LocalDateTime now) {
+        if(this.mqttPublishTimerTask != null) {
+            this.mqttPublishTimerTask.cancel();
+        }
         if(mqttClient != null) {
             mqttClient.disconnect();
         }
@@ -99,5 +117,10 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
     @Override
     public boolean isControllable() {
         return false;
+    }
+
+    private void publishControlMessage(LocalDateTime now, boolean on) {
+        MqttMessage message = new ControlMessage(now, on);
+        mqttClient.publish(Control.TOPIC, message, false);
     }
 }
