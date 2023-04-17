@@ -2,6 +2,7 @@ import {Appliance} from '../../../../main/angular/src/app/appliance/appliance';
 import {SideMenu} from '../page/side.menu.page';
 import {AppliancePage} from '../page/appliance/appliance.page';
 import {Meter} from '../../../../main/angular/src/app/meter/meter';
+import {MqttElectricityMeter} from '../../../../main/angular/src/app/meter/mqtt/mqtt-electricity-meter';
 import {S0MeterPage} from '../page/meter/s0-meter.page';
 import {S0ElectricityMeter} from '../../../../main/angular/src/app/meter/s0/s0-electricity-meter';
 import {SwitchPage} from '../page/control/switch.page';
@@ -18,6 +19,7 @@ import {ModbusControlPage} from '../page/control/modbus-control.page';
 import {HttpSwitch} from '../../../../main/angular/src/app/control/http/http-switch';
 import {AlwaysOnSwitch} from '../../../../main/angular/src/app/control/alwayson/always-on-switch';
 import {ModbusSwitch} from '../../../../main/angular/src/app/control/modbus/modbus-switch';
+import {MqttSwitch} from '../../../../main/angular/src/app/control/mqtt/mqtt-switch';
 import {Switch} from '../../../../main/angular/src/app/control/switch/switch';
 import {ControlPage} from '../page/control/control.page';
 import {StartingCurrentSwitchPage} from '../page/control/starting-current-switch.page';
@@ -36,6 +38,8 @@ import {PwmSwitch} from '../../../../main/angular/src/app/control/pwm/pwm-switch
 import {PwmControlPage} from '../page/control/pwm-control.page';
 import {LevelSwitch} from '../../../../main/angular/src/app/control/level/level-switch';
 import {LevelControlPage} from '../page/control/level-control.page';
+import {MqttMeterPage} from '../page/meter/mqtt-meter.page';
+import {MqttControlPage} from '../page/control/mqtt-control.page';
 
 // Specifies the test speed. Must be a number between 1 (the fastest) and 0.01 (the slowest).
 export const testSpeed = 1;
@@ -105,13 +109,16 @@ export async function createMeter(t: TestController, applianceId: string, meter:
   if (meter.type === S0ElectricityMeter.TYPE) {
     await S0MeterPage.setS0ElectricityMeter(t, meter.s0ElectricityMeter);
   }
-  if (meter.type === HttpElectricityMeter.TYPE) {
+  else if (meter.type === HttpElectricityMeter.TYPE) {
     await HttpMeterPage.setHttpElectricityMeter(t, meter.httpElectricityMeter);
   }
-  if (meter.type === ModbusElectricityMeter.TYPE) {
+  else if (meter.type === ModbusElectricityMeter.TYPE) {
     await ModbusMeterPage.setModbusElectricityMeter(t, meter.modbusElectricityMeter);
   }
-  if (meter.type === SlaveElectricityMeter.TYPE) {
+  else if (meter.type === MqttElectricityMeter.TYPE) {
+    await MqttMeterPage.setMqttElectricityMeter(t, meter.mqttElectricityMeter);
+  }
+  else if (meter.type === SlaveElectricityMeter.TYPE) {
     await SlaveMeterPage.setSlaveMeter(t, meter.slaveElectricityMeter);
   } else {
     await MasterMeterPage.setMasterMeter(t, meter.isMasterMeter, meter.masterElectricityMeter);
@@ -124,13 +131,16 @@ export async function assertMeter(t: TestController, applianceId: string, meter:
   if (meter.type === S0ElectricityMeter.TYPE) {
     await S0MeterPage.assertS0ElectricityMeter(t, meter.s0ElectricityMeter);
   }
-  if (meter.type === HttpElectricityMeter.TYPE) {
+  else if (meter.type === HttpElectricityMeter.TYPE) {
     await HttpMeterPage.assertHttpElectricityMeter(t, meter.httpElectricityMeter);
   }
-  if (meter.type === ModbusElectricityMeter.TYPE) {
+  else if (meter.type === ModbusElectricityMeter.TYPE) {
     await ModbusMeterPage.assertModbusElectricityMeter(t, meter.modbusElectricityMeter);
   }
-  if (meter.type === SlaveElectricityMeter.TYPE) {
+  else if (meter.type === MqttElectricityMeter.TYPE) {
+    await MqttMeterPage.assertMqttElectricityMeter(t, meter.mqttElectricityMeter);
+  }
+  else if (meter.type === SlaveElectricityMeter.TYPE) {
     await SlaveMeterPage.assertSlaveMeter(t, meter.slaveElectricityMeter);
   } else {
     await MasterMeterPage.assertMasterMeter(t, meter.isMasterMeter, meter.masterElectricityMeter);
@@ -151,6 +161,9 @@ export async function createControl(t: TestController, applianceId: string, cont
   }
   else if (control.type === ModbusSwitch.TYPE) {
     await ModbusControlPage.setModbusSwitch(t, control.modbusSwitch);
+  }
+  else if (control.type === MqttSwitch.TYPE) {
+    await MqttControlPage.setMqttSwitch(t, control.mqttSwitch);
   }
   else if (control.type === LevelSwitch.TYPE) {
     await LevelControlPage.setLevelSwitch(t, control.levelSwitch);
@@ -181,6 +194,9 @@ export async function assertControl(t: TestController, applianceId: string, cont
   }
   else if (control.type === ModbusSwitch.TYPE) {
     await ModbusControlPage.assertModbusSwitch(t, control.modbusSwitch);
+  }
+  else if (control.type === MqttSwitch.TYPE) {
+    await MqttControlPage.assertMqttSwitch(t, control.mqttSwitch);
   }
   else if (control.type === LevelSwitch.TYPE) {
     await LevelControlPage.assertLevelSwitch(t, control.levelSwitch);
