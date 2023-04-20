@@ -1,8 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Logger} from '../../log/logger';
-import {AbstractControl, UntypedFormGroup, FormGroupDirective} from '@angular/forms';
+import {AbstractControl, FormGroupDirective, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
-import {FormHandler} from '../../shared/form-handler';
 import {SettingsService} from '../../settings/settings-service';
 import {FileMode} from './file-mode';
 import {debounce} from 'rxjs/operators';
@@ -26,14 +25,12 @@ export class FilenameInputComponent implements OnInit {
   @Input()
   requiredFileModes: FileMode[];
   form: UntypedFormGroup;
-  formHandler: FormHandler;
   errors: { [key: string]: string } = {};
 
   constructor(private logger: Logger,
               private settingsService: SettingsService,
               private translate: TranslateService,
               private parent: FormGroupDirective) {
-    this.formHandler = new FormHandler();
   }
 
   ngOnInit(): void {
@@ -44,7 +41,7 @@ export class FilenameInputComponent implements OnInit {
       'FilenameInputComponent.error.not-writable',
       'FilenameInputComponent.error.not-executable',
     ]).subscribe(translated => this.errors = translated);
-    this.formHandler.addFormControl(this.form, this.formControlNameInput, this.value);
+    this.form.addControl(this.formControlNameInput, new UntypedFormControl(this.value));
     const control = this.getControl();
     control.valueChanges.pipe(debounce(() => interval(400))).subscribe(() => this.checkFileAndSetError(control));
     this.checkFileAndSetError(control);

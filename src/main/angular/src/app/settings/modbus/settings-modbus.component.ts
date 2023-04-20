@@ -1,16 +1,16 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {ModbusSetting} from './modbus-setting';
 import {TranslateService} from '@ngx-translate/core';
-import {UntypedFormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
-import {FormHandler} from '../../shared/form-handler';
 import {SettingsService} from '../settings-service';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {getValidInt, getValidString} from '../../shared/form-util';
+import {isRequired} from '../../shared/form-util';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
 import {SettingsDefaults} from '../settings-defaults';
+import {SettingsModbusModel} from './settings-modbus.model';
 
 @Component({
   selector: 'app-settings-modbus',
@@ -23,10 +23,9 @@ export class SettingsModbusComponent implements OnChanges, OnInit {
   @Input()
   settingsDefaults: SettingsDefaults;
   @Input()
-  form: UntypedFormGroup;
+  form: FormGroup<SettingsModbusModel>;
   @Output()
   remove = new EventEmitter<any>();
-  formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -36,7 +35,6 @@ export class SettingsModbusComponent implements OnChanges, OnInit {
               private translate: TranslateService,
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -64,13 +62,15 @@ export class SettingsModbusComponent implements OnChanges, OnInit {
     });
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'modbusTcpId',
-      this.modbusSetting && this.modbusSetting.modbusTcpId, Validators.required);
-    this.formHandler.addFormControl(this.form, 'modbusTcpHost',
-      this.modbusSetting && this.modbusSetting.modbusTcpHost, Validators.pattern(InputValidatorPatterns.HOSTNAME));
-    this.formHandler.addFormControl(this.form, 'modbusTcpPort',
-      this.modbusSetting && this.modbusSetting.modbusTcpPort, Validators.pattern(InputValidatorPatterns.INTEGER));
+    this.form.addControl('modbusTcpId', new FormControl(this.modbusSetting?.modbusTcpId, Validators.required));
+    this.form.addControl('modbusTcpHost', new FormControl(this.modbusSetting?.modbusTcpHost,
+      Validators.pattern(InputValidatorPatterns.HOSTNAME)));
+    this.form.addControl('modbusTcpPort', new FormControl(this.modbusSetting?.modbusTcpPort, Validators.pattern(InputValidatorPatterns.INTEGER)));
   }
 
   removeModbus() {
@@ -78,9 +78,9 @@ export class SettingsModbusComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): ModbusSetting | undefined {
-    const modbusTcpId = getValidString(this.form.controls.modbusTcpId.value);
-    const modbusTcpHost = getValidString(this.form.controls.modbusTcpHost.value);
-    const modbusTcpPort = getValidInt(this.form.controls.modbusTcpPort.value);
+    const modbusTcpId = this.form.controls.modbusTcpId.value;
+    const modbusTcpHost = this.form.controls.modbusTcpHost.value;
+    const modbusTcpPort = this.form.controls.modbusTcpPort.value;
 
     if (!(modbusTcpId || modbusTcpHost || modbusTcpPort)) {
       return undefined;

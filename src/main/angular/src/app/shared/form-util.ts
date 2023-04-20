@@ -1,18 +1,5 @@
-export function simpleMeterType(meterType: string) {
-  return meterType && meterType.split('.')[4];
-}
+import {FormControl, FormGroup, UntypedFormArray, UntypedFormGroup, Validators} from '@angular/forms';
 
-export function simpleControlType(controlType: string) {
-  return controlType && controlType.split('.')[4];
-}
-
-export function simpleTimeframeType(timeframeType: string) {
-  return timeframeType && timeframeType.split('.')[4];
-}
-
-export function simpleRequestType(requestType: string) {
-  return requestType && requestType.split('.')[4];
-}
 
 export function getValidString(input: any): string | undefined {
   if (!input || input.length === 0) {
@@ -33,4 +20,20 @@ export function getValidFloat(input: any): number | undefined {
     return undefined;
   }
   return input.toString().length > 0 ? Number.parseFloat(input) : undefined;
+}
+
+export function isRequired(form: FormGroup, formControlName: string) {
+  const control = form.controls[formControlName] as FormControl;
+  if(control) {
+    return control.hasValidator(Validators.required);
+  }
+  return false;
+}
+
+export function buildFormArrayWithEmptyFormGroups(items: Array<any>): UntypedFormArray {
+  const formArray = new UntypedFormArray([]);
+  if (items) {
+    items.forEach(() => formArray.push(new UntypedFormGroup({})));
+  }
+  return formArray;
 }

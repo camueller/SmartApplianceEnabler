@@ -1,16 +1,17 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
-import {ControlContainer, UntypedFormGroup, FormGroupDirective} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective} from '@angular/forms';
 import {DayTimeframe} from './day-timeframe';
 import {ErrorMessages} from '../../../shared/error-messages';
 import {TimeOfDay} from '../../time-of-day';
 import {DayOfWeek, DaysOfWeek} from '../../../shared/days-of-week';
 import {TimeUtil} from '../../../shared/time-util';
-import {FormHandler} from '../../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
 import {TimepickerComponent} from '../../../material/timepicker/timepicker.component';
+import {ScheduleTimeframeDayModel} from './schedule-timeframe-day.model';
+import {isRequired} from 'src/app/shared/form-util';
 
 @Component({
   selector: 'app-schedule-timeframe-day',
@@ -29,8 +30,7 @@ export class ScheduleTimeframeDayComponent implements OnChanges, OnInit {
   startTimeComp: TimepickerComponent;
   @ViewChild('endTimeComponent', {static: true})
   endTimeComp: TimepickerComponent;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ScheduleTimeframeDayModel>;
   daysOfWeek: DayOfWeek[];
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -41,7 +41,6 @@ export class ScheduleTimeframeDayComponent implements OnChanges, OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -93,8 +92,12 @@ export class ScheduleTimeframeDayComponent implements OnChanges, OnInit {
     }
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'daysOfWeekValues', this.daysOfWeekValues);
+    this.form.addControl('daysOfWeekValues', new FormControl(this.daysOfWeekValues));
   }
 
   updateModelFromForm(): DayTimeframe | undefined {

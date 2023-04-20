@@ -1,15 +1,14 @@
-import {Component, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {UntypedFormGroup, Validators} from '@angular/forms';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusWriteValue} from './modbus-write-value';
 import {ErrorMessages} from '../../shared/error-messages';
-import {FormHandler} from '../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
-import {getValidString} from '../../shared/form-util';
 import {Logger} from '../../log/logger';
-import { EventEmitter } from '@angular/core';
 import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
+import {ModbusWriteValueModel} from './modbus-write-value.model';
+import { isRequired } from 'src/app/shared/form-util';
 
 @Component({
   selector: 'app-modbus-write-value',
@@ -22,8 +21,7 @@ export class ModbusWriteValueComponent implements OnChanges, OnInit {
   @Input()
   valueNames: string[];
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ModbusWriteValueModel>;
   @Input()
   translationPrefix = '';
   @Input()
@@ -39,7 +37,6 @@ export class ModbusWriteValueComponent implements OnChanges, OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -81,21 +78,21 @@ export class ModbusWriteValueComponent implements OnChanges, OnInit {
     }
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'name',
-      this.modbusWriteValue && this.modbusWriteValue.name,
-      [Validators.required]);
+    this.form.addControl('name', new FormControl(this.modbusWriteValue?.name, Validators.required));
     if (this.modbusWriteValue) {
       this.onNameChanged(this.modbusWriteValue.name);
     }
-    this.formHandler.addFormControl(this.form, 'value',
-      this.modbusWriteValue && this.modbusWriteValue.value,
-      [Validators.required]);
+    this.form.addControl('value', new FormControl(this.modbusWriteValue?.value, Validators.required));
   }
 
   updateModelFromForm(): ModbusWriteValue | undefined {
-    const name = getValidString(this.form.controls.name.value);
-    const value = getValidString(this.form.controls.value.value);
+    const name = this.form.controls.name.value;
+    const value = this.form.controls.value.value;
 
     if (!(name || value)) {
       return undefined;

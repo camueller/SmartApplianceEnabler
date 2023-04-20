@@ -6,7 +6,7 @@ import {
   selectorSelectedByFormControlName,
   selectorStringByFormControlNameOrNgReflectName
 } from '../../shared/form';
-import {simpleControlType} from '../../../../../main/angular/src/app/shared/form-util';
+import {simpleControlType} from '../../../../../main/angular/src/app/control/control';
 import {Selector} from 'testcafe';
 
 export class ControlPage {

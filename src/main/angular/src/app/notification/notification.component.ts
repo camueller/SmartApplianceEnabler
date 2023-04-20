@@ -1,10 +1,11 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {FormHandler} from '../shared/form-handler';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {Logger} from '../log/logger';
-import {UntypedFormGroup, FormGroupDirective} from '@angular/forms';
+import {FormControl, FormGroup, FormGroupDirective} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ListItem} from '../shared/list-item';
 import {Notifications} from './notifications';
+import {NotificationModel} from './notification.model';
+import {isRequired} from '../shared/form-util';
 
 @Component({
   selector: 'app-notification',
@@ -18,15 +19,13 @@ export class NotificationComponent implements OnChanges {
   types: string[];
   @Input()
   configured: boolean;
-  form: UntypedFormGroup;
+  form: FormGroup<NotificationModel>;
   typeListItems: ListItem[] = [];
-  formHandler: FormHandler;
 
   constructor(private logger: Logger,
               private parent: FormGroupDirective,
               private translate: TranslateService
   ) {
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -73,9 +72,13 @@ export class NotificationComponent implements OnChanges {
     });
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'notificationsEnabled', {value: !!this.notifications, disabled: !this.configured});
-    this.formHandler.addFormControl(this.form, 'notificationTypes', this.notifications?.types);
+    this.form.addControl('notificationsEnabled', new FormControl({value: !!this.notifications, disabled: !this.configured}));
+    this.form.addControl('notificationTypes', new FormControl(this.notifications?.types));
     this.setEnabled(this.isEnabled());
     this.form.controls.notificationsEnabled.valueChanges.subscribe(value => {
       this.setEnabled(value);

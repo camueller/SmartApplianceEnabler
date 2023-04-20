@@ -1,16 +1,16 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {ControlContainer, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
 import {ErrorMessages} from '../../../shared/error-messages';
 import {DayOfWeek, DaysOfWeek} from '../../../shared/days-of-week';
 import {TimeUtil} from '../../../shared/time-util';
-import {FormHandler} from '../../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
 import {TimepickerComponent} from '../../../material/timepicker/timepicker.component';
-import {getValidInt} from '../../../shared/form-util';
+import {getValidInt, isRequired} from '../../../shared/form-util';
+import {ScheduleTimeframeConsecutivedaysModel} from './schedule-timeframe-consecutivedays.model';
 
 @Component({
   selector: 'app-schedule-timeframe-consecutivedays',
@@ -29,8 +29,7 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
   startTimeComp: TimepickerComponent;
   @ViewChild('endTimeComponent', {static: true})
   endTimeComp: TimepickerComponent;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ScheduleTimeframeConsecutivedaysModel>;
   daysOfWeek: DayOfWeek[];
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -41,7 +40,6 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -99,11 +97,13 @@ export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnI
     }
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'startDayOfWeek', this.startDayOfWeek,
-      Validators.required);
-    this.formHandler.addFormControl(this.form, 'endDayOfWeek', this.endDayOfWeek,
-      Validators.required);
+    this.form.addControl('startDayOfWeek', new FormControl(this.startDayOfWeek, Validators.required));
+    this.form.addControl('endDayOfWeek', new FormControl(this.endDayOfWeek, Validators.required));
   }
 
   updateModelFromForm(): ConsecutiveDaysTimeframe | undefined {

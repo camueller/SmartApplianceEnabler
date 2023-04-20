@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
-import {UntypedFormArray, UntypedFormGroup} from '@angular/forms';
+import {FormArray, FormGroup} from '@angular/forms';
 import {DayTimeframe} from '../timeframe/day/day-timeframe';
 import {TranslateService} from '@ngx-translate/core';
 import {MessageBoxLevel} from '../../material/messagebox/messagebox.component';
@@ -10,13 +10,11 @@ import {ScheduleComponent} from '../schedule.component';
 import {Control} from '../../control/control';
 import {EnergyRequest} from '../request/energy/energy-request';
 import {RuntimeRequest} from '../request/runtime/runtime-request';
-import {Schedule} from '../schedule';
-import {FormHandler} from '../../shared/form-handler';
+import {Schedule, simpleTimeframeType} from '../schedule';
 import {ConsecutiveDaysTimeframe} from '../timeframe/consecutivedays/consecutive-days-timeframe';
 import {SocRequest} from '../request/soc/soc-request';
 import {ElectricVehicle} from '../../control/evcharger/electric-vehicle/electric-vehicle';
 import {Logger} from '../../log/logger';
-import {simpleTimeframeType} from '../../shared/form-util';
 import {ControlComponent} from '../../control/control.component';
 import {Observable} from 'rxjs';
 import {DialogService} from '../../shared/dialog.service';
@@ -24,6 +22,8 @@ import {MeterReportingSwitch} from '../../control/meterreporting/meter-reporting
 import {AlwaysOnSwitch} from '../../control/alwayson/always-on-switch';
 import {PwmSwitch} from '../../control/pwm/pwm-switch';
 import {LevelSwitch} from '../../control/level/level-switch';
+import {SchedulesModel} from './schedules.model';
+import {ScheduleModel} from '../schedule.model';
 
 @Component({
   selector: 'app-schedules',
@@ -33,8 +33,7 @@ import {LevelSwitch} from '../../control/level/level-switch';
 export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
   @ViewChildren('scheduleComponents')
   scheduleComps: QueryList<ScheduleComponent>;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<SchedulesModel>;
   schedules: Schedule[];
   control: Control;
   applianceId: string;
@@ -62,7 +61,6 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
               private translate: TranslateService,
               private changeDetectorRef: ChangeDetectorRef
   ) {
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -157,11 +155,11 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
   }
 
   get schedulesFormArray() {
-    return this.form.controls.schedules as UntypedFormArray;
+    return this.form.controls.schedules;
   }
 
-  createSchedulesFormGroup(): UntypedFormGroup {
-    return new UntypedFormGroup({});
+  createSchedulesFormGroup() {
+    return new FormGroup({} as ScheduleModel);
   }
 
   getScheduleFormGroup(index: number) {
@@ -175,11 +173,11 @@ export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<Cont
     return this.dialogService.confirm(this.discardChangesMessage);
   }
 
-  buildForm(): UntypedFormGroup {
-    const schedulesFormArray = new UntypedFormArray([]);
+  buildForm() {
+    const schedulesFormArray = new FormArray([]);
     this.schedules.forEach(() => schedulesFormArray.push(this.createSchedulesFormGroup()));
 
-    const form = new UntypedFormGroup({
+    const form = new FormGroup({
       schedules: schedulesFormArray
     });
     return form;

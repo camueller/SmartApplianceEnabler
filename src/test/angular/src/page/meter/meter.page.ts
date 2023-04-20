@@ -5,7 +5,7 @@ import {
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName
 } from '../../shared/form';
-import {simpleMeterType} from '../../../../../main/angular/src/app/shared/form-util';
+import {simpleMeterType} from '../../../../../main/angular/src/app/meter/meter';
 
 export class MeterPage {
 

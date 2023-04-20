@@ -1,17 +1,17 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ControlContainer, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {S0ElectricityMeter} from './s0-electricity-meter';
 import {TranslateService} from '@ngx-translate/core';
 import {PinPullResistance} from './pin-pull-resistance';
 import {ErrorMessages} from '../../shared/error-messages';
-import {FormHandler} from '../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {getValidInt} from '../../shared/form-util';
 import {MeterDefaults} from '../meter-defaults';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
 import {ListItem} from '../../shared/list-item';
+import {MeterS0Model} from './meter-s0.model';
+import { isRequired } from 'src/app/shared/form-util';
 
 @Component({
   selector: 'app-meter-s0',
@@ -28,8 +28,7 @@ export class MeterS0Component implements OnChanges, OnInit {
   meterDefaults: MeterDefaults;
   @Input()
   applianceId: string;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<MeterS0Model>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -41,7 +40,6 @@ export class MeterS0Component implements OnChanges, OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -77,25 +75,25 @@ export class MeterS0Component implements OnChanges, OnInit {
     });
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'gpio',
-      this.s0ElectricityMeter && this.s0ElectricityMeter.gpio,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'pinPullResistance',
-      this.s0ElectricityMeter && this.s0ElectricityMeter.pinPullResistance);
-    this.formHandler.addFormControl(this.form, 'impulsesPerKwh',
-      this.s0ElectricityMeter && this.s0ElectricityMeter.impulsesPerKwh,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'minPulseDuration',
-      this.s0ElectricityMeter && this.s0ElectricityMeter.minPulseDuration,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.form.addControl('gpio', new FormControl(this.s0ElectricityMeter?.gpio,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
+    this.form.addControl('pinPullResistance', new FormControl(this.s0ElectricityMeter?.pinPullResistance));
+    this.form.addControl('impulsesPerKwh', new FormControl(this.s0ElectricityMeter?.impulsesPerKwh,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
+    this.form.addControl('minPulseDuration', new FormControl(this.s0ElectricityMeter?.minPulseDuration,
+      Validators.pattern(InputValidatorPatterns.INTEGER)));
   }
 
   updateModelFromForm(): S0ElectricityMeter | undefined {
-    const gpio = getValidInt(this.form.controls.gpio.value);
+    const gpio = this.form.controls.gpio.value;
     const pinPullResistance = this.form.controls.pinPullResistance.value;
-    const impulsesPerKwh = getValidInt(this.form.controls.impulsesPerKwh.value);
-    const minPulseDuration = getValidInt(this.form.controls.minPulseDuration.value);
+    const impulsesPerKwh = this.form.controls.impulsesPerKwh.value;
+    const minPulseDuration = this.form.controls.minPulseDuration.value;
 
     if (!(gpio || pinPullResistance || impulsesPerKwh || minPulseDuration)) {
       return undefined;

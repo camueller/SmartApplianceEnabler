@@ -2,7 +2,7 @@
   <mat-form-field class="ScheduleTimeframeConsecutivedaysComponent__startDayOfWeek">
     <mat-label>{{'ScheduleTimeframeConsecutivedaysComponent.startDayOfWeek' | translate}}</mat-label>
     <mat-select formControlName="startDayOfWeek"
-                required="{{formHandler.isRequired('startDayOfWeek')}}">
+                required="{{isRequired('startDayOfWeek')}}">
       <mat-option *ngFor="let dayOfWeek of daysOfWeek" [value]="dayOfWeek.id">
         {{dayOfWeek.name}}
       </mat-option>
@@ -20,7 +20,7 @@
   <mat-form-field class="ScheduleTimeframeConsecutivedaysComponent__endDayOfWeek">
     <mat-label>{{'ScheduleTimeframeConsecutivedaysComponent.endDayOfWeek' | translate}}</mat-label>
     <mat-select formControlName="endDayOfWeek"
-                required="{{formHandler.isRequired('endDayOfWeek')}}">
+                required="{{isRequired('endDayOfWeek')}}">
       <mat-option *ngFor="let dayOfWeek of daysOfWeek" [value]="dayOfWeek.id">
         {{dayOfWeek.name}}
       </mat-option>

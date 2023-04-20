@@ -22,6 +22,14 @@ import {DayTimeframe} from './timeframe/day/day-timeframe';
 import {ConsecutiveDaysTimeframe} from './timeframe/consecutivedays/consecutive-days-timeframe';
 import {SocRequest} from './request/soc/soc-request';
 
+export function simpleTimeframeType(timeframeType: string) {
+  return timeframeType && timeframeType.split('.')[4];
+}
+
+export function simpleRequestType(requestType: string) {
+  return requestType && requestType.split('.')[4];
+}
+
 export class Schedule {
   '@class' = 'de.avanux.smartapplianceenabler.schedule.Schedule';
   enabled: boolean;

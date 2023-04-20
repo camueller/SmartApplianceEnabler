@@ -20,7 +20,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
 import {MeterFactory} from './meter-factory';
 import {TranslateService} from '@ngx-translate/core';
-import {UntypedFormGroup} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {MeterDefaults} from './meter-defaults';
 import {MeterService} from './meter-service';
 import {Meter} from './meter';
@@ -30,7 +30,6 @@ import {Logger} from '../log/logger';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Settings} from '../settings/settings';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
-import {FormHandler} from '../shared/form-handler';
 import {S0ElectricityMeter} from './s0/s0-electricity-meter';
 import {MeterModbusComponent} from './modbus/meter-modbus.component';
 import {ModbusElectricityMeter} from './modbus/modbus-electricity-meter';
@@ -38,7 +37,7 @@ import {MeterHttpComponent} from './http/meter-http.component';
 import {HttpElectricityMeter} from './http/http-electricity-meter';
 import {MeterS0Component} from './s0/meter-s0.component';
 import {ListItem} from '../shared/list-item';
-import {simpleMeterType} from '../shared/form-util';
+import {simpleMeterType} from '../meter/meter';
 import {Appliance} from '../appliance/appliance';
 import {ApplianceType} from '../appliance/appliance-type';
 import {NotificationType} from '../notification/notification-type';
@@ -49,6 +48,8 @@ import {SlaveElectricityMeter} from './slave/master-electricity-meter';
 import {MeterSlaveComponent} from './slave/meter-slave.component';
 import {MqttElectricityMeter} from './mqtt/mqtt-electricity-meter';
 import {MeterMqttComponent} from './mqtt/meter-mqtt.component';
+import {MeterModel} from './meter.model';
+import {isRequired} from '../shared/form-util';
 
 @Component({
   selector: 'app-meter',
@@ -70,8 +71,7 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
   meterSlaveComp: MeterSlaveComponent;
   @ViewChild(NotificationComponent)
   notificationComp: NotificationComponent;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<MeterModel>;
   applianceId: string;
   meterDefaults: MeterDefaults;
   meterFactory: MeterFactory;
@@ -91,7 +91,6 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
               private translate: TranslateService) {
     this.meterFactory = new MeterFactory(logger);
     this.meter = this.meterFactory.createEmptyMeter();
-    this.formHandler = new FormHandler();
   }
 
   ngOnInit() {
@@ -129,14 +128,19 @@ export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
     });
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   buildForm() {
-    this.form = new UntypedFormGroup({});
-    this.formHandler.addFormControl(this.form, 'meterType', this.meter && simpleMeterType(this.meter.type));
-    this.formHandler.addFormControl(this.form, 'isMasterMeter', this.meter && this.meter.isMasterMeter);
+    this.form = new FormGroup({
+      meterType: new FormControl(this.meter && simpleMeterType(this.meter.type)),
+      isMasterMeter: new FormControl(this.meter && this.meter.isMasterMeter),
+    });
   }
 
   updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'meterType', simpleMeterType(this.meter.type));
+    this.form.controls.meterType.setValue(simpleMeterType(this.meter.type));
   }
 
   get notficationTypes() {

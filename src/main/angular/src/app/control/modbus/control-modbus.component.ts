@@ -10,7 +10,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import {ControlDefaults} from '../control-defaults';
-import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
@@ -18,15 +18,16 @@ import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {ModbusSwitch} from './modbus-switch';
 import {SettingsDefaults} from '../../settings/settings-defaults';
-import {FormHandler} from '../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {ControlValueName} from '../control-value-name';
-import {getValidString} from '../../shared/form-util';
+import {buildFormArrayWithEmptyFormGroups, isRequired} from '../../shared/form-util';
 import {ModbusWriteComponent} from '../../modbus/write/modbus-write.component';
 import {ModbusWrite} from '../../modbus/write/modbus-write';
 import {ModbusSetting} from '../../settings/modbus/modbus-setting';
-import { MessageBoxLevel } from 'src/app/material/messagebox/messagebox.component';
+import {MessageBoxLevel} from 'src/app/material/messagebox/messagebox.component';
 import {isControlValid} from '../control-validator';
+import {ControlModbusModel} from './control-modbus.model';
+import {ModbusWriteModel} from '../../modbus/write/modbus-write.model';
 
 @Component({
   selector: 'app-control-modbus',
@@ -48,8 +49,7 @@ export class ControlModbusComponent implements OnChanges, OnInit {
   modbusSettings: ModbusSetting[];
   @Input()
   settingsDefaults: SettingsDefaults;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ControlModbusModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -61,7 +61,6 @@ export class ControlModbusComponent implements OnChanges, OnInit {
               private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -114,7 +113,7 @@ export class ControlModbusComponent implements OnChanges, OnInit {
 
   addModbusWrite() {
     this.modbusSwitch.modbusWrites.push(ModbusWrite.createWithSingleChild());
-    this.modbusWritesFormArray.push(new UntypedFormGroup({}));
+    this.modbusWritesFormArray.push(new FormGroup({} as ModbusWriteModel));
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }
@@ -126,26 +125,28 @@ export class ControlModbusComponent implements OnChanges, OnInit {
   }
 
   get modbusWritesFormArray() {
-    return this.form.controls.modbusWrites as UntypedFormArray;
+    return this.form.controls.modbusWrites;
   }
 
   getModbusWriteFormGroup(index: number) {
     return this.modbusWritesFormArray.controls[index];
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'idref', this.modbusSwitch.idref,
-      [Validators.required]);
-    this.formHandler.addFormControl(this.form, 'slaveAddress', this.modbusSwitch.slaveAddress,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusWrites',
-      this.modbusSwitch.modbusWrites);
+    this.form.addControl('idref', new FormControl(this.modbusSwitch?.idref, Validators.required));
+    this.form.addControl('slaveAddress', new FormControl(this.modbusSwitch?.slaveAddress,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
+    this.form.addControl('modbusWrites', buildFormArrayWithEmptyFormGroups(this.modbusSwitch?.modbusWrites));
     this.form.setValidators(isControlValid(this.form, 'modbusWrites', 'modbusWriteValues'));
   }
 
   updateModelFromForm(): ModbusSwitch | undefined {
-    const idref = getValidString(this.form.controls.idref.value);
-    const slaveAddress = getValidString(this.form.controls.slaveAddress.value);
+    const idref = this.form.controls.idref.value;
+    const slaveAddress = this.form.controls.slaveAddress.value;
     const modbusWrites = [];
     this.modbusWriteComps.forEach(modbusWriteComponent => {
       const modbusWrite = modbusWriteComponent.updateModelFromForm();

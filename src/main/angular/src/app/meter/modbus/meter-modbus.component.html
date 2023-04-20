@@ -5,7 +5,7 @@
     <div class="sae__fields">
       <mat-form-field>
         <mat-label>{{'MeterModbusComponent.idref' | translate}}</mat-label>
-        <mat-select formControlName="idref" required="{{formHandler.isRequired('idref')}}">
+        <mat-select formControlName="idref" required="{{isRequired('idref')}}">
           <mat-option *ngFor="let modbusSetting of modbusSettings" [value]="modbusSetting.modbusTcpId">
             {{modbusSetting.modbusTcpId}}
           </mat-option>
@@ -14,14 +14,14 @@
       <mat-form-field class="MeterModbusComponent__slaveAddress">
         <mat-label>{{'MeterModbusComponent.slaveAddress' | translate}}</mat-label>
         <input matInput type="text" formControlName="slaveAddress"
-               required="{{formHandler.isRequired('slaveAddress')}}">
+               required="{{isRequired('slaveAddress')}}">
         <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
       </mat-form-field>
       <mat-form-field class="MeterModbusComponent__pollInterval" *ngIf="displayPollInterval">
         <mat-label>{{'MeterModbusComponent.pollInterval' | translate}}</mat-label>
         <input matInput type="text" formControlName="pollInterval"
                placeholder="{{meterDefaults.modbusElectricityMeterDefaults.pollInterval}}"
-               required="{{formHandler.isRequired('pollInterval')}}">
+               required="{{isRequired('pollInterval')}}">
         <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
       </mat-form-field>
     </div>

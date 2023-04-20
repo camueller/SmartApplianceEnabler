@@ -25,25 +25,25 @@
         <mat-label>{{'SettingsComponent.mqttHost' | translate}}</mat-label>
         <input matInput type="text" formControlName="mqttHost"
                placeholder="{{settingsDefaults.mqttHost}}"
-               required="{{formHandler.isRequired('mqttHost')}}">
+               required="{{isRequired('mqttHost')}}">
         <mat-error *ngIf="errors.mqttHost">{{errors.mqttHost}}</mat-error>
       </mat-form-field>
       <mat-form-field class="sae__port">
         <mat-label>{{'SettingsComponent.mqttPort' | translate}}</mat-label>
         <input matInput type="text" formControlName="mqttPort"
                placeholder="{{settingsDefaults.mqttPort}}"
-               required="{{formHandler.isRequired('mqttPort')}}">
+               required="{{isRequired('mqttPort')}}">
         <mat-error *ngIf="errors.mqttPort">{{errors.mqttPort}}</mat-error>
       </mat-form-field>
       <mat-form-field>
         <mat-label>{{'SettingsComponent.mqttUsername' | translate}}</mat-label>
         <input matInput type="text" formControlName="mqttUsername"
-               required="{{formHandler.isRequired('mqttUsername')}}">
+               required="{{isRequired('mqttUsername')}}">
       </mat-form-field>
       <mat-form-field>
         <mat-label>{{'SettingsComponent.mqttPassword' | translate}}</mat-label>
         <input matInput type="password" formControlName="mqttPassword"
-               required="{{formHandler.isRequired('mqttPassword')}}">
+               required="{{isRequired('mqttPassword')}}">
       </mat-form-field>
     </div>
   </section>
@@ -58,7 +58,7 @@
         <mat-label>{{'SettingsComponent.nodeRedDashboardUrl' | translate}}</mat-label>
         <input matInput type="text" formControlName="nodeRedDashboardUrl"
                placeholder="{{settingsDefaults.nodeRedDashboardUrl}}"
-               required="{{formHandler.isRequired('nodeRedDashboardUrl')}}">
+               required="{{isRequired('nodeRedDashboardUrl')}}">
         <mat-error *ngIf="errors.nodeRedDashboardUrl">{{errors.nodeRedDashboardUrl}}</mat-error>
       </mat-form-field>
     </div>
@@ -76,7 +76,7 @@
         <mat-label>{{'SettingsComponent.holidaysUrl' | translate}}</mat-label>
         <input matInput type="text" formControlName="holidaysUrl"
                placeholder="{{settingsDefaults.holidaysUrl}}"
-               required="{{formHandler.isRequired('holidaysUrl')}}">
+               required="{{isRequired('holidaysUrl')}}">
         <mat-error *ngIf="errors.holidaysUrl">{{errors.holidaysUrl}}</mat-error>
       </mat-form-field>
     </div>

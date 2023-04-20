@@ -11,11 +11,10 @@ import {
 } from '@angular/core';
 import {Settings} from '../../../settings/settings';
 import {SettingsDefaults} from '../../../settings/settings-defaults';
-import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective, ValidatorFn} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, ValidatorFn} from '@angular/forms';
 import {Logger} from '../../../log/logger';
 import {EvHttpControl} from './ev-http-control';
 import {ContentProtocol} from '../../../shared/content-protocol';
-import {FormHandler} from '../../../shared/form-handler';
 import {HttpRead} from '../../../http/read/http-read';
 import {HttpReadComponent} from '../../../http/read/http-read.component';
 import {HttpConfigurationComponent} from '../../../http/configuration/http-configuration.component';
@@ -24,9 +23,13 @@ import {HttpWrite} from '../../../http/write/http-write';
 import {EvReadValueName} from '../ev-read-value-name';
 import {EvWriteValueName} from '../ev-write-value-name';
 import {ValueNameChangedEvent} from '../../../meter/value-name-changed-event';
-import { MessageBoxLevel } from 'src/app/material/messagebox/messagebox.component';
+import {MessageBoxLevel} from 'src/app/material/messagebox/messagebox.component';
 import {TranslateService} from '@ngx-translate/core';
 import {getValueNamesNotConfigured} from '../../../shared/get-value-names-not-configured';
+import {ControlEvchargerHttpModel} from './control-evcharger-http.model';
+import {buildFormArrayWithEmptyFormGroups, isRequired} from '../../../shared/form-util';
+import {HttpReadModel} from '../../../http/read/http-read.model';
+import {HttpWriteModel} from '../../../http/write/http-write.model';
 
 @Component({
   selector: 'app-control-evcharger-http',
@@ -38,7 +41,6 @@ import {getValueNamesNotConfigured} from '../../../shared/get-value-names-not-co
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
-
   @Input()
   evHttpControl: EvHttpControl;
   @Input()
@@ -52,8 +54,7 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
   httpReadComps: QueryList<HttpReadComponent>;
   @ViewChildren('httpWriteComponents')
   httpWriteComps: QueryList<HttpWriteComponent>;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ControlEvchargerHttpModel>;
   @Input()
   translationKeys: string[];
   translatedStrings: string[];
@@ -63,7 +64,6 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
   constructor(private logger: Logger,
               private translate: TranslateService,
               private parent: FormGroupDirective) {
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -143,12 +143,12 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
       this.evHttpControl.httpReads = [];
     }
     this.evHttpControl.httpReads.push(httpRead);
-    this.httpReadsFormArray.push(new UntypedFormGroup({}));
+    this.httpReadsFormArray.push(new FormGroup({} as HttpReadModel));
     this.form.markAsDirty();
   }
 
   get httpReadsFormArray() {
-    return this.form.controls.httpReads as UntypedFormArray;
+    return this.form.controls.httpReads;
   }
 
   onHttpReadRemove(index: number) {
@@ -167,12 +167,12 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
       this.evHttpControl.httpWrites = [];
     }
     this.evHttpControl.httpWrites.push(httpWrite);
-    this.httpWritesFormArray.push(new UntypedFormGroup({}));
+    this.httpWritesFormArray.push(new FormGroup({} as HttpWriteModel));
     this.form.markAsDirty();
   }
 
   get httpWritesFormArray() {
-    return this.form.controls.httpWrites as UntypedFormArray;
+    return this.form.controls.httpWrites;
   }
 
   onHttpWriteRemove(index: number) {
@@ -181,13 +181,14 @@ export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
     this.form.markAsDirty();
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'contentProtocol',
-      this.evHttpControl && this.evHttpControl.contentProtocol);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpReads',
-      this.evHttpControl.httpReads);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
-      this.evHttpControl.httpWrites);
+    this.form.addControl('contentProtocol', new FormControl(this.evHttpControl?.contentProtocol));
+    this.form.addControl('httpReads', buildFormArrayWithEmptyFormGroups(this.evHttpControl.httpReads));
+    this.form.addControl('httpWrites', buildFormArrayWithEmptyFormGroups(this.evHttpControl.httpWrites));
     this.form.setValidators(this.isAllValueNamesConfigured());
   }
 

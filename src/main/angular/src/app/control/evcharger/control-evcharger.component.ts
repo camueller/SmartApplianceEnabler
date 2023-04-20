@@ -1,21 +1,30 @@
-import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {EvCharger} from './ev-charger';
 import {Settings} from '../../settings/settings';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {TranslateService} from '@ngx-translate/core';
-import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
 import {SettingsDefaults} from '../../settings/settings-defaults';
 import {ControlService} from '../control-service';
 import {ElectricVehicle} from './electric-vehicle/electric-vehicle';
-import {FormHandler} from '../../shared/form-handler';
 import {ControlDefaults} from '../control-defaults';
 import {AppliancesReloadService} from '../../appliance/appliances-reload-service';
 import {EvChargerProtocol} from './ev-charger-protocol';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {getValidFloat, getValidInt} from '../../shared/form-util';
+import {buildFormArrayWithEmptyFormGroups, isRequired} from '../../shared/form-util';
 import {ElectricVehicleComponent} from './electric-vehicle/electric-vehicle.component';
 import {EvModbusControl} from './modbus/ev-modbus-control';
 import {ControlEvchargerModbusComponent} from './modbus/control-evcharger-modbus.component';
@@ -26,6 +35,8 @@ import {MeterDefaults} from '../../meter/meter-defaults';
 import {EvReadValueName} from './ev-read-value-name';
 import {EvWriteValueName} from './ev-write-value-name';
 import {EvChargerTemplate} from './ev-charger-template';
+import {ControlEvchargerModel} from './control-evcharger.model';
+import {ElectricVehicleModel} from './electric-vehicle/electric-vehicle.model';
 
 @Component({
   selector: 'app-control-evcharger',
@@ -56,8 +67,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   evChargerHttpComp: ControlEvchargerHttpComponent;
   @ViewChildren('electricVehicles')
   electricVehicleComps: QueryList<ElectricVehicleComponent>;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ControlEvchargerModel>;
   translatedStrings: { [key: string]: string } = {};
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -71,7 +81,6 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
               private translate: TranslateService,
               private changeDetectorRef: ChangeDetectorRef) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -130,7 +139,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   }
 
   get isConfigured(): boolean {
-    return this.evCharger && this.protocol;
+    return this.evCharger && !!this.protocol;
   }
 
   setProtocol(protocol: string) {
@@ -173,7 +182,7 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
       this.evCharger.vehicles = [];
     }
     this.evCharger.vehicles.push(this.createElectricVehicle());
-    this.electricVehiclesFormArray.push(new UntypedFormGroup({}));
+    this.electricVehiclesFormArray.push(new FormGroup({} as ElectricVehicleModel));
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }
@@ -190,63 +199,56 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
   }
 
   get electricVehiclesFormArray() {
-    return this.form.controls.electricVehicles as UntypedFormArray;
+    return this.form.controls.electricVehicles;
   }
 
   getElectricVehicleFormGroup(index: number) {
     return this.electricVehiclesFormArray.controls[index];
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'template', undefined);
-    this.formHandler.addFormControl(this.form, 'protocol', this.evCharger.protocol);
-    this.formHandler.addFormControl(this.form, 'voltage', this.evCharger.voltage,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'phases', this.evCharger.phases,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'pollInterval', this.evCharger.pollInterval,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'startChargingStateDetectionDelay',
-      this.evCharger.startChargingStateDetectionDelay, [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'chargePowerRepetition',
-      this.evCharger.chargePowerRepetition, [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'forceInitialCharging',
-      this.evCharger.forceInitialCharging);
-    this.formHandler.addFormControl(this.form, 'latitude', this.evCharger.latitude,
-      [Validators.pattern(InputValidatorPatterns.FLOAT)]);
-    this.formHandler.addFormControl(this.form, 'longitude', this.evCharger.longitude,
-      [Validators.pattern(InputValidatorPatterns.FLOAT)]);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'electricVehicles',
-      this.evCharger.vehicles);
+    this.form.addControl('template', new FormControl());
+    this.form.addControl('protocol', new FormControl(this.evCharger.protocol));
+    this.form.addControl('voltage', new FormControl(this.evCharger.voltage, Validators.pattern(InputValidatorPatterns.INTEGER)));
+    this.form.addControl('phases', new FormControl(this.evCharger.phases, Validators.pattern(InputValidatorPatterns.INTEGER)));
+    this.form.addControl('pollInterval', new FormControl(this.evCharger.pollInterval, Validators.pattern(InputValidatorPatterns.INTEGER)));
+    this.form.addControl('startChargingStateDetectionDelay', new FormControl(this.evCharger.startChargingStateDetectionDelay,
+      Validators.pattern(InputValidatorPatterns.INTEGER)));
+    this.form.addControl('chargePowerRepetition', new FormControl(this.evCharger.chargePowerRepetition,
+      Validators.pattern(InputValidatorPatterns.INTEGER)));
+    this.form.addControl('forceInitialCharging', new FormControl(this.evCharger.forceInitialCharging));
+    this.form.addControl('latitude', new FormControl(this.evCharger.latitude, Validators.pattern(InputValidatorPatterns.FLOAT)));
+    this.form.addControl('longitude', new FormControl(this.evCharger.longitude, Validators.pattern(InputValidatorPatterns.FLOAT)));
+    this.form.addControl('electricVehicles', buildFormArrayWithEmptyFormGroups(this.evCharger.vehicles));
   }
 
   updateForm() {
     if (!this.evCharger.modbusControl && !this.evCharger.httpControl) {
-      this.formHandler.setFormControlValue(this.form, 'template', undefined);
-      this.formHandler.setFormControlValue(this.form, 'protocol', this.evCharger.protocol);
+      this.form.controls.template.setValue(undefined);
+      this.form.controls.protocol.setValue(this.evCharger.protocol);
     }
-    this.formHandler.setFormControlValue(this.form, 'voltage', this.evCharger.voltage);
-    this.formHandler.setFormControlValue(this.form, 'phases', this.evCharger.phases);
-    this.formHandler.setFormControlValue(this.form, 'pollInterval', this.evCharger.pollInterval);
-    this.formHandler.setFormControlValue(this.form, 'startChargingStateDetectionDelay',
-      this.evCharger.startChargingStateDetectionDelay);
-    this.formHandler.setFormControlValue(this.form, 'chargePowerRepetition',
-      this.evCharger.chargePowerRepetition);
-    this.formHandler.setFormControlValue(this.form, 'forceInitialCharging',
-      this.evCharger.forceInitialCharging);
-    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'electricVehicles',
-      this.evCharger.vehicles);
+    this.form.controls.voltage.setValue(this.evCharger.voltage);
+    this.form.controls.phases.setValue(this.evCharger.phases);
+    this.form.controls.pollInterval.setValue(this.evCharger.pollInterval);
+    this.form.controls.startChargingStateDetectionDelay.setValue(this.evCharger.startChargingStateDetectionDelay);
+    this.form.controls.chargePowerRepetition.setValue(this.evCharger.chargePowerRepetition);
+    this.form.controls.forceInitialCharging.setValue(this.evCharger.forceInitialCharging);
+    this.form.setControl('electricVehicles', buildFormArrayWithEmptyFormGroups(this.evCharger.vehicles));
   }
 
   public updateModelFromForm(): EvCharger | undefined {
-    const voltage = getValidInt(this.form.controls.voltage.value);
-    const phases = getValidInt(this.form.controls.phases.value);
-    const pollInterval = getValidInt(this.form.controls.pollInterval.value);
-    const startChargingStateDetectionDelay = getValidInt(this.form.controls.startChargingStateDetectionDelay.value);
-    const chargePowerRepetition = getValidInt(this.form.controls.chargePowerRepetition.value);
+    const voltage = this.form.controls.voltage.value;
+    const phases = this.form.controls.phases.value;
+    const pollInterval = this.form.controls.pollInterval.value;
+    const startChargingStateDetectionDelay = this.form.controls.startChargingStateDetectionDelay.value;
+    const chargePowerRepetition = this.form.controls.chargePowerRepetition.value;
     const forceInitialCharging = this.form.controls.forceInitialCharging.value;
-    const latitude = getValidFloat(this.form.controls.latitude.value);
-    const longitude = getValidFloat(this.form.controls.longitude.value);
+    const latitude = this.form.controls.latitude.value;
+    const longitude = this.form.controls.longitude.value;
     let modbusControl: EvModbusControl;
     if (this.evChargerModbusComp) {
       modbusControl = this.evChargerModbusComp.updateModelFromForm();

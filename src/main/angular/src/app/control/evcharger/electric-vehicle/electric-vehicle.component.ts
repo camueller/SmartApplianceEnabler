@@ -1,21 +1,20 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {UntypedFormGroup, Validators} from '@angular/forms';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Logger} from '../../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
-import {FormHandler} from '../../../shared/form-handler';
 import {ErrorMessages} from '../../../shared/error-messages';
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {ControlDefaults} from '../../control-defaults';
-import {getValidInt, getValidString} from '../../../shared/form-util';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {SocScript} from './soc-script';
 import {ElectricVehicle} from './electric-vehicle';
 import {TimeUtil} from '../../../shared/time-util';
 import {TimepickerComponent} from '../../../material/timepicker/timepicker.component';
-import { ViewChild } from '@angular/core';
 import {FileMode} from '../../../material/filenameinput/file-mode';
 import {FilenameInputComponent} from '../../../material/filenameinput/filename-input.component';
+import {ElectricVehicleModel} from './electric-vehicle.model';
+import {isRequired} from 'src/app/shared/form-util';
 
 @Component({
   selector: 'app-electric-vehicle',
@@ -28,8 +27,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
   @Input()
   controlDefaults: ControlDefaults;
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ElectricVehicleModel>;
   @Output()
   remove = new EventEmitter<any>();
   @ViewChild('updateAfterSecondsComponent', {static: true})
@@ -43,7 +41,6 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
   constructor(private logger: Logger,
               private translate: TranslateService) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -53,7 +50,9 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       } else {
         this.electricVehicle = new ElectricVehicle();
       }
-      this.updateForm();
+      if(! changes.electricVehicle.isFirstChange()) {
+        this.updateForm();
+      }
     }
     if (changes.form) {
       this.expandParentForm();
@@ -79,89 +78,77 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
   }
 
   get updateAfterTime() {
-    return this.electricVehicle.socScript && this.electricVehicle.socScript.updateAfterSeconds
+    return this.electricVehicle?.socScript?.updateAfterSeconds
       && TimeUtil.toHourMinute(this.electricVehicle.socScript.updateAfterSeconds);
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'id',
-      this.electricVehicle && this.electricVehicle.id);
-    this.formHandler.addFormControl(this.form, 'name',
-      this.electricVehicle && this.electricVehicle.name,
-      Validators.required);
-    this.formHandler.addFormControl(this.form, 'batteryCapacity',
-      this.electricVehicle && this.electricVehicle.batteryCapacity,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'phases',
-      this.electricVehicle && this.electricVehicle.phases,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'maxChargePower',
-      this.electricVehicle && this.electricVehicle.maxChargePower,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'chargeLoss',
-      this.electricVehicle && this.electricVehicle.chargeLoss,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'defaultSocManual',
-      this.electricVehicle && this.electricVehicle.defaultSocManual,
-      [Validators.pattern(InputValidatorPatterns.PERCENTAGE)]);
-    this.formHandler.addFormControl(this.form, 'defaultSocOptionalEnergy',
-      this.electricVehicle && this.electricVehicle.defaultSocOptionalEnergy,
-      [Validators.pattern(InputValidatorPatterns.PERCENTAGE)]);
+    this.form.addControl('id', new FormControl(this.electricVehicle?.id));
+    this.form.addControl('name', new FormControl(this.electricVehicle?.name, Validators.required));
+    this.form.addControl('batteryCapacity', new FormControl(this.electricVehicle?.batteryCapacity,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
+    this.form.addControl('phases', new FormControl(this.electricVehicle?.phases,
+      Validators.pattern(InputValidatorPatterns.INTEGER)))
+    this.form.addControl('maxChargePower', new FormControl(this.electricVehicle?.maxChargePower,
+      Validators.pattern(InputValidatorPatterns.INTEGER)));
+    this.form.addControl('chargeLoss', new FormControl(this.electricVehicle?.chargeLoss,
+      Validators.pattern(InputValidatorPatterns.INTEGER)));
+    this.form.addControl('defaultSocManual', new FormControl(this.electricVehicle?.defaultSocManual,
+      Validators.pattern(InputValidatorPatterns.PERCENTAGE)));
+    this.form.addControl('defaultSocOptionalEnergy', new FormControl(this.electricVehicle?.defaultSocOptionalEnergy,
+      Validators.pattern(InputValidatorPatterns.PERCENTAGE)));
+    const socScript = this.electricVehicle?.socScript;
+    this.form.addControl('scriptExtractionRegex', new FormControl(socScript?.extractionRegex));
+    this.form.addControl('pluginStatusExtractionRegex', new FormControl(socScript?.pluginStatusExtractionRegex));
+    this.form.addControl('pluginTimeExtractionRegex', new FormControl(socScript?.pluginTimeExtractionRegex));
+    this.form.addControl('latitudeExtractionRegex', new FormControl(socScript?.latitudeExtractionRegex));
+    this.form.addControl('longitudeExtractionRegex', new FormControl(socScript?.longitudeExtractionRegex));
 
-    this.formHandler.addFormControl(this.form, 'scriptExtractionRegex',
-      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.extractionRegex);
-    this.formHandler.addFormControl(this.form, 'pluginStatusExtractionRegex',
-      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.pluginStatusExtractionRegex);
-    this.formHandler.addFormControl(this.form, 'pluginTimeExtractionRegex',
-      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.pluginTimeExtractionRegex);
-    this.formHandler.addFormControl(this.form, 'latitudeExtractionRegex',
-      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.latitudeExtractionRegex);
-    this.formHandler.addFormControl(this.form, 'longitudeExtractionRegex',
-      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.longitudeExtractionRegex);
-
-    this.formHandler.addFormControl(this.form, 'scriptUpdateSocAfterIncrease',
-      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.updateAfterIncrease,
-      Validators.pattern(InputValidatorPatterns.PERCENTAGE));
-    this.formHandler.addFormControl(this.form, 'scriptUpdateSocAfterSeconds',
-      this.electricVehicle && this.electricVehicle.socScript && this.electricVehicle.socScript.updateAfterSeconds,
-      Validators.pattern(InputValidatorPatterns.INTEGER));
+    this.form.addControl('scriptUpdateSocAfterIncrease', new FormControl(socScript?.updateAfterIncrease,
+      Validators.pattern(InputValidatorPatterns.PERCENTAGE)));
+    this.form.addControl('scriptUpdateSocAfterSeconds', new FormControl(socScript?.updateAfterSeconds,
+      Validators.pattern(InputValidatorPatterns.INTEGER)));
   }
 
   updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'name', this.electricVehicle.name);
-    this.formHandler.setFormControlValue(this.form, 'batteryCapacity', this.electricVehicle.batteryCapacity);
-    this.formHandler.setFormControlValue(this.form, 'maxChargePower', this.electricVehicle.maxChargePower);
-    this.formHandler.setFormControlValue(this.form, 'chargeLoss', this.electricVehicle.chargeLoss);
-    this.formHandler.setFormControlValue(this.form, 'defaultSocManual', this.electricVehicle.defaultSocManual);
-    this.formHandler.setFormControlValue(this.form, 'defaultSocOptionalEnergy',
-      this.electricVehicle.defaultSocOptionalEnergy);
-    if (this.electricVehicle && this.electricVehicle.socScript) {
-      this.formHandler.setFormControlValue(this.form, 'scriptExtractionRegex', this.electricVehicle.socScript.extractionRegex);
-      this.formHandler.setFormControlValue(this.form, 'pluginStatusExtractionRegex', this.electricVehicle.socScript.pluginStatusExtractionRegex);
-      this.formHandler.setFormControlValue(this.form, 'pluginTimeExtractionRegex', this.electricVehicle.socScript.pluginTimeExtractionRegex);
-      this.formHandler.setFormControlValue(this.form, 'latitudeExtractionRegex', this.electricVehicle.socScript.latitudeExtractionRegex);
-      this.formHandler.setFormControlValue(this.form, 'longitudeExtractionRegex', this.electricVehicle.socScript.longitudeExtractionRegex);
+    this.form.controls.name.setValue(this.electricVehicle.name);
+    this.form.controls.batteryCapacity.setValue(this.electricVehicle.batteryCapacity);
+    this.form.controls.maxChargePower.setValue(this.electricVehicle.maxChargePower);
+    this.form.controls.chargeLoss.setValue(this.electricVehicle.chargeLoss);
+    this.form.controls.defaultSocManual.setValue(this.electricVehicle.defaultSocManual);
+    this.form.controls.defaultSocOptionalEnergy.setValue(this.electricVehicle.defaultSocOptionalEnergy);
+    const socScript = this.electricVehicle?.socScript;
+    if(!!socScript) {
+      this.form.controls.scriptExtractionRegex.setValue(socScript.extractionRegex);
+      this.form.controls.pluginStatusExtractionRegex.setValue(socScript.pluginStatusExtractionRegex);
+      this.form.controls.pluginTimeExtractionRegex.setValue(socScript.pluginTimeExtractionRegex);
+      this.form.controls.latitudeExtractionRegex.setValue(socScript.latitudeExtractionRegex);
+      this.form.controls.longitudeExtractionRegex.setValue(socScript.longitudeExtractionRegex);
 
-      this.formHandler.setFormControlValue(this.form, 'scriptUpdateSocAfterIncrease', this.electricVehicle.socScript.updateAfterIncrease);
-      this.formHandler.setFormControlValue(this.form, 'scriptUpdateSocAfterSeconds', this.electricVehicle.socScript.updateAfterSeconds);
+      this.form.controls.scriptUpdateSocAfterIncrease.setValue(socScript.updateAfterIncrease);
+      this.form.controls.scriptUpdateSocAfterSeconds.setValue(socScript.updateAfterSeconds);
     }
   }
 
   updateModelFromForm(): ElectricVehicle {
-    const name = getValidString(this.form.controls.name.value);
-    const batteryCapacity = getValidInt(this.form.controls.batteryCapacity.value);
-    const phases = getValidInt(this.form.controls.phases.value);
-    const maxChargePower = getValidInt(this.form.controls.maxChargePower.value);
-    const chargeLoss = getValidInt(this.form.controls.chargeLoss.value);
-    const defaultSocManual = getValidInt(this.form.controls.defaultSocManual.value);
-    const defaultSocOptionalEnergy = getValidInt(this.form.controls.defaultSocOptionalEnergy.value);
+    const name = this.form.controls.name.value;
+    const batteryCapacity = this.form.controls.batteryCapacity.value;
+    const phases = this.form.controls.phases.value;
+    const maxChargePower = this.form.controls.maxChargePower.value;
+    const chargeLoss = this.form.controls.chargeLoss.value;
+    const defaultSocManual = this.form.controls.defaultSocManual.value;
+    const defaultSocOptionalEnergy = this.form.controls.defaultSocOptionalEnergy.value;
     const scriptFilename = this.socScriptFilenameInput.updateModelFromForm();
-    const extractionRegex = getValidString(this.form.controls.scriptExtractionRegex.value);
-    const pluginStatusExtractionRegex = getValidString(this.form.controls.pluginStatusExtractionRegex.value);
-    const pluginTimeExtractionRegex = getValidString(this.form.controls.pluginTimeExtractionRegex.value);
-    const latitudeExtractionRegex = getValidString(this.form.controls.latitudeExtractionRegex.value);
-    const longitudeExtractionRegex = getValidString(this.form.controls.longitudeExtractionRegex.value);
-    const updateSocAfterIncrease = this.form.controls.scriptUpdateSocAfterIncrease.value;
+    const extractionRegex = this.form.controls.scriptExtractionRegex?.value;
+    const pluginStatusExtractionRegex = this.form.controls.pluginStatusExtractionRegex?.value;
+    const pluginTimeExtractionRegex = this.form.controls.pluginTimeExtractionRegex?.value;
+    const latitudeExtractionRegex = this.form.controls.latitudeExtractionRegex?.value;
+    const longitudeExtractionRegex = this.form.controls.longitudeExtractionRegex?.value;
+    const updateSocAfterIncrease = this.form.controls.scriptUpdateSocAfterIncrease?.value;
     const updateSocAfterTime = this.updateAfterSecondsComponent.updateModelFromForm();
 
     this.electricVehicle.name = name;

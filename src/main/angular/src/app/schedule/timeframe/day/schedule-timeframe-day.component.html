@@ -21,7 +21,7 @@
     <mat-label>{{'ScheduleTimeframeDayComponent.daysOfWeekValues' | translate}}</mat-label>
     <mat-select formControlName="daysOfWeekValues" multiple
                 placeholder="{{'ScheduleTimeframeDayComponent.daysOfWeekValues_placeholder' | translate}}"
-                required="{{formHandler.isRequired('daysOfWeekValues')}}">
+                required="{{isRequired('daysOfWeekValues')}}">
       <mat-option *ngFor="let dayOfWeek of daysOfWeek" [value]="dayOfWeek.id">
         {{dayOfWeek.name}}
       </mat-option>

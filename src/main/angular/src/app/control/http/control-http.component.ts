@@ -11,13 +11,12 @@ import {
   ViewChildren
 } from '@angular/core';
 import {ControlDefaults} from '../control-defaults';
-import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {HttpSwitch} from './http-switch';
-import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {ControlValueName} from '../control-value-name';
 import {HttpReadComponent} from '../../http/read/http-read.component';
@@ -26,6 +25,10 @@ import {HttpWriteComponent} from '../../http/write/http-write.component';
 import {HttpWrite} from '../../http/write/http-write';
 import {isControlValid} from '../control-validator';
 import {HttpRead} from '../../http/read/http-read';
+import {ControlHttpModel} from './control-http.model';
+import {buildFormArrayWithEmptyFormGroups} from '../../shared/form-util';
+import {HttpReadModel} from '../../http/read/http-read.model';
+import {HttpWriteModel} from '../../http/write/http-write.model';
 
 @Component({
   selector: 'app-control-http',
@@ -48,8 +51,7 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   @Input()
   controlDefaults: ControlDefaults;
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ControlHttpModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -60,7 +62,6 @@ export class ControlHttpComponent implements OnChanges, OnInit {
               private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -123,7 +124,7 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   set readControlState(readControlState: boolean) {
     if (readControlState) {
       if(!this.form.controls.httpRead) {
-        this.form.addControl('httpRead', new UntypedFormGroup({}));
+        this.form.addControl('httpRead', new FormGroup({} as HttpReadModel));
       }
     } else {
       if(this.form.controls.httpRead) {
@@ -134,7 +135,7 @@ export class ControlHttpComponent implements OnChanges, OnInit {
 
   addHttpWrite() {
     this.httpSwitch.httpWrites.push(HttpWrite.createWithSingleChild());
-    this.httpWritesFormArray.push(new UntypedFormGroup({}));
+    this.httpWritesFormArray.push(new FormGroup({} as HttpWriteModel));
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }
@@ -146,7 +147,7 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   }
 
   get httpWritesFormArray() {
-    return this.form.controls.httpWrites as UntypedFormArray;
+    return this.form.controls.httpWrites;
   }
 
   getHttpWriteFormGroup(index: number) {
@@ -158,10 +159,9 @@ export class ControlHttpComponent implements OnChanges, OnInit {
   }
 
   expandParentForm() {
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpWrites',
-      this.httpSwitch.httpWrites);
+    this.form.addControl('httpWrites', buildFormArrayWithEmptyFormGroups(this.httpSwitch.httpWrites));
     const readControlState = this.httpSwitch.httpRead?.readValues.length > 0 ?? false;
-    this.formHandler.addFormControl(this.form, 'readControlState', readControlState);
+    this.form.addControl('readControlState', new FormControl(readControlState));
     this.readControlState = readControlState;
     this.form.controls.readControlState.valueChanges.subscribe(value => {
       if (value && !this.httpSwitch.httpRead) {

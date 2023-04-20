@@ -1,16 +1,15 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {ControlContainer, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {RuntimeRequest} from './runtime-request';
 import {ErrorMessages} from '../../../shared/error-messages';
 import {TimeUtil} from '../../../shared/time-util';
-import {FormHandler} from '../../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
 import {TimepickerComponent} from '../../../material/timepicker/timepicker.component';
-import {getValidInt} from '../../../shared/form-util';
+import {ScheduleRequestRuntimeModel} from './schedule-request-runtime.model';
 
 @Component({
   selector: 'app-schedule-request-runtime',
@@ -29,8 +28,7 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
   minRuntimeComp: TimepickerComponent;
   @ViewChild('maxRuntimeComponent', {static: true})
   maxRuntimeComp: TimepickerComponent;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ScheduleRequestRuntimeModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -40,7 +38,6 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -76,11 +73,10 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
   }
 
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'minRuntime', this.minRuntime,
-      [Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    this.formHandler.addFormControl(this.form, 'maxRuntime', this.maxRuntime,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]);
-    this.formHandler.addFormControl(this.form, 'enabledExternally', !this.runtimeRequest.enabled);
+    this.form.addControl('minRuntime', new FormControl(this.minRuntime, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)));
+    this.form.addControl('maxRuntime', new FormControl(this.maxRuntime,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]));
+    this.form.addControl('enabledExternally', new FormControl(!this.runtimeRequest.enabled));
   }
 
   updateModelFromForm(): RuntimeRequest | undefined {

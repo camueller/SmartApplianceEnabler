@@ -1,7 +1,7 @@
 <div class="ScheduleRequestSocComponent sae__fields">
   <mat-form-field>
     <mat-label>{{'ScheduleRequestSocComponent.evId' | translate}}</mat-label>
-    <mat-select formControlName="evId" required="{{formHandler.isRequired('evId')}}">
+    <mat-select formControlName="evId" required="{{isRequired('evId')}}">
       <mat-option *ngFor="let electricVehicle of electricVehicles" [value]="electricVehicle.id">
         {{electricVehicle.name}}
       </mat-option>
@@ -10,7 +10,7 @@
   <mat-form-field class="ScheduleRequestSocComponent__soc">
     <mat-label>{{'ScheduleRequestSocComponent.soc' | translate}}</mat-label>
     <input matInput type="text" formControlName="soc"
-           required="{{formHandler.isRequired('soc')}}">
+           required="{{isRequired('soc')}}">
     <mat-error *ngIf="errors.soc">{{errors.soc}}</mat-error>
   </mat-form-field>
   <mat-checkbox formControlName="enabledExternally"

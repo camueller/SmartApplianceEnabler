@@ -17,16 +17,16 @@
  */
 
 import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ControlContainer, FormGroupDirective, UntypedFormGroup, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
-import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
 import {PwmSwitch} from './pwm-switch';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {getValidFloat, getValidInt} from '../../shared/form-util';
+import {isRequired} from '../../shared/form-util';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {ControlPwmModel} from './control-pwm.model';
 
 @Component({
   selector: 'app-control-pwm',
@@ -41,8 +41,7 @@ export class ControlPwmComponent implements OnChanges, OnInit {
   @Input()
   pwmSwitch: PwmSwitch;
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ControlPwmModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -52,7 +51,6 @@ export class ControlPwmComponent implements OnChanges, OnInit {
               private translate: TranslateService,
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -79,26 +77,26 @@ export class ControlPwmComponent implements OnChanges, OnInit {
     });
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'gpio',
-      this.pwmSwitch && this.pwmSwitch.gpio,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'pwmFrequency',
-      this.pwmSwitch && this.pwmSwitch.pwmFrequency,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'minDutyCycle',
-      this.pwmSwitch && this.pwmSwitch.minDutyCycle,
-      [Validators.pattern(InputValidatorPatterns.FLOAT)]);
-    this.formHandler.addFormControl(this.form, 'maxDutyCycle',
-      this.pwmSwitch && this.pwmSwitch.maxDutyCycle,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.FLOAT)]);
+    this.form.addControl('gpio', new FormControl(this.pwmSwitch?.gpio,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
+    this.form.addControl('pwmFrequency', new FormControl(this.pwmSwitch?.pwmFrequency,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
+    this.form.addControl('minDutyCycle', new FormControl(this.pwmSwitch?.minDutyCycle,
+      Validators.pattern(InputValidatorPatterns.FLOAT)));
+    this.form.addControl('maxDutyCycle', new FormControl(this.pwmSwitch.maxDutyCycle,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.FLOAT)]));
   }
 
   updateModelFromForm(): PwmSwitch | undefined {
-    const gpio = getValidInt(this.form.controls.gpio.value);
-    const pwmFrequency = getValidInt(this.form.controls.pwmFrequency.value);
-    const minDutyCycle = getValidFloat(this.form.controls.minDutyCycle.value);
-    const maxDutyCycle = getValidFloat(this.form.controls.maxDutyCycle.value);
+    const gpio = this.form.controls.gpio.value;
+    const pwmFrequency = this.form.controls.pwmFrequency.value;
+    const minDutyCycle = this.form.controls.minDutyCycle.value;
+    const maxDutyCycle = this.form.controls.maxDutyCycle.value;
 
     if (!(gpio || pwmFrequency || minDutyCycle || maxDutyCycle)) {
       return undefined;

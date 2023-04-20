@@ -31,8 +31,6 @@ import {Logger} from '../log/logger';
 import {Settings} from '../settings/settings';
 import {SettingsDefaults} from '../settings/settings-defaults';
 import {Appliance} from '../appliance/appliance';
-import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
-import {FormHandler} from '../shared/form-handler';
 import {Switch} from './switch/switch';
 import {ControlSwitchComponent} from './switch/control-switch.component';
 import {ControlHttpComponent} from './http/control-http.component';
@@ -45,7 +43,7 @@ import {ControlEvchargerComponent} from './evcharger/control-evcharger.component
 import {ControlStartingcurrentComponent} from './startingcurrent/control-startingcurrent.component';
 import {EvCharger} from './evcharger/ev-charger';
 import {ListItem} from '../shared/list-item';
-import {simpleControlType} from '../shared/form-util';
+import {simpleControlType} from '../control/control';
 import {MeterDefaults} from '../meter/meter-defaults';
 import {MeterReportingSwitch} from './meterreporting/meter-reporting-switch';
 import {NotificationComponent} from '../notification/notification.component';
@@ -60,6 +58,9 @@ import {SwitchOption} from './switchoption/switch-option';
 import {ControlSwitchOptionComponent} from './switchoption/control-switchoption.component';
 import {MqttSwitch} from './mqtt/mqtt-switch';
 import {ControlMqttComponent} from './mqtt/control-mqtt.component';
+import {FormControl, FormGroup} from '@angular/forms';
+import {ControlModel} from './control.model';
+import {isRequired} from '../shared/form-util';
 
 @Component({
   selector: 'app-control',
@@ -89,8 +90,7 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
   controlSwitchComp: ControlSwitchComponent;
   @ViewChild(NotificationComponent)
   notificationComp: NotificationComponent;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ControlModel>;
   applianceId: string;
   controlDefaults: ControlDefaults;
   meterDefaults: MeterDefaults;
@@ -112,7 +112,6 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
               private translate: TranslateService) {
     this.controlFactory = new ControlFactory(logger);
     this.control = this.controlFactory.createEmptyControl();
-    this.formHandler = new FormHandler();
   }
 
   ngOnInit() {
@@ -154,15 +153,16 @@ export class ControlComponent implements OnInit, CanDeactivate<ControlComponent>
     });
   }
 
-  buildForm() {
-    this.form = new UntypedFormGroup({});
-    this.formHandler.addFormControl(this.form, 'controlType', this.control && simpleControlType(this.control.type));
-    this.formHandler.addFormControl(this.form, 'startingCurrentSwitchUsed',
-      this.control && this.control.startingCurrentSwitchUsed);
-    this.formHandler.addFormControl(this.form, 'switchOptionUsed',
-      this.control && this.control.switchOptionUsed);
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
 
-    this.form.addControl('testControlName', new UntypedFormControl('parent'))
+  buildForm() {
+    this.form = new FormGroup({
+      controlType: new FormControl(this.control && simpleControlType(this.control.type)),
+      startingCurrentSwitchUsed: new FormControl(this.control && this.control.startingCurrentSwitchUsed),
+      switchOptionUsed: new FormControl(this.control && this.control.switchOptionUsed),
+    });
     this.setStartingCurrentDetection(this.control?.startingCurrentSwitchUsed ?? false, this.control?.startingCurrentSwitch, false);
     this.setSwitchOption(this.control.switchOptionUsed ?? false, this.control.switchOption, false);
   }

@@ -1,7 +1,7 @@
 <div class="ControlEvchargerHttpComponent sae__fields">
   <mat-form-field class="sae__contentProtocol">
     <mat-label>{{'ControlEvchargerHttpComponent.contentProtocol' | translate}}</mat-label>
-    <mat-select formControlName="contentProtocol" required="{{formHandler.isRequired('contentProtocol')}}">
+    <mat-select formControlName="contentProtocol" required="{{isRequired('contentProtocol')}}">
       <mat-option *ngFor="let contentProtocol of contentProtocols" [value]="contentProtocol">
         {{contentProtocol}}
       </mat-option>

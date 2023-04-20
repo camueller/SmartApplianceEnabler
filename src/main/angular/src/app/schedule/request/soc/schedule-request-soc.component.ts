@@ -1,14 +1,15 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ControlContainer, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {SocRequest} from './soc-request';
 import {ErrorMessages} from '../../../shared/error-messages';
-import {FormHandler} from '../../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {ElectricVehicle} from '../../../control/evcharger/electric-vehicle/electric-vehicle';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
+import {ScheduleRequestSocModel} from './schedule-request-soc.model';
+import { isRequired } from 'src/app/shared/form-util';
 
 @Component({
   selector: 'app-schedule-request-soc',
@@ -25,8 +26,7 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
   electricVehicles: ElectricVehicle[];
   @Input()
   enabled: boolean;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ScheduleRequestSocModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -36,7 +36,6 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -84,11 +83,15 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
     }
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'evId', this.evId, Validators.required);
-    this.formHandler.addFormControl(this.form, 'soc', this.soc,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.PERCENTAGE)]);
-    this.formHandler.addFormControl(this.form, 'enabledExternally', !this.socRequest.enabled);
+    this.form.addControl('evId', new FormControl(this.evId, Validators.required));
+    this.form.addControl('soc', new FormControl(this.soc,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.PERCENTAGE)]));
+    this.form.addControl('enabledExternally', new FormControl(!this.socRequest.enabled));
   }
 
   updateModelFromForm(): SocRequest | undefined {

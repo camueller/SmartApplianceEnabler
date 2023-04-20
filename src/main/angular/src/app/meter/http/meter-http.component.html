@@ -4,12 +4,12 @@
       <mat-label>{{'MeterHttpComponent.pollInterval' | translate}}</mat-label>
       <input matInput type="text" formControlName="pollInterval"
              placeholder="{{meterDefaults.httpElectricityMeterDefaults.pollInterval}}"
-             required="{{formHandler.isRequired('pollInterval')}}">
+             required="{{isRequired('pollInterval')}}">
       <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
     </mat-form-field>
     <mat-form-field>
       <mat-label>{{'MeterHttpComponent.contentProtocol' | translate}}</mat-label>
-      <mat-select formControlName="contentProtocol" required="{{formHandler.isRequired('contentProtocol')}}">
+      <mat-select formControlName="contentProtocol" required="{{isRequired('contentProtocol')}}">
         <mat-option *ngFor="let contentProtocol of contentProtocols" [value]="contentProtocol">
           {{contentProtocol}}
         </mat-option>

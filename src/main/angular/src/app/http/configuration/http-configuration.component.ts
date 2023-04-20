@@ -1,9 +1,9 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {UntypedFormGroup} from '@angular/forms';
-import {FormHandler} from '../../shared/form-handler';
+import {FormControl, FormGroup} from '@angular/forms';
+import { isRequired } from 'src/app/shared/form-util';
 import {Logger} from '../../log/logger';
 import {HttpConfiguration} from './http-configuration';
-import {getValidString} from '../../shared/form-util';
+import {HttpConfigurationModel} from './http-configuration.model';
 
 @Component({
   selector: 'app-http-configuration',
@@ -14,12 +14,10 @@ export class HttpConfigurationComponent implements OnChanges, OnInit {
   @Input()
   httpConfiguration: HttpConfiguration;
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<HttpConfigurationModel>;
 
   constructor(private logger: Logger,
   ) {
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -29,7 +27,9 @@ export class HttpConfigurationComponent implements OnChanges, OnInit {
       } else {
         this.httpConfiguration = new HttpConfiguration();
       }
-      this.updateForm();
+      if(! changes.httpConfiguration.isFirstChange()) {
+        this.updateForm();
+      }
     }
     if (changes.form) {
       this.expandParentForm();
@@ -39,25 +39,26 @@ export class HttpConfigurationComponent implements OnChanges, OnInit {
   ngOnInit(): void {
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'contentType',
-      this.httpConfiguration && this.httpConfiguration.contentType);
-    this.formHandler.addFormControl(this.form, 'username',
-      this.httpConfiguration && this.httpConfiguration.username);
-    this.formHandler.addFormControl(this.form, 'password',
-      this.httpConfiguration && this.httpConfiguration.password);
+    this.form.addControl('contentType', new FormControl(this.httpConfiguration?.contentType))
+    this.form.addControl('username', new FormControl(this.httpConfiguration?.username))
+    this.form.addControl('password', new FormControl(this.httpConfiguration?.password))
   }
 
   updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'contentType', this.httpConfiguration.contentType);
-    this.formHandler.setFormControlValue(this.form, 'username', this.httpConfiguration.username);
-    this.formHandler.setFormControlValue(this.form, 'password', this.httpConfiguration.password);
+    this.form.controls.contentType.setValue(this.httpConfiguration.contentType);
+    this.form.controls.username.setValue(this.httpConfiguration.username);
+    this.form.controls.password.setValue(this.httpConfiguration.password);
   }
 
   updateModelFromForm(): HttpConfiguration | undefined {
-    const contentType = getValidString(this.form.controls.contentType.value);
-    const username = getValidString(this.form.controls.username.value);
-    const password = getValidString(this.form.controls.password.value);
+    const contentType = this.form.controls.contentType.value;
+    const username = this.form.controls.username.value;
+    const password = this.form.controls.password.value;
 
     if (!(contentType || username || password)) {
       return undefined;

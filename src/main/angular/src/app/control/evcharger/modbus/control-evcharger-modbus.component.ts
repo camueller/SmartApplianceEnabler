@@ -1,15 +1,23 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChildren
+} from '@angular/core';
 import {Logger} from '../../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
-import {FormHandler} from '../../../shared/form-handler';
 import {ErrorMessages} from '../../../shared/error-messages';
-import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective, ValidatorFn, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, ValidatorFn, Validators} from '@angular/forms';
 import {Settings} from '../../../settings/settings';
 import {EvModbusControl} from './ev-modbus-control';
 import {SettingsDefaults} from '../../../settings/settings-defaults';
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
-import {getValidString} from '../../../shared/form-util';
+import {buildFormArrayWithEmptyFormGroups, isRequired} from '../../../shared/form-util';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {ModbusWriteComponent} from '../../../modbus/write/modbus-write.component';
 import {ModbusWrite} from '../../../modbus/write/modbus-write';
@@ -22,6 +30,9 @@ import {MeterDefaults} from '../../../meter/meter-defaults';
 import {ValueNameChangedEvent} from '../../../meter/value-name-changed-event';
 import {getValueNamesNotConfigured} from '../../../shared/get-value-names-not-configured';
 import {ControlDefaults} from '../../control-defaults';
+import {ControlEvchargerModbusModel} from './control-evcharger-modbus.model';
+import {ModbusReadModel} from '../../../modbus/read/modbus-read.model';
+import {ModbusWriteModel} from '../../../modbus/write/modbus-write.model';
 
 @Component({
   selector: 'app-control-evcharger-modbus',
@@ -47,8 +58,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   modbusReadComps: QueryList<ModbusReadComponent>;
   @ViewChildren('modbusWriteComponents')
   modbusWriteComps: QueryList<ModbusWriteComponent>;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ControlEvchargerModbusModel>;
   @Input()
   translationKeys: string[];
   translatedStrings: { [key: string]: string } = {};
@@ -62,7 +72,6 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
               private parent: FormGroupDirective,
               private translate: TranslateService) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -145,7 +154,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
       this.evModbusControl.modbusReads = [];
     }
     this.evModbusControl.modbusReads.push(modbusRead);
-    this.modbusReadsFormArray.push(new UntypedFormGroup({}));
+    this.modbusReadsFormArray.push(new FormGroup({} as ModbusReadModel));
     this.form.markAsDirty();
   }
 
@@ -161,7 +170,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
       this.evModbusControl.modbusWrites = [];
     }
     this.evModbusControl.modbusWrites.push(modbusWrite);
-    this.modbusWritesFormArray.push(new UntypedFormGroup({}));
+    this.modbusWritesFormArray.push(new FormGroup({} as ModbusWriteModel));
     this.form.markAsDirty();
   }
 
@@ -172,7 +181,7 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   }
 
   get modbusReadsFormArray() {
-    return this.form.controls.modbusReads as UntypedFormArray;
+    return this.form.controls.modbusReads;
   }
 
   getModbusReadFormGroup(index: number) {
@@ -180,24 +189,23 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   }
 
   get modbusWritesFormArray() {
-    return this.form.controls.modbusWrites as UntypedFormArray;
+    return this.form.controls.modbusWrites;
   }
 
   getModbusWriteFormGroup(index: number) {
     return this.modbusWritesFormArray.controls[index];
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'idref',
-      this.evModbusControl && this.evModbusControl.idref,
-      [Validators.required]);
-    this.formHandler.addFormControl(this.form, 'slaveAddress',
-      this.evModbusControl && this.evModbusControl.slaveAddress,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusReads',
-      this.evModbusControl.modbusReads);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusWrites',
-      this.evModbusControl.modbusWrites);
+    this.form.addControl('idref', new FormControl(this.evModbusControl?.idref, Validators.required));
+    this.form.addControl('slaveAddress', new FormControl(this.evModbusControl?.slaveAddress,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]));
+    this.form.addControl('modbusReads', buildFormArrayWithEmptyFormGroups(this.evModbusControl.modbusReads));
+    this.form.addControl('modbusWrites', buildFormArrayWithEmptyFormGroups(this.evModbusControl.modbusWrites));
     this.form.setValidators(this.isAllValueNamesConfigured());
   }
 
@@ -208,8 +216,8 @@ export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   }
 
   updateModelFromForm(): EvModbusControl | undefined {
-    const idref = getValidString(this.form.controls.idref.value);
-    const slaveAdress = getValidString(this.form.controls.slaveAddress.value);
+    const idref = this.form.controls.idref.value;
+    const slaveAdress = this.form.controls.slaveAddress.value;
     const modbusReads = [];
     this.modbusReadComps.forEach(modbusReadComponent => {
       const modbusRead = modbusReadComponent.updateModelFromForm();

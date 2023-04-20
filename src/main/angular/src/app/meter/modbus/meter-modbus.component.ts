@@ -1,32 +1,22 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  QueryList,
-  SimpleChanges,
-  ViewChild,
-  ViewChildren
-} from '@angular/core';
-import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusRead} from '../../modbus/read/modbus-read';
 import {ModbusReadComponent} from '../../modbus/read/modbus-read.component';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {getValidInt, getValidString} from '../../shared/form-util';
+import {buildFormArrayWithEmptyFormGroups, isRequired} from '../../shared/form-util';
 import {MeterDefaults} from '../meter-defaults';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ModbusElectricityMeter} from './modbus-electricity-meter';
 import {SettingsDefaults} from '../../settings/settings-defaults';
 import {MeterValueName} from '../meter-value-name';
-import {FormHandler} from '../../shared/form-handler';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {Logger} from '../../log/logger';
 import {ModbusSetting} from '../../settings/modbus/modbus-setting';
 import {MessageBoxLevel} from 'src/app/material/messagebox/messagebox.component';
 import {ValueNameChangedEvent} from '../value-name-changed-event';
+import {MeterModbusModel} from './meter-modbus.model';
 
 @Component({
   selector: 'app-meter-modbus',
@@ -50,8 +40,7 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   modbusSettings: ModbusSetting[];
   @Input()
   applianceId: string;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<MeterModbusModel>;
   translatedStrings: { [key: string]: string } = {};
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -64,7 +53,6 @@ export class MeterModbusComponent implements OnChanges, OnInit {
               private translate: TranslateService,
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -129,28 +117,30 @@ export class MeterModbusComponent implements OnChanges, OnInit {
   }
 
   get modbusReadsFormArray() {
-    return this.form.controls.modbusReads as UntypedFormArray;
+    return this.form.controls.modbusReads;
   }
 
   getModbusReadFormGroup(index: number) {
     return this.modbusReadsFormArray.controls[index];
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'idref', this.modbusElectricityMeter.idref,
-      [Validators.required]);
-    this.formHandler.addFormControl(this.form, 'slaveAddress', this.modbusElectricityMeter.slaveAddress,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
-    this.formHandler.addFormControl(this.form, 'pollInterval', this.modbusElectricityMeter.pollInterval,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusReads',
-      this.modbusElectricityMeter.modbusReads);
+    this.form.addControl('idref', new FormControl(this.modbusElectricityMeter.idref, Validators.required));
+    this.form.addControl('slaveAddress', new FormControl(this.modbusElectricityMeter.slaveAddress,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]));
+    this.form.addControl('pollInterval', new FormControl(this.modbusElectricityMeter.pollInterval,
+      Validators.pattern(InputValidatorPatterns.INTEGER)));
+    this.form.addControl('modbusReads', buildFormArrayWithEmptyFormGroups(this.modbusElectricityMeter.modbusReads));
   }
 
   updateModelFromForm(): ModbusElectricityMeter | undefined {
-    const idref = getValidString(this.form.controls.idref.value);
-    const slaveAddress = getValidString(this.form.controls.slaveAddress.value);
-    const pollInterval = getValidInt(this.form.controls.pollInterval.value);
+    const idref = this.form.controls.idref.value;
+    const slaveAddress = this.form.controls.slaveAddress.value;
+    const pollInterval = this.form.controls.pollInterval.value;
     const modbusRead = this.modbusReadComp.updateModelFromForm();
 
     if (!(idref || slaveAddress || pollInterval || modbusRead)) {

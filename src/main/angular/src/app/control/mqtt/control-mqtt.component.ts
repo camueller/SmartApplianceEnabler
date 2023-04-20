@@ -7,16 +7,15 @@ import {
   OnInit,
   SimpleChanges
 } from '@angular/core';
-import {ControlContainer, FormGroupDirective, UntypedFormGroup, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {MqttSwitch} from './mqtt-switch';
-import {FormHandler} from '../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {ControlValueName} from '../control-value-name';
-import {getValidString} from '../../shared/form-util';
+import {getValidString, isRequired} from '../../shared/form-util';
+import {ControlMqttModel} from './control-mqtt.model';
 
 @Component({
   selector: 'app-control-mqtt',
@@ -31,8 +30,7 @@ export class ControlMqttComponent implements OnChanges, OnInit {
   @Input()
   mqttSwitch: MqttSwitch;
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ControlMqttModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -43,7 +41,6 @@ export class ControlMqttComponent implements OnChanges, OnInit {
               private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -70,15 +67,16 @@ export class ControlMqttComponent implements OnChanges, OnInit {
     });
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'topic', this.mqttSwitch.topic,
-      [Validators.required]);
-    this.formHandler.addFormControl(this.form, 'onPayload', this.mqttSwitch.onPayload,
-      [Validators.required]);
-    this.formHandler.addFormControl(this.form, 'offPayload', this.mqttSwitch.offPayload,
-      [Validators.required]);
-    this.formHandler.addFormControl(this.form, 'statusTopic', this.mqttSwitch.statusTopic);
-    this.formHandler.addFormControl(this.form, 'statusExtractionRegex', this.mqttSwitch.statusExtractionRegex);
+    this.form.addControl('topic', new FormControl(this.mqttSwitch?.topic, Validators.required));
+    this.form.addControl('onPayload', new FormControl(this.mqttSwitch?.onPayload, Validators.required));
+    this.form.addControl('offPayload', new FormControl(this.mqttSwitch?.offPayload, Validators.required));
+    this.form.addControl('statusTopic', new FormControl(this.mqttSwitch?.statusTopic));
+    this.form.addControl('statusExtractionRegex', new FormControl(this.mqttSwitch?.statusExtractionRegex));
   }
 
   updateModelFromForm(): MqttSwitch | undefined {

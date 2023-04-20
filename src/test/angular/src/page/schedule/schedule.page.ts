@@ -9,7 +9,7 @@ import {
   selectorSelectedByFormControlName,
   setCheckboxEnabled
 } from '../../shared/form';
-import {simpleRequestType, simpleTimeframeType} from '../../../../../main/angular/src/app/shared/form-util';
+import {simpleRequestType, simpleTimeframeType} from '../../../../../main/angular/src/app/schedule/schedule';
 import {DayTimeframe} from '../../../../../main/angular/src/app/schedule/timeframe/day/day-timeframe';
 import {DayTimeframePage} from './day-timeframe.page';
 import {RuntimeRequest} from '../../../../../main/angular/src/app/schedule/request/runtime/runtime-request';

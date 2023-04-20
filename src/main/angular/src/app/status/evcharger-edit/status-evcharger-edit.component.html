@@ -21,14 +21,14 @@
       <mat-label>{{'StatusComponent.socCurrent' | translate}}</mat-label>
       <input matInput type="text" formControlName="socCurrent"
              class="StatusEvchargerEditComponent__soc-input" placeholder="0"
-             required="{{formHandler.isRequired('socCurrent')}}">
+             required="{{isRequired('socCurrent')}}">
     </mat-form-field>
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.socUnit' | translate}}</span>
     <mat-form-field class="StatusEvchargerEditComponent__soc">
       <mat-label>{{'StatusComponent.socTarget' | translate}}</mat-label>
       <input matInput type="text" formControlName="socTarget"
              class="StatusEvchargerEditComponent__soc-input" [placeholder]="socTargetPlaceholder"
-             required="{{formHandler.isRequired('socTarget')}}">
+             required="{{isRequired('socTarget')}}">
     </mat-form-field>
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.socUnit' | translate}}</span>
   </div>
@@ -36,7 +36,7 @@
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.chargeLatestEndRequested' | translate}}</span>
     <mat-form-field class="StatusEvchargerEditComponent__dayOfWeek">
       <mat-label>{{'dayOfWeek' | translate}}</mat-label>
-      <mat-select formControlName="chargeEndDow" required="{{formHandler.isRequired('chargeEndDow')}}">
+      <mat-select formControlName="chargeEndDow" required="{{isRequired('chargeEndDow')}}">
         <mat-option *ngFor="let dow of dows" [value]="dow.id">{{dow.name}}</mat-option>
       </mat-select>
     </mat-form-field>

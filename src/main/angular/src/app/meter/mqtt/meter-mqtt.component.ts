@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ControlContainer, FormGroupDirective, UntypedFormGroup, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {MeterDefaults} from '../meter-defaults';
@@ -7,12 +7,12 @@ import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {ErrorMessages} from '../../shared/error-messages';
 import {MqttElectricityMeter} from './mqtt-electricity-meter';
 import {MeterValueName} from '../meter-value-name';
-import {FormHandler} from '../../shared/form-handler';
 import {Logger} from '../../log/logger';
 import {ValueNameChangedEvent} from '../value-name-changed-event';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {getValidFloat, getValidString} from '../../shared/form-util';
 import {ContentProtocol} from '../../shared/content-protocol';
+import {MeterMqttModel} from './meter-mqtt.model';
+import { isRequired } from 'src/app/shared/form-util';
 
 @Component({
   selector: 'app-meter-mqtt',
@@ -30,8 +30,7 @@ export class MeterMqttComponent implements OnChanges, OnInit {
   meterDefaults: MeterDefaults;
   contentProtocols = [undefined, ContentProtocol.JSON.toUpperCase()];
   readValueName: MeterValueName;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<MeterMqttModel>;
   translatedStrings: string[];
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
@@ -42,7 +41,6 @@ export class MeterMqttComponent implements OnChanges, OnInit {
               private translate: TranslateService,
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -103,25 +101,27 @@ export class MeterMqttComponent implements OnChanges, OnInit {
     }
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'topic', this.mqttElectricityMeter.topic,
-      [Validators.required]);
-    this.formHandler.addFormControl(this.form, 'name', this.mqttElectricityMeter.name,
-      [Validators.required]);
-    this.formHandler.addFormControl(this.form, 'contentProtocol', this.mqttElectricityMeter.contentProtocol);
-    this.formHandler.addFormControl(this.form, 'path', this.mqttElectricityMeter.path);
-    this.formHandler.addFormControl(this.form, 'timePath', this.mqttElectricityMeter.timePath);
-    this.formHandler.addFormControl(this.form, 'factorToValue', this.mqttElectricityMeter.factorToValue,
-      [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+    this.form.addControl('topic', new FormControl(this.mqttElectricityMeter.topic, Validators.required));
+    this.form.addControl('name', new FormControl(this.mqttElectricityMeter.name, Validators.required));
+    this.form.addControl('contentProtocol', new FormControl(this.mqttElectricityMeter.contentProtocol));
+    this.form.addControl('path', new FormControl(this.mqttElectricityMeter.path));
+    this.form.addControl('timePath', new FormControl(this.mqttElectricityMeter.timePath));
+    this.form.addControl('factorToValue', new FormControl(this.mqttElectricityMeter.factorToValue,
+      Validators.pattern(InputValidatorPatterns.FLOAT)));
   }
 
   updateModelFromForm(): MqttElectricityMeter | undefined {
-    const topic = getValidString(this.form.controls.topic.value);
-    const name = getValidString(this.form.controls.name.value);
+    const topic = this.form.controls.topic.value;
+    const name = this.form.controls.name.value;
     const contentProtocol = this.form.controls.contentProtocol.value;
-    const path = !!contentProtocol ? getValidString(this.form.controls.path.value) : undefined;
-    const timePath = !!contentProtocol ? getValidString(this.form.controls.timePath.value) : undefined;
-    const factorToValue = getValidFloat(this.form.controls.factorToValue.value);
+    const path = !!contentProtocol ? this.form.controls.path.value : undefined;
+    const timePath = !!contentProtocol ? this.form.controls.timePath.value : undefined;
+    const factorToValue = this.form.controls.factorToValue.value;
 
     if (!(topic || name || contentProtocol || path || timePath || factorToValue)) {
       return undefined;

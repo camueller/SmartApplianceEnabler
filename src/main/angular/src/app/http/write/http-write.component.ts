@@ -11,8 +11,7 @@ import {
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import {UntypedFormArray, UntypedFormGroup, Validators} from '@angular/forms';
-import {FormHandler} from '../../shared/form-handler';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
@@ -20,10 +19,12 @@ import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {HttpWrite} from './http-write';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {getValidString} from '../../shared/form-util';
+import {buildFormArrayWithEmptyFormGroups, isRequired} from '../../shared/form-util';
 import {HttpWriteValueComponent} from '../write-value/http-write-value.component';
 import {HttpWriteValue} from '../write-value/http-write-value';
 import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
+import {HttpWriteModel} from './http-write.model';
+import {HttpWriteValueModel} from '../write-value/http-write-value.model';
 
 @Component({
   selector: 'app-http-write',
@@ -43,8 +44,7 @@ export class HttpWriteComponent implements OnChanges, OnInit {
   @Input()
   disableFactorToValue = false;
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<HttpWriteModel>;
   @Input()
   translationPrefix: string;
   @Input()
@@ -62,7 +62,6 @@ export class HttpWriteComponent implements OnChanges, OnInit {
               private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -105,7 +104,7 @@ export class HttpWriteComponent implements OnChanges, OnInit {
   addValue() {
     const newWriteValue = new HttpWriteValue();
     this.httpWrite.writeValues.push(newWriteValue);
-    this.httpWriteValuesFormArray.push(new UntypedFormGroup({}));
+    this.httpWriteValuesFormArray.push(new FormGroup({} as HttpWriteValueModel));
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }
@@ -125,29 +124,30 @@ export class HttpWriteComponent implements OnChanges, OnInit {
   }
 
   get httpWriteValuesFormArray() {
-    return this.form.controls.httpWriteValues as UntypedFormArray;
+    return this.form.controls.httpWriteValues;
   }
 
   getHttpWriteValueFormGroup(index: number) {
     return this.httpWriteValuesFormArray.controls[index];
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'url',
-      this.httpWrite && this.httpWrite.url,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpWriteValues',
-      this.httpWrite.writeValues);
+    this.form.addControl('url', new FormControl(this.httpWrite?.url,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]))
+    this.form.addControl('httpWriteValues', buildFormArrayWithEmptyFormGroups(this.httpWrite.writeValues));
   }
 
   updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'url', this.httpWrite.url);
-    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'httpWriteValues',
-      this.httpWrite.writeValues);
+    this.form.controls.url.setValue(this.httpWrite.url);
+    this.form.setControl('httpWriteValues', buildFormArrayWithEmptyFormGroups(this.httpWrite.writeValues));
   }
 
   updateModelFromForm(): HttpWrite | undefined {
-    const url = getValidString(this.form.controls.url.value);
+    const url = this.form.controls.url.value;
     const httpWriteValues = [];
     this.httpWriteValueComps.forEach(httpWriteValueComp => {
       const httpWriteValue = httpWriteValueComp.updateModelFromForm();

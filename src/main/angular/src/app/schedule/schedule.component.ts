@@ -16,11 +16,20 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {Logger} from '../log/logger';
-import {Schedule} from './schedule';
-import {UntypedFormGroup, Validators} from '@angular/forms';
-import {FormHandler} from '../shared/form-handler';
+import {Schedule, simpleRequestType, simpleTimeframeType} from './schedule';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorMessages} from '../shared/error-messages';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {ElectricVehicle} from '../control/evcharger/electric-vehicle/electric-vehicle';
@@ -31,10 +40,13 @@ import {DayTimeframe} from './timeframe/day/day-timeframe';
 import {ConsecutiveDaysTimeframe} from './timeframe/consecutivedays/consecutive-days-timeframe';
 import {ScheduleRequestEnergyComponent} from './request/energy/schedule-request-energy.component';
 import {ScheduleRequestRuntimeComponent} from './request/runtime/schedule-request-runtime.component';
-import {ScheduleTimeframeConsecutivedaysComponent} from './timeframe/consecutivedays/schedule-timeframe-consecutivedays.component';
+import {
+  ScheduleTimeframeConsecutivedaysComponent
+} from './timeframe/consecutivedays/schedule-timeframe-consecutivedays.component';
 import {ScheduleRequestSocComponent} from './request/soc/schedule-request-soc.component';
 import {SocRequest} from './request/soc/soc-request';
-import {simpleRequestType, simpleTimeframeType} from '../shared/form-util';
+import {ScheduleModel} from './schedule.model';
+import { isRequired } from '../shared/form-util';
 
 @Component({
   selector: 'app-schedule',
@@ -45,7 +57,7 @@ export class ScheduleComponent implements OnChanges, AfterViewInit {
   @Input()
   schedule: Schedule;
   @Input()
-  form: UntypedFormGroup;
+  form: FormGroup<ScheduleModel>;
   @Input()
   timeframeTypes: { key: string, value?: string }[];
   @Input()
@@ -64,7 +76,6 @@ export class ScheduleComponent implements OnChanges, AfterViewInit {
   requestEnergyComp: ScheduleRequestEnergyComponent;
   @ViewChild(ScheduleRequestSocComponent)
   requestSocComp: ScheduleRequestSocComponent;
-  formHandler: FormHandler;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -73,7 +84,6 @@ export class ScheduleComponent implements OnChanges, AfterViewInit {
               private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -140,12 +150,14 @@ export class ScheduleComponent implements OnChanges, AfterViewInit {
     return this.schedule && simpleRequestType(this.schedule.requestType);
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'enabled', this.schedule.enabled);
-    this.formHandler.addFormControl(this.form, 'timeframeType',
-      this.timeframeType, [Validators.required]);
-    this.formHandler.addFormControl(this.form, 'requestType',
-      this.requestType, [Validators.required]);
+    this.form.addControl('enabled', new FormControl(this.schedule.enabled));
+    this.form.addControl('timeframeType', new FormControl(this.timeframeType, Validators.required));
+    this.form.addControl('requestType', new FormControl(this.requestType, Validators.required));
     this.form.controls.enabled.valueChanges.subscribe(value => {
       this.setEnabled(value);
       this.form.markAsDirty();

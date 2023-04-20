@@ -30,6 +30,10 @@ import {LevelSwitch} from './level/level-switch';
 import {SwitchOption} from './switchoption/switch-option';
 import {MqttSwitch} from './mqtt/mqtt-switch';
 
+export function simpleControlType(controlType: string) {
+  return controlType && controlType.split('.')[4];
+}
+
 export class Control {
   type: string;
   startingCurrentSwitchUsed?: boolean;

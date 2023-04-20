@@ -1,14 +1,14 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {UntypedFormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusReadValue} from './modbus-read-value';
 import {ErrorMessages} from '../../shared/error-messages';
-import {FormHandler} from '../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
-import {getValidString} from '../../shared/form-util';
 import {Logger} from '../../log/logger';
 import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
+import {isRequired} from 'src/app/shared/form-util';
+import {ModbusReadValueModel} from './modbus-read-value.model';
 
 @Component({
   selector: 'app-modbus-read-value',
@@ -21,8 +21,7 @@ export class ModbusReadValueComponent implements OnChanges, OnInit {
   @Input()
   valueNames: string[];
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ModbusReadValueModel>;
   @Input()
   translationPrefix = '';
   @Input()
@@ -38,7 +37,6 @@ export class ModbusReadValueComponent implements OnChanges, OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -57,7 +55,7 @@ export class ModbusReadValueComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     if (this.form && !this.form.controls.name.value && this.valueNames.length === 1) {
-      this.formHandler.setFormControlValue(this.form, 'name', this.valueNames[0]);
+      this.form.controls.name.setValue(this.valueNames[0]);
     }
     this.errorMessages = new ErrorMessages('ModbusReadValueComponent.error.', [
       new ErrorMessage('name', ValidatorType.required, ERROR_INPUT_REQUIRED, true),
@@ -83,20 +81,21 @@ export class ModbusReadValueComponent implements OnChanges, OnInit {
     }
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'name',
-      this.modbusReadValue && this.modbusReadValue.name,
-      [Validators.required]);
+    this.form.addControl('name', new FormControl(this.modbusReadValue?.name, Validators.required));
     if (this.modbusReadValue) {
       this.onNameChanged(this.modbusReadValue.name);
     }
-    this.formHandler.addFormControl(this.form, 'extractionRegex',
-      this.modbusReadValue && this.modbusReadValue.extractionRegex);
+    this.form.addControl('extractionRegex', new FormControl(this.modbusReadValue?.extractionRegex));
   }
 
   updateModelFromForm(): ModbusReadValue | undefined {
-    const name = getValidString(this.form.controls.name.value);
-    const extractionRegex = getValidString(this.form.controls.extractionRegex.value);
+    const name = this.form.controls.name.value;
+    const extractionRegex = this.form.controls.extractionRegex.value;
 
     if (!(name || extractionRegex)) {
       return undefined;

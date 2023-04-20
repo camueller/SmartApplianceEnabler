@@ -17,15 +17,15 @@
  */
 
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {UntypedFormGroup} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
-import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
 import {MasterElectricityMeter} from './master-electricity-meter';
 import {ListItem} from '../../shared/list-item';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
+import {MeterMasterModel} from './meter-master.model';
 
 @Component({
   selector: 'app-meter-master',
@@ -36,8 +36,7 @@ export class MeterMasterComponent implements OnChanges, OnInit {
   @Input()
   masterMeter: MasterElectricityMeter;
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<MeterMasterModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -59,7 +58,6 @@ export class MeterMasterComponent implements OnChanges, OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -119,10 +117,10 @@ export class MeterMasterComponent implements OnChanges, OnInit {
   }
 
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'masterSwitchOn', this.toSwitchOnKey(this.masterMeter?.masterSwitchOn),
-      this.masterSlaveControlValidator);
-    this.formHandler.addFormControl(this.form, 'slaveSwitchOn', this.toSwitchOnKey(this.masterMeter?.slaveSwitchOn),
-      this.masterSlaveControlValidator);
+    this.form.addControl('masterSwitchOn', new FormControl(this.toSwitchOnKey(this.masterMeter?.masterSwitchOn),
+      this.masterSlaveControlValidator));
+    this.form.addControl('slaveSwitchOn', new FormControl(this.toSwitchOnKey(this.masterMeter?.slaveSwitchOn),
+      this.masterSlaveControlValidator));
   }
 
   updateModelFromForm(): MasterElectricityMeter {

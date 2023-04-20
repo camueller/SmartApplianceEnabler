@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {ChangeDetectorRef, Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {ActivatedRoute, CanDeactivate} from '@angular/router';
-import {UntypedFormArray, UntypedFormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {SettingsService} from './settings-service';
 import {Settings} from './settings';
 import {SettingsDefaults} from './settings-defaults';
@@ -30,12 +30,13 @@ import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
 import {Logger} from '../log/logger';
 import {ErrorMessage, ValidatorType} from '../shared/error-message';
-import {FormHandler} from '../shared/form-handler';
 import {SettingsModbusComponent} from './modbus/settings-modbus.component';
 import {ModbusSetting} from './modbus/modbus-setting';
-import {getValidInt, getValidString} from '../shared/form-util';
+import {buildFormArrayWithEmptyFormGroups, isRequired} from '../shared/form-util';
 import {FileMode} from '../material/filenameinput/file-mode';
 import {FilenameInputComponent} from '../material/filenameinput/filename-input.component';
+import {SettingsModel} from './settings.model';
+import {SettingsModbusModel} from './modbus/settings-modbus.model';
 
 @Component({
   selector: 'app-settings',
@@ -49,8 +50,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   modbusSettingComps: QueryList<SettingsModbusComponent>;
   @ViewChild(FilenameInputComponent, {static: true})
   notificationCommandInput: FilenameInputComponent;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<SettingsModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -63,7 +63,6 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
               private route: ActivatedRoute,
               private changeDetectorRef: ChangeDetectorRef) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnInit() {
@@ -84,20 +83,21 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
     });
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   buildForm() {
-    this.form = new UntypedFormGroup({});
-    this.formHandler.addFormControl(this.form, 'mqttHost', this.settings.mqttSettings?.host,
-      Validators.pattern(InputValidatorPatterns.HOSTNAME)),
-    this.formHandler.addFormControl(this.form, 'mqttPort', this.settings.mqttSettings?.port,
-      Validators.pattern(InputValidatorPatterns.INTEGER)),
-      this.formHandler.addFormControl(this.form, 'nodeRedDashboardUrl', this.settings.nodeRedDashboardUrl,
-        [Validators.pattern(InputValidatorPatterns.URL)]);
-    this.formHandler.addFormControl(this.form, 'mqttUsername', this.settings.mqttSettings?.username);
-    this.formHandler.addFormControl(this.form, 'mqttPassword', this.settings.mqttSettings?.password),
-    this.formHandler.addFormControl(this.form, 'holidaysEnabled', this.settings.holidaysEnabled);
-    this.formHandler.addFormControl(this.form, 'holidaysUrl', this.settings.holidaysUrl,
-      [Validators.pattern(InputValidatorPatterns.URL)]);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusSettings', this.settings?.modbusSettings);
+    this.form = new FormGroup({
+      mqttHost: new FormControl(this.settings.mqttSettings?.host, Validators.pattern(InputValidatorPatterns.HOSTNAME)),
+      mqttPort: new FormControl(this.settings.mqttSettings?.port, Validators.pattern(InputValidatorPatterns.INTEGER)),
+      nodeRedDashboardUrl: new FormControl(this.settings.nodeRedDashboardUrl, Validators.pattern(InputValidatorPatterns.URL)),
+      mqttUsername: new FormControl(this.settings.mqttSettings?.username),
+      mqttPassword: new FormControl(this.settings.mqttSettings?.password),
+      holidaysEnabled: new FormControl(this.settings.holidaysEnabled),
+      holidaysUrl: new FormControl(this.settings.holidaysUrl, Validators.pattern(InputValidatorPatterns.URL)),
+      modbusSettings: buildFormArrayWithEmptyFormGroups(this.settings?.modbusSettings),
+    });
     this.setHolidaysUrlEnabled(this.settings.holidaysEnabled);
     this.form.controls.holidaysEnabled.valueChanges.subscribe(value => {
       this.setHolidaysUrlEnabled(value);
@@ -114,7 +114,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   }
 
   get modbusSettingsFormArray() {
-    return this.form.controls.modbusSettings as UntypedFormArray;
+    return this.form.controls.modbusSettings;
   }
 
   getModbusSettingFormGroup(index: number) {
@@ -126,7 +126,7 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
       this.settings.modbusSettings = [];
     }
     this.settings.modbusSettings.push(new ModbusSetting());
-    this.modbusSettingsFormArray.push(new UntypedFormGroup({}));
+    this.modbusSettingsFormArray.push(new FormGroup({} as SettingsModbusModel));
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }
@@ -149,16 +149,16 @@ export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponen
   }
 
   updateModelFromForm() {
-    const mqttHost = getValidString(this.form.controls.mqttHost.value);
-    const mqttPort = getValidInt(this.form.controls.mqttPort.value);
-    const mqttUsername = getValidString(this.form.controls.mqttUsername.value);
-    const mqttPassword = getValidString(this.form.controls.mqttPassword.value);
+    const mqttHost = this.form.controls.mqttHost.value;
+    const mqttPort = this.form.controls.mqttPort.value;
+    const mqttUsername = this.form.controls.mqttUsername.value;
+    const mqttPassword = this.form.controls.mqttPassword.value;
     if (mqttHost) {
       this.settings.mqttSettings = {host: mqttHost, port: mqttPort, username: mqttUsername, password: mqttPassword};
     }
-    this.settings.nodeRedDashboardUrl = getValidString(this.form.controls.nodeRedDashboardUrl.value);
+    this.settings.nodeRedDashboardUrl = this.form.controls.nodeRedDashboardUrl.value;
     this.settings.holidaysEnabled = this.form.controls.holidaysEnabled.value;
-    this.settings.holidaysUrl = getValidString(this.form.controls.holidaysUrl.value);
+    this.settings.holidaysUrl = this.form.controls.holidaysUrl.value;
     this.settings.modbusSettings = [];
     this.modbusSettingComps.forEach(modbusSettingComponent => {
       const modbusSetting = modbusSettingComponent.updateModelFromForm();

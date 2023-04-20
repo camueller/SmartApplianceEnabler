@@ -11,14 +11,13 @@ import {
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import {UntypedFormArray, UntypedFormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusWrite} from './modbus-write';
 import {ModbusWriteValueComponent} from '../write-value/modbus-write-value.component';
 import {ErrorMessages} from '../../shared/error-messages';
-import {FormHandler} from '../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {getValidFloat, getValidString} from '../../shared/form-util';
+import {buildFormArrayWithEmptyFormGroups, isRequired} from '../../shared/form-util';
 import {ModbusWriteValue} from '../write-value/modbus-write-value';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
@@ -27,6 +26,8 @@ import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 import {WriteRegisterType} from './write-register-type';
 import {ReadRegisterType} from '../read/read-register-type';
 import {ValueType} from '../read/value-type';
+import {ModbusWriteModel} from './modbus-write.model';
+import {ModbusWriteValueModel} from '../write-value/modbus-write-value.model';
 
 @Component({
   selector: 'app-modbus-write',
@@ -46,8 +47,7 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   @Input()
   disableFactorToValue = false;
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ModbusWriteModel>;
   @Input()
   translationPrefix: string;
   @Input()
@@ -66,7 +66,6 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
               private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -173,11 +172,11 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
   }
 
   get modbusWriteValuesFormArray() {
-    return this.form.controls.modbusWriteValues as UntypedFormArray;
+    return this.form.controls.modbusWriteValues;
   }
 
-  createModbusWriteValueFormGroup(): UntypedFormGroup {
-    return new UntypedFormGroup({});
+  createModbusWriteValueFormGroup() {
+    return new FormGroup({} as ModbusWriteValueModel);
   }
 
   getModbusWriteValueFormGroup(index: number) {
@@ -193,19 +192,18 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
     }
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'address',
-      this.modbusWrite && this.modbusWrite.address,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]);
-    this.formHandler.addFormControl(this.form, 'type',
-      this.modbusWrite && this.modbusWrite.type,
-      [Validators.required]);
-    this.formHandler.addFormControl(this.form, 'valueType',
-      this.modbusWrite && this.modbusWrite.valueType);
+    this.form.addControl('address', new FormControl(this.modbusWrite?.address,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER_OR_HEX)]));
+    this.form.addControl('type', new FormControl(this.modbusWrite?.type, Validators.required));
+    this.form.addControl('valueType', new FormControl(this.modbusWrite?.valueType));
     if (!this.disableFactorToValue) {
-      this.formHandler.addFormControl(this.form, 'factorToValue',
-        this.modbusWrite && this.modbusWrite.factorToValue,
-        [Validators.pattern(InputValidatorPatterns.FLOAT)]);
+      this.form.addControl('factorToValue', new FormControl(this.modbusWrite.factorToValue,
+        Validators.pattern(InputValidatorPatterns.FLOAT)));
     }
     this.form.controls.type.valueChanges.subscribe(value => {
       this.updateValueTypeValidator(value);
@@ -213,15 +211,14 @@ export class ModbusWriteComponent implements OnChanges, OnInit {
     if (this.modbusWrite) {
       this.updateValueTypeValidator(this.form.controls.type.value);
     }
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'modbusWriteValues',
-      this.modbusWrite.writeValues);
+    this.form.addControl('modbusWriteValues', buildFormArrayWithEmptyFormGroups(this.modbusWrite.writeValues));
   }
 
   updateModelFromForm(): ModbusWrite | undefined {
-    const address = getValidString(this.form.controls.address.value);
-    const type = getValidString(this.form.controls.type.value);
-    const valueType = getValidString(this.form.controls.valueType.value);
-    const factorToValue = this.form.controls.factorToValue && getValidFloat(this.form.controls.factorToValue.value);
+    const address = this.form.controls.address.value;
+    const type = this.form.controls.type.value;
+    const valueType = this.form.controls.valueType.value;
+    const factorToValue = this.form.controls.factorToValue && this.form.controls.factorToValue.value;
     const modbusWriteValues = [];
     this.modbusWriteValueComps.forEach(modbusWriteValueComp => {
       const modbusWriteValue = modbusWriteValueComp.updateModelFromForm();

@@ -13,6 +13,8 @@ import {
 import {heatingRod} from './fixture/appliance/heatingrod';
 import {LevelSwitch} from '../../../main/angular/src/app/control/level/level-switch';
 import {levelSwitch} from './fixture/control/level-switch';
+import {s0Meter} from './fixture/meter/s0-meter';
+import { S0ElectricityMeter } from '../../../main/angular/src/app/meter/s0/s0-electricity-meter';
 
 fixture('Heating rod')
     .beforeEach(async t => {
@@ -25,8 +27,8 @@ function createHeatingRod(): ApplianceConfiguration {
   return new ApplianceConfiguration({
     appliance: {...heatingRod, id: generateApplianceId()},
     meter: {
-      type: SlaveElectricityMeter.TYPE,
-      slaveElectricityMeter: new SlaveElectricityMeter({masterElectricityMeterApplianceId: 'F-00000001-000000000001-00'}),
+      type: S0ElectricityMeter.TYPE,
+      s0ElectricityMeter: s0Meter,
     },
     control: {type: LevelSwitch.TYPE, startingCurrentSwitchUsed: false, levelSwitch }  });
 }

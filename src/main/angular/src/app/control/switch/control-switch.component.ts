@@ -1,15 +1,15 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ControlContainer, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Switch} from './switch';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {TranslateService} from '@ngx-translate/core';
 import {ControlDefaults} from '../control-defaults';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {FormHandler} from '../../shared/form-handler';
 import {Logger} from '../../log/logger';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {getValidInt} from '../../shared/form-util';
+import {isRequired} from '../../shared/form-util';
+import {ControlSwitchModel} from './control-switch.model';
 
 @Component({
   selector: 'app-control-switch',
@@ -24,8 +24,7 @@ export class ControlSwitchComponent implements OnChanges, OnInit {
   switch_: Switch;
   @Input()
   controlDefaults: ControlDefaults;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ControlSwitchModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -35,7 +34,6 @@ export class ControlSwitchComponent implements OnChanges, OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -61,14 +59,18 @@ export class ControlSwitchComponent implements OnChanges, OnInit {
     this.expandParentForm();
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'gpio', this.switch_ && this.switch_.gpio,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'reverseStates', this.switch_ && this.switch_.reverseStates);
+    this.form.addControl('gpio', new FormControl(this.switch_?.gpio,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
+    this.form.addControl('reverseStates', new FormControl(this.switch_?.reverseStates));
   }
 
   updateModelFromForm(): Switch | undefined {
-    const gpio = getValidInt(this.form.controls.gpio.value);
+    const gpio = this.form.controls.gpio.value;
     const reverseStates = this.form.controls.reverseStates.value;
 
     if (!(gpio || reverseStates)) {

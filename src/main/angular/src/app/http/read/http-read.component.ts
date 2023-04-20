@@ -11,19 +11,20 @@ import {
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import {UntypedFormArray, UntypedFormGroup, Validators} from '@angular/forms';
-import {FormHandler} from '../../shared/form-handler';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {HttpRead} from './http-read';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {getValidString} from '../../shared/form-util';
+import {buildFormArrayWithEmptyFormGroups, getValidString, isRequired} from '../../shared/form-util';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {HttpReadValueComponent} from '../read-value/http-read-value.component';
 import {HttpReadValue} from '../read-value/http-read-value';
 import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
+import {HttpReadModel} from './http-read.model';
+import {HttpReadValueModel} from '../read-value/http-read-value.model';
 
 @Component({
   selector: 'app-http-read',
@@ -47,8 +48,7 @@ export class HttpReadComponent implements OnChanges, OnInit {
   @Input()
   disableRemove = false;
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<HttpReadModel>;
   @Input()
   translationPrefix: string;
   @Input()
@@ -67,7 +67,6 @@ export class HttpReadComponent implements OnChanges, OnInit {
               private changeDetectorRef: ChangeDetectorRef
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -120,7 +119,7 @@ export class HttpReadComponent implements OnChanges, OnInit {
       this.httpRead.readValues = [];
     }
     this.httpRead.readValues.push(newReadValue);
-    this.httpReadValuesFormArray.push(new UntypedFormGroup({}));
+    this.httpReadValuesFormArray.push(new FormGroup<HttpReadValueModel>({} as HttpReadValueModel));
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }
@@ -140,25 +139,26 @@ export class HttpReadComponent implements OnChanges, OnInit {
   }
 
   get httpReadValuesFormArray() {
-    return this.form.controls.httpReadValues as UntypedFormArray;
+    return this.form.controls.httpReadValues;
   }
 
   getHttpReadValueFormGroup(index: number) {
     return this.httpReadValuesFormArray.controls[index];
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'url',
-      this.httpRead && this.httpRead.url,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpReadValues',
-      this.httpRead.readValues);
+    this.form.addControl('url', new FormControl(this.httpRead && this.httpRead.url,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.URL)]));
+    this.form.addControl('httpReadValues', buildFormArrayWithEmptyFormGroups(this.httpRead.readValues));
   }
 
   updateForm() {
-    this.formHandler.setFormControlValue(this.form, 'url', this.httpRead.url);
-    this.formHandler.setFormArrayControlWithEmptyFormGroups(this.form, 'httpReadValues',
-      this.httpRead.readValues);
+    this.form.controls.url.setValue(this.httpRead.url);
+    this.form.setControl('httpReadValues', buildFormArrayWithEmptyFormGroups(this.httpRead.readValues));
   }
 
   updateModelFromForm(): HttpRead | undefined {

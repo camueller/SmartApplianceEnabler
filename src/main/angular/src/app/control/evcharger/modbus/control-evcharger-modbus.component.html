@@ -8,7 +8,7 @@
         <mat-select formControlName="idref"
                     matTooltip="{{'ControlEvchargerModbusComponent.idref.tooltip' | translate}}"
                     [matTooltipDisabled]="'matTooltipDisabled' | env"
-                    required="{{formHandler.isRequired('idref')}}">
+                    required="{{isRequired('idref')}}">
           <mat-option *ngFor="let modbusSetting of settings.modbusSettings" [value]="modbusSetting.modbusTcpId">
             {{modbusSetting.modbusTcpId}}
           </mat-option>
@@ -17,7 +17,7 @@
       <mat-form-field class="sae__modbus-address">
         <mat-label>{{'ControlEvchargerModbusComponent.slaveAddress' | translate}}</mat-label>
         <input matInput type="text" formControlName="slaveAddress"
-               required="{{formHandler.isRequired('slaveAddress')}}">
+               required="{{isRequired('slaveAddress')}}">
         <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
       </mat-form-field>
     </div>

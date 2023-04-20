@@ -17,16 +17,16 @@
  */
 
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {UntypedFormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
-import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
-import {getValidInt} from '../../shared/form-util';
 import {SwitchOption} from './switch-option';
+import {ControlSwitchoptionModel} from './control-switchoption.model';
+import {isRequired} from 'src/app/shared/form-util';
 
 @Component({
   selector: 'app-control-switchoption',
@@ -37,8 +37,7 @@ export class ControlSwitchOptionComponent implements OnChanges, OnInit {
   @Input()
   switchOption: SwitchOption;
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ControlSwitchoptionModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -47,7 +46,6 @@ export class ControlSwitchOptionComponent implements OnChanges, OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -78,22 +76,23 @@ export class ControlSwitchOptionComponent implements OnChanges, OnInit {
     });
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'powerThreshold',
-      this.switchOption && this.switchOption.powerThreshold,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'switchOnDetectionDuration',
-      this.switchOption && this.switchOption.switchOnDetectionDuration,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'switchOffDetectionDuration',
-      this.switchOption && this.switchOption.switchOffDetectionDuration,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.form.addControl('powerThreshold', new FormControl(this.switchOption?.powerThreshold,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
+    this.form.addControl('switchOnDetectionDuration', new FormControl(this.switchOption?.switchOnDetectionDuration,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
+    this.form.addControl('switchOffDetectionDuration', new FormControl(this.switchOption?.switchOffDetectionDuration,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
   }
 
   updateModelFromForm(): SwitchOption {
-    const powerThreshold = getValidInt(this.form.controls.powerThreshold.value);
-    const switchOnDetectionDuration = getValidInt(this.form.controls.switchOnDetectionDuration.value);
-    const switchOffDetectionDuration = getValidInt(this.form.controls.switchOffDetectionDuration.value);
+    const powerThreshold = this.form.controls.powerThreshold.value;
+    const switchOnDetectionDuration = this.form.controls.switchOnDetectionDuration.value;
+    const switchOffDetectionDuration = this.form.controls.switchOffDetectionDuration.value;
 
     // all properties are optional; therefore we always have to return an instance
 

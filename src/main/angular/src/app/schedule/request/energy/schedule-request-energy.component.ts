@@ -1,14 +1,14 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {ControlContainer, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {EnergyRequest} from './energy-request';
 import {ErrorMessages} from '../../../shared/error-messages';
-import {FormHandler} from '../../../shared/form-handler';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../../../shared/error-message';
 import {InputValidatorPatterns} from '../../../shared/input-validator-patterns';
 import {ErrorMessageHandler} from '../../../shared/error-message-handler';
 import {Logger} from '../../../log/logger';
-import {getValidInt} from '../../../shared/form-util';
+import {ScheduleRequestEnergyModel} from './schedule-request-energy.model';
+import { isRequired } from 'src/app/shared/form-util';
 
 @Component({
   selector: 'app-schedule-request-energy',
@@ -23,8 +23,7 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
   energyRequest: EnergyRequest;
   @Input()
   enabled: boolean;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ScheduleRequestEnergyModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -34,7 +33,6 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -69,18 +67,21 @@ export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
     return this.energyRequest && this.energyRequest.max;
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'minEnergy', this.minEnergy,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'maxEnergy', this.maxEnergy,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'enabledExternally', !this.energyRequest.enabled);
+    this.form.addControl('minEnergy', new FormControl(this.minEnergy, Validators.pattern(InputValidatorPatterns.INTEGER)));
+    this.form.addControl('maxEnergy', new FormControl(this.maxEnergy,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
+    this.form.addControl('enabledExternally', new FormControl(!this.energyRequest.enabled));
   }
 
   updateModelFromForm(): EnergyRequest | undefined {
     const enabled = !this.form.controls.enabledExternally.value;
-    const minEnergy = getValidInt(this.form.controls.minEnergy.value);
-    const maxEnergy = getValidInt(this.form.controls.maxEnergy.value);
+    const minEnergy = this.form.controls.minEnergy.value;
+    const maxEnergy = this.form.controls.maxEnergy.value;
 
     if (!(minEnergy || maxEnergy)) {
       return undefined;

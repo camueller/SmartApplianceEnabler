@@ -1,7 +1,7 @@
 <div class="HttpWriteValueComponent sae__fields" [formGroup]="form">
   <mat-form-field class="sae__value-name">
     <mat-label>{{'HttpWriteValueComponent.name' | translate}}</mat-label>
-    <mat-select formControlName="name" required="{{formHandler.isRequired('name')}}">
+    <mat-select formControlName="name" required="{{isRequired('name')}}">
       <mat-option *ngFor="let valueName of valueNames" [value]="valueName">
         {{getTranslatedValueName(valueName)}}
       </mat-option>
@@ -9,7 +9,7 @@
   </mat-form-field>
   <mat-form-field class="sae__http-method">
     <mat-label>{{'HttpWriteValueComponent.method' | translate}}</mat-label>
-    <mat-select formControlName="method" required="{{formHandler.isRequired('method')}}">
+    <mat-select formControlName="method" required="{{isRequired('method')}}">
       <mat-option *ngFor="let method of methods" [value]="method">
         {{getMethodTranslationKey(method)| translate}}
       </mat-option>
@@ -18,14 +18,14 @@
   <mat-form-field class="HttpWriteValueComponent__value">
     <mat-label>{{'HttpWriteValueComponent.value' | translate}}</mat-label>
     <input matInput type="text" formControlName="value"
-           required="{{formHandler.isRequired('value')}}">
+           required="{{isRequired('value')}}">
     <mat-error *ngIf="errors.value">{{errors.value}}</mat-error>
   </mat-form-field>
   <mat-form-field class="sae__factorToValue" *ngIf="! disableFactorToValue">
     <mat-label>{{'HttpWriteValueComponent.factorToValue' | translate}}</mat-label>
     <input matInput type="text" formControlName="factorToValue"
            placeholder="1"
-           required="{{formHandler.isRequired('factorToValue')}}">
+           required="{{isRequired('factorToValue')}}">
     <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
   </mat-form-field>
 </div>

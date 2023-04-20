@@ -28,7 +28,7 @@ import {
   selectorSelectByFormControlName,
   selectorSelectedByFormControlName, setCheckboxEnabled
 } from '../../shared/form';
-import {simpleControlType} from '../../../../../main/angular/src/app/shared/form-util';
+import {simpleControlType} from '../../../../../main/angular/src/app/control/control';
 import {Switch} from '../../../../../main/angular/src/app/control/switch/switch';
 import {SwitchPage} from './switch.page';
 
@@ -42,6 +42,10 @@ export class LevelControlPage extends ControlPage {
 
   private static powerLevelSelectorPrefix(powerLevelIndex: number) {
     return `*[formarrayname="powerLevels"] > *[ng-reflect-name="${powerLevelIndex}"]`;
+  }
+
+  private static switchStatusesPrefix(controlIndex: number, selectorPrefix?: string) {
+    return `${selectorPrefix} > *[formarrayname="switchStatuses"] > *[ng-reflect-name="${controlIndex}"]`;
   }
 
   public static async setLevelSwitch(t: TestController, levelSwitch: LevelSwitch) {
@@ -97,10 +101,12 @@ export class LevelControlPage extends ControlPage {
   }
 
   public static async setSwitchStatus(t: TestController, controlIndex: number, on: boolean, selectorPrefix?: string) {
-    await setCheckboxEnabled(t, selectorCheckboxByFormControlName((controlIndex + 1).toString(), selectorPrefix), on);
+    await setCheckboxEnabled(t, selectorCheckboxByFormControlName('on',
+        LevelControlPage.switchStatusesPrefix(controlIndex, selectorPrefix)), on);
   }
   public static async assertSwitchStatus(t: TestController, controlIndex: number, on: boolean, selectorPrefix?: string) {
-    await assertCheckbox(t, selectorCheckboxCheckedByFormControlName((controlIndex + 1).toString(), selectorPrefix), on);
+    await assertCheckbox(t, selectorCheckboxCheckedByFormControlName('on',
+        LevelControlPage.switchStatusesPrefix(controlIndex, selectorPrefix)), on);
   }
 
   public static async clickAddControl(t: TestController) {

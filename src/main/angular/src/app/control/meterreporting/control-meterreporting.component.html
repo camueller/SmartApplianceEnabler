@@ -3,7 +3,7 @@
     <mat-label>{{'ControlMeterreportingComponent.powerThreshold' | translate}}</mat-label>
     <input matInput type="text" formControlName="powerThreshold"
            placeholder="{{controlDefaults.meterReportingSwitchDefaults.powerThreshold}}"
-           required="{{formHandler.isRequired('powerThreshold')}}">
+           required="{{isRequired('powerThreshold')}}">
     <mat-error *ngIf="errors.powerThreshold">{{errors.powerThreshold}}</mat-error>
   </mat-form-field>
   <mat-form-field>
@@ -12,7 +12,7 @@
            placeholder="{{controlDefaults.meterReportingSwitchDefaults.offDetectionDelay}}"
            matTooltip="{{'ControlMeterreportingComponent.offDetectionDelay.tooltip' | translate}}"
            [matTooltipDisabled]="'matTooltipDisabled' | env"
-           required="{{formHandler.isRequired('offDetectionDelay')}}">
+           required="{{isRequired('offDetectionDelay')}}">
     <mat-error *ngIf="errors.offDetectionDelay">{{errors.offDetectionDelay}}</mat-error>
   </mat-form-field>
 </div>

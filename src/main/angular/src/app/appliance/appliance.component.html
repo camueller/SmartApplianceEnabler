@@ -22,7 +22,7 @@
     <input matInput type="text" placeholder="F-00000000-000000000000-00" formControlName="id"
            matTooltip="{{'ApplianceComponent.id.tooltip' | translate}}"
            [matTooltipDisabled]="'matTooltipDisabled' | env"
-           required="{{formHandler.isRequired('id')}}">
+           required="{{isRequired('id')}}">
     <mat-error *ngIf="errors.id">{{errors.id}}</mat-error>
   </mat-form-field>
   <app-help [helpfile]="'Appliance'"></app-help>
@@ -32,18 +32,18 @@
       <mat-form-field class="vendor">
         <mat-label>{{'ApplianceComponent.vendor' | translate}}</mat-label>
         <input matInput type="text" formControlName="vendor"
-               required="{{formHandler.isRequired('vendor')}}">
+               required="{{isRequired('vendor')}}">
         <mat-error *ngIf="errors.vendor">{{errors.vendor}}</mat-error>
       </mat-form-field>
       <mat-form-field class="name">
         <mat-label>{{'ApplianceComponent.name' | translate}}</mat-label>
         <input matInput type="text" formControlName="name"
-               required="{{formHandler.isRequired('name')}}">
+               required="{{isRequired('name')}}">
         <mat-error *ngIf="errors.name">{{errors.name}}</mat-error>
       </mat-form-field>
       <mat-form-field>
         <mat-label>{{'ApplianceComponent.type' | translate}}</mat-label>
-        <mat-select formControlName="type" required="{{formHandler.isRequired('type')}}">
+        <mat-select formControlName="type" required="{{isRequired('type')}}">
           <mat-option *ngFor="let applianceTyp of applianceTypes" [value]="applianceTyp.value">
             {{applianceTyp.viewValue}}
           </mat-option>
@@ -52,7 +52,7 @@
       <mat-form-field class="serial">
         <mat-label>{{'ApplianceComponent.serial' | translate}}</mat-label>
         <input matInput type="text" formControlName="serial"
-               required="{{formHandler.isRequired('serial')}}">
+               required="{{isRequired('serial')}}">
         <mat-error *ngIf="errors.serial">{{errors.serial}}</mat-error>
       </mat-form-field>
     </div>
@@ -66,7 +66,7 @@
         <input matInput type="text" formControlName="minPowerConsumption"
                matTooltip="{{'ApplianceComponent.minPowerConsumption.tooltip' | translate}}"
                [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{formHandler.isRequired('minPowerConsumption')}}">
+               required="{{isRequired('minPowerConsumption')}}">
         <mat-error *ngIf="errors.minPowerConsumption">{{errors.minPowerConsumption}}</mat-error>
       </mat-form-field>
       <mat-form-field class="maxPowerConsumption">
@@ -74,7 +74,7 @@
         <input matInput type="text" formControlName="maxPowerConsumption"
                matTooltip="{{'ApplianceComponent.maxPowerConsumption.tooltip' | translate}}"
                [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{formHandler.isRequired('maxPowerConsumption')}}">
+               required="{{isRequired('maxPowerConsumption')}}">
         <mat-error *ngIf="errors.maxPowerConsumption">{{errors.maxPowerConsumption}}</mat-error>
       </mat-form-field>
       <mat-checkbox formControlName="interruptionsAllowed"
@@ -88,7 +88,7 @@
         <input matInput type="text" formControlName="minOnTime"
                matTooltip="{{'ApplianceComponent.minOnTime.tooltip' | translate}}"
                [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{formHandler.isRequired('minOnTime')}}">
+               required="{{isRequired('minOnTime')}}">
         <mat-error *ngIf="errors.minOnTime">{{errors.minOnTime}}</mat-error>
       </mat-form-field>
       <mat-form-field class="maxOnTime">
@@ -96,7 +96,7 @@
         <input matInput type="text" formControlName="maxOnTime"
                matTooltip="{{'ApplianceComponent.maxOnTime.tooltip' | translate}}"
                [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{formHandler.isRequired('maxOnTime')}}">
+               required="{{isRequired('maxOnTime')}}">
         <mat-error *ngIf="errors.maxOnTime">{{errors.maxOnTime}}</mat-error>
       </mat-form-field>
       <mat-form-field class="minOffTime">
@@ -104,7 +104,7 @@
         <input matInput type="text" formControlName="minOffTime"
                matTooltip="{{'ApplianceComponent.minOffTime.tooltip' | translate}}"
                [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{formHandler.isRequired('minOffTime')}}">
+               required="{{isRequired('minOffTime')}}">
         <mat-error *ngIf="errors.minOffTime">{{errors.minOffTime}}</mat-error>
       </mat-form-field>
       <mat-form-field class="maxOffTime">
@@ -112,7 +112,7 @@
         <input matInput type="text" formControlName="maxOffTime"
                matTooltip="{{'ApplianceComponent.maxOffTime.tooltip' | translate}}"
                [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{formHandler.isRequired('maxOffTime')}}">
+               required="{{isRequired('maxOffTime')}}">
         <mat-error *ngIf="errors.maxOffTime">{{errors.maxOffTime}}</mat-error>
       </mat-form-field>
     </div>
@@ -124,7 +124,7 @@
         <mat-label>{{'ApplianceComponent.notification.senderId' | translate}}</mat-label>
         <input matInput type="text" formControlName="notificationSenderId"
                placeholder="{{form.controls.id?.value}}"
-               required="{{formHandler.isRequired('notificationSenderId')}}">
+               required="{{isRequired('notificationSenderId')}}">
         <mat-error *ngIf="errors.notificationSenderId">{{errors.notificationSenderId}}</mat-error>
       </mat-form-field>
     </div>

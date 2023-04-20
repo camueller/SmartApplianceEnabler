@@ -24,6 +24,10 @@ import {MasterElectricityMeter} from './master/master-electricity-meter';
 import {SlaveElectricityMeter} from './slave/master-electricity-meter';
 import {MqttElectricityMeter} from './mqtt/mqtt-electricity-meter';
 
+export function simpleMeterType(meterType: string) {
+  return meterType && meterType.split('.')[4];
+}
+
 export class Meter {
   type: string;
   isMasterMeter?: boolean;

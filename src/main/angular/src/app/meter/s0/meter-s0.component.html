@@ -2,12 +2,12 @@
   <mat-form-field class="sae__gpio">
     <mat-label>{{'MeterS0Component.gpio' | translate}}</mat-label>
     <input matInput type="text" formControlName="gpio"
-           required="{{formHandler.isRequired('gpio')}}">
+           required="{{isRequired('gpio')}}">
     <mat-error *ngIf="errors.gpio">{{errors.gpio}}</mat-error>
   </mat-form-field>
   <mat-form-field>
     <mat-label>{{'MeterS0Component.pinPullResistance' | translate}}</mat-label>
-    <mat-select formControlName="pinPullResistance" required="{{formHandler.isRequired('pinPullResistance')}}">
+    <mat-select formControlName="pinPullResistance" required="{{isRequired('pinPullResistance')}}">
       <mat-option *ngFor="let pinPullResistanceType of pinPullResistanceTypes" [value]="pinPullResistanceType.value">
         {{pinPullResistanceType.viewValue}}
       </mat-option>
@@ -16,14 +16,14 @@
   <mat-form-field class="impulsesPerKwh">
     <mat-label>{{'MeterS0Component.impulsesPerKwh' | translate}}</mat-label>
     <input matInput type="text" formControlName="impulsesPerKwh"
-           required="{{formHandler.isRequired('impulsesPerKwh')}}">
+           required="{{isRequired('impulsesPerKwh')}}">
     <mat-error *ngIf="errors.impulsesPerKwh">{{errors.impulsesPerKwh}}</mat-error>
   </mat-form-field>
   <mat-form-field class="minPulseDuration">
     <mat-label>{{'MeterS0Component.minPulseDuration' | translate}}</mat-label>
     <input matInput type="text" formControlName="minPulseDuration"
            placeholder="{{meterDefaults.s0ElectricityMeterDefaults.minPulseDuration}}"
-           required="{{formHandler.isRequired('minPulseDuration')}}">
+           required="{{isRequired('minPulseDuration')}}">
     <mat-error *ngIf="errors.minPulseDuration">{{errors.minPulseDuration}}</mat-error>
   </mat-form-field>
 </div>

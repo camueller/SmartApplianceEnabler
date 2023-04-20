@@ -17,8 +17,7 @@
  */
 
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {FormHandler} from '../../shared/form-handler';
-import {ControlContainer, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Logger} from '../../log/logger';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {TranslateService} from '@ngx-translate/core';
@@ -27,8 +26,8 @@ import {ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {MeterReportingSwitch} from './meter-reporting-switch';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {ControlDefaults} from '../control-defaults';
-import {Switch} from '../switch/switch';
-import {getValidInt} from '../../shared/form-util';
+import {isRequired} from '../../shared/form-util';
+import {ControlMeterreportingModel} from './control-meterreporting.model';
 
 @Component({
   selector: 'app-control-meterreporting',
@@ -44,8 +43,7 @@ export class ControlMeterreportingComponent implements OnChanges, OnInit {
   meterReportingSwitch: MeterReportingSwitch;
   @Input()
   controlDefaults: ControlDefaults;
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ControlMeterreportingModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -55,7 +53,6 @@ export class ControlMeterreportingComponent implements OnChanges, OnInit {
               private translate: TranslateService
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -81,16 +78,20 @@ export class ControlMeterreportingComponent implements OnChanges, OnInit {
     this.expandParentForm();
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'powerThreshold', this.meterReportingSwitch.powerThreshold,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'offDetectionDelay', this.meterReportingSwitch.offDetectionDelay,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
+    this.form.addControl('powerThreshold', new FormControl(this.meterReportingSwitch?.powerThreshold,
+      Validators.pattern(InputValidatorPatterns.INTEGER)));
+    this.form.addControl('offDetectionDelay', new FormControl(this.meterReportingSwitch?.offDetectionDelay,
+      Validators.pattern(InputValidatorPatterns.INTEGER)));
   }
 
   updateModelFromForm(): MeterReportingSwitch | undefined {
-    const powerThreshold = getValidInt(this.form.controls.powerThreshold.value);
-    const offDetectionDelay = getValidInt(this.form.controls.offDetectionDelay.value);
+    const powerThreshold = this.form.controls.powerThreshold.value;
+    const offDetectionDelay = this.form.controls.offDetectionDelay.value;
 
     this.meterReportingSwitch.powerThreshold = powerThreshold;
     this.meterReportingSwitch.offDetectionDelay = offDetectionDelay;

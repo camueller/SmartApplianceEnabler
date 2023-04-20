@@ -23,7 +23,7 @@
     <div>
       <mat-form-field>
         <mat-label>{{'ScheduleComponent.timeframeType' | translate}}</mat-label>
-        <mat-select formControlName="timeframeType" required="{{formHandler.isRequired('timeframeType')}}">
+        <mat-select formControlName="timeframeType" required="{{isRequired('timeframeType')}}">
           <mat-option *ngFor="let timeframeType of timeframeTypes" [value]="timeframeType.key">
             {{timeframeType.value}}
           </mat-option>
@@ -31,7 +31,7 @@
       </mat-form-field>
       <mat-form-field>
         <mat-label>{{'ScheduleComponent.requestType' | translate}}</mat-label>
-        <mat-select formControlName="requestType" required="{{formHandler.isRequired('requestType')}}">
+        <mat-select formControlName="requestType" required="{{isRequired('requestType')}}">
           <mat-option *ngFor="let requestType of validRequestTypes" [value]="requestType.key">
             {{requestType.value}}
           </mat-option>

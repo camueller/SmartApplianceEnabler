@@ -17,12 +17,12 @@
  */
 
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {UntypedFormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Logger} from '../../log/logger';
-import {FormHandler} from '../../shared/form-handler';
 import {ListItem} from '../../shared/list-item';
 import {SlaveElectricityMeter} from './master-electricity-meter';
-import {getValidString} from '../../shared/form-util';
+import {isRequired} from '../../shared/form-util';
+import {MeterSlaveModel} from './meter-slave.model';
 
 @Component({
   selector: 'app-meter-slave',
@@ -35,13 +35,11 @@ export class MeterSlaveComponent implements OnChanges, OnInit {
   @Input()
   masterElectricityMeterApplianceIdWithApplianceName: Object;
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<MeterSlaveModel>;
   masterMeterOptions: ListItem[] = [];
 
   constructor(private logger: Logger,
   ) {
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -63,14 +61,17 @@ export class MeterSlaveComponent implements OnChanges, OnInit {
       {value: applianceId, viewValue: this.masterElectricityMeterApplianceIdWithApplianceName[applianceId]} as ListItem));
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'masterMeterAppliance',
-      this.slaveMeter && this.slaveMeter.masterElectricityMeterApplianceId,
-      [Validators.required]);
+    this.form.addControl('masterMeterAppliance', new FormControl(this.slaveMeter?.masterElectricityMeterApplianceId,
+      Validators.required));
   }
 
   updateModelFromForm(): SlaveElectricityMeter {
-    const masterElectricityMeterApplianceId = getValidString(this.form.controls.masterMeterAppliance.value);
+    const masterElectricityMeterApplianceId = this.form.controls.masterMeterAppliance.value;
 
     if (!masterElectricityMeterApplianceId) {
       return undefined;

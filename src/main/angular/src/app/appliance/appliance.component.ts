@@ -21,7 +21,7 @@ import {ApplianceService} from './appliance.service';
 import {ActivatedRoute, CanDeactivate, Router} from '@angular/router';
 import {AppliancesReloadService} from './appliances-reload-service';
 import {Location} from '@angular/common';
-import {AbstractControl, UntypedFormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ErrorMessageHandler} from '../shared/error-message-handler';
 import {InputValidatorPatterns} from '../shared/input-validator-patterns';
@@ -31,10 +31,10 @@ import {Observable} from 'rxjs';
 import {DialogService} from '../shared/dialog.service';
 import {Logger} from '../log/logger';
 import {ERROR_INPUT_REQUIRED, ErrorMessage, ValidatorType} from '../shared/error-message';
-import {FormHandler} from '../shared/form-handler';
-import {getValidInt, getValidString} from '../shared/form-util';
+import {getValidInt, getValidString, isRequired} from '../shared/form-util';
 import {ApplianceType} from './appliance-type';
 import {ListItem} from '../shared/list-item';
+import {ApplianceModel} from './appliance.model';
 
 @Component({
   selector: 'app-appliance',
@@ -45,8 +45,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
   applianceId: string;
   appliance: Appliance;
   applianceIdsUsedElsewhere: string[];
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ApplianceModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -66,7 +65,6 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
               private router: Router
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -126,7 +124,7 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
   }
 
   isEvCharger() {
-    return this.form && this.form.controls.type.value === ApplianceType.EV_CHARGER;
+    return this.form.controls.type.value === ApplianceType.EV_CHARGER;
   }
 
   isInterruptionAllowed() {
@@ -144,58 +142,44 @@ export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<Appl
   }
 
   buildForm() {
-    this.form = new UntypedFormGroup({});
-    this.formHandler.addFormControl(this.form, 'id', this.appliance && this.appliance.id,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.APPLIANCE_ID),
-        this.isApplianceIdValid(this.applianceIdsUsedElsewhere)]);
-    this.formHandler.addFormControl(this.form, 'vendor', this.appliance && this.appliance.vendor,
-      Validators.required);
-    this.formHandler.addFormControl(this.form, 'name', this.appliance && this.appliance.name,
-      Validators.required);
-    this.formHandler.addFormControl(this.form, 'type', this.appliance && this.appliance.type,
-      Validators.required);
-    this.formHandler.addFormControl(this.form, 'serial', this.appliance && this.appliance.serial,
-      Validators.required);
-    this.formHandler.addFormControl(this.form, 'minPowerConsumption',
-      this.appliance && this.appliance.minPowerConsumption,
-      Validators.pattern(InputValidatorPatterns.INTEGER));
-    this.formHandler.addFormControl(this.form, 'maxPowerConsumption',
-      this.appliance && this.appliance.maxPowerConsumption,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'interruptionsAllowed',
-      this.appliance && this.appliance.interruptionsAllowed);
-    this.formHandler.addFormControl(this.form, 'minOnTime',
-      this.appliance && this.appliance.minOnTime,
-      Validators.pattern(InputValidatorPatterns.INTEGER));
-    this.formHandler.addFormControl(this.form, 'maxOnTime',
-      this.appliance && this.appliance.maxOnTime,
-      Validators.pattern(InputValidatorPatterns.INTEGER));
-    this.formHandler.addFormControl(this.form, 'minOffTime',
-      this.appliance && this.appliance.minOffTime,
-      Validators.pattern(InputValidatorPatterns.INTEGER));
-    this.formHandler.addFormControl(this.form, 'maxOffTime',
-      this.appliance && this.appliance.maxOffTime,
-      Validators.pattern(InputValidatorPatterns.INTEGER));
-    this.formHandler.addFormControl(this.form, 'notificationSenderId', this.appliance && this.appliance.notificationSenderId);
+    this.form = new FormGroup({
+      id: new FormControl( this.appliance?.id, [Validators.required, Validators.pattern(InputValidatorPatterns.APPLIANCE_ID)]),
+      vendor: new FormControl(this.appliance?.vendor, Validators.required),
+      name: new FormControl(this.appliance?.name, Validators.required),
+      type: new FormControl(this.appliance?.type, Validators.required),
+      serial: new FormControl(this.appliance?.serial, Validators.required),
+      minPowerConsumption: new FormControl(this.appliance?.minPowerConsumption, Validators.pattern(InputValidatorPatterns.INTEGER)),
+      maxPowerConsumption: new FormControl(this.appliance?.maxPowerConsumption, [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]),
+      interruptionsAllowed: new FormControl(this.appliance?.interruptionsAllowed),
+      minOnTime: new FormControl(this.appliance?.minOnTime, Validators.pattern(InputValidatorPatterns.INTEGER)),
+      minOffTime: new FormControl(this.appliance?.minOffTime, Validators.pattern(InputValidatorPatterns.INTEGER)),
+      maxOnTime: new FormControl(this.appliance?.maxOnTime, Validators.pattern(InputValidatorPatterns.INTEGER)),
+      maxOffTime: new FormControl(this.appliance?.maxOffTime, Validators.pattern(InputValidatorPatterns.INTEGER)),
+      notificationSenderId: new FormControl(this.appliance?.notificationSenderId),
+    });
   }
 
   updateModelFromForm() {
     if (!this.appliance) {
       this.appliance = new Appliance();
     }
-    this.appliance.id = getValidString(this.form.controls.id.value);
-    this.appliance.vendor = getValidString(this.form.controls.vendor.value);
-    this.appliance.name = getValidString(this.form.controls.name.value);
-    this.appliance.type = getValidString(this.form.controls.type.value);
-    this.appliance.serial = getValidString(this.form.controls.serial.value);
-    this.appliance.minPowerConsumption = getValidInt(this.form.controls.minPowerConsumption.value);
-    this.appliance.maxPowerConsumption = getValidInt(this.form.controls.maxPowerConsumption.value);
+    this.appliance.id = this.form.controls.id.value;
+    this.appliance.vendor = this.form.controls.vendor.value;
+    this.appliance.name = this.form.controls.name.value;
+    this.appliance.type = this.form.controls.type.value;
+    this.appliance.serial = this.form.controls.serial.value;
+    this.appliance.minPowerConsumption = this.form.controls.minPowerConsumption.value;
+    this.appliance.maxPowerConsumption = this.form.controls.maxPowerConsumption.value;
     this.appliance.interruptionsAllowed = this.form.controls.interruptionsAllowed.value;
-    this.appliance.minOnTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.minOnTime.value) : undefined;
-    this.appliance.maxOnTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.maxOnTime.value) : undefined;
-    this.appliance.minOffTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.minOffTime.value) : undefined;
-    this.appliance.maxOffTime = this.appliance.interruptionsAllowed ? getValidInt(this.form.controls.maxOffTime.value) : undefined;
-    this.appliance.notificationSenderId = getValidString(this.form.controls.notificationSenderId.value);
+    this.appliance.minOnTime = this.appliance.interruptionsAllowed ? this.form.controls.minOnTime.value : undefined;
+    this.appliance.maxOnTime = this.appliance.interruptionsAllowed ? this.form.controls.maxOnTime.value : undefined;
+    this.appliance.minOffTime = this.appliance.interruptionsAllowed ? this.form.controls.minOffTime.value : undefined;
+    this.appliance.maxOffTime = this.appliance.interruptionsAllowed ? this.form.controls.maxOffTime.value : undefined;
+    this.appliance.notificationSenderId = this.form.controls.notificationSenderId.value;
+  }
+
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
   }
 
   isApplianceIdValid(applianceIdsUsedElsewhere: string[]): ValidatorFn {

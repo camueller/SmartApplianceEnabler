@@ -1,21 +1,27 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {ControlContainer, UntypedFormArray, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
+import {
+  ControlContainer,
+  FormControl,
+  FormGroup,
+  FormGroupDirective,
+  Validators
+} from '@angular/forms';
 import {HttpElectricityMeter} from './http-electricity-meter';
 import {ContentProtocol} from '../../shared/content-protocol';
 import {HttpReadComponent} from '../../http/read/http-read.component';
 import {ErrorMessage, ValidatorType} from '../../shared/error-message';
-import {getValidInt} from '../../shared/form-util';
+import {buildFormArrayWithEmptyFormGroups, isRequired} from '../../shared/form-util';
 import {MeterDefaults} from '../meter-defaults';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {ErrorMessages} from '../../shared/error-messages';
 import {MeterValueName} from '../meter-value-name';
 import {HttpRead} from '../../http/read/http-read';
-import {FormHandler} from '../../shared/form-handler';
 import {HttpConfigurationComponent} from '../../http/configuration/http-configuration.component';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
 import {ValueNameChangedEvent} from '../value-name-changed-event';
+import {MeterHttpModel} from './meter-http.model';
 
 @Component({
   selector: 'app-meter-http',
@@ -37,8 +43,7 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   meterDefaults: MeterDefaults;
   readValueName: MeterValueName;
   contentProtocols = [undefined, ContentProtocol.JSON.toUpperCase()];
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<MeterHttpModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -48,7 +53,6 @@ export class MeterHttpComponent implements OnChanges, OnInit {
               private translate: TranslateService,
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -108,23 +112,26 @@ export class MeterHttpComponent implements OnChanges, OnInit {
   }
 
   get httpReadsFormArray() {
-    return this.form.controls.httpReads as UntypedFormArray;
+    return this.form.controls.httpReads;
   }
 
   getHttpReadFormGroup(index: number) {
     return this.httpReadsFormArray.controls[index];
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
-    this.formHandler.addFormControl(this.form, 'pollInterval', this.httpElectricityMeter.pollInterval,
-      [Validators.pattern(InputValidatorPatterns.INTEGER)]);
-    this.formHandler.addFormControl(this.form, 'contentProtocol', this.httpElectricityMeter.contentProtocol);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'httpReads',
-      this.httpElectricityMeter.httpReads);
+    this.form.addControl('pollInterval', new FormControl( this.httpElectricityMeter.pollInterval,
+      Validators.pattern(InputValidatorPatterns.INTEGER)));
+    this.form.addControl('contentProtocol', new FormControl(this.httpElectricityMeter.contentProtocol));
+    this.form.addControl('httpReads', buildFormArrayWithEmptyFormGroups(this.httpElectricityMeter.httpReads));
   }
 
   updateModelFromForm(): HttpElectricityMeter | undefined {
-    const pollInterval = getValidInt(this.form.controls.pollInterval.value);
+    const pollInterval = this.form.controls.pollInterval.value;
     const contentProtocol = this.form.controls.contentProtocol.value;
     const httpConfiguration = this.httpConfigurationComp.updateModelFromForm();
     const httpRead = this.httpReadComp.updateModelFromForm();

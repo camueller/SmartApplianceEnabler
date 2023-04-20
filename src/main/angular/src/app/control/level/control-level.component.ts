@@ -16,11 +16,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-import {FormHandler} from '../../shared/form-handler';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
 import {Logger} from '../../log/logger';
-import {simpleControlType} from '../../shared/form-util';
+import {simpleControlType} from '../../control/control';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -35,12 +34,12 @@ import {
 import {
   AbstractControl,
   ControlContainer,
-  UntypedFormArray,
-  FormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
+  FormArray,
+  FormControl,
+  FormGroup,
   FormGroupDirective,
-  ValidatorFn, Validators
+  ValidatorFn,
+  Validators
 } from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {LevelSwitch} from './level-switch';
@@ -59,6 +58,8 @@ import {ControlSwitchComponent} from '../switch/control-switch.component';
 import {SwitchStatus} from './switch-status';
 import {MqttSwitch} from '../mqtt/mqtt-switch';
 import {ControlMqttComponent} from '../mqtt/control-mqtt.component';
+import {ControlLevelModel, ControlLevelSupportedTypes, PowerLevelModel, SwitchStatusModel} from './control-level.model';
+import {buildFormArrayWithEmptyFormGroups, isRequired} from '../../shared/form-util';
 
 @Component({
   selector: 'app-control-level',
@@ -87,8 +88,7 @@ export class ControlLevelComponent implements OnChanges, OnInit {
   @ViewChildren('controlMqttComponents')
   controlMqttComps: QueryList<ControlMqttComponent>;
   @Input()
-  form: UntypedFormGroup;
-  formHandler: FormHandler;
+  form: FormGroup<ControlLevelModel>;
   errors: { [key: string]: string } = {};
   errorMessages: ErrorMessages;
   errorMessageHandler: ErrorMessageHandler;
@@ -96,13 +96,11 @@ export class ControlLevelComponent implements OnChanges, OnInit {
   controlIds: string[] = [];
 
   constructor(private logger: Logger,
-              private fb: FormBuilder,
               private parent: FormGroupDirective,
               private changeDetectorRef: ChangeDetectorRef,
               private translate: TranslateService,
   ) {
     this.errorMessageHandler = new ErrorMessageHandler(logger);
-    this.formHandler = new FormHandler();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -132,6 +130,10 @@ export class ControlLevelComponent implements OnChanges, OnInit {
     this.expandParentForm();
   }
 
+  isRequired(formControlName: string) {
+    return isRequired(this.form, formControlName);
+  }
+
   expandParentForm() {
     let realControlType = simpleControlType(Switch.TYPE);
     let controls = [];
@@ -141,9 +143,9 @@ export class ControlLevelComponent implements OnChanges, OnInit {
       controls = this.levelSwitch.controls;
       this.controlIds = this.levelSwitch.controls.map(control => control.id);
     }
-    this.formHandler.addFormControl(this.form, 'realControlType', realControlType);
-    this.formHandler.addFormArrayControlWithEmptyFormGroups(this.form, 'controls', controls);
-    this.form.addControl('powerLevels', this.fb.array([]));
+    this.form.addControl('realControlType', new FormControl(realControlType));
+    this.form.addControl('controls', buildFormArrayWithEmptyFormGroups(controls));
+    this.form.addControl('powerLevels', new FormArray([]));
     this.powerLevelFormArray?.clear();
     this.levelSwitch.powerLevels?.forEach(powerlevel => this.addPowerLevel(powerlevel));
     this.form.setValidators(this.isFormValid());
@@ -213,9 +215,13 @@ export class ControlLevelComponent implements OnChanges, OnInit {
       this.levelSwitch.controls.push(mqttSwitch)
     }
     this.controlIds.push(nextId.toString());
-    this.controlsFormArray.push(new UntypedFormGroup({}))
+    this.controlsFormArray.push(new FormGroup({} as ControlLevelSupportedTypes))
     for(let i=0; i<this.powerLevelFormArray?.length ?? 0; i++) {
-      this.formHandler.addFormControlToFormArray(this.powerLevelFormArray, i, nextId.toString());
+      const switchStatusFormGroup = new FormGroup<SwitchStatusModel>({
+        idref: new FormControl(nextId.toString()),
+        on: new FormControl(false)
+      });
+      this.powerLevelFormArray.at(i).controls.switchStatuses.push(switchStatusFormGroup);
     }
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
@@ -229,34 +235,47 @@ export class ControlLevelComponent implements OnChanges, OnInit {
 
     const formControlName = index.toString();
     for(let i=0; i<this.powerLevelFormArray.length; i++) {
-      (this.powerLevelFormArray.at(i) as UntypedFormGroup).removeControl(formControlName);
+      this.powerLevelFormArray.at(i).controls.switchStatuses.removeAt(i);
     }
     this.form.markAsDirty();
     this.changeDetectorRef.detectChanges();
   }
 
   get controlsFormArray() {
-    return this.form.controls.controls as UntypedFormArray;
-  }
-
-  getPowerLevelFormGroup(index: number): UntypedFormGroup {
-    return this.powerLevelFormArray.controls[index] as UntypedFormGroup;
+    return this.form.controls.controls;
   }
 
   get powerLevelFormArray() {
-    return this.form.controls.powerLevels as UntypedFormArray;
+    return this.form.controls.powerLevels;
   }
 
   public addPowerLevel(powerLevel?: PowerLevel) {
-    const powerLevelFormGroup = new UntypedFormGroup({});
-    this.formHandler.addFormControl(powerLevelFormGroup, 'power', powerLevel?.power, [Validators.required]);
-    this.controlIds.forEach(controlId => powerLevelFormGroup
-      .addControl(controlId, new UntypedFormControl(powerLevel?.switchStatuses.find(status => status.idref === controlId)?.on ?? false)))
+    const powerLevelFormGroup = new FormGroup<PowerLevelModel>({} as PowerLevelModel);
+    powerLevelFormGroup.addControl('power', new FormControl(powerLevel?.power, Validators.required));
+
+    const switchStatusFormArray = new FormArray([]);
+    this.controlIds.forEach(controlId => {
+      const switchStatusFormGroup = new FormGroup<SwitchStatusModel>({
+        idref: new FormControl(controlId),
+        on: new FormControl(powerLevel?.switchStatuses.find(status => status.idref === controlId)?.on ?? false)
+      });
+      switchStatusFormArray.push(switchStatusFormGroup);
+    });
+    powerLevelFormGroup.addControl('switchStatuses', switchStatusFormArray);
     this.powerLevelFormArray.push(powerLevelFormGroup);
   }
 
   public removePowerLevel(index: number) {
     this.powerLevelFormArray.removeAt(index);
+  }
+
+  private getSwitchingStatus(powerLevelFormGroup: FormGroup<PowerLevelModel>, idref: string) {
+    const switchingStatuses = powerLevelFormGroup.controls.switchStatuses;
+    for(let i=0; i<switchingStatuses.length; i++) {
+      if(switchingStatuses.at(i).controls.idref.value === idref) {
+        return switchingStatuses.at(i).controls.on.value;
+      }
+    }
   }
 
   updateModelFromForm(): LevelSwitch | undefined {
@@ -293,13 +312,15 @@ export class ControlLevelComponent implements OnChanges, OnInit {
 
     const powerLevels: PowerLevel[] = [];
     for(let i=0; i<this.powerLevelFormArray.length; i++) {
-      const power = this.getPowerLevelFormGroup(i).controls.power.value;
+      // const power = this.getPowerLevelFormGroup(i).controls.power.value;
+      const powerLevelFormGroup = this.powerLevelFormArray.at(i);
+      const power = powerLevelFormGroup.controls.power.value;
 
       const switchStatuses: SwitchStatus[] = [];
       this.controlIds.forEach(controlId => {
         const switchStatus = new SwitchStatus({
           idref: controlId,
-          on: this.getPowerLevelFormGroup(i).controls[controlId].value ?? false,
+          on: this.getSwitchingStatus(powerLevelFormGroup, controlId),
         });
         switchStatuses.push(switchStatus);
       });
