@@ -120,9 +120,8 @@ export async function createMeter(t: TestController, applianceId: string, meter:
   }
   else if (meter.type === SlaveElectricityMeter.TYPE) {
     await SlaveMeterPage.setSlaveMeter(t, meter.slaveElectricityMeter);
-  } else {
-    await MasterMeterPage.setMasterMeter(t, meter.isMasterMeter, meter.masterElectricityMeter);
   }
+  await MasterMeterPage.setMasterMeter(t, meter.isMasterMeter, meter.masterElectricityMeter);
   await NotificationPage.setNotifications(t, meter.notifications);
   await MeterPage.clickSave(t);
 }
@@ -140,10 +139,10 @@ export async function assertMeter(t: TestController, applianceId: string, meter:
   else if (meter.type === MqttElectricityMeter.TYPE) {
     await MqttMeterPage.assertMqttElectricityMeter(t, meter.mqttElectricityMeter);
   }
-  else if (meter.type === SlaveElectricityMeter.TYPE) {
+  if (meter.type === SlaveElectricityMeter.TYPE) {
     await SlaveMeterPage.assertSlaveMeter(t, meter.slaveElectricityMeter);
   } else {
-    await MasterMeterPage.assertMasterMeter(t, meter.isMasterMeter, meter.masterElectricityMeter);
+    await MasterMeterPage.assertMasterMeter(t, !!meter.isMasterMeter, meter.masterElectricityMeter);
   }
   await NotificationPage.assertNotifications(t, meter.notifications);
 }
