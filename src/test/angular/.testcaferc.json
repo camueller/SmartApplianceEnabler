@@ -1,4 +1,7 @@
 {
+  "selectorTimeout": 15000,
+  "assertionTimeout": 15000,
+  "pageLoadTimeout": 15000,
   "compilerOptions": {
     "typescript": {
       "options": {

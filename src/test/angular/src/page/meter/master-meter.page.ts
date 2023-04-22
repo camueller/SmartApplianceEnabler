@@ -33,8 +33,8 @@ export class MasterMeterPage {
   private static readonly switchOnUndefined = 'switchOn.undefined';
 
   public static async setMasterMeter(t: TestController, isMasterMeter: boolean, masterMeter: MasterElectricityMeter) {
-    await MasterMeterPage.setMasterMeterEnabled(t, isMasterMeter);
     if (isMasterMeter) {
+      await MasterMeterPage.setMasterMeterEnabled(t, isMasterMeter);
       await MasterMeterPage.setMasterSwitchOn(t, masterMeter?.masterSwitchOn);
       await MasterMeterPage.setSlaveSwitchOn(t, masterMeter?.slaveSwitchOn);
     }
