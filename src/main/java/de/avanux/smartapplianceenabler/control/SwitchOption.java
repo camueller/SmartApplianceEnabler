@@ -128,6 +128,9 @@ public class SwitchOption extends WrappedControl implements TimeframeIntervalHan
         }
         else {
             switchOnTime = null;
+            if(detectingSwitchOn == true) {
+                timeframeIntervalHandler.removeActiveTimeframeInterval(now);
+            }
             detectingSwitchOn = false;
             switchOnDetected = false;
         }
