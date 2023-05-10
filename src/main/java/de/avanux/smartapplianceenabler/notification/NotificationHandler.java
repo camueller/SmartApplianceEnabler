@@ -73,8 +73,8 @@ public class NotificationHandler implements ApplianceIdConsumer {
     }
 
     protected boolean isRequestedNotification(NotificationType type) {
-        return this.requestedNotifications != null
-                && (this.requestedNotifications.getTypes() == null
+        return this.requestedNotifications == null
+                || (this.requestedNotifications.getTypes() == null
                 || this.requestedNotifications.getTypes().contains(type.name()));
     }
 
