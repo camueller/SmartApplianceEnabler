@@ -119,11 +119,11 @@ public class StartingCurrentSwitch extends WrappedControl implements TimeframeIn
             switchOnTime = now;
             startingCurrentDetected = false;
         }
-        on = switchOn;
         publishControlMessage(switchOn);
         if(getNotificationHandler() != null && switchOn != on) {
             getNotificationHandler().sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
         }
+        on = switchOn;
     }
 
     public boolean isOn() {
