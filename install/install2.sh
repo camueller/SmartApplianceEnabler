@@ -56,10 +56,6 @@ cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime 2>&1 >> $LOG
 echo "$PREFIX Install required packages ..." >> $LOG
 apt install $PACKAGES -y 2>&1 >> $LOG
 
-echo "$PREFIX Install wiring-pi in order support SAE < 2.x ..." >> $LOG
-wget "https://github.com/camueller/SmartApplianceEnabler/raw/master/run/wiringpi-latest.deb" -P /tmp 2>>$LOG
-dpkg -i "/tmp/wiringpi-latest.deb" 2>&1 >> $LOG
-
 echo "$PREFIX Setting up pigpiod ..." >> $LOG
 sed -i "s/ExecStart=\/usr\/bin\/pigpiod -l/ExecStart=\/usr\/bin\/pigpiod/g" /lib/systemd/system/pigpiod.service 2>&1 >> $LOG
 systemctl start pigpiod 2>&1 >> $LOG
