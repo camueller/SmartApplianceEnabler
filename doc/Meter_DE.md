@@ -1,6 +1,6 @@
 # Zähler
 Um einen Zähler zu konfigurieren muss in der `Typ`-Auswahlbox der Typ des Zählers ausgewählt werden:
-- [S0](SOMeter_DE.md)
+- [S0](S0Meter_DE.md)
 - [HTTP](HttpMeter_DE.md)
 - [Modbus](ModbusMeter_DE.md) erscheint nur, wenn in den [Einstellungen](Settings_DE.md#user-content-modbus) mindesten ein Modbus konfiguriert wurde
 - [Master-/Slave-Zähler](MasterSlaveMeter_DE.md)

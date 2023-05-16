@@ -1,6 +1,6 @@
 # Meter
 To configure a meter, the type of meter must be selected in the `Type` selection box:
-- [S0](SOMeter_EN.md)
+- [S0](S0Meter_EN.md)
 - [HTTP](HttpMeter_EN.md)
 - [Modbus](ModbusMeter_EN.md) only appears if at least one Modbus has been configured in the [Settings](Settings_EN.md#user-content-modbus).
 - [Master/Slave meter](MasterSlaveMeter_EN.md)
