@@ -12,6 +12,18 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [2.3.0](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.3.0) - 18.05.2023
+
+### Neu
+- [neuer Schalter-Typ "MQTT"](https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/MqttSwitch_DE.md) erlaubt das Schalten durch Senden von MQTT-Nachrichten. Adapter auf Basis von [Tasmota sollten darauf umgestellt](https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/Tasmota_DE.md) werden.
+- [neuer Zähler-Typ "MQTT"](https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/MqttMeter_DE.md) erlaubt das Lesen von Zählerstand oder Leistung aus MQTT-Nachrichten. Adapter auf Basis von [Tasmota sollten darauf umgestellt](https://github.com/camueller/SmartApplianceEnabler/blob/master/doc/Tasmota_DE.md) werden.
+
+### Gefixt
+- MQTT-Nachrichten von Schaltern werden wieder periodisch verschickt, was erforderlich ist durch den Versand der MQTT_Nachrichten ohne Retained-Flag ab SAE 2.2.2
+- mehrere SAE-Instanzen mit geteiltem MQTT-Server waren nicht möglich, weil teilweise die MQTT-Client-IDs nicht unique waren
+- bei der Einschalt-Option wurde das Zeitfenster nicht freigegeben, wenn innerhalb der Dauer der Einschalterkennung bereits ein Ausschaltbefehl kam
+- Versand von Benachrichtigungen bei Schaltern mit Anlaufstromerkennung hat nicht funktioniert, wenn alle Ereignisse ausgewählt waren
+
 ## [2.2.2](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.2.2) - 21.03.2023
 
 ### Gefixt
