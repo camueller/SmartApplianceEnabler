@@ -99,6 +99,7 @@
   "MeterMqttComponent.contentProtocol": "Format",
   "MeterMqttComponent.path": "Pfad für Wert-Extraktion",
   "MeterMqttComponent.timePath": "Pfad für Zeit-Extraktion",
+  "MeterMqttComponent.extractionRegex": "Regex für Extraktion",
   "MeterMqttComponent.factorToValue": "Umrechnungsfaktor",
   "MeterMqttComponent.error.factorToValue_pattern": "Der Faktor muss eine (Gleitkomma-) Zahl sein",
 

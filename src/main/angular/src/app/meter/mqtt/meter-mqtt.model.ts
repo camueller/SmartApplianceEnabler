@@ -6,5 +6,6 @@ export interface MeterMqttModel {
   contentProtocol: FormControl<string>;
   path: FormControl<string>;
   timePath: FormControl<string>;
+  extractionRegex: FormControl<string>;
   factorToValue: FormControl<number>;
 }

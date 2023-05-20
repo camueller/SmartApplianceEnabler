@@ -4,9 +4,9 @@ In order for MQTT messages to be used as a data source, a current MQTT message s
 
 For an MQTT meter, its `Topic` must be specified as well as the `Parameter`, which can be `Meter reading` or `Power` depending on the values present in the MQTT message.
 
-If no `Format` is specified, the MQTT message may only contain the numeric value. If `JSON` is specified, the `value extraction path` must also be specified in order to be able to [extract the numerical value from the MQTT message in JSON format] (ValueExtraction_DE.md).
+If the MQTT message is delivered in **JSON format**, this should be set as `Format` because then by specifying the `Extraction path` the numerical value can be [extracted from the MQTT message](ValueExtraction_EN.md) very easily. If the optional `time extraction path` is specified, the time extracted from the MQTT message is used instead of the current time for further processing.
 
-If the optional `time extraction path` is specified, the time extracted from the MQTT message is used instead of the current time for further processing.
+Alternatively (or also downstream of the JSON interpretation), a [regular expression for extraction](ValueExtraction_EN.md) can be specified if the numerical value has to be extracted from a text (XML, ...). This also applies if the MQTT message appears to only contain the number, but it also contains a line break (CR/LF).
 
 For parameter `Meter reading` the value has to be provided in kWh and for parameter `Power` the value has to be provided in W. If the values are supplied in other units, a `factor to value` must be specified, which is multiplied by the supplied value to convert it into the required unit. For example, if the parameter `Power` is supplied in mW, the value `0.001` must be specified as the `factor to value`.
 

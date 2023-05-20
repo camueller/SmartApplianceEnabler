@@ -99,6 +99,7 @@
   "MeterMqttComponent.contentProtocol": "Format",
   "MeterMqttComponent.path": "Value extraction path",
   "MeterMqttComponent.timePath": "Time extraction path",
+  "MeterMqttComponent.extractionRegex": "Extraction regex",
   "MeterMqttComponent.factorToValue": "Factor to value",
   "MeterMqttComponent.error.factorToValue_pattern": "The factor-to-value has to be a (float) number",
 

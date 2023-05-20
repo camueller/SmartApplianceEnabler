@@ -53,9 +53,11 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     @XmlAttribute
     private String path;
     @XmlAttribute
-    private Double factorToValue;
-    @XmlAttribute
     private String timePath;
+    @XmlAttribute
+    private String extractionRegex;
+    @XmlAttribute
+    private Double factorToValue;
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     private transient String applianceId;
@@ -93,13 +95,14 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
     public void validate() throws ConfigurationException {
         logger.debug("{}: Validating configuration", applianceId);
         logger.debug("{}: configured: topic={}", applianceId, topic);
-        logger.debug("{}: {} configured: contentProtocol={} path={} factorToValue={} timePath={}",
+        logger.debug("{}: {} configured: contentProtocol={} path={} factorToValue={} timePath={} extractionRegex={}",
                 applianceId,
                 name,
                 contentProtocol,
                 path,
                 factorToValue,
-                timePath);
+                timePath,
+                extractionRegex);
 
         if(topic == null) {
             logger.error("{}: Missing 'topic' property", applianceId);
@@ -110,9 +113,11 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
                     applianceId, MeterValueName.Power.name(), MeterValueName.Energy.name());
             throw new ConfigurationException();
         }
-        if(path == null) {
-            logger.error("{}: Missing 'path' property", applianceId);
-            throw new ConfigurationException();
+        if(ContentProtocolType.JSON.equals(contentProtocol)) {
+            if(path == null) {
+                logger.error("{}: Missing 'path' property", applianceId);
+                throw new ConfigurationException();
+            }
         }
     }
 
@@ -146,7 +151,7 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
                 var messageString = new String(message, StandardCharsets.UTF_8);
                 logger.trace("{}: MQTT message received: {}", applianceId, messageString);
 
-                var time = now;
+                var time = LocalDateTime.now();
                 var inputValue = messageString;
                 var contentHandler = getContentContentProtocolHandler();
                 if(contentHandler != null) {
@@ -159,7 +164,7 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
 
                     inputValue = contentHandler.readValue(path);
                 }
-                value = valueExtractor.getDoubleValue(inputValue, null, factorToValue, 0.0);
+                value = valueExtractor.getDoubleValue(inputValue, extractionRegex, factorToValue, 0.0);
                 if(MeterValueName.Power.name().equals(name)) {
                     pollPowerMeter.pollPower(time);
                 }

@@ -484,6 +484,7 @@
         <xs:attribute name="contentProtocol" type="ContentProtcolType" />
         <xs:attribute name="path" type="xs:string" />
         <xs:attribute name="timePath" type="xs:string" />
+        <xs:attribute name="extractionRegex" type="xs:string" />
         <xs:attribute name="factorToValue" type="xs:double" />
     </xs:complexType>
 

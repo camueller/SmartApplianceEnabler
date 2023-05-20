@@ -18,6 +18,7 @@ import {NotificationModule} from '../notification/notification.module';
 import {MeterMasterComponent} from './master/meter-master.component';
 import {MeterSlaveComponent} from './slave/meter-slave.component';
 import {MeterMqttComponent} from './mqtt/meter-mqtt.component';
+import {SharedModule} from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -29,22 +30,23 @@ import {MeterMqttComponent} from './mqtt/meter-mqtt.component';
     MeterS0Component,
     MeterSlaveComponent,
   ],
-  imports: [
-    CommonModule,
-    MaterialModule,
-    HttpModule,
-    HttpClientModule,
-    ModbusModule,
-    NotificationModule,
-    ReactiveFormsModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
-    })
-  ],
+    imports: [
+        CommonModule,
+        MaterialModule,
+        HttpModule,
+        HttpClientModule,
+        ModbusModule,
+        NotificationModule,
+        ReactiveFormsModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        }),
+        SharedModule
+    ],
   providers: [
     MeterService,
     MeterResolver,

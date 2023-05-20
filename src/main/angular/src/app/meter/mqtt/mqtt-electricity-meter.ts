@@ -28,6 +28,7 @@ export class MqttElectricityMeter {
   contentProtocol?: string;
   path: string;
   timePath?: string;
+  extractionRegex?: string;
   factorToValue?: number;
 
   public constructor(init?: Partial<MqttElectricityMeter>) {

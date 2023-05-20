@@ -34,6 +34,14 @@
              required="{{isRequired('timePath')}}">
       <mat-error *ngIf="errors.timePath">{{errors.timePath}}</mat-error>
     </mat-form-field>
+    <mat-form-field class="sae__regex">
+      <mat-label>{{'MeterMqttComponent.extractionRegex' | translate}}</mat-label>
+      <input matInput type="text" formControlName="extractionRegex"
+             matTooltip="{{'regex.tooltip' | translate}}"
+             [matTooltipDisabled]="'matTooltipDisabled' | env"
+             required="{{isRequired('extractionRegex')}}">
+      <mat-error *ngIf="errors.extractionRegex">{{errors.extractionRegex}}</mat-error>
+    </mat-form-field>
     <mat-form-field class="sae__factorToValue">
       <mat-label>{{'MeterMqttComponent.factorToValue' | translate}}</mat-label>
       <input matInput type="text" formControlName="factorToValue"

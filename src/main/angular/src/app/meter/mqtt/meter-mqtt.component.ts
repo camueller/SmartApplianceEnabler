@@ -12,7 +12,7 @@ import {ValueNameChangedEvent} from '../value-name-changed-event';
 import {InputValidatorPatterns} from '../../shared/input-validator-patterns';
 import {ContentProtocol} from '../../shared/content-protocol';
 import {MeterMqttModel} from './meter-mqtt.model';
-import { isRequired } from 'src/app/shared/form-util';
+import {getValidString, isRequired} from 'src/app/shared/form-util';
 
 @Component({
   selector: 'app-meter-mqtt',
@@ -111,8 +111,10 @@ export class MeterMqttComponent implements OnChanges, OnInit {
     this.form.addControl('contentProtocol', new FormControl(this.mqttElectricityMeter.contentProtocol));
     this.form.addControl('path', new FormControl(this.mqttElectricityMeter.path));
     this.form.addControl('timePath', new FormControl(this.mqttElectricityMeter.timePath));
+    this.form.addControl('extractionRegex', new FormControl(this.mqttElectricityMeter?.extractionRegex));
     this.form.addControl('factorToValue', new FormControl(this.mqttElectricityMeter.factorToValue,
       Validators.pattern(InputValidatorPatterns.FLOAT)));
+    this.onContentProtocolChanged(this.mqttElectricityMeter.contentProtocol);
   }
 
   updateModelFromForm(): MqttElectricityMeter | undefined {
@@ -121,9 +123,10 @@ export class MeterMqttComponent implements OnChanges, OnInit {
     const contentProtocol = this.form.controls.contentProtocol.value;
     const path = !!contentProtocol ? this.form.controls.path.value : undefined;
     const timePath = !!contentProtocol ? this.form.controls.timePath.value : undefined;
+    const extractionRegex = getValidString(this.form.controls.extractionRegex.value);
     const factorToValue = this.form.controls.factorToValue.value;
 
-    if (!(topic || name || contentProtocol || path || timePath || factorToValue)) {
+    if (!(topic || name || contentProtocol || path || timePath || extractionRegex || factorToValue)) {
       return undefined;
     }
 
@@ -132,6 +135,7 @@ export class MeterMqttComponent implements OnChanges, OnInit {
     this.mqttElectricityMeter.contentProtocol = contentProtocol;
     this.mqttElectricityMeter.path = path;
     this.mqttElectricityMeter.timePath = timePath;
+    this.mqttElectricityMeter.extractionRegex = extractionRegex;
     this.mqttElectricityMeter.factorToValue = factorToValue;
     return this.mqttElectricityMeter;
   }
