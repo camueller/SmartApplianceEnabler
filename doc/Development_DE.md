@@ -87,10 +87,11 @@ Angesichts dieser Probleme stoppe ich hier erstmal den Versuch, das Testen der a
 ## Erstellen eines neuen Releases
 
 1. `CHANGELOG.md` aktualisieren
-2. Version in `pom.xml` erhöhen
-3. Tag mit neuer Version erstellen, z.B. `2.0.2`
-4. Änderungen inkl. Tags zu Github pushen
-5. Jenkins-Build manuell starten und Docker-Push aktivieren (dauert inkl. Browserstack-Tests aktuell ca. 50 Minuten)
+1. Version in `pom.xml` erhöhen
+1. Version in `README.md` und `README_EN.md` erhöhen 
+1. Tag mit neuer Version erstellen, z.B. `2.0.2`
+1. Änderungen inkl. Tags zu Github pushen
+1. Jenkins-Build manuell starten und Docker-Push aktivieren (dauert inkl. Browserstack-Tests aktuell ca. 50 Minuten)
    1. compiliert Source-Files und baut Java-Backend und Angular-Webanwendung
    2. führt Unit-Tests aus
    3. führt Browserstack-Tests in verschiedenen Browsern aus
@@ -99,12 +100,12 @@ Angesichts dieser Probleme stoppe ich hier erstmal den Versuch, das Testen der a
       3. führt Browserstack-Tests in verschiedenen Browser aus
    4. erstellt Docker-Image für amd64 und pusht es zu Dockerhub
    5. erstellt Docker-Image für arm32 und pusht es zu Dockerhub
-6. Kopieren des Build-Artefakts aus dem Jenkins-Docker-Container auf den Host:
+1. Kopieren des Build-Artefakts aus dem Jenkins-Docker-Container auf den Host:
   `docker cp jenkins:/var/jenkins_home/workspace/SmartApplianceEnabler2/target/SmartApplianceEnabler-2.0.2.war /tmp`
-7. Kopieren des Build-Artefakts vom Server auf den lokalen Rechner: 
+1. Kopieren des Build-Artefakts vom Server auf den lokalen Rechner: 
   `scp server:/tmp/SmartApplianceEnabler-2.0.2.war /tmp`
-8. Erstellen eines neuen Releases auf Github unter Verwendung des bereits angelegten Tags
-9. Bekanntmachen des neuen Releases auf Gihub-Discussions und Sperren des Themas zur Vermeidung von Diskussionen innerhalb der Bekanntmachung
+1. Erstellen eines neuen Releases auf Github unter Verwendung des bereits angelegten Tags
+1. Bekanntmachen des neuen Releases auf Gihub-Discussions und Sperren des Themas zur Vermeidung von Diskussionen innerhalb der Bekanntmachung
 
 ## Lokales Entwickeln
 ### Source-Download
