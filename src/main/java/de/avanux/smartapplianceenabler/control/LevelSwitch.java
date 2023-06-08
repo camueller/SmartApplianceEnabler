@@ -22,6 +22,9 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.gpio.GpioControllable;
+import de.avanux.smartapplianceenabler.gpio.GpioControllableUser;
+import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
+import de.avanux.smartapplianceenabler.modbus.ModbusSlaveUser;
 import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
@@ -40,7 +43,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, Validateable, NotificationProvider {
+public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, Validateable, NotificationProvider, GpioControllableUser, ModbusSlaveUser {
     private transient Logger logger = LoggerFactory.getLogger(LevelSwitch.class);
     @XmlAttribute
     private String id;
@@ -88,11 +91,23 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
         }
     }
 
+    @Override
     public Set<GpioControllable> getGpioControllables() {
         if(this.controls != null) {
             return this.controls.stream()
                     .filter(control -> control instanceof GpioControllable)
                     .map(gpioControllable -> (GpioControllable) gpioControllable)
+                    .collect(Collectors.toSet());
+        }
+        return new HashSet<>();
+    }
+
+    @Override
+    public Set<ModbusSlave> getModbusSlaves() {
+        if(this.controls != null) {
+            return this.controls.stream()
+                    .filter(control -> control instanceof ModbusSlave)
+                    .map(modbusSlave -> (ModbusSlave) modbusSlave)
                     .collect(Collectors.toSet());
         }
         return new HashSet<>();

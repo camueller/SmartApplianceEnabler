@@ -19,7 +19,11 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.gpio.GpioControllable;
+import de.avanux.smartapplianceenabler.gpio.GpioControllableUser;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
+import de.avanux.smartapplianceenabler.modbus.ModbusSlaveUser;
 import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
@@ -34,7 +38,8 @@ import java.util.*;
 
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class WrappedControl implements Control, ApplianceIdConsumer, NotificationProvider {
+public abstract class WrappedControl implements Control, ApplianceIdConsumer, NotificationProvider,
+        GpioControllableUser, ModbusSlaveUser {
     private transient Logger logger = LoggerFactory.getLogger(WrappedControl.class);
     @XmlAttribute
     private String id;
@@ -76,6 +81,16 @@ public abstract class WrappedControl implements Control, ApplianceIdConsumer, No
 
     public Control getControl() {
         return control;
+    }
+
+    @Override
+    public Set<GpioControllable> getGpioControllables() {
+        return control instanceof GpioControllable ? Collections.singleton((GpioControllable) control) : new HashSet<>();
+    }
+
+    @Override
+    public Set<ModbusSlave> getModbusSlaves() {
+        return control instanceof ModbusSlave ? Collections.singleton((ModbusSlave) control) : new HashSet<>();
     }
 
     protected MqttClient getMqttClient() {

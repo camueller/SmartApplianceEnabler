@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlElement;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 
 /**
@@ -48,7 +49,7 @@ import java.util.Timer;
  * The TCP connection to the device remains established across the polls.
  */
 public class ModbusElectricityMeter extends ModbusSlave implements Meter, ApplianceIdConsumer,
-        Validateable, PollPowerExecutor, PollEnergyExecutor, NotificationProvider, MeterUpdateListener {
+        Validateable, PollPowerExecutor, PollEnergyExecutor, NotificationProvider, MeterUpdateListener, ModbusSlaveUser {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusElectricityMeter.class);
     @XmlElement(name = "ModbusRead")
@@ -85,6 +86,10 @@ public class ModbusElectricityMeter extends ModbusSlave implements Meter, Applia
         return notifications;
     }
 
+    @Override
+    public Set<ModbusSlave> getModbusSlaves() {
+        return Collections.singleton(this);
+    }
     public List<ModbusRead> getModbusReads() {
         return modbusReads;
     }

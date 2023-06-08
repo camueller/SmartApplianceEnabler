@@ -22,6 +22,10 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.gpio.GpioControllable;
+import de.avanux.smartapplianceenabler.gpio.GpioControllableUser;
+import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
+import de.avanux.smartapplianceenabler.modbus.ModbusSlaveUser;
 import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
 import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
@@ -30,10 +34,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Timer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable, Meter {
+public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable, Meter, GpioControllableUser, ModbusSlaveUser {
     private transient Logger logger = LoggerFactory.getLogger(MasterElectricityMeter.class);
     @XmlAttribute
     private Boolean masterSwitchOn;
@@ -63,6 +70,16 @@ public class MasterElectricityMeter implements ApplianceIdConsumer, Validateable
 
     public Meter getWrappedMeter() {
         return meter;
+    }
+
+    @Override
+    public Set<GpioControllable> getGpioControllables() {
+        return meter instanceof GpioControllable ? Collections.singleton((GpioControllable) meter) : new HashSet<>();
+    }
+
+    @Override
+    public Set<ModbusSlave> getModbusSlaves() {
+        return meter instanceof ModbusSlave ? Collections.singleton((ModbusSlave) meter) : new HashSet<>();
     }
 
     public void setSlaveElectricityMeter(SlaveElectricityMeter slaveMeter) {

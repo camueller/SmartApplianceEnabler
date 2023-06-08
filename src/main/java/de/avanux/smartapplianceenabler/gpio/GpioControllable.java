@@ -30,10 +30,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-abstract public class GpioControllable implements ApplianceIdConsumer, Validateable {
+abstract public class GpioControllable implements ApplianceIdConsumer, Validateable, GpioControllableUser {
     private transient Logger logger = LoggerFactory.getLogger(GpioControllable.class);
     // FIXME rename to pin
     @XmlAttribute
@@ -41,6 +44,10 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
     private transient PigpioInterface pigpioInterface;
     private transient String applianceId;
 
+    @Override
+    public Set<GpioControllable> getGpioControllables() {
+        return Collections.singleton(this);
+    }
 
     protected PigpioInterface getPigpioInterface() {
         return pigpioInterface;

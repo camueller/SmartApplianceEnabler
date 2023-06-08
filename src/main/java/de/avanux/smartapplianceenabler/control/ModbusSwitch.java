@@ -37,9 +37,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 
-public class ModbusSwitch extends ModbusSlave implements Control, Validateable, NotificationProvider {
+public class ModbusSwitch extends ModbusSlave implements Control, Validateable, NotificationProvider, ModbusSlaveUser {
 
     private transient Logger logger = LoggerFactory.getLogger(ModbusSwitch.class);
     @XmlAttribute
@@ -78,6 +79,11 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     @Override
     public Notifications getNotifications() {
         return notifications;
+    }
+
+    @Override
+    public Set<ModbusSlave> getModbusSlaves() {
+        return Collections.singleton(this);
     }
 
     @Override

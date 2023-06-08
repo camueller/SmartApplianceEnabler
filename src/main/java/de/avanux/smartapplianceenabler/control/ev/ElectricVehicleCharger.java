@@ -26,6 +26,8 @@ import de.avanux.smartapplianceenabler.control.VariablePowerConsumer;
 import de.avanux.smartapplianceenabler.http.EVHttpControl;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
+import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
+import de.avanux.smartapplianceenabler.modbus.ModbusSlaveUser;
 import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationProvider;
@@ -44,14 +46,11 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.Vector;
+import java.util.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceLifeCycle, Validateable, ApplianceIdConsumer,
-        TimeframeIntervalChangedListener, SocValuesChangedListener, NotificationProvider {
+        TimeframeIntervalChangedListener, SocValuesChangedListener, NotificationProvider, ModbusSlaveUser {
 
     private transient Logger logger = LoggerFactory.getLogger(ElectricVehicleCharger.class);
     @XmlAttribute
@@ -155,6 +154,11 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
 
     public void setControl(EVChargerControl control) {
         this.control = control;
+    }
+
+    @Override
+    public Set<ModbusSlave> getModbusSlaves() {
+        return control instanceof EVModbusControl ? Collections.singleton((EVModbusControl) control) : new HashSet<>();
     }
 
     public ElectricVehicleHandler getElectricVehicleHandler() {

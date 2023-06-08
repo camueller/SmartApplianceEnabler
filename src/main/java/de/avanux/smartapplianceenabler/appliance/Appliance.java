@@ -23,11 +23,9 @@ import de.avanux.smartapplianceenabler.control.*;
 import de.avanux.smartapplianceenabler.control.ev.*;
 import de.avanux.smartapplianceenabler.gpio.GpioControllable;
 import de.avanux.smartapplianceenabler.gpio.GpioAccessProvider;
+import de.avanux.smartapplianceenabler.gpio.GpioControllableUser;
 import de.avanux.smartapplianceenabler.meter.*;
-import de.avanux.smartapplianceenabler.modbus.EVModbusControl;
-import de.avanux.smartapplianceenabler.modbus.ModbusElectricityMeterDefaults;
-import de.avanux.smartapplianceenabler.modbus.ModbusSlave;
-import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
+import de.avanux.smartapplianceenabler.modbus.*;
 import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.Notification;
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
@@ -417,27 +415,13 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     private Set<GpioControllable> getGpioControllables() {
         Set<GpioControllable> controllables = new HashSet<GpioControllable>();
         if(meter != null) {
-            if(meter instanceof S0ElectricityMeter) {
-                controllables.add((S0ElectricityMeter) meter);
-            } else if(meter instanceof MasterElectricityMeter) {
-                Meter wrappedMeter = ((MasterElectricityMeter) meter).getWrappedMeter();
-                if(wrappedMeter instanceof GpioControllable) {
-                    controllables.add((GpioControllable) wrappedMeter);
-                }
+            if(meter instanceof GpioControllableUser) {
+                controllables.addAll(((GpioControllableUser) meter).getGpioControllables());
             }
         }
         if(control != null) {
-            if(control instanceof GpioControllable) {
-                controllables.add((GpioControllable) control);
-            }
-            else if(control instanceof WrappedControl) {
-                Control wrappedControl = ((WrappedControl) control).getControl();
-                if(wrappedControl instanceof GpioControllable) {
-                    controllables.add((GpioControllable) wrappedControl);
-                }
-            }
-            else if(control instanceof LevelSwitch) {
-                controllables.addAll(((LevelSwitch) control).getGpioControllables());
+            if(control instanceof GpioControllableUser) {
+                controllables.addAll(((GpioControllableUser) control).getGpioControllables());
             }
         }
         return controllables;
@@ -531,31 +515,13 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     private Set<ModbusSlave> getModbusSlaves() {
         Set<ModbusSlave> slaves = new HashSet<ModbusSlave>();
         if(meter != null) {
-            if(meter instanceof ModbusElectricityMeter) {
-                slaves.add((ModbusElectricityMeter) meter);
-            }
-            else if (meter instanceof MasterElectricityMeter) {
-                Meter wrappedMeter = ((MasterElectricityMeter) meter).getWrappedMeter();
-                if(wrappedMeter instanceof ModbusElectricityMeter) {
-                    slaves.add((ModbusElectricityMeter) wrappedMeter);
-                }
+            if(meter instanceof ModbusSlaveUser) {
+                slaves.addAll(((ModbusSlaveUser) meter).getModbusSlaves());
             }
         }
         if(control != null) {
-            if(control instanceof ModbusSwitch) {
-                slaves.add((ModbusSwitch) control);
-            }
-            else if(control instanceof StartingCurrentSwitch) {
-                Control wrappedControl = ((StartingCurrentSwitch) control).getControl();
-                if(wrappedControl instanceof ModbusSwitch) {
-                    slaves.add((ModbusSwitch) wrappedControl);
-                }
-            }
-            else if(isElectricVehicleCharger()) {
-                EVChargerControl evChargerControl = ((ElectricVehicleCharger) control).getControl();
-                if(evChargerControl instanceof EVModbusControl) {
-                    slaves.add((EVModbusControl) evChargerControl);
-                }
+            if(control instanceof ModbusSlaveUser) {
+                slaves.addAll(((ModbusSlaveUser) control).getModbusSlaves());
             }
         }
         return slaves;
