@@ -47,3 +47,6 @@ The shell script for using it as a notification channel in *Smart Appliance Enab
 
 ### Prowl (https://www.prowlapp.com)
 The shell script for using it as a notification channel in *Smart Appliance Enabler* is https://github.com/camueller/SmartApplianceEnabler/blob/master/run/notifyWithProwl.sh.
+
+### Home Assistant (https://www.home-assistant.io)
+The shell script for using it as a notification channel in *Smart Appliance Enabler* is https://github.com/camueller/SmartApplianceEnabler/blob/master/run/notifyWithHA.sh.

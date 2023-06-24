@@ -47,3 +47,6 @@ Das Shell-Script für die Nutzung als Benachrichtigungskanal im *Smart Appliance
 
 ### Prowl (https://www.prowlapp.com)
 Das Shell-Script für die Nutzung als Benachrichtigungskanal im *Smart Appliance Enabler* ist https://github.com/camueller/SmartApplianceEnabler/blob/master/run/notifyWithProwl.sh.
+
+### Home Assistant (https://www.home-assistant.io)
+Das Shell-Script für die Nutzung als Benachrichtigungskanal im *Smart Appliance Enabler* ist https://github.com/camueller/SmartApplianceEnabler/blob/master/run/notifyWithHA.sh.
