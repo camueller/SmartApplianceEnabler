@@ -86,7 +86,11 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     protected void pollPower(LocalDateTime now) {
         if(pollPowerExecutor != null) {
             Double power = pollPowerExecutor.pollPower();
-            if(power != null) {
+            if(power == null) {
+                previousPowerTimestamp = null;
+                currentPower = null;
+                currentPowerTimestamp = null;
+            } else {
                 previousPowerTimestamp = currentPowerTimestamp;
                 currentPower = power;
                 currentPowerTimestamp = now;

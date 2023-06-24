@@ -88,7 +88,13 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     protected void pollEnergy(LocalDateTime now) {
         if(pollEnergyExecutor != null) {
             Double energy = pollEnergyExecutor.pollEnergy(now);
-            if(energy != null) {
+            if(energy == null) {
+                previousEnergyCounter = null;
+                previousEnergyCounterTimestamp = null;
+                currentEnergyCounter = null;
+                currentEnergyCounterTimestamp = null;
+            }
+            else {
                 previousEnergyCounter = currentEnergyCounter;
                 previousEnergyCounterTimestamp = currentEnergyCounterTimestamp;
                 currentEnergyCounter = energy;
