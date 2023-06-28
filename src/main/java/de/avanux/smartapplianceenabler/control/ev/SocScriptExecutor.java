@@ -79,7 +79,11 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
             logger.warn("{}: interrupting SOC script: evId={}", applianceId, evId);
             this.thread.interrupt();
         }
-        this.thread = null;
+        setThread(null);
+    }
+
+    private void setThread(Thread thread) {
+        this.thread = thread;
     }
 
     @Override
@@ -87,9 +91,11 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
         if(socScript.getScript() != null) {
             var result = socScript.getResult();
             logger.debug("{}: SOC script execution result: {}", applianceId, result);
-            this.listener.handleSocScriptExecutionResult(
-                    this.nowForTesting != null ? this.nowForTesting : LocalDateTime.now(), this.evId, result);
+            if(result != null) {
+                this.listener.handleSocScriptExecutionResult(
+                        this.nowForTesting != null ? this.nowForTesting : LocalDateTime.now(), this.evId, result);
+            }
         }
-        this.thread = null;
+        setThread(null);
     }
 }
