@@ -140,8 +140,12 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
     }
 
     public Double startEnergyCounter() {
+        return startEnergyCounter(null);
+    }
+
+    public Double startEnergyCounter(Double startEnergyCounter) {
         if(! this.started) {
-            this.startEnergyCounter = this.pollEnergyExecutor.pollEnergy(LocalDateTime.now());
+            this.startEnergyCounter = startEnergyCounter != null ? startEnergyCounter : this.pollEnergyExecutor.pollEnergy(LocalDateTime.now());
             logger.debug("{}: Start energy counter: {}", applianceId, startEnergyCounter);
             this.started = true;
         }
@@ -167,14 +171,15 @@ public class PollEnergyMeter implements ApplianceIdConsumer {
 
     public void reset() {
         logger.debug("{}: Reset energy counter", applianceId);
+        Double stopEnergyCounter = null;
         var wasStarted = this.started;
         if(wasStarted) {
-            stopEnergyCounter();
+            stopEnergyCounter = stopEnergyCounter();
         }
         this.startEnergyCounter = null;
         this.totalEnergy = null;
         if(wasStarted) {
-            startEnergyCounter();
+            startEnergyCounter(stopEnergyCounter);
         }
     }
 

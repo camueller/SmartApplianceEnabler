@@ -86,6 +86,11 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     protected void pollPower(LocalDateTime now) {
         if(pollPowerExecutor != null) {
             Double power = pollPowerExecutor.pollPower();
+            polledPower(now, power);
+        }
+    }
+
+    private void polledPower(LocalDateTime now, Double power) {
             if(power == null) {
                 previousPowerTimestamp = null;
                 currentPower = null;
@@ -98,7 +103,6 @@ public class PollPowerMeter implements ApplianceIdConsumer {
             meterUpdateListeners.forEach(
                     listener -> listener.onMeterUpdate(now, power != null ? power.intValue() : 0, getTotalEnergy())
             );
-        }
     }
 
     public double getTotalEnergy() {
@@ -126,16 +130,25 @@ public class PollPowerMeter implements ApplianceIdConsumer {
         }
         return diffEnergy;
     }
-
     public Double startEnergyCounter() {
+        return startEnergyCounter(null);
+    }
+
+    public Double startEnergyCounter(Double startEnergyCounter) {
         if(! this.started) {
-            this.pollPowerExecutor.pollPower();
+            if(startEnergyCounter != null) {
+                polledPower(LocalDateTime.now(), startEnergyCounter);
+            }
+            else {
+                this.pollPowerExecutor.pollPower();
+            }
             this.startEnergyCounter = totalEnergy;
             this.started = true;
-            logger.debug("{}: Start energy counter: {}kWh", applianceId, energyFormat.format(startEnergyCounter));
+            logger.debug("{}: Start energy counter: {}kWh", applianceId, energyFormat.format(this.startEnergyCounter));
         }
-        return startEnergyCounter;
+        return this.startEnergyCounter;
     }
+
 
     public Double stopEnergyCounter() {
         this.pollPowerExecutor.pollPower();
@@ -150,16 +163,17 @@ public class PollPowerMeter implements ApplianceIdConsumer {
 
     public void reset() {
         logger.debug("{}: Reset energy counter", applianceId);
+        Double stopEnergyCounter = null;
         var wasStarted = this.started;
         if(wasStarted) {
-            stopEnergyCounter();
+            stopEnergyCounter = stopEnergyCounter();
         }
         this.startEnergyCounter = null;
         this.totalEnergy = 0.0;
         this.previousPowerTimestamp = null;
         this.currentPowerTimestamp = null;
         if(wasStarted) {
-            startEnergyCounter();
+            startEnergyCounter(stopEnergyCounter);
         }
     }
 
