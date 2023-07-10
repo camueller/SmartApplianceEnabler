@@ -3,9 +3,25 @@ Der [Edimax SP-2101W](http://www.edimax-de.eu/edimax/merchandise/merchandise_det
 
 ## SP-2101W als Stromzähler
 Die aktuelle Leistungsaufnahme des SP-2101W kann wie folgt abgefragt werden (Passwort hier 12345678):
+```bash
+$ curl \
+    -s \
+    -X POST \
+    -d '<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="get"><NOW_POWER><Device.System.Power.NowPower></Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>' \
+    http://admin:12345678@192.168.69.74:10000/smartplug.cgi
 ```
-curl -s -X POST -d '<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="get"><NOW_POWER><Device.System.Power.NowPower></Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>' http://admin:12345678@192.168.69.74:10000/smartplug.cgi
-<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="get"><NOW_POWER><Device.System.Power.NowPower>52.49</Device.System.Power.NowPower></NOW_POWER></CMD></SMARTPLUG>
+
+Das Ergebnis sieht dann (zur besseren Lesbarkeit formatiert) bspw. wie folgt aus:
+
+```xml
+<?xml version="1.0" encoding="UTF8"?>
+<SMARTPLUG id="edimax">
+    <CMD id="get">
+        <NOW_POWER>
+            <Device.System.Power.NowPower>52.49</Device.System.Power.NowPower>
+        </NOW_POWER>
+    </CMD>
+</SMARTPLUG>
 ```
 
 Bei der Angabe der für die Abfrage notwendigen XML-Struktur im *Smart Appliance Enabler* ist zu beachten, dass diese _encoded_ ist. Dazu kann z.B. http://coderstoolbox.net/string/#!encoding=xml&action=encode&charset=us_ascii genutzt werden.
@@ -25,13 +41,21 @@ Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabl
 Der Schaltzustand des SP-2101W kann wie folgt geändert werden (Passwort hier 12345678):
 
 _Einschalten_
-```
-curl -s -X POST -d '<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="setup"><Device.System.Power.State>ON</Device.System.Power.State></CMD></SMARTPLUG>'  http://admin:12345678@192.168.1.1:10000/smartplug.cgi
+```bash
+$ curl \
+    -s \
+    -X POST \
+    -d '<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="setup"><Device.System.Power.State>ON</Device.System.Power.State></CMD></SMARTPLUG>' \
+    http://admin:12345678@192.168.1.1:10000/smartplug.cgi
 ```
 
 _Ausschalten_
-```
-curl -s -X POST -d '<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="setup"><Device.System.Power.State>OFF</Device.System.Power.State></CMD></SMARTPLUG>'  http://admin:12345678@192.168.1.1:10000/smartplug.cgi
+```bash
+$ curl \
+    -s \
+    -X POST \
+    -d '<?xml version="1.0" encoding="UTF8"?><SMARTPLUG id="edimax"><CMD id="setup"><Device.System.Power.State>OFF</Device.System.Power.State></CMD></SMARTPLUG>' \
+    http://admin:12345678@192.168.1.1:10000/smartplug.cgi
 ```
 
 Aus obigem Beispiel ergeben sich folgende Feld-Inhalte im *Smart Appliance Enabler*:
