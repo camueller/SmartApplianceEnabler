@@ -1,17 +1,17 @@
 # Konfiguration
 
 ## Allgemeine Hinweise
-Die Konfiguration erfolgt über das Web-Frontend des *Smart Appliance Enabler*. Dazu muss man im Web-Browser lediglich eingeben `http://raspi:8080`, wobei *raspi* durch den Hostnamen oder die IP-Adresse des Raspberry Pi ersetzt werden muss. Es öffnet sich die Status-Seite mit dem Hinweis, dass noch keine Geräte konfiguert sind.
+Die Konfiguration erfolgt über das Web-Frontend des *Smart Appliance Enabler*. Dazu muss man im Web-Browser lediglich `http://raspi:8080` eingeben, wobei *raspi* durch den Hostnamen oder die IP-Adresse des Raspberry Pi ersetzt wird. Es öffnet sich die Status-Seite mit dem Hinweis, dass noch keine Geräte konfiguert sind.
 
 Die Web-Oberfläche ist bewusst einfach und dennoch komfortabel gehalten, um Browser auf PC, Tablett und Handy gleichermaßen zu unterstützen.
 
-Grundsätzlich gilt, dass Eingaben/Änderungen erst nach dem [Klicken der `Speichern`-Schaltfläche](ConfigurationFiles_DE.md#speichern) gespeichert sind. Beim Wechsel auf ein andere Seite erfolgt eine Warnung, wenn nicht gespeicherte Änderungen vorhanden sind.
+Grundsätzlich gilt, dass Eingaben/Änderungen erst nach dem [Klicken der `Speichern` Schaltfläche](ConfigurationFiles_DE.md#speichern) gespeichert sind. Beim Wechsel auf ein andere Seite erfolgt eine Warnung, wenn nicht gespeicherte Änderungen vorhanden sind.
 
 Werden bei Eingabefeldern Inhalte mit grauer Schrift angezeigt, so handelt es sich um Voreinstellungen, d.h. wenn kein Wert eingegeben wird, gilt dieser Wert ohne dass er eingegeben werden muss.
 
-Pflichtfelder sind mit einem `*` hinter der Feldbezeichnung gekennzeichnet. Solange nicht alle Pflichtfelder ausgefüllt sind, ist die `Speichern`-Schaltfläche nicht aktiv. 
+Pflichtfelder sind mit einem `*` hinter der Feldbezeichnung gekennzeichnet. Solange nicht alle Pflichtfelder ausgefüllt sind, ist die `Speichern` Schaltfläche nicht aktiv. 
 
-Bei ungültigen Eingaben erscheint unter dem Eingabefled eine Fehlermeldung. Solange auf einer Seite solche Fehlermeldungen existieren, ist die `Speichern`-Schaltfläche nicht aktiv.
+Bei ungültigen Eingaben erscheint unter dem Eingabefled eine Fehlermeldung. Solange auf einer Seite solche Fehlermeldungen existieren, ist die `Speichern` Schaltfläche nicht aktiv.
 
 Beim ersten Start ohne vorhandene Konfigurationsdateien wird folgende Seite angezeigt:
 
@@ -30,12 +30,12 @@ Nachfolgend finden sich im Menü Links
 - zur [Projekt-Hompage](https://github.com/camueller/SmartApplianceEnabler)
 - zum [Anwender-Forum](https://github.com/camueller/SmartApplianceEnabler/discussions)
 
-Unterhalb des Eintrags für `Neues Gerät` werden die konfigurierten Geräte mit Zähler, Schalter und Schaltzeiten angezeigt, wenn sie vorhanden sind.
+Unterhalb des Eintrags für `Neues Gerät` werden die konfigurierten Geräte mit Zähler, Schalter und Schaltzeiten angezeigt.
 
 ![Menü mit Geräten](../pics/fe/MenuStatus_DE.png)
 
 ## Grundlagen
-Vor Beginn der eigentlichen Konfiguration sollten folgende Zusammenhänge bewusst sein, deren Nichtbeachtung dazu führen wird, dass der *Smart Appliance Enabler* nicht funktionieren kann:
+Vor Beginn der eigentlichen Konfiguration sollten die folgenden Zusammenhänge klar sein. Deren Nichtbeachtung wird dazu führen, dass der *Smart Appliance Enabler* nicht funktionieren kann:
 
 1. Der *Sunny Home Manager* berücksichtigt nur die Leistungsaufnahme von Geräten, für die auch der Zustand "eingeschaltet" vom *Smart Appliance Enabler* übermittelt wird (siehe [Schalter](Control_DE.md))
 2. Der *Sunny Home Manager* wird nur dann ein Gerät durch Schaltbefehle steuern, wenn der *Smart Appliance Enabler* zuvor einen Bedarf gemeldet hat. Grundlage dafür ist
