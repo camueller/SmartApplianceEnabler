@@ -76,6 +76,7 @@ This is a security risk - please login as the 'pi' user and type 'passwd' to set
 pi@raspberrypi:~ $
 ```
 ### Increase root file system
+<a name="root-filesystem-enlarge"></a>
 The Raspbian images are usually created for SD cards with a size of 2 GB. If the SD card used is larger, the additional storage space remains unused. However, Raspbian includes the `raspi-config` utility that allows you to easily enlarge the root filesystem to use the entire SD card (a 16 GB SD card was used here):
 
 ```console
