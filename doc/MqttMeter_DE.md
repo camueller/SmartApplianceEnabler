@@ -6,7 +6,7 @@ Für einen MQTT-Zähler muss dessen `Topic` angegeben werden sowie der `Paramete
 
 Wenn die MQTT-Nachticht im **JSON-Format** geliefert wird, sollte das als `Format` eingestellt werden. Damit lässt sich durch die Angabe des `Pfad für Extraktion` der Zahlenwert sehr leicht [aus der MQTT-Nachricht extrahieren](ValueExtraction_DE.md). Wird der optionale `Pfad für die Zeit-Extraktion` angegeben, wird die aus der MQTT-Nachricht extrahierte Zeit anstelle der aktuellen Zeit für die weitere Verarbeitung verwendet.
 
-Alternativ (oder auch nachgelagert zur JSON-Interpretation) kann ein [Regulärer Ausdruck zum Extrahieren](ValueExtraction_DE.md) angegeben werden, falls der Zahlenwert aus einem Text (XML, ...) extrahiert werden muss. Dies gilt auch, wenn die MQTT-Nachricht scheinbar nur die Zahl enthält, diese aber auch einen Zeilenumbruch (CR/LF) beinhaltet.
+Alternativ (oder auch nachgelagert zur JSON-Interpretation) kann ein [regulärer Ausdruck zum Extrahieren](ValueExtraction_DE.md) angegeben werden, falls der Zahlenwert aus einem Text (XML, ...) extrahiert werden muss. Dies gilt auch, wenn die MQTT-Nachricht scheinbar nur die Zahl enthält, diese aber auch einen Zeilenumbruch (CR/LF) beinhaltet.
 
 Für den Parameter `Zählerstand` wird der Wert in kWh und für den Parameter `Leistung` in W benötigt. Falls die Werte in anderen Einheiten geliefert werden, muss ein `Umrechnungsfaktor` angegeben werden, der mit dem gelieferten Wert multipliziert wird. Wird beispielsweise der Parameter `Leistung` in mW geliefert, muss als `Umrechnungsfaktor` der Wert `0.001` angegeben werden.
 

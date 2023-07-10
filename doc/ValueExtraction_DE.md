@@ -51,7 +51,7 @@ String replacement result:
 
 Der Wert 26 wurde also erfolgreich mit obigem Regulären Ausdruck aus der Antwort extrahiert.
 
-Wenn ein Regulärer Ausdruck konfiguriert wird, sollte im *Smart Appliance Enabler* als `Format` kein Wert konfiguriert werden!
+Wenn ein regulärer Ausdruck konfiguriert wird, sollte im *Smart Appliance Enabler* als `Format` kein Wert konfiguriert werden!
 
 Im *Smart Appliance Enabler* muss für dieses Beispiel konfiguriert werden:
 

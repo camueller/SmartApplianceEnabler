@@ -86,9 +86,9 @@ Die Versionsnummer im Namen der war-Datei muss natürlich entsprechend der verwe
 ### SAE3
 Die Leistungaufname des Gerätes, die an den *Sunny Home Manager* übermittelt wird, wird über den im *Smart Appliance Enabler* konfigurierten Zähler bestimmt. In Abhängkeit von dessen Typ kann man im Log die Leistungaufname sehen:
 - [S0](SOMeter_DE.md#log)
-- [HTTP](HttpMeter_DE.md#log): wenn die HTTP-Response mehr als den "nackten" Zahlenwert enthält, muss ein [Regulärer Ausdruck zum Extrahieren](ValueExtraction_DE.md) konfiguriert werden!
+- [HTTP](HttpMeter_DE.md#log): wenn die HTTP-Response mehr als den "nackten" Zahlenwert enthält, muss ein [regulärer Ausdruck zum Extrahieren](ValueExtraction_DE.md) konfiguriert werden!
 - [Modbus](ModbusMeter_DE.md#log)
-- [MQTT](MqttMeter_DE.md#log): wenn die MQTT-Response mehr als den "nackten" Zahlenwert enthält, muss ein [Regulärer Ausdruck zum Extrahieren](ValueExtraction_DE.md) konfiguriert werden!
+- [MQTT](MqttMeter_DE.md#log): wenn die MQTT-Response mehr als den "nackten" Zahlenwert enthält, muss ein [regulärer Ausdruck zum Extrahieren](ValueExtraction_DE.md) konfiguriert werden!
 
 ### SAE4
 Wenn ein Schaltbefehl vom *Sunny Home Manager* empfangen wird, wird dieser an den für das Gerät im *Smart Appliance Enabler* konfigurierten Schalter weitergegeben. In Abhängigkeit In Abhängkeit von dessen Typ kann man im Log den Schaltbefehl sehen:  
