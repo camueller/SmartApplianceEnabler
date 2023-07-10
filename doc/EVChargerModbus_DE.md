@@ -8,25 +8,25 @@ Bevor die Wallbox-spezifische Modbus-Konfiguration erstellt werden kann, müssen
 
 ## Wallbox-spezifische Modbus-Konfiguration
 
-Die Wallbox-spezifische Modbus-Konfiguration des *Smart Appliance Enabler* besteht im Wesentlichen aus 3 Teilen:
+Die Wallbox-spezifische Modbus-Konfiguration des *Smart Appliance Enabler* besteht im Wesentlichen aus drei Teilen:
 
 ### Wallbox-Status
 
 Das Auslesen des Wallbox-Status ist ein Lesezugriff.
 
-Zur Bestimmung des Wallbox-Status müssen 4 Parameter bestimmt werden:
+Zur Bestimmung des Wallbox-Status müssen vier Parameter bestimmt werden:
 - Ladestecker nicht angeschlossen
 - Ladestecker angeschlossen
 - Ladevorgang läuft
 - Ladegerät meldet Fehler
 
-Jeder Parameter muss zusammen mit einem [Regulärer Ausdruck/Regex](ValueExtraction_DE.md) einem Register zugeordnet werden, d.h. wenn der Wert in diesem Register auf den Regulären Ausruck passt, entspricht der Wallbox-Status diesem Parameter.
+Jeder Parameter muss zusammen mit einem [regulären Ausdruck/Regex](ValueExtraction_DE.md) einem Register zugeordnet werden, d.h. wenn der Wert in diesem Register auf den regulären Ausdruck passt, entspricht der Wallbox-Status diesem Parameter.
 
-Es können mehrere Parameter demselben Register zugeordnet werden, wobei jeder Parameter einen anderen Reguläre Ausdruck haben sollte.
+Es können mehrere Parameter demselben Register zugeordnet werden, wobei jeder Parameter einen anderen regulären Ausdruck haben sollte.
 
-Wenn man einen Parameter mehreren Registern zuordnet, entspricht das einer UND-Verknüfung, d.h. der Wallbox-Status entspricht nur dann diesem Parameter, wenn alle zugeordneten Register einen Wert haben, der auf den jeweiligen Regulären Ausruck passt.
+Wenn man einen Parameter mehreren Registern zuordnet, entspricht das einer UND-Verknüfung, d.h. der Wallbox-Status entspricht nur dann diesem Parameter, wenn alle zugeordneten Register einen Wert haben, der auf den jeweiligen regulären Ausdruck passt.
 
-In der Modbus-Dokumentation der Wallbox sucht man bei den Input-Registern (Read) nach einem oder mehreren Registern, welche die o.g. 4 Parameter des Status abbilden können.
+In der Modbus-Dokumentation der Wallbox sucht man bei den Input-Registern (Read) nach einem oder mehreren Registern, welche die o.g. vier Parameter des Status abbilden können.
 
 _Beispiel:_
 
@@ -43,7 +43,7 @@ Bei Wallboxen mit Phoenix Contact EM-CP-PP-ETH-Controller ist der Status im Regi
 
 Das Beginnen und Beenden des Ladevorganges sind zwei Aktionen, die einen Schreibzugriff darstellen.
 
-In der Modbus-Dokumentation der Wallbox sucht man bei den Holding-Registern (Write) nach einem Register, welche das Setzen des Ladestatus erlaubt. Nach dem Beenden des Ladevorganges sollte der Ladevorgang erneut gestartet werden können, ohne das Fahrzeug von der Wallbox zu trennen.
+In der Modbus-Dokumentation der Wallbox sucht man bei den Holding-Registern (Write) nach einem Register, welches das Setzen des Ladestatus erlaubt. Nach dem Beenden des Ladevorganges sollte der Ladevorgang erneut gestartet werden können, ohne das Fahrzeug von der Wallbox zu trennen.
 
 _Beispiel:_
 
@@ -58,7 +58,7 @@ Bei Wallboxen mit Phoenix Contact EM-CP-PP-ETH-Controller erfolgt das Setzen des
 
 Das Setzen der Ladestromstärke stellt ebenfalls einen Schreibzugriff dar.
 
-In der Modbus-Dokumentation der Wallbox sucht man bei den Holding-Registern (Write) nach einem Register, welche das Setzen der Ladestromstärke erlaubt.
+In der Modbus-Dokumentation der Wallbox sucht man bei den Holding-Registern (Write) nach einem Register, welches das Setzen der Ladestromstärke erlaubt.
 
 _Beispiel:_
 
