@@ -13,8 +13,8 @@ Daraus ergibt sich zwangsläufig, dass Du für Dich **einen Github-Account (ist 
 Die nachfolgenden Schritte finden alle im Web-Browser statt - Du musst lokal nichts installieren oder ausführen!
 
 1. Erstelle ein Kopie ("Fork") des *Smart Appliance Enabler* Repositories (https://github.com/camueller/SmartApplianceEnabler) in Deinem Github-Account
-1. An den Dateien dieses "geforkten" Repositories kannst Du jetzt die eigentlichen Änderungen vornehmen oder neue Dateien hinzufügen
-1. Erstelle einen "Pull Request", um damit die Übernahme Deiner Änderungen in das originale *Smart Appliance Enabler* Repository zu beantragen
+2. An den Dateien dieses "geforkten" Repositories kannst Du jetzt die eigentlichen Änderungen vornehmen oder neue Dateien hinzufügen
+3. Erstelle einen "Pull Request", um damit die Übernahme Deiner Änderungen in das originale *Smart Appliance Enabler* Repository zu beantragen
 
 Zu diesem Ablauf gibt es ein sehr gutes Video, das leider nur in Englisch verfügbar ist:
 
