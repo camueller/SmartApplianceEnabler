@@ -1,5 +1,5 @@
 # Docker-Images 
-Für den *Smart Appliance Enabler* werden Docker-Images bereitgestellt für `arm` (inklusive Raspberry Pi) und `amd64`, welche jeweils die passende Java-Version beinhalten (deshalb Plaform-spezifische Images).
+Für den *Smart Appliance Enabler* werden Docker-Images für `arm` (inklusive Raspberry Pi) und `amd64` bereitgestellt, welche jeweils die passende Java-Version beinhalten (Platform-spezifische Images).
 
 Das Repository für dieses Images ist [avanux/smartapplianceenabler](https://hub.docker.com/r/avanux/smartapplianceenabler)
 

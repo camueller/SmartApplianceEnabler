@@ -6,7 +6,7 @@ Der [*SMA Connection Assist*](https://www.sma.de/produkte/monitoring-control/sma
 
 Zunächst musst der [*SMA Connection Assist* heruntergeladen](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/run/connection-assist.jar) werden.
 
-Um diesen auszuführen, muss eine Java-Runtime auf Eurem PC installiert sein - ggf. könnt Ihr sie hier herunterladen (Standardeinstellungen ausgewählt lassen): https://adoptopenjdk.net/
+Um diesen auszuführen, muss eine Java-Runtime auf dem PC installiert sein - ggf. könnt ihr sie hier herunterladen (Standardeinstellungen ausgewählt lassen): https://adoptopenjdk.net/
 
 In dem Verzeichnis, in sich die heruntergeladene  jar-Datei des *SMA Connection Assist* befindet, muss dieser wie folgt gestartet werden (Versionsnummer ggf. anpassen!):
 ```bash
