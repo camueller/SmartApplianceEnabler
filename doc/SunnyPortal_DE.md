@@ -35,7 +35,7 @@ Wenn stattdessen die Fehlermeldung angezeigt wird
 ### Maximale Anzahl der Geräte im Sunny Portal
 <a name="max-devices"></a>
 
-Aktuell unterstützt der Sunny Home Manager *maximal 12 Geräte*. Zur Gesamtzahl zählen neben den Geräten, die mit dem SEMP Protokoll angesprochen werden, auch z.B. SMA Bluetooth Funksteckdosen - also alle Geräte, die im Sunny Portal in der Verbraucherübersicht angezeigt werden.
+Aktuell unterstützt der Sunny Home Manager *maximal 23 Geräte*. Zur Gesamtzahl zählen neben den Geräten, die mit dem SEMP Protokoll angesprochen werden, bspw. auch SMA Bluetooth Funksteckdosen - also alle Geräte, die im Sunny Portal in der Verbraucherübersicht angezeigt werden.
 
 ## Vebraucherbilanz
 In der *Verbraucherbilanz* sollte ab jetzt das neue Gerät mit seinem Verbrauch aufgeführt werden:
