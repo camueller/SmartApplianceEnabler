@@ -1,7 +1,7 @@
 # Configuration files
 
 ## Device2EM.xml and Appliances.xml
-he configuration of the *Smart Appliance Enabler* is located in two [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language) files:
+The configuration of the *Smart Appliance Enabler* is located in two [XML](https://de.wikipedia.org/wiki/Extensible_Markup_Language) files:
 * the file `Device2EM.xml` contains a device description for the Sunny Home Manager
 * the file `Appliances.xml` contains the device configuration for the *Smart Appliance Enabler*
 
