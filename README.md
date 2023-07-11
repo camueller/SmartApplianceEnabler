@@ -28,9 +28,9 @@
 
 ![SmartHomeEnablerClip](pics/clip/SaeClip_DE.gif)
 
-Dazu meldet der *Smart Appliance Enabler* dem *Sunny Home Manager* **Bedarfsanforderungen** dieser Geräte um diesem eine optimale Planung des Eigenverbrauchs zu ermöglichen. Entsprechend dieser Planung empfängt der *Smart Appliance Enabler* **Schaltbefehle**, die er an die von ihm verwalteten Geräte weiterleitet. Falls für diese Geräte individuelle, **digitale Stromzähler** verwendet werden, können diese ausgelesen werden und der Stromverbrauch an den *Sunny Home Manager* gemeldet werden, um diesen beim Lernen der Verbrauchscharakteristik zu unterstüzen und Verbräuche im [Sunny Portal](https://www.sunnyportal.com/) zu visualieren.
+Dazu meldet der *Smart Appliance Enabler* dem *Sunny Home Manager* **Bedarfsanforderungen** dieser Geräte, um diesem eine optimale Planung des Eigenverbrauchs zu ermöglichen. Entsprechend dieser Planung empfängt der *Smart Appliance Enabler* **Schaltbefehle**, die er an die von ihm verwalteten Geräte weiterleitet. Falls für diese Geräte individuelle, **digitale Stromzähler** vorhanden sind, können diese ausgelesen und der Stromverbrauch an den *Sunny Home Manager* gemeldet werden, um diesen beim Lernen der Verbrauchscharakteristik zu unterstützen und Verbräuche im [Sunny Portal](https://www.sunnyportal.com/) zu visualisieren.
 
-Die nachfolgende Grafik aus dem [Sunny Portal](https://www.sunnyportal.com/) zeigt einen sonnigen Herbstag, an dem die [Wallbox](doc/EVCharger_DE.md) optimal angesteuert wurde, um das E-Auto so zu laden, dass Netzbezug vermieden wird. Gleichzeitig musste der *Sunny Home Manager* den Geschirrspüler und die Waschmaschine entsprechend der eingestellten Anforderungen laufen lassen. Zusätzlich waren auch die Wärmepumpe (Warmwasser und Heizung) und die Espressomaschine zeitweise eingeschaltet, die nicht durch den *Sunny Home Manager* gesteuert werden, aber natürlich auch Strom verbrauchen.
+Die nachfolgende Grafik aus dem [Sunny Portal](https://www.sunnyportal.com/) zeigt einen sonnigen Herbsttag, an dem die [Wallbox](doc/EVCharger_DE.md) optimal angesteuert wurde, um das E-Auto so zu laden und so Netzbezug zu vermeiden. Gleichzeitig musste der *Sunny Home Manager* den Geschirrspüler und die Waschmaschine entsprechend der eingestellten Anforderungen laufen lassen. Zusätzlich waren auch die Wärmepumpe (Warmwasser und Heizung) und die Espressomaschine zeitweise eingeschaltet, die nicht durch den *Sunny Home Manager* gesteuert werden, aber natürlich auch Strom verbrauchen.
 
 ![SHM_Verbraucherbilanz_GuterTag](pics/shm/Verbraucherbilanz_GuterTag.png)
 
@@ -38,7 +38,7 @@ Die nachfolgende Grafik aus dem [Sunny Portal](https://www.sunnyportal.com/) zei
 
 ## Anforderungen
 
-Der *Smart Appliance Enabler* wurde in **Java** implementiert und läuft grundsätzlich auf jedem Gerät, für das eine Java Virtual Machine mit Java 11 existiert. Neben dem compilierten Code werden diverse Scripts bereitgestellt in denen von **Linux** als Betriebssystem ausgegangen wird. Falls Geräte über [GPIO](https://www.itwissen.info/GPIO-general-purpose-input-output.html) angebunden werden sollen, benötigt der *Smart Appliance Enabler* einen [**Raspberry Pi**](doc/Raspberry_DE.md) als Hardware. 
+Der *Smart Appliance Enabler* wurde in **Java** implementiert und läuft grundsätzlich auf jedem Gerät, für das eine Java Virtual Machine mit Java 11 existiert. Neben dem compilierten Code werden diverse Scripts bereitgestellt, in denen von **Linux** als Betriebssystem ausgegangen wird. Falls Geräte über [GPIO](https://www.itwissen.info/GPIO-general-purpose-input-output.html) angebunden werden sollen, benötigt der *Smart Appliance Enabler* einen [**Raspberry Pi**](doc/Raspberry_DE.md) als Hardware. 
 
 ## Stromzähler
 
@@ -87,7 +87,7 @@ Die [Konfiguration](doc/Configuration_DE.md) des *Smart Appliance Enabler* erfol
 Der Status aller steuerbaren Geräte wird in der [Status-Anzeige](doc/Status_DE.md) übersichtlich dargestellt, wobei der Status jedes Gerätes durch eine **Ampel** visualisiert wird. Die Ampel kann auch zur **manuellen Steuerung** verwendet werden.
 
 <a><img align="left" src="pics/mqtt-logo.png"></a>
-Zusätzlich unterstützt der *Smart Appliance Enabler* [Node-RED indem er für die konfigurierten Geräte Flows exportiert, damit diese im Dashboard von Node-RED visualisiert werden](doc/NodeRED_DE.md). Darüber hinaus können die [MQTT-Nachrichten des *Smart Appliance Enabler*](doc/MQTT_DE.md) zur Integration des mit anderen Automatisierungsplatformen verwendet werden.
+Zusätzlich unterstützt der *Smart Appliance Enabler* [Node-RED](doc/NodeRED_DE.md), indem er für die konfigurierten Geräte Flows exportiert, damit diese im Dashboard von Node-RED visualisiert werden. Darüber hinaus können die [MQTT-Nachrichten des *Smart Appliance Enabler*](doc/MQTT_DE.md) zur Integration mit anderen Automatisierungsplatformen verwendet werden.
 
 In dem nachfolgenden Video kann man einen Eindruck von der Konfiguration des *Smart Appliance Enabler* gewinnen. Dieses Video wurde im Rahmen der Durchführung automatisierter Tests erstellt, welche die Qualität des *Smart Appliance Enabler* sicherstellen sollen.
 
@@ -99,7 +99,7 @@ Neben der Steuerung durch den *Sunny Home Manager* ermöglicht der *Smart Applia
 ![Verbraucherbilanz](pics/shm/Verbraucherbilanz.png)
 
 # Häufige Fragen und Antworten
-<a href="doc/QA_DE.md"><img align="left" src="pics/fragen_antworten.jpeg"></a>[Diese Seite führt bei Problemen hoffentlich zur Lösung](doc/QA_DE.md). Ausgehend von häufig gestellten Fragen werden Antworten gegeben sowie Verweise zu relevanten Teilen der Dokumentation.
+<a href="doc/QA_DE.md"><img align="left" src="pics/fragen_antworten.jpeg"></a>[Diese Seite führt bei Problemen hoffentlich zur Lösung](doc/QA_DE.md). Ausgehend von häufig gestellten Fragen werden Antworten sowie Verweise zu relevanten Teilen der Dokumentation gegeben.
 <br><br><br><br><br>
 
 # Unterstützung
@@ -118,9 +118,9 @@ Alle Informationen rund um die [Entwicklung](doc/Development_DE.md) des *Smart A
 <br><br>
 
 # Dank und Anerkennung
-Das Projekt *Smart Appliance Enabler* wurde **von [SMA](http://www.sma.de) unterstützt** durch die kostenfreie Bereitstellung eines [Sunny Home Manager 2.0](https://www.sma.de/produkte/monitoring-control/sunny-home-manager)!
+Das Projekt *Smart Appliance Enabler* wurde durch die kostenfreie Bereitstellung eines [Sunny Home Manager 2.0](https://www.sma.de/produkte/monitoring-control/sunny-home-manager) **von [SMA](http://www.sma.de) unterstützt**!
 
-Der *Smart Appliance Enabler* würde so nicht existieren ohne folgende Tools und Frameworks, deren Entwicklern ich Dank und Anerkennung zolle:
+Der *Smart Appliance Enabler* würde ohne folgende Tools und Frameworks so nicht existieren, deren Entwicklern ich Dank und Anerkennung zolle:
 * [Angular](https://angular.io) für das Web-Frontend
 * [Angular Material](https://material.angular.io/) für die Material-Design-Komponenten des Web-Frontends
 * [Browserstack](https://www.browserstack.com) für automatisierte Multi-Browser-Tests und kostenlose Lizenz für Open-Source-Projekte
