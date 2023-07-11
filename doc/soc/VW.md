@@ -1,6 +1,6 @@
 # Volkswagen
 
-Volkswagen stellt keine offizielle API für Fremdsoftware bereit, sie untersagt es sogar in den AGB für CarNet. Daher ist die Benutzung dieser Anleitung auf eigenes Risiko. 
+Volkswagen stellt keine offizielle API für Fremdsoftware bereit, sie untersagt es sogar in den AGB für CarNet. Daher erfolgt die Benutzung dieser Anleitung auf eigenes Risiko. 
 Änderungen an den inoffiziellen Schnittstellen bei VW können jederzeit das Abfragen der nötigen Werte beeinflussen.
 
 ## Vorraussetzung
@@ -9,17 +9,16 @@ Die Vorraussetzung zur Nutzung dieser Anleitung ist ein aktiver CarNet Account m
 
 ## Installation
 
-Um das SoC aus dem CarNet abzufragen, habe ich mich einen GitHub Projekt bedient. Eine detailierte Installationsanleitung erhaltet ihr in diesem Projekt. 
-https://github.com/wez3/volkswagen-carnet-client . Hier findet ihr auch das original Script.
+Um das SoC aus dem CarNet abzufragen, habe ich mich einen GitHub Projektes bedient. Eine detailierte Installationsanleitung erhaltet ihr in [diesem Projekt](https://github.com/wez3/volkswagen-carnet-client). Hier findet ihr auch das original Script.
 
-In groben Zügen braucht es eine python Installation mit dem Python Modul "Requests".
+In groben Zügen braucht es eine Python Installation mit dem Python Modul "Requests".
 
 ## Script
 
 Hier das Script für Copy&Paste oder als [Download](VW_soc.py)
-Einfach nur Username und Passwort eintragen und in einer `VW_soc.py` Datei o.ä. speichern.
+Einfach nur Username und Passwort eintragen und unter `/opt/sae/soc/VW_soc.py` speichern.
 
-```
+```python
 #!/usr/bin/python
 # coding: utf8
 
@@ -71,15 +70,14 @@ VIN = retrieveVehicles()
 retrieveSOC(VIN)
 ``` 
 
-Nach dem Speichern der Datei ein `chmod +x VW_soc.py` machen. Danach kann man das Script mit ./soc.py testen.
+Nach dem Speichern der Datei ein `chmod +x /opt/sae/soc/VW_soc.py` machen. Danach kann man das Script mit `$ /opt/sae/soc/soc.py` testen.
 Es wird ein ganzzahliger Wert zurück geliefert, der direkt vom SAE verarbeitet werden kann.
 
 ## Anbindung an SAE
 
-Im SAE kann man das Script direkt in der jeweiligen Fahrzeugkonfiguration eintragen, z.b. /home/pi/VW_soc.py
+Im SAE kann man das Script direkt in der jeweiligen Fahrzeugkonfiguration eintragen, z.b. `/opt/sae/soc/VW_soc.py`.
 
 ## Anmerkungen / Einschränkungen
 
 - Das Abfragen des SoC kann einige Zeit (30sek) dauern. Das beeinflusst u.a. die Operationen innerhalb des SAE.
 - Im CarNet Account darf nur 1 Fahrzeug registriert sein!
-
