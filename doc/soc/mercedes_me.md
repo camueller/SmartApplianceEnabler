@@ -252,8 +252,7 @@ Außerdem muss der nachfolgende *reguläre Ausdruck* angegeben werden, um aus de
 ```
 
 ### Cronjob zur Generierung des Accesstoken
-Da der Accesstoken nach 60 Minuten abläuft, muss ein Cronjob eingerichtet werden, der innerhalb dieser Zeit mit Hilfe des Refreshtokens einen neuen Accesstoken erzeugt.
-Dafür wird ein Skript mit dem Namen `token_refresh.sh` und diesem Inhalt angelegt und über crontab aufgerufen:
+Da der Accesstoken nach 60 Minuten abläuft, muss ein Cronjob eingerichtet werden, der innerhalb dieser Zeit mit Hilfe des Refreshtokens einen neuen Accesstoken erzeugt. Dafür wird ein entsprechendes Script im `hourly`-Ordner des Cron-Dienstes angelegt: `/etc/cron.hourly/token_refresh.sh`. Der Inhalt des Scripts sieht wie folgt aus:
 
 ```bash
 #!/bin/sh
