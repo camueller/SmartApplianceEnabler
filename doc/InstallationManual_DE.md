@@ -17,6 +17,18 @@ pi@raspi:~ $ uname -a
 Linux raspi3 4.19.75-v7+ #1270 SMP Tue Sep 24 18:45:11 BST 2019 armv7l GNU/Linux
 ```
 
+Befehle mit mehreren Optionen und Parametern werden zum besseren Verständnis mehrzeilig dargestellt, wobei der Backslash `\ ` das letzte Zeichen jeder Zeile ist und damit die jeweils nächste Zeile "verbindet". Ein solcher Befehl kann so wie er ist kopiert und ausgeführt werden. Ein Beispiel:
+
+```bash
+$ docker run \
+    -it \
+    --rm \
+    -p 1880:1880 \
+    -v node_red_data:/data \
+    --name nodered \
+    nodered/node-red
+```
+
 ### Raspbian
 Von den [Raspberry Pi OS](https://www.raspberrypi.org/software) Images ist die **Lite-Version** ausreichend, sodass man eine *4GB-SD-Karte* verwenden kann.
 
