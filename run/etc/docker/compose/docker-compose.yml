@@ -50,10 +50,8 @@ services:
     privileged: true
 volumes:
   sae:
-    name: sae
 networks:
   macvlan0:
-    name: macvlan0
     driver: macvlan
     driver_opts:
       parent: eth0
