@@ -23,6 +23,6 @@ sae@raspi:~ $ grep 'Modbus\|Register' /tmp/rolling-2020-12-30.log | grep F-00000
 *Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `Modbus` und drückt Refresh.
 
 ## Schaltbeispiel: 240V-Gerät mit Stromverbrauchsmessung
-Der Aufbau zum Messen des Stromverbrauchs eines 240V-Gerätes (z.B. Pumpe) könnte wie folgt aussehen, wobei diese Schaltung natürlich um einen Schalter erweitert werden kann, wenn neben dem Messen auch geschaltet werden soll.
+Das Schaltbeispiel zeigt den Anschluss eines 240V-Gerätes an einen Modbus-Stromzähler. Bei einem 400V-Gerät (z.B. Wallbox) werden statt dem Leiter L die drei Leiter L1, L2, L3 angeschlossen. In beiden Fällen besteht ein Modbus aus einem zweiadrigen Kabel (optional 3-adrig, falls GND verbunden wird), das bis zu 1200m lang sein darf. Bei dem Kabel kann es sich z.B. Klingeldraht, Telefon-Kabel oder Ethernet-Kabel handeln. Der Modbus verbindet die Anschlüsse A und B (und optional GND) des USB-RS485-Konverters mit den Anschlüssen A und B (und optional GND) des Modbus-Stromzählers. Von dort kann das Kabel bei Bedarf zu weiteren Modbus-Geräten verlegt werden. Wichtig ist, dass am USB-RS485-Konverters und am letzten Modbus-Gerät jeweils zwischen A und B ein 100-Ohm-Widerstand angeschlossen wird.
 
 ![Schaltbeispiel](../pics/SchaltungModbusZaehler.jpg)
