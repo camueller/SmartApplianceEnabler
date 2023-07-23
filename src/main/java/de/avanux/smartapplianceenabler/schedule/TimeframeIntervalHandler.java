@@ -539,8 +539,13 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                 timeframeInterval.getInterval().setStart(now);
             }
             OptionalEnergySocRequest request = (OptionalEnergySocRequest) timeframeInterval.getRequest();
-            request.setSocInitial(socCurrent);
-            request.setSoc(socTarget);
+            if(socCurrent != null) {
+                request.setSocInitialIfNotSet(socCurrent);
+                request.setSocCurrent(socCurrent);
+            }
+            if(socTarget != null) {
+                request.setSoc(socTarget);
+            }
             request.setEnabled(true);
         }
         else {
