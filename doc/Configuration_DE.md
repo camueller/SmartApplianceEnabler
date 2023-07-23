@@ -1,7 +1,7 @@
 # Konfiguration
 
 ## Allgemeine Hinweise
-Die Konfiguration erfolgt über das Web-Frontend des *Smart Appliance Enabler*. Dazu muss man im Web-Browser lediglich `http://raspi:8080` eingeben, wobei *raspi* durch den Hostnamen oder die IP-Adresse des Raspberry Pi ersetzt wird. Es öffnet sich die Status-Seite mit dem Hinweis, dass noch keine Geräte konfiguert sind.
+Die Konfiguration erfolgt über das Web-Frontend des *Smart Appliance Enabler*. Dazu muss man im Web-Browser lediglich `http://raspi:8080` eingeben, wobei *raspi* durch den Hostnamen oder die IP-Adresse des Raspberry Pi ersetzt wird. Es öffnet sich die Status-Seite mit dem Hinweis, dass noch keine Geräte konfiguriert sind.
 
 Die Web-Oberfläche ist bewusst einfach und dennoch komfortabel gehalten, um Browser auf PC, Tablett und Handy gleichermaßen zu unterstützen.
 
