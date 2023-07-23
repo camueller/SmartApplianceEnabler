@@ -5,13 +5,13 @@ Die Konfiguration erfolgt über das Web-Frontend des *Smart Appliance Enabler*. 
 
 Die Web-Oberfläche ist bewusst einfach und dennoch komfortabel gehalten, um Browser auf PC, Tablett und Handy gleichermaßen zu unterstützen.
 
-Grundsätzlich gilt, dass Eingaben/Änderungen erst nach dem [Klicken der `Speichern` Schaltfläche](ConfigurationFiles_DE.md#speichern) gespeichert sind. Beim Wechsel auf ein andere Seite erfolgt eine Warnung, wenn nicht gespeicherte Änderungen vorhanden sind.
+Grundsätzlich gilt, dass Eingaben/Änderungen erst nach dem [Klicken der `Speichern`-Schaltfläche](ConfigurationFiles_DE.md#speichern) gespeichert sind. Beim Wechsel auf ein andere Seite erfolgt eine Warnung, wenn nicht gespeicherte Änderungen vorhanden sind.
 
 Werden bei Eingabefeldern Inhalte mit grauer Schrift angezeigt, so handelt es sich um Voreinstellungen, d.h. wenn kein Wert eingegeben wird, gilt dieser Wert ohne dass er eingegeben werden muss.
 
-Pflichtfelder sind mit einem `*` hinter der Feldbezeichnung gekennzeichnet. Solange nicht alle Pflichtfelder ausgefüllt sind, ist die `Speichern` Schaltfläche nicht aktiv. 
+Pflichtfelder sind mit einem `*` hinter der Feldbezeichnung gekennzeichnet. Solange nicht alle Pflichtfelder ausgefüllt sind, ist die `Speichern`-Schaltfläche nicht aktiv. 
 
-Bei ungültigen Eingaben erscheint unter dem Eingabefled eine Fehlermeldung. Solange auf einer Seite solche Fehlermeldungen existieren, ist die `Speichern` Schaltfläche nicht aktiv.
+Bei ungültigen Eingaben erscheint unter dem Eingabefled eine Fehlermeldung. Solange auf einer Seite solche Fehlermeldungen existieren, ist die `Speichern`-Schaltfläche nicht aktiv.
 
 Beim ersten Start ohne vorhandene Konfigurationsdateien wird folgende Seite angezeigt:
 
