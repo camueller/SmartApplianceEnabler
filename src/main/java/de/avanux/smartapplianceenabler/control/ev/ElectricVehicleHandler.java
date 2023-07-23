@@ -91,9 +91,11 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
                 logger.debug("{}: {}", this.applianceId, vehicle);
             }
             this.vehicles.forEach(vehicle -> {
-                SocScriptExecutor executor = new SocScriptExecutor(vehicle.getId(), vehicle.getSocScript());
-                executor.setApplianceId(this.applianceId);
-                this.evIdWithSocScriptExecutor.put(vehicle.getId(), executor);
+                if(vehicle.getSocScript() != null) {
+                    SocScriptExecutor executor = new SocScriptExecutor(vehicle.getId(), vehicle.getSocScript());
+                    executor.setApplianceId(this.applianceId);
+                    this.evIdWithSocScriptExecutor.put(vehicle.getId(), executor);
+                }
             });
             this.chargeLoss = getConnectedVehicle().getChargeLoss() != null
                     ? getConnectedVehicle().getChargeLoss().floatValue() : 0.0f;
@@ -269,7 +271,7 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
        this.evIdWithSocScriptExecutor.values().forEach(executor -> executor.triggerExecution(this, socScriptAsync));
     }
 
-    public void triggerSocScriptExecution(Integer evId) {
+    private void triggerSocScriptExecution(Integer evId) {
         var executor = evIdWithSocScriptExecutor.get(evId);
         if(executor != null) {
             executor.triggerExecution(this, socScriptAsync);
@@ -281,8 +283,8 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
     }
 
     @Override
-    public void handleSocScriptExecutionResult(LocalDateTime now, int evId, SocScriptExecutionResult result) {
-        logger.debug("{}: Handling SOC script execution result: result={} previousSocScriptExecutionResult={}",
+    public void onSocScriptExecutionSuccess(LocalDateTime now, int evId, SocScriptExecutionResult result) {
+        logger.debug("{}: SOC script execution success: result={} previousSocScriptExecutionResult={}",
                 applianceId, result, previousSocScriptExecutionResult);
 
         var betterPluginStatus = isBetterPluginStatus(result, previousSocScriptExecutionResult);
@@ -308,47 +310,54 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
             this.chargeLoss = chargeLoss != null ? chargeLoss.floatValue() : 0.0f;
         }
         if(this.connectedVehicleId != null) {
-            if(this.connectedVehicleId != evId) {
-                logger.debug("{}: Ignore SOC script execution result for vehicle: id={}", applianceId, evId);
-                return;
-            }
-            logger.debug("{}: Using SOC script execution result", applianceId);
-            setSocValuesBatteryCapacityFromConnectedVehicle();
-            Integer socLastRetrieved = socValues.retrieved != null ? socValues.retrieved : socValues.initial;
-            if(socValues.initial == null) {
-                socValues.initial = result.soc.intValue();
-                socValues.initialTimestamp = now;
-                socValues.current = result.soc.intValue();
-            }
-            socValues.retrieved = result.soc.intValue();
-            if(socLastRetrieved != null) {
-                Double chargeLossCalculated = calculateChargeLoss(getEnergyMeteredSinceLastSocScriptExecution(), socValues.retrieved, socLastRetrieved);
-                if(chargeLossCalculated != null) {
-                    if(chargeLossCalculated > 50) {
-                        chargeLoss = 50.0;
-                        logger.debug("{}: Ignoring calculated charge loss. Limit charge loss to {}", applianceId, chargeLoss);
-                    }
-                    else if(chargeLossCalculated < 0) {
-                        chargeLoss = getVehicle(evId).getChargeLoss();
-                        logger.debug("{}: Ignoring calculated charge loss. Using vehicle default value of {}", applianceId, chargeLoss);
-                    }
-                    else {
-                        chargeLoss = chargeLossCalculated;
-                    }
-                }
-            }
-            socValues.current = result.soc.intValue();
-            socRetrievalEnergyMeterValue = meterMessage != null ? meterMessage.energy : 0.0;
-            if(this.chargingAlmostCompleted) {
-                socRetrievalForChargingAlmostCompleted = true;
-            }
-            this.socValuesChangedListener.onSocValuesChanged(this.socValues);
-        }
-        else if(socValues.batteryCapacity == null) {
-            logger.debug("{}: Unable to determine connected vehicle - using battery capacity of first vehicle", applianceId);
-            socValues.batteryCapacity = getVehicle(getConnectedOrFirstVehicleId()).getBatteryCapacity();
+            handleSocScriptExecutionResult(now, evId, result);
         }
         this.previousSocScriptExecutionResult = result;
+    }
+
+    @Override
+    public void onSocScriptExecutionFailure(LocalDateTime now) {
+        logger.warn("{}: SOC script execution failed", applianceId);
+        this.connectedVehicleId = getConnectedOrFirstVehicleId();
+        handleSocScriptExecutionResult(now, this.connectedVehicleId, new SocScriptExecutionResult(
+                socValues.initial == null ? 0: socValues.current, null, null, null));
+    }
+
+    private void handleSocScriptExecutionResult(LocalDateTime now, int evId, SocScriptExecutionResult result) {
+        if(this.connectedVehicleId != evId) {
+            logger.debug("{}: Ignore SOC script execution result for vehicle: id={}", applianceId, evId);
+            return;
+        }
+        setSocValuesBatteryCapacityFromConnectedVehicle();
+        Integer socLastRetrieved = socValues.retrieved != null ? socValues.retrieved : socValues.initial;
+        if(socValues.initial == null) {
+            socValues.initial = result.soc.intValue();
+            socValues.initialTimestamp = now;
+            socValues.current = result.soc.intValue();
+        }
+        socValues.retrieved = result.soc.intValue();
+        if(socLastRetrieved != null) {
+            Double chargeLossCalculated = calculateChargeLoss(getEnergyMeteredSinceLastSocScriptExecution(), socValues.retrieved, socLastRetrieved);
+            if(chargeLossCalculated != null) {
+                if(chargeLossCalculated > 50) {
+                    chargeLoss = 50.0;
+                    logger.debug("{}: Ignoring calculated charge loss. Limit charge loss to {}", applianceId, chargeLoss);
+                }
+                else if(chargeLossCalculated < 0) {
+                    chargeLoss = getVehicle(evId).getChargeLoss();
+                    logger.debug("{}: Ignoring calculated charge loss. Using vehicle default value of {}", applianceId, chargeLoss);
+                }
+                else {
+                    chargeLoss = chargeLossCalculated;
+                }
+            }
+        }
+        socValues.current = result.soc.intValue();
+        socRetrievalEnergyMeterValue = meterMessage != null ? meterMessage.energy : 0.0;
+        if(this.chargingAlmostCompleted) {
+            socRetrievalForChargingAlmostCompleted = true;
+        }
+        this.socValuesChangedListener.onSocValuesChanged(this.socValues);
     }
 
     protected boolean isBetterPluginStatus(SocScriptExecutionResult result, SocScriptExecutionResult previousResult) {

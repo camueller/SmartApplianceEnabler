@@ -71,6 +71,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       new ErrorMessage('defaultSocOptionalEnergy', ValidatorType.pattern),
       new ErrorMessage('scriptUpdateSocAfterIncrease', ValidatorType.pattern),
       new ErrorMessage('scriptUpdateSocAfterTime', ValidatorType.pattern),
+      new ErrorMessage('scriptTimeoutSeconds', ValidatorType.pattern),
     ], this.translate);
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
@@ -112,6 +113,8 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       Validators.pattern(InputValidatorPatterns.PERCENTAGE)));
     this.form.addControl('scriptUpdateSocAfterSeconds', new FormControl(socScript?.updateAfterSeconds,
       Validators.pattern(InputValidatorPatterns.INTEGER)));
+    this.form.addControl('scriptTimeoutSeconds', new FormControl(socScript?.timeoutSeconds,
+      Validators.pattern(InputValidatorPatterns.INTEGER)));
   }
 
   updateForm() {
@@ -131,6 +134,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
 
       this.form.controls.scriptUpdateSocAfterIncrease.setValue(socScript.updateAfterIncrease);
       this.form.controls.scriptUpdateSocAfterSeconds.setValue(socScript.updateAfterSeconds);
+      this.form.controls.scriptTimeoutSeconds.setValue(socScript.timeoutSeconds);
     }
   }
 
@@ -143,6 +147,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
     const defaultSocManual = this.form.controls.defaultSocManual.value;
     const defaultSocOptionalEnergy = this.form.controls.defaultSocOptionalEnergy.value;
     const scriptFilename = this.socScriptFilenameInput.updateModelFromForm();
+    const scriptTimeoutSeconds = this.form.controls.scriptTimeoutSeconds?.value;
     const extractionRegex = this.form.controls.scriptExtractionRegex?.value;
     const pluginStatusExtractionRegex = this.form.controls.pluginStatusExtractionRegex?.value;
     const pluginTimeExtractionRegex = this.form.controls.pluginTimeExtractionRegex?.value;
@@ -174,6 +179,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       this.electricVehicle.socScript.updateAfterIncrease = updateSocAfterIncrease;
       this.electricVehicle.socScript.updateAfterSeconds = updateSocAfterTime
         && updateSocAfterTime.length > 0 ? TimeUtil.toSeconds(updateSocAfterTime) : undefined;
+      this.electricVehicle.socScript.timeoutSeconds = scriptTimeoutSeconds;
     }
     return this.electricVehicle;
   }

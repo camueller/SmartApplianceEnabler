@@ -18,4 +18,5 @@ export interface ElectricVehicleModel {
   longitudeExtractionRegex: FormControl<string>;
   scriptUpdateSocAfterIncrease: FormControl<number>;
   scriptUpdateSocAfterSeconds: FormControl<number>;
+  scriptTimeoutSeconds: FormControl<number>;
 }

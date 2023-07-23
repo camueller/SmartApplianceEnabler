@@ -21,5 +21,7 @@ package de.avanux.smartapplianceenabler.control.ev;
 import java.time.LocalDateTime;
 
 public interface SocScriptExecutionResultListener {
-    void handleSocScriptExecutionResult(LocalDateTime now, int evId, SocScriptExecutionResult result);
+    void onSocScriptExecutionSuccess(LocalDateTime now, int evId, SocScriptExecutionResult result);
+
+    void onSocScriptExecutionFailure(LocalDateTime now);
 }

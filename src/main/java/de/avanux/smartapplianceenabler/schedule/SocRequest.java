@@ -66,6 +66,12 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         socVariablesInitialized().initial = socInitial;
     }
 
+    public void setSocInitialIfNotSet(Integer socInitial) {
+        if(socVariablesInitialized().initial == null) {
+            socVariablesInitialized().initial = socInitial;
+        }
+    }
+
     public void setSocCurrent(Integer socCurrent) {
         socVariablesInitialized().current = socCurrent;
     }
