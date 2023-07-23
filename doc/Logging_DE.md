@@ -62,11 +62,11 @@ $ tail -f /tmp/rolling-2020-12-31.log | grep --line-buffered F-00000001-00000000
 <a name="webmin-logs"></a>
 
 1. System -> System Logs
-2. Die Schaltfläche zur Dateiauswahl rechts von `View log file` anklicken. 
-3. In dem Dateiauswahl-Dialog nach `tmp` navigieren und die entsprechende Datei auswählen. 
-4. Jetzt sollte hinter `View log file` der Name der ausgewählten Log-Datei stehen. 
-5. Nach Klick auf die Schaltfälche `View` werden die letzten 100 Zeilen der Datei angezeigt. 
-6. Durch Klick auf den Pfeil rechts in der Schaltfläche `View` kann das automatische Aktualisieren der Anzeige aktiviert werden.
+1. Die Schaltfläche zur Dateiauswahl rechts von `View log file` anklicken. 
+1. In dem Dateiauswahl-Dialog nach `tmp` navigieren und die entsprechende Datei auswählen. 
+1. Jetzt sollte hinter `View log file` der Name der ausgewählten Log-Datei stehen. 
+1. Nach Klick auf die Schaltfälche `View` werden die letzten 100 Zeilen der Datei angezeigt. 
+1. Durch Klick auf den Pfeil rechts in der Schaltfläche `View` kann das automatische Aktualisieren der Anzeige aktiviert werden.
 
 Um nur die Log-Einträge eines spezifischen Gerätes zu sehen, gibt man hinter `Only show lines with text` die ID des Gerätes ein z.B. `F-00000001-000000000002-00`.
 
