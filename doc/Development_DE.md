@@ -180,7 +180,7 @@ ng serve --host 0.0.0.0 --disable-host-check
 
 ### Tests
 #### Simulation der Interaktion durch den Sunny Home Manager
-Zum Einschalten eines Gerätes eignet sich folgender Befehl, wobei der Parameter `RecommendedPowerConsumption` nur für Wallboxen relevant ist:
+Zum Einschalten eines Gerätes eignet sich folgender Befehl, wobei der Parameter `RecommendedPowerConsumption` nur für Geräte mit variabler Leistungsaufnahme (z.B. Wallboxen) relevant ist:
 ```bash
 curl \
     -X POST \
