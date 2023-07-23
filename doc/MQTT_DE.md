@@ -206,7 +206,7 @@ Ereignisse sind ebenfalls MQTT-Nachrichten, enthalten nach der Appliance-ID im T
 
 Der *Smart Appliance Enabler* sendet Ereignisse nur, wenn sie auftreten.
 
-Standardmäßig haben alle Ereignisse folgenden `Inhalt`: 
+Standardmäßig haben alle Ereignisse folgenden Inhalt: 
 
 | Feld   | Typ     | Beipiel-Wert               | Beschreibung         |
 |--------|---------|----------------------------|----------------------|
