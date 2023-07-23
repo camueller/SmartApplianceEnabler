@@ -101,7 +101,7 @@ Die Installation funktioniert zwar prinzipiell, aber
 - Java wird zwar installiert, aber es fehlen die Links unter `/etc/alternatives`
 - wenn man das Java-Binary direkt aufruft, kommt ein Hinweis, dass die VM nur unter `v7l` läuft, nicht jedoch unter `v6l`. In `qemu-system-arm` scheint zwar Support für andere ARM-Prozesssoren (z.B. cortex-v7) enthalten zu sein, aber ich konnte mit keinem (außer `versatilepb`) ein Raspbian erfolgreich booten. `versatilepb` untersützt nur `v6l` und ist auf 256 MB begrenzt. 
 
-Angesichts dieser Probleme stoppe ich hier erstmal den Versuch, die automatische Installation zu testen.
+Angesichts dieser Probleme stoppe ich hier erstmal den Versuch, die automatische Installation automatisiert zu testen.
 
 ## Erstellen eines neuen Releases
 
