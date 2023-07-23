@@ -1,6 +1,6 @@
 # Entwicklung
 ## Art der Anwendung
-Beim *Smart Appliance Enabler* handelt es sich um eine [Spring Boot](http://projects.spring.io/spring-boot) Anwendung mit einer [Angular](https://angular.io) Web-Anwendung. 
+Beim *Smart Appliance Enabler* handelt es sich um eine [Spring Boot](http://projects.spring.io/spring-boot)-Anwendung mit einer [Angular](https://angular.io)-Web-Anwendung. 
 
 ## Continuous Integration (CI)
 Für den *Smart Appliance Enabler* existiert eine [Continuous Integration](https://de.wikipedia.org/wiki/Kontinuierliche_Integration) Umgebung, in der die Anwendung vollständig automatisiert gebaut und getestet wird:
