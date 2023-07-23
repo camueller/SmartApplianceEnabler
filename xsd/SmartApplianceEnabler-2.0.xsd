@@ -240,6 +240,7 @@
         <xs:attribute name="extractionRegex" type="xs:string" />
         <xs:attribute name="updateAfterIncrease" type="xs:int" />
         <xs:attribute name="updateAfterSeconds" type="xs:int" />
+        <xs:attribute name="timeoutSeconds" type="xs:int" />
         <xs:attribute name="pluginStatusExtractionRegex" type="xs:string" />
         <xs:attribute name="pluginTimeExtractionRegex" type="xs:string" />
         <xs:attribute name="latitudeExtractionRegex" type="xs:string" />

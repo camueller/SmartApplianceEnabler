@@ -13,6 +13,7 @@ export class SocScript {
   longitudeExtractionRegex: string;
   updateAfterIncrease: number;
   updateAfterSeconds: number;
+  timeoutSeconds: number;
 
   public constructor(init?: Partial<SocScript>) {
     Object.assign(this, init);

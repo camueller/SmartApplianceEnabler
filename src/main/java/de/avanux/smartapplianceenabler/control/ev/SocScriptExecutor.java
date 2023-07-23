@@ -30,6 +30,7 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
 
     private Thread thread;
     private LocalDateTime nowForTesting;
+    private LocalDateTime triggeredAt;
     private SocScript socScript;
     private int evId;
     private SocScriptExecutionResultListener listener;
@@ -68,9 +69,17 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
                 // for unit tests
                 run();
             }
+            this.triggeredAt = LocalDateTime.now();
         }
         else {
-            logger.debug("{}: SOC retrieval already running: evId={}", applianceId, evId);
+            if(this.triggeredAt != null && LocalDateTime.now().minusSeconds(socScript.getTimeoutSeconds()).isAfter(this.triggeredAt)) {
+                logger.warn("{}: SOC script timeout: evId={}", applianceId, evId);
+                terminate();
+                reportSocScriptFailure();
+            }
+            else {
+                logger.debug("{}: SOC retrieval already running: evId={}", applianceId, evId);
+            }
         }
     }
 
@@ -92,10 +101,18 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
             var result = socScript.getResult();
             logger.debug("{}: SOC script execution result: {}", applianceId, result);
             if(result != null) {
-                this.listener.handleSocScriptExecutionResult(
+                this.listener.onSocScriptExecutionSuccess(
                         this.nowForTesting != null ? this.nowForTesting : LocalDateTime.now(), this.evId, result);
+            }
+            else {
+                reportSocScriptFailure();
             }
         }
         setThread(null);
+    }
+
+    private void reportSocScriptFailure() {
+        this.listener.onSocScriptExecutionFailure(
+                this.nowForTesting != null ? this.nowForTesting : LocalDateTime.now());
     }
 }

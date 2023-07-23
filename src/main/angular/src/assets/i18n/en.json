@@ -314,6 +314,7 @@
   "ElectricVehicleComponent.defaultSocOptionalEnergy": "Excess energy [%]",
   "ElectricVehicleComponent.script.heading": "Script to retrieve SOC",
   "ElectricVehicleComponent.script.filename": "Fully qualified filename",
+  "ElectricVehicleComponent.script.timeoutSeconds": "Timeout [s]",
   "ElectricVehicleComponent.script.extractionRegex": "SOC extraction regex",
   "ElectricVehicleComponent.script.extractionRegex.tooltip": "This regular expression extracts the SOC as capture group 1. Example: .*state_of_charge': '(\\d+)",
   "ElectricVehicleComponent.script.pluginStatusExtractionRegex": "Plugin state match regex",
@@ -337,6 +338,7 @@
   "ElectricVehicleComponent.error.defaultSocOptionalEnergy_pattern": "SOC has to be a percentage",
   "ElectricVehicleComponent.error.scriptUpdateSocAfterIncrease_pattern": "SOC has to be a percentage",
   "ElectricVehicleComponent.error.scriptUpdateSocAfterTime_pattern": "Time has to be specified as 'Hours:Minutes'",
+  "ElectricVehicleComponent.error.scriptTimeoutSeconds_pattern": "Timeout has to be specified in seconds",
 
   "ModbusReadComponent.address": "Register address",
   "ModbusReadComponent.type": "Register type",

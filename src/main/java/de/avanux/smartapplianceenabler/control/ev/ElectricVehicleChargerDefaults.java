@@ -27,6 +27,7 @@ public class ElectricVehicleChargerDefaults {
     private Integer startChargingStateDetectionDelay = 30;
     private Boolean forceInitialCharging = false;
     private Integer updateSocAfterIncrease = 20;
+    private Integer socScriptTimeoutSeconds = 180;
     private static ElectricVehicleChargerDefaults instance = new ElectricVehicleChargerDefaults();
 
     public static Integer getVoltage() {
@@ -55,5 +56,9 @@ public class ElectricVehicleChargerDefaults {
 
     public static Integer getUpdateSocAfterIncrease() {
         return instance.updateSocAfterIncrease;
+    }
+
+    public static Integer getSocScriptTimeoutSeconds() {
+        return instance.socScriptTimeoutSeconds;
     }
 }

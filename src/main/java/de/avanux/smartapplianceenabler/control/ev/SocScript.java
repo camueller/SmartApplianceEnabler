@@ -42,6 +42,8 @@ public class SocScript implements ApplianceIdConsumer {
     @XmlAttribute
     private Integer updateAfterSeconds;
     @XmlAttribute
+    private Integer timeoutSeconds;
+    @XmlAttribute
     private String extractionRegex;
     @XmlAttribute
     private String pluginStatusExtractionRegex;
@@ -68,6 +70,10 @@ public class SocScript implements ApplianceIdConsumer {
 
     public Integer getUpdateAfterSeconds() {
         return updateAfterSeconds;
+    }
+
+    public Integer getTimeoutSeconds() {
+        return timeoutSeconds != null ? timeoutSeconds : ElectricVehicleChargerDefaults.getSocScriptTimeoutSeconds();
     }
 
     public String getExtractionRegex() {
@@ -207,6 +213,7 @@ public class SocScript implements ApplianceIdConsumer {
                 "script='" + script + '\'' +
                 ", updateAfterIncrease=" + updateAfterIncrease +
                 ", updateAfterSeconds=" + updateAfterSeconds +
+                ", timeoutSeconds=" + timeoutSeconds +
                 ", extractionRegex='" + extractionRegex + '\'' +
                 ", pluginStatusExtractionRegex='" + pluginStatusExtractionRegex + '\'' +
                 ", pluginTimeExtractionRegex='" + pluginTimeExtractionRegex + '\'' +

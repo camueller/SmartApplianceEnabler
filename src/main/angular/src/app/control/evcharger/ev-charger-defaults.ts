@@ -24,6 +24,7 @@ export class EvChargerDefaults {
   startChargingStateDetectionDelay: number;
   forceInitialCharging: boolean;
   updateSocAfterIncrease: number;
+  socScriptTimeoutSeconds: number;
 
   public constructor(init?: Partial<EvChargerDefaults>) {
     Object.assign(this, init);

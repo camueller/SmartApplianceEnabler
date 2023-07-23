@@ -60,6 +60,13 @@
       value="{{socScriptFilename}}"
       [requiredFileModes]="socScriptFileModes"
     ></app-filenameinput>
+    <mat-form-field class="ElectricVehicleComponent__scriptTimeoutSeconds">
+      <mat-label>{{'ElectricVehicleComponent.script.timeoutSeconds' | translate}}</mat-label>
+      <input matInput type="text" formControlName="scriptTimeoutSeconds"
+             placeholder="{{controlDefaults.evChargerDefaults.socScriptTimeoutSeconds}}"
+             required="{{isRequired('scriptTimeoutSeconds')}}">
+      <mat-error *ngIf="errors.scriptTimeoutSeconds">{{errors.scriptTimeoutSeconds}}</mat-error>
+    </mat-form-field>
   </div>
   <div class="sae__fields">
     <mat-form-field class="ElectricVehicleComponent__scriptRegex">

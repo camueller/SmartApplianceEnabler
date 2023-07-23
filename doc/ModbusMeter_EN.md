@@ -23,6 +23,6 @@ sae@raspi:~ $ grep 'Modbus\|Register' /tmp/rolling-2020-12-30.log | grep F-00000
 *Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `Modbus` after `Only show lines with text` and press Refresh.
 
 ## Wiring example: 240V device with power consumption measurement
-The wiring for measuring the power consumption of a 240V device (e.g. pump) could look like this, whereby it can of course be expanded with a switch if switching is also to be carried out in addition to measuring.
+The wiring example shows the connection of a 240V device to a Modbus electricity meter. With a 400V device (e.g. wall box), the three conductors L1, L2, L3 are connected instead of the L conductor. In both cases, a Modbus consists of a two-wire cable (optionally three-wire if GND is connected), which can be up to 1200m long. The cable can be, for example, ring wire, telephone cable or Ethernet cable. The Modbus connects the A and B (and optional GND) terminals of the USB-RS485 converter to the A and B (and optional GND) terminals of the Modbus electricity meter. From there, the cable can be routed to other Modbus devices if required. It is important that a 100 ohm resistor is connected between A and B on the USB-RS485 converter and on the last Modbus device.
 
 ![Schaltbeispiel](../pics/SchaltungModbusZaehler.jpg)
