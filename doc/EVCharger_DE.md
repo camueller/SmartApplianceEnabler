@@ -46,8 +46,7 @@ Unabhängig von der spezifischen Wallbox gibt es folgende Einstellungen, die fü
 - `Ladestatuserkennung abwarten`: Nachdem ein angeschlosses Fahrzeug erkannt wird, erfolgt ein sofortiger Ladestart bis die Wallbox den Status 'Laden' zurückmeldet. Danach wird das Laden wieder gestoppt bis ein Einschaltbefehl empfangen wird. Erforderlich für Renault Zoe!
 - `Geo. Breite`, `Geo. Länge`: Die geografische Breite und Länge der Wallbox dient bei mehreren konfigurierten Fahrzeugen zur Identifikation des Fahrzeugs, welches sich in der Nähe der Wallbox befindet.
  
-### Fahrzeuge
-<a name="ev"></a>
+### <a name="ev"></a> Fahrzeuge
 
 Die Konfiguration von Fahrzeugen beinhaltet Parameter zur Steuerung des Ladevorgangs und Standardwerte für Dialoge.
 

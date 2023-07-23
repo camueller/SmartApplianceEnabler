@@ -89,8 +89,7 @@ This is a security risk - please login as the 'pi' user and type 'passwd' to set
 pi@raspberrypi:~ $
 ```
 
-### Root-Filesystem vergrößern
-<a name="root-filesystem-vergroesern"></a>
+### <a name="root-filesystem-vergroesern"></a> Root-Filesystem vergrößern
 Die Raspbian-Images werden in der Regel für SD-Karten mit einer Größe von 2 GB erstellt. Wenn die verwendete SD-Karte größer ist, bleibt der darüber hinausgehene Speicherplatz unbenutzt. Raspbian enthält jedoch das Utility `raspi-config`, mit dem man ganz einfach das Root-Filesystem so vergrößern kann, dass die gesamte SD-Karte genutzt wird (hier wurde eine 16 GB SD-Karte verwendet):
 
 ```bash
@@ -443,8 +442,7 @@ $ mv /opt/sae/Device2EM.xml /opt/sae/Device2EM.xml.old
 
 Danach muss die Konfiguration wie im Kapitel [Konfiguration](Configuration_DE.md) beschrieben neu erstellt werden.
 
-### Benachrichtigungen
-<a name="notifications"></a>
+### <a name="notifications"></a> Benachrichtigungen
 Für den optionalen Versand von Benachrichtigungen via Instant-Messanger wie [Telegram](http://www.telegram.org), muss das entsprechende Shell-Script heruntergeladen und ausführbar gemacht werden:
 
 ```bash

@@ -32,8 +32,7 @@ Wenn stattdessen die Fehlermeldung angezeigt wird
 
 ... ist die von Ihnen für das Gerät gewählte ID bereits vergeben und es muß eine andere [ID konfiguriert](Appliance_DE.md#id) werden. Danach muss man das Gerät im *Sunny Portal*  erneut hinzufügen.
 
-### Maximale Anzahl der Geräte im Sunny Portal
-<a name="max-devices"></a>
+### <a name="max-devices"></a> Maximale Anzahl der Geräte im Sunny Portal
 
 Aktuell unterstützt der Sunny Home Manager *maximal 12 steuerbare Geräte*. Da der *Smart Appliance Enabler* via SEMP-Protokoll mit dem Sunny Home Manager kommuniziert, sind aus Sicht des Sunny Home Manager alle Geräte im *Smart Appliance Enabler* steuerbare Geräte. Zur Gesamtzahl zählen neben den Geräten, die mit dem SEMP Protokoll angesprochen werden, bspw. auch SMA Bluetooth Funksteckdosen - also alle Geräte, die im Sunny Portal in der Verbraucherübersicht angezeigt werden.
 

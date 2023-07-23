@@ -28,8 +28,7 @@ Beispiel für einen Mehrtagesplan:
 
 Der *Smart Appliance Enabler* meldet dem Sunny Home Manager den Geräte-Laufzeitbedarf für die nächsten 48 Stunden, damit er auf dieser Basis optimal planen kann.
 
-## Besonderheiten für Verbraucher mit variabler Leistungsaufnahme
-<a name="variableLeistungsaufnahme"></a>
+## <a name="variableLeistungsaufnahme"></a> Besonderheiten für Verbraucher mit variabler Leistungsaufnahme
 Bei Verbrauchern mit variabler Leistungsaufnahme wird vom *Sunny Home Manager* auch die momentan zulässige Leistungsaufnahme vorgegeben.
 
 Der *Smart Appliance Enabler* unterstützt die Nutzung folgender Schaltertypen bzw. Geräte mit variabler Leistungsaufnahme:

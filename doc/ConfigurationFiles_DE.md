@@ -33,12 +33,12 @@ Zum Transferieren der Dateien zwischen Raspberry Pi und PC kann man unter Linux 
 
 *Webmin*: Mit dem [File-Manager von Webmin](Webmin_DE.md) kann der Transfer zwischen Raspberry Pi und PC im Browser erfolgen.
 
-## Server-Konfiguration
-<a name="etc-default-smartapplianceenabler"></a>
+## <a name="etc-default-smartapplianceenabler"></a> Server-Konfiguration
+
 
 In der Datei `/etc/default/smartapplianceenabler` finden sich die Konfigurationseinstellungen für den *Smart Appliance Enabler*. Die darin befindlichen Parameter (z.B. Netzwerk-Adresse, Port, Java-Einstellungen, ...) sind in der Datei selbst dokumentiert. Normalerweise sollte man die Datei unverändert lassen können.
 
-## Log-Konfiguration
-<a name="log-konfiguration"></a>
+## <a name="log-konfiguration"></a> Log-Konfiguration
+
 
 Die Konfiguration des Loggings erfolgt in der Datei `/opt/sae/logback-spring.xml`.

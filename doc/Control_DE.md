@@ -21,8 +21,8 @@ Wenn als Gerätetyp `Elektroauto-Ladegerät` angegeben ist, kann auf dieser Seit
 
 Siehe auch: [Allgemeine Hinweise zur Konfiguration](Configuration_DE.md)
 
-## Schaltbefehl vom Sunny Home Manager
-<a name="control-request">
+## <a name="control-request"></a> Schaltbefehl vom Sunny Home Manager
+
 
 Wenn ein Schaltbefehl vom *Sunny Home Manager* für ein Gerät empfangen wird, führt das zu einem entsprechenden Log-Eintrag, der mit folgendem Befehl angezeigt werden kann:
 

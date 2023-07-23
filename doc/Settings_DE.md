@@ -3,8 +3,7 @@
 
 ![Einstellungen](../pics/fe/Settings_DE.png)
 
-## Feiertage
-<a name="holidays"></a>
+## <a name="holidays"></a> Feiertage
 
 Die Feiertage werden aus der Datei `Holidays-JJJJ.txt` gelesen, wobei JJJJ durch die Jahreszahl ersetzt wird, d.h. die Feiertage für 2017 finden sich in der Datei `Holidays-2017.txt`. 
 Die Datei muss sich sich in dem Verzeichnis befinden, auf das die Variable `SAE_HOME` verweist (normalerweise `/opt/sae`). 
@@ -31,16 +30,14 @@ Sofern der Raspberry Zugang zum Internet hat, erfolgt einmal jährlich ein Downl
 
 HE steht dabei für Hessen, die Abkürzung für andere Bundesländer und die vollständige API-Dokumentation findet sich auf http://feiertage.jarmedia.de. Anstelle der Jahreszahl muss "{0}" (ohne Anführungszeichen) verwendet werden, was zum Ausführungszeitpunkt durch die aktuelle Jahreszahl ersetzt wird.
 
-## Modbus
-<a name="user-content-modbus"></a>
+## <a name="user-content-modbus"></a> Modbus
 
 Bevor Modbus für Zähler oder Schalter verwendet werden kann, muss mindestens ein Modbus/TCP konfiguriert werden.
 
 Für jeden Modbus/TCP muss eine eindeutige ID festgelegt werden, die bei der Konfiguration von Modbus-Zählern und Schaltern angegeben wird (z.B. "wallbox").
 Die Angabe von Hostname bzw. IP-Adresse und Port ist optional möglich.
 
-## Benachrichtigungen
-<a name="notifications"></a>
+## <a name="notifications"></a> Benachrichtigungen
 
 Zur Verwendung von Benachrichtigungen muss ein Shell-Script angegeben werden, das beim Auftreten eines konfigurierten Ereignisses aufgerufen wird.
 

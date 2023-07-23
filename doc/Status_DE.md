@@ -8,8 +8,7 @@ Die Statusseite zeigt den Status jedes schaltbaren Gerätes in Form einer **Ampe
 
 Bei Geräten mit aktivierter [Anlaufstromerkennung](StartingCurrentDetection_DE.md) geht die Ampel abhängig vom Zeitplan und der aktuellen Uhrzeit auf rot oder gelb, sobald der Anlaufstrom erkannt wurde.  
 
-## Manuelles Schalten
-<a name="click-green"></a>
+## <a name="click-green"></a> Manuelles Schalten
 
 Die Ampel ermöglicht auch das **manuelle Schalten** von Geräten. Durch einen **Klick auf die grüne Lampe** kann das Gerät unabhängig von konfigurierten Zeitplänen sofort eingeschaltet werden:
 
@@ -25,8 +24,7 @@ Die geplante Laufzeit muss eingegeben werden, damit der *Smart Appliance Enabler
 
 Durch Klick auf die `Starten`-Schaltfläche wird das Gerät sofort eingeschaltet.
 
-## Besonderheiten für Wallboxen
-<a name="click-green-ev"></a>
+## <a name="click-green-ev"></a> Besonderheiten für Wallboxen
 
 Nach einen **Klick auf das grüne Ampellicht** kann man den `Lademodus` für den aktuellen Ladevorgang festlegen.
 

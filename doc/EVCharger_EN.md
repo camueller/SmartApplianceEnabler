@@ -47,8 +47,7 @@ Regardless of the specific wallbox, the following settings apply to all wallboxe
 - `Latitude`: The geographic latitude of the Wallbox is used to identify the vehicle that is close to the Wallbox in the case of multiple configured vehicles.
 - `Longitude`: The geographic longitude of the Wallbox is used to identify the vehicle that is close to the Wallbox in the case of multiple configured vehicles.
 
-### Vehicles
-<a name="ev">
+### <a name="ev"></a> Vehicles
 
 The configuration of vehicles includes parameters for controlling the charging process and default values for dialogs.
 

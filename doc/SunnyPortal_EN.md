@@ -30,8 +30,7 @@ If you get the error message instead
 
 ... the ID you selected for the device is already assigned and another [ID configured](Appliance_EN.md#id) must be configured. Then you have to add the device again in the *Sunny Portal*.
 
-### Maximum number of devices in Sunny Portal
-<a name="max-devices">
+### <a name="max-devices"></a> Maximum number of devices in Sunny Portal
 
 The Sunny Home Manager currently supports *a maximum of 12 devices*. In addition to the devices that are addressed with the SEMP protocol, the total number also includes, for example, SMA Bluetooth radio-controlled sockets - i.e. all devices that are displayed in the consumer overview in Sunny Portal.
 
