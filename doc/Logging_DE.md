@@ -74,7 +74,7 @@ Um nur die Log-Einträge eines spezifischen Gerätes zu sehen, gibt man hinter `
 
 Bei Verdacht auf Fehlverhalten des *Smart Appliance Enabler* sollte das Log gezielt nach Fehlern durchsucht werden.
 
-Der *Smart Appliance Enabler* loggt Fehler mit dem Log-Level `ERROR`. d.h. dieses "Wort" kann man als Such-Kriterium verwenden.
+Der *Smart Appliance Enabler* loggt Fehler mit dem Log-Level `ERROR`, d.h. dieses "Wort" kann man als Such-Kriterium verwenden.
 
 ```bash
 $ grep ERROR /tmp/rolling-2020-12-31.log
