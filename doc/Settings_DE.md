@@ -6,7 +6,7 @@
 ## Feiertage
 <a name="holidays"></a>
 
-Die Feiertage werden aus der Datei `Holidays-JJJJ.txt` gelesen, wobei JJJJ durch die Jahreszahl ersetzt wird, d.h. die Feiertage für 2023 finden sich in der Datei `Holidays-2023.txt`. 
+Die Feiertage werden aus der Datei `Holidays-JJJJ.txt` gelesen, wobei JJJJ durch die Jahreszahl ersetzt wird, d.h. die Feiertage für 2017 finden sich in der Datei `Holidays-2017.txt`. 
 Die Datei muss sich sich in dem Verzeichnis befinden, auf das die Variable `SAE_HOME` verweist (normalerweise `/opt/sae`). 
 Der Inhalt der Datei ist wie folgt aufgebaut:
 
