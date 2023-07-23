@@ -5,7 +5,7 @@ The *Smart Appliance Enabler* currently supports the following controls:
 
 * [Meter reporting switch](MeterReportingSwitch_EN.md) is automatically active if no other control is configured
 * [GPIO](GPIOSwitch_EN.md)
-* [Modbus](ModbusSwitch_EN.md) only appears if at least one Modbus has been configured in the [Settings](Settings_EN.md#user-content-modbus)
+* [Modbus](ModbusSwitch_EN.md) only appears if at least one Modbus has been configured in the [Settings](Settings_EN.md#modbus)
 * [HTTP](HttpSwitch_EN.md)
 * [Level switch](LevelSwitch_EN.md)
 * [PWM switch](PwmSwitch_EN.md)
