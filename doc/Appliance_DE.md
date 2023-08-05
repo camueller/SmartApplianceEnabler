@@ -1,10 +1,10 @@
 # Gerät
 
-Durch Klick auf `Neues Gerät` wird die Konfiguration eines neuen Geräte begonnen und es öffnet sich folgende Seite:
+Durch Klick auf `Neues Gerät` wird die Konfiguration eines neuen Geräte begonnen. Dabei öffnet sich folgende Seite:
 
 ![Neues Gerät](../pics/fe/ApplianceNew_DE.png)
 
-Nach dem Speichern des Geätes erscheint im Menü ein Eintrag für das angelegte Gerät. Zusätzlich erscheinen die Unterpunkte `Zähler`, `Schalter` und `Schaltzeiten`.
+Nach dem Speichern des Gerätes erscheint im Menü ein Eintrag für das angelegte Gerät. Zusätzlich erscheinen die Unterpunkte `Zähler`, `Schalter` und `Schaltzeiten`.
 
 Durch Klicken der `Löschen`-Schaltfläche und Bestätigung der Löschabsicht wird das Gerät gelöscht.
 
@@ -48,28 +48,26 @@ Die vom *Sunny Home Manager* empfohlene Leistungsaufnahme wird diesen Wert nicht
 ### Max. Leistungsaufnahme
 Bei Geräten, deren Leistungsaufnahme nicht steuerbar ist, die maximale Leistungsaufnahme laut Typenschild. Bei Geräten mit steuerbarer Leistungsaufnahme wird die empfohlene Leistungsaufnahme diesen Wert nicht überschreiten.
 
-### Unterbrechnung erlaubt
-Wenn aktiviert, darf der *Sunny Home Manager* die Laufzeit des Gerätes unterbrechen als Reaktion auf unvorhergesehene Energiebedarfe anderer Geräte oder schlechte Wetterbedinungen.
+### Unterbrechung erlaubt
+Wenn aktiviert, darf der *Sunny Home Manager* als Reaktion auf unvorhergesehene Energiebedarfe anderer Geräte oder schlechte Wetterbedingungen die Laufzeit des Gerätes unterbrechen.
 
-#### Min. Einschaltdauer
-Dieses Feld ist nur aktiv, wenn `Unterbrechnung erlaubt` aktiviert wurde.
+Die folgenden Felder sind nur aktiv, wenn `Unterbrechnung erlaubt` aktiviert wurde.
 
-Wenn das Gerät eingeschaltet ist, muss der *Sunny Home Manager* es in diesem Zustand lassen für die angegebene Dauer, bevor es ausgeschaltet wird.
+* `Min. Einschaltdauer`
+  
+  Wenn das Gerät eingeschaltet ist, muss der *Sunny Home Manager* es mindestens für die angegebene Dauer in diesem Zustand belassen, bevor es ausgeschaltet werden kann.
 
-#### Max. Einschaltdauer
-Dieses Feld ist nur aktiv, wenn `Unterbrechnung erlaubt` aktiviert wurde.
+* `Max. Einschaltdauer`
 
-Wenn das Gerät eingeschaltet ist, darf der *Sunny Home Manager* es in diesem Zustand nicht länger als die angegebene Dauer lassen, bevor es ausgeschaltet wird.
+  Wenn das Gerät eingeschaltet ist, darf der *Sunny Home Manager* es maximal für die angegebene Dauer in diesem Zustand belassen, bis es ausgeschaltet wird.
 
-#### Min. Ausschaltdauer
-Dieses Feld ist nur aktiv, wenn `Unterbrechnung erlaubt` aktiviert wurde.
+* `Min. Ausschaltdauer`
 
-Wenn das Gerät ausgeschaltet ist, muss der *Sunny Home Manager* es in diesem Zustand lassen für die angegebene Dauer, bevor es wieder eingeschaltet wird.
+  Wenn das Gerät ausgeschaltet ist, muss der *Sunny Home Manager* es mindestens für die angegebene Dauer in diesem Zustand belassen, bevor es wieder eingeschaltet werden kann.
 
-#### Max. Ausschaltdauer
-Dieses Feld ist nur aktiv, wenn `Unterbrechnung erlaubt` aktiviert wurde.
+* `Max. Ausschaltdauer`
 
-Wenn das Gerät ausgeschaltet ist, darf der *Sunny Home Manager* es in diesem Zustand nicht länger als die angegebene Dauer lassen, bevor es wieder eingeschaltet wird.
+  Wenn das Gerät ausgeschaltet ist, darf der *Sunny Home Manager* es maximal für die angegebene Dauer in diesem Zustand belassen, bis es eingeschaltet wird.
 
 ### Absender-ID für Benachrichtigungen
 Der Wert dieses Feldes wird beim Versenden von Benachrichtigungen als Absender verwendet. Wenn kein Wert eingetragen ist, wird stattdessen der Wert des Feldes `ID` verwendet. 

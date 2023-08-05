@@ -10,8 +10,8 @@ Für die Genauigkeit des Zählers ist die Anzahl der Impulse pro kWh wichtig. Di
 ## Log
 Wird ein S0-Zähler für das Gerät `F-00000001-000000000012-00` verwendet, kann man die ermittelte Leistungsaufnahme im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
 
-```console
-sae@raspi:~ $ grep S0ElectricityMeter /tmp/rolling-2021-01-01.log | grep F-00000001-000000000012-00
+```bash
+$ grep S0ElectricityMeter /tmp/rolling-2021-01-01.log | grep F-00000001-000000000012-00
 2021-01-01 13:00:00,064 DEBUG [pi4j-gpio-event-executor-46] d.a.s.m.S0ElectricityMeter [S0ElectricityMeter.java:189] F-00000001-000000000012-00: S0 impulse detected on GPIO 2
 2021-01-01 13:00:00,066 DEBUG [pi4j-gpio-event-executor-46] d.a.s.m.S0ElectricityMeter [S0ElectricityMeter.java:193] F-00000001-000000000012-00: power: 2077W
 2021-01-01 13:00:01,823 DEBUG [pi4j-gpio-event-executor-46] d.a.s.m.S0ElectricityMeter [S0ElectricityMeter.java:189] F-00000001-000000000012-00: S0 impulse detected on GPIO 2
@@ -20,14 +20,14 @@ sae@raspi:~ $ grep S0ElectricityMeter /tmp/rolling-2021-01-01.log | grep F-00000
 2021-01-01 13:05:47,604 DEBUG [pi4j-gpio-event-executor-47] d.a.s.m.S0ElectricityMeter [S0ElectricityMeter.java:193] F-00000001-000000000012-00: power: 10W
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `S0ElectricityMeter` und drückt Refresh.
+*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` den Text `S0ElectricityMeter` ein und drückt Refresh.
 
 ## Schaltung
 Der für den Zähler verwendete GPIO-Eingang muß auf einen definierten Grundzustand gesetzt werden, um den Einfluss von Störungen zu minimieren. Dabei unterscheidet man zwischen **Pull-Up** und **Pull-Down** (für Details siehe https://www.elektronik-kompendium.de/sites/raspberry-pi/2006051.htm).
 
 Grundsätzlich sollte das Kabel zwischen Zähler und Raspberry Pi möglichst kurz sein (max. 20-30 cm). Sollte ein längeres Kabel notwendig sein, ist nach meinen Erfahrungen die Schaltung als **Pull-Up** weniger anfällig für Störungen.
 
-In den nachfolgenden Schaltbeispielen ist der notwendige Widerstand für Pull-Down/Pull-Down nicht eingezeichnet, weil dafür dieser auf dem Raspberry Pi selbst vorhandenen ist und vom *Smart Appliance Enabler* per Software-Konfiguration aktiviert wird.
+In den nachfolgenden Schaltbeispielen ist der notwendige Widerstand für Pull-Down/Pull-Down nicht eingezeichnet, weil dieser auf dem Raspberry Pi selbst vorhandenen ist und vom *Smart Appliance Enabler* per Software-Konfiguration aktiviert wird.
 
 ### Schaltbeispiel Pull-Up
 Die Schaltung zum Messen des Stromverbrauchs eines 240V-Gerätes (z.B. Pumpe) könnte wie folgt aussehen:

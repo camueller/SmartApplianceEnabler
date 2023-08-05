@@ -6,10 +6,10 @@ Der [*SMA Connection Assist*](https://www.sma.de/produkte/monitoring-control/sma
 
 Zunächst musst der [*SMA Connection Assist* heruntergeladen](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/run/connection-assist.jar) werden.
 
-Um diesen auszuführen, muss eine Java-Runtime auf Eurem PC installiert sein - ggf. könnt Ihr sie hier herunterladen (Standardeinstellungen ausgewählt lassen): https://adoptopenjdk.net/
+Um diesen auszuführen, muss eine Java-Runtime auf dem PC installiert sein - ggf. könnt ihr sie hier herunterladen (Standardeinstellungen ausgewählt lassen): https://adoptopenjdk.net/
 
 In dem Verzeichnis, in sich die heruntergeladene  jar-Datei des *SMA Connection Assist* befindet, muss dieser wie folgt gestartet werden (Versionsnummer ggf. anpassen!):
-```console
+```bash
 java -jar connection-assist.jar -discoverHoman
 ```
 
@@ -19,7 +19,7 @@ Der *SMA Connection Assist* läuft im installierten Standard-Webbrowser des Syst
 
 Wenn die im Text genannten Vorraussetzungen vorliegen, kann auf *Weiter* geklickt werden.
 
-Der *SMA Connection Assist* wird jetzt die SMA-Geräte im Netzwerk suchen. Das dauertwenige Sekunden und wird so angezeigt:
+Der *SMA Connection Assist* wird jetzt die SMA-Geräte im Netzwerk suchen. Das dauert wenige Sekunden und wird so angezeigt:
 
 ![Gerätesuche](../pics/ca/Geraetesuche.png)
 
@@ -39,7 +39,7 @@ Nach Eingabe des Passwords auf "Weiter" klicken. Nach einem kurzen Datenaustausc
 
 ![System Status](../pics/ca/SystemStatus.png)
 
-Hier muss auf *Systemstatus speichern* geklickt werden. Daraufhin wird der Systemstatus gespeichert, was ca. 20-30 Sekunden dauern kann. Danach wird in einem Dialog das Verzeichnis angezeigt, in dem das Log gespeichert werden wird und der Dateiname (aufschreiben oder merken!). Außerdem kann der Inhalt festegelgt werden - hier muss _SMA Servicelog (*.smasl)_ ausgewählt werden. 
+Hier muss auf *Systemstatus speichern* geklickt werden. Daraufhin wird der Systemstatus gespeichert, was ca. 20-30 Sekunden dauern kann. Danach wird in einem Dialog das Verzeichnis und der Dateiname angezeigt, unter dem das Log gespeichert wird (aufschreiben oder merken!). Außerdem kann das Datenformat festgelegt werden, welches hier _SMA Servicelog (*.smasl)_ sein muss. 
 
 ![System Status Speichern](../pics/ca/SystemStatusSpeichern.png)
 
@@ -47,18 +47,18 @@ Nachdem der Systemstatus erfolgreich gespeichert wurde, wird folgende Meldung an
 
 ![Erfolgreich gesspeichert](../pics/ca/ErfolgreichGespeichert.png)
 
-Der *SMA Connection Assist* kann jetzt geschlossen werden. Die erzeugte Datei mit der Endung .smasl ist eine Zip-Datei. Es bietet sich daher an, die Datei umzubenennen und die Endung .zip hinzuzufügen, damit sie einfacher geöffnet werden kann.
+Der *SMA Connection Assist* kann jetzt geschlossen werden. Die erzeugte Datei mit der Endung `.smasl` ist eine Zip-Datei. Es bietet sich daher an, die Datei umzubenennen und die Endung `.zip` hinzuzufügen, damit sie einfacher geöffnet werden kann.
 
 ## Analyse des SEMP-Log
 
-Wenn man vom *SMA Connection Assist* erzeugte Datei mit einem Zip-Manager öffnet, findet man darin unter anderem eine Datei mit dem Namen `SEMPLog.tgz`. Dabei handelt es sich wiederum um eine gepackte Datei, die mehrere 5 Log-Dateien im Text-Format beinhaltet, welche die letzten Stunden abdecken. Man muss die Logs also während oder kurz nach der relevanten Situation vom *Sunny Home Manager* ziehen.
+Wenn man die vom *SMA Connection Assist* erzeugte Datei mit einem Zip-Manager öffnet, findet man darin unter anderem eine Datei mit dem Namen `SEMPLog.tgz`. Dabei handelt es sich wiederum um eine gepackte Datei, die mehrere Log-Dateien im Text-Format beinhaltet, welche die letzten Stunden abdecken. Man muss die Logs also während oder kurz nach der relevanten Situation vom *Sunny Home Manager* ziehen.
 
 Alle 60 Sekunden fragt der *Sunny Home Manager* alle SEMP-Gatesways (also auch den *Smart Appliance Enabler*) ab:
 ```console
 [2021-08-21T09:20:56] SEMP(Info): SEMP update
 ```
 
-Dadurch erält der *Sunny Home Manager* Informationen zum aktuellen Status der Geräte und eventuell vorhandene Timeframes:
+Dadurch erhält der *Sunny Home Manager* Informationen zum aktuellen Status der Geräte und eventuell vorhandene Timeframes:
 ```console
 [2021-08-21T09:20:56] SEMP(Info): Current timeframes and plans: 
 [2021-08-21T09:20:56] SEMP(Info):   Device: F-00000001-000000000003-00
@@ -74,15 +74,15 @@ Danach folgt eine Zusammenfassung der SEMP-Abfrage:
 [2021-08-21T09:20:57] SEMP(Info): SEMP devices (active: 22, timed-out: 0)
 ```
 
-Falls Timeframes vorhanden sind, erfolgt eine Analyse. Wenn Tiemframes verworfen werden, wird das hier dokumentiert und man braucht sich nicht wundern, warum das Gerät keinen Einschaltbefehlt erhält.
+Falls Timeframes vorhanden sind, erfolgt eine Analyse. Wenn Timeframes verworfen werden, wird das hier dokumentiert und man braucht sich nicht wundern, warum das Gerät keinen Einschaltbefehlt erhält.
 
 Folgende Abkürzungen werden dabei verwendet:
-- ES: Earliest Start
-- LE: Latest End
-- MinRT: minimale Laufzeit
-- MaxRT: maximale Laufzeit
-- MinP: minimale Leistung
-- MaxP: maximale Leistung
+- **ES**: Earliest Start
+- **LE**: Latest End
+- **MinRT**: minimale Laufzeit
+- **MaxRT**: maximale Laufzeit
+- **MinP**: minimale Leistung
+- **MaxP**: maximale Leistung
 ```console
 [2021-08-21T09:20:57] SEMP(Info): Received timeframe: DevID=F-00000001-000000000003-00 ES(rel)=+0:00(+0) LE(rel)=+9:39(+34742) MinRT=7:41 (27719) MaxRT=7:42(27720)
 [2021-08-21T09:20:57] SEMP(Info): Received timeframe: DevID=F-00000001-000000000003-00 ES(rel)=+21:39(+77942) LE(rel)=+33:39(+121142) MinRT=7:59 (28799) MaxRT=8:00(28800)

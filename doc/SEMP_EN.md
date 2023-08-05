@@ -6,8 +6,7 @@ The use of the UPnP protocol means that *Sunny Home Manager* and *Smart Applianc
 
 Normally, the *Smart Appliance Enabler* can correctly determine this URL itself. However, if the host has multiple network interfaces or the *Smart Appliance Enabler* runs in a virtual machine or container, it may be necessary to tell the *Smart Appliance Enabler* which URL it should communicate to the *Sunny Home Manager*. This is done via the configuration parameter `semp.gateway.address` in the file `/etc/default/smartapplianceenabler`.
 
-## SEMP-URL
-<a name="url">
+## <a name="url"></a> SEMP-URL
 
 After the *Sunny Home Manager* has detected the *Smart Appliance Enabler*, further communication consists **exclusively** of the *Sunny Home Manager* accessing the following **SEMP-URL** of the *Smart Appliance Enabler* (host name / IP address must be adjusted accordingly) **every 60 seconds** :
 ```
@@ -24,8 +23,7 @@ sae@raspi:~ $ grep "SEMP UPnP" /tmp/rolling-2020-12-31.log
 
 Entering this URL, supplemented by the path `/semp` (according to the above example, this would be `http://192.168.1.1:8080/semp`), in a web browser must lead to the display of the SEMP XML described below . If this does not work because this URL is incorrect, the *Sunny Home Manager* cannot communicate with the *Smart Appliance Enabler*, i.e. no devices can be added in the *Sunny Portal* and devices are not measured and switched!
 
-## SEMP-XML
-<a name="xml">
+## <a name="xml"></a> SEMP-XML
 
 By entering the [SEMP-URL](#url) in a normal web browser the data can be displayed reported by the *Smart Appliance Enabler* to the *Sunny Home Manager*.
 

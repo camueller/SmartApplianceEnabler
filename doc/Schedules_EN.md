@@ -28,8 +28,7 @@ _Example of a multi-day plan_
 
 The *Smart Appliance Enabler* reports the device runtime requirement for the next 48 hours to the Sunny Home Manager so that it can plan optimally on this basis.
 
-## Special features  for consumer with variable power consumption
-<a name="variablePowerConsumption">
+## <a name="variablePowerConsumption"></a> Special features  for consumer with variable power consumption
 
 In the case of loads with variable power consumption, the *Sunny Home Manager* also specifies the currently permissible power consumption.
 

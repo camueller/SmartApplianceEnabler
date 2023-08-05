@@ -5,7 +5,7 @@ The *Smart Appliance Enabler* currently supports the following controls:
 
 * [Meter reporting switch](MeterReportingSwitch_EN.md) is automatically active if no other control is configured
 * [GPIO](GPIOSwitch_EN.md)
-* [Modbus](ModbusSwitch_EN.md) only appears if at least one Modbus has been configured in the [Settings](Settings_EN.md#user-content-modbus)
+* [Modbus](ModbusSwitch_EN.md) only appears if at least one Modbus has been configured in the [Settings](Settings_EN.md#modbus)
 * [HTTP](HttpSwitch_EN.md)
 * [Level switch](LevelSwitch_EN.md)
 * [PWM switch](PwmSwitch_EN.md)
@@ -21,8 +21,7 @@ If `EV charger` is specified as the appliance type, the [wallbox configuration a
 
 See also: [General notes on configuration](Configuration_EN.md)
 
-## Control requests from the Sunny Home Manager
-<a name="control-request">
+## <a name="control-request"></a> Control requests from the Sunny Home Manager
 
 If a control request is received from the *Sunny Home Manager* for an appliance, this leads to a corresponding log entry that can be displayed with the following command:
 

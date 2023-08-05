@@ -8,8 +8,7 @@ Die Statusseite zeigt den Status jedes schaltbaren Gerätes in Form einer **Ampe
 
 Bei Geräten mit aktivierter [Anlaufstromerkennung](StartingCurrentDetection_DE.md) geht die Ampel abhängig vom Zeitplan und der aktuellen Uhrzeit auf rot oder gelb, sobald der Anlaufstrom erkannt wurde.  
 
-## Manuelles Schalten
-<a name="click-green">
+## <a name="click-green"></a> Manuelles Schalten
 
 Die Ampel ermöglicht auch das **manuelle Schalten** von Geräten. Durch einen **Klick auf die grüne Lampe** kann das Gerät unabhängig von konfigurierten Zeitplänen sofort eingeschaltet werden:
 
@@ -19,19 +18,18 @@ Ein Klick auf die rote Lampe bewirkt das Ausschalten des Gerätes, wobei auch da
 
 ![Klick auf rotes Ampellicht](../pics/fe/StatusViewRedHover_DE.png)
 
-Die geplante Laufzeit muss eingegeben werden, damit der *Smart Appliance Enabler* dem *Sunny Home Manager* diese mitteilen kann. Falls für das Gerät ein Zeitplan existiert wird das Eingabefeld vorbelegt mit dessen Wert für Laufzeit.
+Die geplante Laufzeit muss eingegeben werden, damit der *Smart Appliance Enabler* dem *Sunny Home Manager* diese mitteilen kann. Falls für das Gerät ein Zeitplan existiert, wird das Eingabefeld mit dessen Wert für Laufzeit vorbelegt.
 
 ![Eingabe der Laufzeit bei Ampel](../pics/fe/StatusEdit_DE.png)
 
 Durch Klick auf die `Starten`-Schaltfläche wird das Gerät sofort eingeschaltet.
 
-## Besonderheiten für Wallboxen
-<a name="click-green-ev">
+## <a name="click-green-ev"></a> Besonderheiten für Wallboxen
 
-Nach einen **Klick auf das grüne Ampellicht** kann man den `Lademodus` für den aktuellen Ladevorgang festelegen.
+Nach einen **Klick auf das grüne Ampellicht** kann man den `Lademodus` für den aktuellen Ladevorgang festlegen.
 
 In Abhängigkeit des gewählten Lademodus werden die Felder `SOC: Ist` und/oder `SOC: Soll` angzeigt, wobei Folgendes gilt:
-- wenn ein [SOC-Script](soc/SOC_DE.md) für das ausgewählte Fahrzeug angegeben wurde, wird das Eingabefeld `SOC: Ist` vorbelegt mit dem aktuellen Wert zu diesem Zeitpunkt. Ohne SOC-Script kann er im Auto abgelesen und hier eingegeben werden, wenn man dem *Sunny Home Manager* eine gute Planung ermöglichen will. Ansonsten wird 0 angenommen und ein entsprechend hoher Energiebedarf gemeldet.
+- wenn ein [SOC-Script](soc/SOC_DE.md) für das ausgewählte Fahrzeug angegeben wurde, wird das Eingabefeld `SOC: Ist` mit dem aktuellen Wert zu diesem Zeitpunkt vorbelegt. Ohne SOC-Script kann er im Auto abgelesen und hier eingegeben werden, wenn man dem *Sunny Home Manager* eine gute Planung ermöglichen will. Ansonsten wird 0 angenommen und ein entsprechend hoher Energiebedarf gemeldet.
 - wird im Eingabefeld `SOC: Soll` kein Wert eingegeben, wird 100% angenommen und ein entsprechend hoher Energiebedarf an den *Sunny Home Manager* gemeldet.
 
 ### Lademodus: Schnell
@@ -54,7 +52,7 @@ Wenn das Fahrzeug nicht mit der Wallbox verbunden ist, wird lediglich der Status
 
 ![Statusanzeige ohne verbundenes Fahrzeug](../pics/fe/StatusEVViewNotConnected_DE.png)
 
-Nachdem das Fahrzeug verbunden wurde, werde weitere Details angezeigt. Der SOC wird mit "0%" angezeigt, falls kein [SOC-Script](#fahrzeuge) konfiguriert wurde.
+Nachdem das Fahrzeug verbunden wurde, werden weitere Details angezeigt. Der SOC wird mit "0%" angezeigt, falls kein [SOC-Script](#fahrzeuge) konfiguriert wurde.
 
 ![Statusanzeige ohne verbundenes Fahrzeug](../pics/fe/StatusEVViewConnected_DE.png)
 

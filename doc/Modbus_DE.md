@@ -3,7 +3,7 @@ Vor der Einbindung von Modbus-Geräten in den *Smart Appliance Enabler* sollte g
 - die Kommunikation mit dem Gerät via Modbus/TCP funktioniert
 - die relevanten Register die erwarteten Daten liefern
 
-Dazu eignet sich das Windows-Programm [Simply Modbus TCP Client](https://www.simplymodbus.ca/TCPclient.htm), dessen Demo-Version zwar funtional nicht eingeschränkt ist aber nach 6 Modbus-Nachrichten einen Neustart des Programms erfodert.
+Dazu eignet sich das Windows-Programm [Simply Modbus TCP Client](https://www.simplymodbus.ca/TCPclient.htm), dessen Demo-Version zwar funtional nicht eingeschränkt ist, aber nach sechs Modbus-Nachrichten einen Neustart des Programms erfordert.
 
 Folgende Angaben müssen dabei der Modbus-Beschreibung des jeweiligen Geätes entnommen werden:
 - Slave ID bzw. Slave-Adresse
@@ -29,7 +29,7 @@ Register auslesen:
 - `Function code` auswählen
 - `minus offset` muss immer auf 0 stehen!
 - `register size` auswählen
-- nach Klick auf `Send` sollte keine Fehlermeldung kommen, sondern eine Response angezeigt werden
+- nach Klick auf `Send` sollte keine Fehlermeldung sondern eine Response angezeigt werden
 
 Durch Variation von
 - `High byte first`
@@ -42,7 +42,7 @@ muss erreicht werden, dass in Spalte `results` der korrekte Wert angezeigt wird.
 
 # Modbus im Smart Appliance Enabler
 ## Allgemein
-Für jeden Modbus-basierten Zähler/Schalter/Wallbox muss ein konfigurierter [Modbus/TCP](Settings_DE.md#user-content-modbus) ausgewählt werden.
+Für jeden Modbus-basierten Zähler/Schalter/Wallbox muss ein konfigurierter [Modbus/TCP](Settings_DE.md#modbus) ausgewählt werden.
 
 Ausserdem muss die **Slave-Adresse** des Modbus-Gerätes angegeben werden.
 
@@ -58,7 +58,7 @@ Beim Finden der richtigen Konfiguration hilft Ausprobieren: Eine zu testende Kom
 
 ## Modbus-Protokoll
 ### Modbus/TCP
-Die Konfiguration von Modbus/TCP erfolgt in den [Einstellungen](Settings_DE.md#user-content-modbus).
+Die Konfiguration von Modbus/TCP erfolgt in den [Einstellungen](Settings_DE.md#modbus).
 
 ### Modbus/RTU
 *Smart Appliance Enabler* unterstützt das [Modbus](https://de.wikipedia.org/wiki/Modbus)-Protokoll lediglich in der Ausprägung Modbus/TCP. Allerdings können Modbus/RTU-Geräte angeschlossen werden, wenn man einen **USB-Modbus-Adapter** (manchmal auch als USB-RS485-Adapter bezeichnet) verwendet. In diesem Fall benötigt man allerdings zusätzlich ein Modbus/TCP zu Modbus/RTU Gateway wie z.B. das frei verfügbare [mbusd](https://github.com/3cky/mbusd), dessen Installation nachfolgend beschrieben ist.
@@ -66,26 +66,30 @@ Die Konfiguration von Modbus/TCP erfolgt in den [Einstellungen](Settings_DE.md#u
 #### Aktivieren/Starten des `mbusd` nach Automatischer Installation
 Bei der automatischen Installation wird der `mbusd` bereits gebaut und installiert, aber zur Vermeidung unnötiger Einträge im Syslog nicht gestartet und im Boot-System aktiviert.
 Das lässt sich bei Bedarf mit den beiden folgenden Befehlen nachholen, nachdem ein **USB-Modbus-Adapter** angeschlossen wurde:
-```console
-sae@raspberrypi:/~ $ sudo systemctl start mbusd@ttyUSB0.service
-sae@raspberrypi:/~ $ sudo systemctl enable mbusd@ttyUSB0.service
+
+```bash
+$ sudo systemctl start mbusd@ttyUSB0.service
+$ sudo systemctl enable mbusd@ttyUSB0.service
 ```
 
 #### Manuelle Installation
 Falls noch nicht installiert, muss `git` und `cmake` installiert werden:
-```console
-pi@raspberrypi:/tmp $ sudo apt update
-pi@raspberrypi:/tmp $ sudo apt install git cmake
+
+```bash
+$ sudo apt update
+$ sudo apt install git cmake
 ```
 
 Für den Build wird in das Verzeichnis `/tmp` gewechselt:
-```console
-pi@raspberrypi ~ $ cd /tmp
+
+```bash
+$ cd /tmp
 ```
 
-Damit können jetzt die Sourcen aus dem Git-Repository gehole werden:
-```console
-pi@raspberrypi:/tmp $ git clone https://github.com/camueller/mbusd.git
+Damit können jetzt die Sourcen aus dem Git-Repository geholt werden:
+
+```bash
+$ git clone https://github.com/camueller/mbusd.git
 Cloning into 'mbusd'...
 remote: Enumerating objects: 22, done.
 remote: Counting objects: 100% (22/22), done.
@@ -95,14 +99,12 @@ Receiving objects: 100% (775/775), 986.62 KiB | 540.00 KiB/s, done.
 Resolving deltas: 100% (480/480), done.
 ```
 
-Als nächstes in das Verzeichnis mit den Sourcen wechseln, dort ein build-Verzeichnis erstellen und dortin wechseln:
-```console
-pi@raspberrypi:/tmp $ cd mbusd && mkdir build && cd build
-```
+Als nächstes wird im Verzeichnis des Git-Klone das Build-Verzeichnis erstellt, dorthin gewechselt und der Build konfiguriert:
 
-Jetzt kann die Build-Konfiguration erstellt werden:
-```console
-pi@raspberrypi:/tmp/mbusd/build $ cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+```bash
+$ mkdir mbusd/build
+$ cd mbusd/build
+$ cmake -DCMAKE_INSTALL_PREFIX=/usr ..
 -- The C compiler identification is GNU 6.3.0
 -- The CXX compiler identification is GNU 6.3.0
 -- Check for working C compiler: /usr/bin/cc
@@ -147,8 +149,9 @@ pi@raspberrypi:/tmp/mbusd/build $ cmake -DCMAKE_INSTALL_PREFIX=/usr ..
 ```
 
 Nun kann endlich der eigentliche Build gestartet werden:
-```console
-pi@raspberrypi:/tmp/mbusd/build $ make
+
+```bash
+$ make
 Scanning dependencies of target mbusd
 [  8%] Building C object CMakeFiles/mbusd.dir/src/main.c.o
 [ 16%] Building C object CMakeFiles/mbusd.dir/src/tty.c.o
@@ -166,8 +169,9 @@ Scanning dependencies of target mbusd
 ```
 
 Die Installation der Build-Artefakte kommt als Nächstes:
-```console
-pi@raspberrypi:/tmp/mbusd/build $ sudo make install
+
+```bash
+$ sudo make install
 [100%] Built target mbusd
 Install the project...
 -- Install configuration: ""
@@ -178,24 +182,28 @@ Install the project...
 ```
 
 Der `systemd` muss reinitialisiert werden, damit er die gerade installierte Service-Definition des `mbusd` finden kann:
-```console
-pi@raspberrypi:/tmp/mbusd/build $ sudo systemctl daemon-reload
+
+```bash
+$ sudo systemctl daemon-reload
 ```
 
 Jetzt kann die Konfiguration für den mbusd erstellt werden, ausgehend von der installierten Beispiel-Datei:
-```console
-cd /etc/mbusd/
-sudo cp mbusd.conf.example mbusd-ttyUSB0.conf
+
+```bash
+$ cd /etc/mbusd/
+$ sudo cp mbusd.conf.example mbusd-ttyUSB0.conf
 ```
 
 Jetzt steht einem Start des `mbusd` nichts mehr im Wege:
-```console
-pi@raspberrypi:/etc/mbusd $ sudo systemctl start mbusd@ttyUSB0.service
+
+```bash
+$ sudo systemctl start mbusd@ttyUSB0.service
 ```
 
 Nachfolgend ist zu sehen, wie überprüft werden kann, ob der `mbusd` läuft:
-```console
-pi@raspberrypi:/etc/mbusd $ sudo systemctl status mbusd@ttyUSB0.service
+
+```bash
+$ sudo systemctl status mbusd@ttyUSB0.service
 ● mbusd@ttyUSB0.service - Modbus TCP to Modbus RTU (RS-232/485) gateway.
    Loaded: loaded (/lib/systemd/system/mbusd@.service; disabled; vendor preset: enabled)
    Active: active (running) since Sun 2019-03-24 18:33:53 CET; 2s ago
@@ -208,12 +216,14 @@ Mar 24 18:33:53 raspberrypi mbusd[2807]: 24 Mar 2019 18:33:53 mbusd-0.3.1 starte
 ```
 
 Damit der `mbusd` direkt beim Booten gestartet wird, muss der Service noch aktiviert werden:
-```console
-pi@raspberrypi:/etc/mbusd $ sudo systemctl enable mbusd@ttyUSB0.service
+
+```bash
+$ sudo systemctl enable mbusd@ttyUSB0.service
 Created symlink /etc/systemd/system/multi-user.target.wants/mbusd@ttyUSB0.service → /lib/systemd/system/mbusd@.service.
 ```
 
 Falls es Probleme mit `mbusd` gibt, kann man den Log-Level erhöhen und die Ausgaben in eine Datei leiten, in dem man in der Datei `/lib/systemd/system/mbusd@.service` die `ExecStart`-Zeile wie folgt ändert:
+
 ```
 ExecStart=/usr/bin/mbusd -d -v9 -c /etc/mbusd/mbusd-%i.conf -p /dev/%i
 ```
@@ -222,18 +232,19 @@ Danach finden sich sehr detaillierte Log-Ausgaben in der Datei `/var/log/mbus.lo
 
 ### Überprüfung der Modbus-Installation und der mbusd-Installation
 Bei Modbus-Problemen sollten zunächst folgende Punkte geprüft werden:
-- Wurde bei der Modbus-Verkabelung Plus und Minus nicht vertauscht?
-- Hat der Modbus einen 100-Ohm-Widerstand mindestens an einem Ende?
+- Wurde bei der Modbus-Verkabelung Plus und Minus vertauscht?
+- Wurde der Bus mindestens auf einer Seite mit einem 120-Ohm-Widerstand sauber terminiert?
 
 Nach der Hardware-Überprüfung sollte zunächst die Modbus/RTU-Funktion überprüft werden, bevor Modbus/TCP geprüft wird.
 
 #### Installation von mbpoll
 Für die Überprüfung von Modbus/RTU und Modbus/TCP eignet sich das Command-Line-Tool [mbpoll](https://github.com/epsilonrt/mbpoll), das wie folgt installiert wird:
-```
-wget -O- http://www.piduino.org/piduino-key.asc | sudo apt-key add -
-echo 'deb http://raspbian.piduino.org stretch piduino' | sudo tee /etc/apt/sources.list.d/piduino.list
-sudo apt update
-sudo apt install mbpoll
+
+```bash
+$ wget -O- http://www.piduino.org/piduino-key.asc | sudo apt-key add -
+$ echo 'deb http://raspbian.piduino.org stretch piduino' | sudo tee /etc/apt/sources.list.d/piduino.list
+$ sudo apt update
+$ sudo apt install mbpoll
 ```
 
 `mbpoll -h` liefert Hinweise zur Verwendung. Alternativ finden sich diese auch auf der [Projekt-Homepage](https://github.com/epsilonrt/mbpoll#help).
@@ -249,9 +260,10 @@ Danach sollte es möglich sein ein Register auszulesen. Beispielsweise sieht der
 - erste Adresse is 0 anstatt 1 (`-0`)
 - Register nur einmal auslesen (`-1`)
 
-Der Aufruf sorgt dafür, dass das Register einmal ausgelesen wird und der Register-Wert (hier im Beispiel: 2952.21) angezeigt wird.
-```
-pi@raspberrypi:~ $ mbpoll -b 9600 -P none -a 1 -r 342 -t 3:float -B -0 -1 /dev/ttyUSB0
+Der Aufruf sorgt dafür, dass das Register einmal ausgelesen und der Register-Wert (hier im Beispiel: 2952.21) angezeigt wird.
+
+```bash
+$ mbpoll -b 9600 -P none -a 1 -r 342 -t 3:float -B -0 -1 /dev/ttyUSB0
 mbpoll 1.4-12 - FieldTalk(tm) Modbus(R) Master Simulator
 Copyright © 2015-2019 Pascal JEAN, https://github.com/epsilonrt/mbpoll
 This program comes with ABSOLUTELY NO WARRANTY.
@@ -281,8 +293,9 @@ Danach sollte es möglich sein ein Register auszulesen. Beispielsweise sieht der
 - Register nur einmal auslesen (`-1`)
 
 Der Aufruf sorgt dafür, dass das Register einmal ausgelesen wird und der Register-Wert (hier im Beispiel: 2952.21) angezeigt wird.
-```
-pi@raspberrypi:~ $ mbpoll -a 1 -r 342 -t 3:float -B -0 -1 localhost
+
+```bash
+$ mbpoll -a 1 -r 342 -t 3:float -B -0 -1 localhost
 mbpoll 1.4-12 - FieldTalk(tm) Modbus(R) Master Simulator
 Copyright © 2015-2019 Pascal JEAN, https://github.com/epsilonrt/mbpoll
 This program comes with ABSOLUTELY NO WARRANTY.

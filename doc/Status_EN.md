@@ -8,8 +8,7 @@ The status page shows the status of each controllable appliance with a **traffic
 
 For devices with activated [Starting CurrentDetection](StartingCurrentDetection_EN.md), the traffic light changes to red or yellow depending on the schedule and the current time as soon as the starting current has been detected.
 
-## Manual switching
-<a name="click-green">
+## <a name="click-green"></a> Manual switching
 
 The traffic light also enables **manual switching** of appliances. With a **click on the green lamp**, the device can be switched on immediately, regardless of configured schedules:
 
@@ -25,8 +24,7 @@ The planned runtime must be entered so that the *Smart Appliance Enabler* can co
 
 By clicking on the `Start` button, the device is switched on immediately.
 
-## Special features for wallboxes
-<a name="click-green-ev">
+## <a name="click-green-ev"></a> Special features for wallboxes
 
 After a **click on the green traffic light** you can set the `charge mode` for the current charge process.
 

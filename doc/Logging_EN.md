@@ -52,8 +52,7 @@ pi@raspi ~ $ tail -f /tmp/rolling-2020-12-31.log | grep --line-buffered F-000000
 2020-12-31 11:23:19,841 DEBUG [Timer-0] d.a.s.h.HttpTransactionExecutor [HttpTransactionExecutor.java:168] F-00000001-000000000002-00: Response code is 200
 ```
 
-#### Webmin
-<a name="webmin-logs">
+#### <a name="webmin-logs"></a> Webmin
 
 System -> System Logs
 Click the file selection button to the right of `View log file`.
