@@ -739,7 +739,9 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
 
     @Override
     public void timeframeIntervalCreated(LocalDateTime now, TimeframeInterval timeframeInterval) {
-        timeframeInterval.getRequest().setEnabled(false);
+        if(this.evHandler.getConnectedVehicle().getSocScript() != null) {
+            timeframeInterval.getRequest().setEnabled(false);
+        }
     }
 
     @Override
