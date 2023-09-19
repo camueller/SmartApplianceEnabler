@@ -19,15 +19,15 @@ Im einfachsten Fall ist der min. Tastgrad 0% und der max. Tastgrad 100%. Hier ka
 
 Komplizierter ist es, wenn ein min. Tastgrad (rote Farbe: ca. 25%) und ein max. Tastgrad (grüne Farbe: ca. 60%) zu berücksichtigen sind. Damit stehen nur 60%-25%=35% Tastgrad zur Verfügung, um die Spanne zwischen min. Leistungsaufnahme (z.B. 1000W) und max. Leistungsaufnahme (z.B. 4000W) abzubilden. Dabei entspricht eine Leistungsaufnahme von 1000W einem Tastgrad von 25% und eine Leistungsaufnahme von 4000W einem Tastgrad von 60%. 
 
-Für die Konfiguration des PWM-Signals muss mindestens die `PWM-Frequenz` angeben werden.
+Für die Konfiguration des PWM-Signals muss mindestens die `PWM-Frequenz` angegeben werden.
 
 ## Log
 Wird ein Gerät (hier `F-00000001-000000000001-00`) mit konfiguriertem PWM-Schalter gesteuert, kann man die Steuerbefehle im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
 
-```console
-sae@raspi2:~ $ grep "c.PwmSwitch" /tmp/rolling-2022-03-27.log | grep F-00000001-000000000001-00
+```bash
+$ grep "c.PwmSwitch" /tmp/rolling-2022-03-27.log | grep F-00000001-000000000001-00
 2022-03-27 08:00:49,798 INFO [MQTT Call: F-00000001-000000000001-00-PwmSwitch] d.a.s.c.PwmSwitch [PwmSwitch.java:144] F-00000001-000000000001-00: Setting power to 2000
 2022-03-27 08:00:49,799 INFO [MQTT Call: F-00000001-000000000001-00-PwmSwitch] d.a.s.c.PwmSwitch [PwmSwitch.java:158] F-00000001-000000000001-00: Setting GPIO 17 duty cycle to 310
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `c.PwmSwitch` und drückt Refresh.
+*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` den Text `c.PwmSwitch` ein und drückt Refresh.

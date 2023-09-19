@@ -37,18 +37,16 @@ Die Konfiguration mit der Kombination der zuvor beschriebenen Besonderheiten kö
 ### Protokoll-unabhängige Einstellungen für Wallboxen
 ![Fahrzeugkonfiguration](../pics/fe/EVChargerCommon_DE.png)
 
-Unabhängig von der spezifischen Wallbox gibt folgende Einstellungen, die für alle Wallboxen gelten:
-- `Spannung`: wird für die Berechnung der ladestromstärke benötigt (Standardwert: 230V)
+Unabhängig von der spezifischen Wallbox gibt es folgende Einstellungen, die für alle Wallboxen gelten:
+- `Spannung`: wird für die Berechnung der Ladestromstärke benötigt (Standardwert: 230V)
 - `Phasen`: Anzahl der Phasen, mit denen die Wallbox maximal laden kann. Kann für jedes Fahrzeug individuell überschrieben werden. (Standardwert: 1)
 - `Abfrage-Intervall`: in diesen Zeitabständen wird der Status der Wallbox abgefragt (Standardwert: 10s)
 - `Statuserkennung-Unterbrechung`: Nach dem Ein-/Ausschalten wird der Ladestatus für die angegebene Dauer nicht abgefragt um der Wallbox Zeit zu geben, den gewünschten Status herbeizuführen
 - `Wiederholung Ladestrom setzen`: Falls gesetzt, wird die Ladestromstärke trotz gleichbleibenden Wertes wiederholt nach Ablauf der durch den Wert angegebenen Dauer in Sekunden gesetzt. Das kann notwendig sein, um einen Rückfall der Wallbox auf eine niedrigere Stromstärke zu verhindern.
-- `Ladestatuserkennung abwarten`: Nachdem ein angeschlosses Fahrzeug erkannt wird erfolgt ein sofortiger Ladestart bis die Wallbox den Status 'Laden' zurückmeldet. Danach wird das Laden wieder gestoppt bis ein Einschaltbefehl empfangen wird. Erforderlich Für Renault Zoe!
-- `Geo. Breite`: Die geografische Breite der Wallbox dient bei mehrenden konfigurierten Fahrzeugen zur Identifikation des Fahrzeugs, welches sich in der Nähe der Wallbox befindet.
-- `Geo. Länge`: Die geografische Länge der Wallbox dient bei mehrenden konfigurierten Fahrzeugen zur Identifikation des Fahrzeugs, welches sich in der Nähe der Wallbox befindet.
+- `Ladestatuserkennung abwarten`: Nachdem ein angeschlosses Fahrzeug erkannt wird, erfolgt ein sofortiger Ladestart bis die Wallbox den Status 'Laden' zurückmeldet. Danach wird das Laden wieder gestoppt bis ein Einschaltbefehl empfangen wird. Erforderlich für Renault Zoe!
+- `Geo. Breite`, `Geo. Länge`: Die geografische Breite und Länge der Wallbox dient bei mehreren konfigurierten Fahrzeugen zur Identifikation des Fahrzeugs, welches sich in der Nähe der Wallbox befindet.
  
-### Fahrzeuge
-<a name="ev">
+### <a name="ev"></a> Fahrzeuge
 
 Die Konfiguration von Fahrzeugen beinhaltet Parameter zur Steuerung des Ladevorgangs und Standardwerte für Dialoge.
 
@@ -81,14 +79,14 @@ Im *Sunny Home Manager* sollte die Verbraucher-Konfiguration für eine Wallbox w
 ## Ladevorgang
 Wenn ein *SOC-Script* konfiguriert wurde, wird dieses **automatisch nach dem Verbinden des Fahrzeuges mit der Wallbox** ausgeführt.
 
-Zusätzlich besteht die Möglichkeit, den Ist- und Soll-Ladezustand einzugeben beim [manuellen Start des Ladevorganges](Status_DE.md#user-content-click-green-ev).
+Zusätzlich besteht die Möglichkeit, den Ist- und Soll-Ladezustand beim [manuellen Start des Ladevorganges](Status_DE.md#user-content-click-green-ev) einzugeben.
 
 Auf Basis der Werte für
-- `Batteriekapazität`: aus der Fahrzeug-Konfiguration
-- `Ist-SOC`: geliefert vom SOC-Script oder eingegeben über die [Ampel-Steuerung](Status_DE.md#user-content-click-green-ev)
-- `Soll-SOC` Standardwert aus der Fahrzeug-Konfiguration oder eingegeben über [Ampel-Steuerung](Status_DE.md#user-content-click-green-ev)
+- `Batteriekapazität` aus der Fahrzeug-Konfiguration,
+- vom SOC-Script geliefertem oder über die [Ampel-Steuerung](Status_DE.md#user-content-click-green-ev) eingegebenem `Ist-SOC`,
+- sowie dem `Soll-SOC` Standardwert aus der Fahrzeug-Konfiguration oder über [Ampel-Steuerung](Status_DE.md#user-content-click-green-ev) eingegebenem Wert
 
-... wird die **initiale Energie** berechnet, die vom *Sunny Home Manager* anzufordern ist.
+wird die **initiale Energie** berechnet, die vom *Sunny Home Manager* anzufordern ist.
 
 Während des Ladenvorgangs wird der **aktuelle SOC berechnet** aus:
 - `letzter bekannter SOC`: vom SOC-Script (Ladebeginn bzw. letzte Ausführung) bzw. Eingabe via Ampel (bei Ladebeginn)
@@ -106,56 +104,79 @@ Während des Ladevorgangs wird das **SOC-Script periodisch ausgeführt**. Wenn s
 Der Ablauf eines (Überschuss-) Ladevorgangs soll hier anhand von Auszügen aus dem Log veranschaulicht werden:
 
 Nachdem das Fahrzeug mit der Wallbox verbunden wurde:
+
 ```
 2021-05-02 13:04:04,740 DEBUG: Vehicle state changed: previousState=VEHICLE_NOT_CONNECTED newState=VEHICLE_CONNECTED
 ```
+
 ... wurde das SOC-Script ausgeführt und liefert 51%:
+
 ```
 2021-05-02 13:04:05,048 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
 2021-05-02 13:04:59,092 DEBUG: SoC: 51.0
 ```
+
 Aus dem Ist-SOC (51%), Soll-SOC (80% laut Fahrzeug-Konfguration) und Netto-Batteriekapzität (36 kWh) wird die benötige Energie (ohne Berücksichtigung von Ladeverlusten) mit 10,4 kWh berechnet:
+
 ```
 2021-05-02 13:05:04,747 DEBUG: energy calculation: 10440Wh evId=1 batteryCapactiy=36000Wh currentSoc=51% targetSoc=80%
 2021-05-02 13:05:32,404 DEBUG: ACTIVE/2021-05-02T13:04:04/2021-05-04T13:04:04::ENABLED/evId=1/soc=51%=>80%/energy=10440Wh/Optional Energy
 ```
+
 Für die Berechnung des SOC wird der für das Fahrzeug konfigurierte Wert für die Ladeverluste (`chargeLoss`) herangezogen - hier 11%:
+
 ```
 2021-05-02 13:06:25,018 DEBUG: SOC calculation: socCurrent=51% socRetrievedOrInitial=51% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=0Wh chargeLoss=11%
 ```
+
 Der Ladevorgang ist vorangeschritten und der berechnete SOC liegt um 20% über dem SOC der letzten Ausführung des SOC-Scripts (Standardwert der Konfiguration) - also ist eine erneute Ausführung notwendig:
+
 ```
 2021-05-03 09:26:45,464 DEBUG: SOC calculation: socCurrent=71% socRetrievedOrInitial=51% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7796Wh chargeLoss=11%
 2021-05-03 09:26:45,468 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
 2021-05-03 09:27:37,613 DEBUG: SoC: 72.0
 ```
+
 Der berechnete SOC ist 71%, der vom SOC-Script gelieferte Wert ist 72%. Aus der SOC-Änderung läßt sich die Energie berechnen, die im Fahrzeug "angekommen" ist (`energyReceivedByEv`). Aus dieser und der laut Zähler dafür aufgewendeten Energiemenge lassen sich die tatsächlichen Ladeverluste berechnen - hier 4%:
+
 ```
 2021-05-03 09:27:37,674 DEBUG: charge loss calculation: chargeLoss=4% socCurrent=72% socLastRetrieval=51% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7844Wh energyReceivedByEv=7560Wh
 ```
+
 Ab jetzt wird für die Berechnung des SOC für die Ladeverluste anstelle des für das Fahrzeug konfigurierten Wertes der zuvor berechnete Wert für die tatsächlichen Ladeverluste verwendet:
+
 ```
 2021-05-03 09:27:45,461 DEBUG: SOC calculation: socCurrent=72% socRetrievedOrInitial=72% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7Wh chargeLoss=4%
 ```
+
 An dieser Stelle wurde der Soll-SOC für diesen Ladevorgang manuell via Ampel auf 100% erhöht:
+
 ```
 2021-05-03 09:56:15,985 DEBUG: Received request to update SOC: socCurrent=74 socTarget=100
 ```
+
 Der berechnete SOC liegt abermals 20% über dem SOC der letzten Ausführung des SOC-Scripts - also ist eine erneute Ausführung notwendig:
+
 ```
 2021-05-03 11:47:05,529 DEBUG: SOC retrieval is required: SocValues{batteryCapacity=36000Wh, initial=51%, retrieved=72%, current=92%}
 2021-05-03 11:47:05,532 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
 2021-05-03 11:47:59,060 DEBUG: SoC: 90.0
 ```
+
 Der berechnete SOC war 92%, der vom SOC-Script gelieferte Wert war 90%. Die Berechnung der tatsächlichen Ladeverluste ergibt 14%:
+
 ```
 2021-05-03 11:47:59,119 DEBUG: charge loss calculation: chargeLoss=14% socCurrent=90% socLastRetrieval=72% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7416Wh energyReceivedByEv=6480Wh
 ```
+
 Ab jetzt wird für die Berechnung des SOC für die Ladeverluste der neu berechnete Wert von 14% verwendet:
+
 ```
 2021-05-03 11:48:05,532 DEBUG: SOC calculation: socCurrent=90% socRetrievedOrInitial=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=10Wh chargeLoss=14%
 ```
+
 Die berechnete Restmenge der benötigen Energie zur Erreichung des Soll-SOC ist erstmals kleiner 1 kWh - deshalb wird eine weitere Ausführung des SOC-Scripts angestossen um sicherzustellen, dass das Fahrzeug tatsächlich kurz davor ist, den Soll-SOC zu erreichen:
+
 ```
 2021-05-03 12:55:05,777 DEBUG: energy calculation: 360Wh evId=1 batteryCapactiy=36000Wh currentSoc=99% targetSoc=100%
 2021-05-03 12:55:05,767 DEBUG: SOC calculation: socCurrent=99% socRetrievedOrInitial=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=3515Wh chargeLoss=14%
@@ -164,16 +185,22 @@ Die berechnete Restmenge der benötigen Energie zur Erreichung des Soll-SOC ist 
 2021-05-03 12:55:05,772 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
 2021-05-03 12:55:58,372 DEBUG: SoC: 98.0
 ```
+
 Der berechnete SOC ist 99%, der vom SOC-Script gelieferte Wert ist 98%. Daraus lassen sich die Ladeverluste berechnen: 23% in dieser Phase des Ladens:
+
 ```
 2021-05-03 12:55:58,436 DEBUG: charge loss calculation: chargeLoss=23% socCurrent=98% socLastRetrieval=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=3552Wh energyReceivedByEv=2880Wh
 ```
+
 Auch die noch benötigte Energie wird auf Basis des tatsächlichen SOC korrigiert - von 360 Wh auf 720 Wh:
+
 ```
 2021-05-03 12:56:05,778 DEBUG: energy calculation: 720Wh evId=1 batteryCapactiy=36000Wh currentSoc=98% targetSoc=100%
 2021-05-03 12:56:35,676 DEBUG: ACTIVE/2021-05-03T09:56:15/2021-05-04T13:04:04::ENABLED/evId=1/soc=98%=>100%/energy=720Wh/Optional Energy
 ```
+
 Sobald diese Energie geladen wurde, wurde der Soll-SOC erreicht und das Laden wird beendet:
+
 ```
 2021-05-03 13:23:25,811 DEBUG: SOC calculation: socCurrent=100% socRetrievedOrInitial=98% 
 batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=666Wh chargeLoss=23%
@@ -185,8 +212,8 @@ batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=666Wh chargeLos
 ### Schaltbefehl
 Wird vom *Sunny Home Manager* ein Schaltbefehl für eine Wallbox (hier `F-00000001-000000000019-00`) empfangen, kann man das im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
 
-```console
-sae@raspi:~ $ grep "Received control" -A 3 /tmp/rolling-2020-11-18.log
+```bash
+$ grep "Received control" -A 3 /tmp/rolling-2020-11-18.log
 2020-11-18 09:36:10,008 DEBUG [http-nio-8080-exec-3] d.a.s.s.w.SempController [SempController.java:220] F-00000001-000000000019-00: Received control request: on=true, recommendedPowerConsumption=3442W
 2020-11-18 09:36:10,060 DEBUG [http-nio-8080-exec-3] d.a.s.a.Appliance [Appliance.java:334] F-00000001-000000000019-00: Setting appliance state to ON
 2020-11-18 09:36:10,062 DEBUG [http-nio-8080-exec-3] d.a.s.c.e.ElectricVehicleCharger [ElectricVehicleCharger.java:642] F-00000001-000000000019-00: Set charge power: 3442W corresponds to 14A using 1 phases
@@ -198,8 +225,8 @@ sae@raspi:~ $ grep "Received control" -A 3 /tmp/rolling-2020-11-18.log
 ### SOC-Script
 Für jede Ausführung des SOC-Scripts finden sich im [Log](Logging_DE.md) folgende Zeilen:
 
-```console
-sae@raspi:~ $ grep "SocScript" /tmp/rolling-2021-01-09.log
+```bash
+$ grep "SocScript" /tmp/rolling-2021-01-09.log
 2021-01-09 08:50:23,205 DEBUG [Thread-7] d.a.s.c.e.SocScript [SocScript.java:108] F-00000001-000000000019-00: Executing SoC script: /opt/sae/soc/soc.sh
 2021-01-09 08:51:15,495 DEBUG [Thread-7] d.a.s.c.e.SocScript [SocScript.java:118] F-00000001-000000000019-00: SoC script output: Prepare Session
 2021-01-09 08:51:15,499 DEBUG [Thread-7] d.a.s.c.e.SocScript [SocScript.java:120] F-00000001-000000000019-00: SoC script exited with return code 0

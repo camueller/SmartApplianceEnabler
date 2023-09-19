@@ -3,8 +3,7 @@ The `Settings` menu item takes you to the administration of the central, device-
 
 ![Settings](../pics/fe/Settings_EN.png)
 
-## Feiertage
-<a name="holidays">
+## <a name="holidays"></a> Feiertage
 
 The holidays are read from the `Holidays-YYYY.txt` file, where YYYY is replaced by the year, i.e. the holidays for 2017 can be found in the `Holidays-2017.txt` file.
 The file must be in the directory pointed to by the `SAE_HOME` variable (usually `/opt/sae`).
@@ -27,16 +26,14 @@ If the Raspberry has access to the Internet, this file is downloaded once a year
 ```
 HE stands for Hessia, the abbreviation for other federal states and the complete API documentation can be found at http://ferien.jarmedia.de. "{0}" (without quotation marks) must be used instead of the year, which is replaced by the current year at run time.
 
-## Modbus
-<a name="modbus">
+## <a name="modbus"></a> Modbus
 
 Before Modbus can be used for meters or switches, one or more Modbus/TCP must be configured.
 
 A unique ID must be defined for each Modbus/TCP, which must be specified when configuring Modbus meters and switches (e.g. "wallbox").
 Specifying the host name or IP address and port is optional.
 
-## Benachrichtigungen
-<a name="notifications">
+## <a name="notifications"></a> Notifications
 
 To use notifications, a shell script must be specified that is called when a configured event occurs.
 

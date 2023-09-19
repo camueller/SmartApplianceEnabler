@@ -75,7 +75,7 @@ This is a security risk - please login as the 'pi' user and type 'passwd' to set
 
 pi@raspberrypi:~ $
 ```
-### Increase root file system
+### <a name="root-filesystem-enlarge"></a> Increase root file system
 The Raspbian images are usually created for SD cards with a size of 2 GB. If the SD card used is larger, the additional storage space remains unused. However, Raspbian includes the `raspi-config` utility that allows you to easily enlarge the root filesystem to use the entire SD card (a 16 GB SD card was used here):
 
 ```console
@@ -380,8 +380,7 @@ pi@raspberrypi ~ $ mv /opt/sae/Device2EM.xml /opt/sae/Device2EM.xml.old
 ```
 The configuration must then be created again, as described in the [Configuration](Configuration_EN.md) chapter.
 
-### Notifications
-<a name="notifications"></a>
+### <a name="notifications"></a> Notifications
 For the optional sending of notifications via instant messengers such as [Telegram](http://www.telegram.org), the corresponding shell script must be downloaded and made executable:
 ```console
 pi@raspberrypi ~ $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/notifyWithTelegram.sh -P /opt/sae

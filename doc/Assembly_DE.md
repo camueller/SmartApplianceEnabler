@@ -27,7 +27,7 @@ Im Ergebnis könnten die montierten Geräte so aussehen:
 
 ## DIN-Schienenhalter
 
-Zur Montage von Raspberry Pi und Solid-State-Relais im Schaltschrank verwende ich DIN-Schienenhalten vom Typ **Bopla TSH 35**, die man bei den großen Elektronikhändlern bestellen kann. Auf diese Schraube ich zunächst eine PVC-Platte auf. Auf dieser wird dann das eigentliche Bauteil mit Nylonschrauben (leiten keinen Strom) befestigt.
+Zur Montage von Raspberry Pi und Solid-State-Relais im Schaltschrank verwende ich DIN-Schienenhalter vom Typ **Bopla TSH 35**, die man bei den großen Elektronikhändlern bestellen kann. Auf diese Schraube ich zunächst eine PVC-Platte auf. Auf dieser wird dann das eigentliche Bauteil mit Nylonschrauben (leiten keinen Strom) befestigt.
 
 ![DINSchienenhalter](../pics/DINSchienenhalter.jpg)
 ![DINSchienenhalterMitPVCPlatte](../pics/DINSchienenhalterMitPVCPlatte.jpg)

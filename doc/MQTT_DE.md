@@ -200,13 +200,13 @@ Zusätzlich zu den Feldern der `ControlMessage` sind folgende Felder enthalten:
 
 
 ## Ereignisse
-Ereignisse sind ebenfalls MQTT-Nachrichten, aber enthalten im Topic die Gruppierungsebende `Event` nach der Appliance-ID:
+Ereignisse sind ebenfalls MQTT-Nachrichten, enthalten nach der Appliance-ID im Topic jedoch auch noch die Gruppierungsebende `Event`:
 
 `/sae/<appliance_id>/Event/...`
 
 Der *Smart Appliance Enabler* sendet Ereignisse nur, wenn sie auftreten.
 
-Standardmäßig haben alle Ereignisse haben folgende `Inhalt`: 
+Standardmäßig haben alle Ereignisse folgenden Inhalt: 
 
 | Feld   | Typ     | Beipiel-Wert               | Beschreibung         |
 |--------|---------|----------------------------|----------------------|

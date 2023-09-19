@@ -42,7 +42,7 @@ it must be accomplished that the correct value is displayed in the `results` col
 
 # Modbus in Smart Appliance Enabler
 ## General
-A configured [Modbus/TCP](Settings_EN.md#user-content-modbus) must be selected for each Modbus-based meter/switch/wallbox.
+A configured [Modbus/TCP](Settings_EN.md#modbus) must be selected for each Modbus-based meter/switch/wallbox.
 
 In addition, the **slave address** of the Modbus device must be specified.
 
@@ -58,7 +58,7 @@ Trying out helps to find the right configuration: set a combination of `register
 
 ## Modbus procokol
 ### Modbus/TCP
-The configuration of Modbus/TCP takes place in the [Settings](Settings_EN.md#user-content-modbus).
+The configuration of Modbus/TCP takes place in the [Settings](Settings_EN.md#modbus).
 
 ### Modbus/RTU
 *Smart Appliance Enabler* only supports the [Modbus](https://de.wikipedia.org/wiki/Modbus) protocol in the Modbus/TCP version. However, Modbus/RTU devices can be connected using a **USB-Modbus Adapter** (sometimes referred to as USB-RS485 Adapter). In this case, however, you also need a Modbus/TCP to Modbus/RTU gateway such as the freely available [mbusd](https://github.com/3cky/mbusd), the installation of which is described below.

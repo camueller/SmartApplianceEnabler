@@ -3,19 +3,22 @@ Kia stellt ein API namens UVO bereit, für das im Folgenden eine Python-Implemen
 Für die Nutzung des Scripts ist eine Registrierung bei UVO unerlässlich. Es basiert auf einem im [openWB.de-Forum geposteten Script](https://openwb.de/forum/viewtopic.php?p=11877#p11877).
 
 ## Python-Installation
-Zunächst muss der Python installiert werden:
-```console
-pi@raspberrypi ~ $ sudo apt-get -y install python3
+Zunächst muss Python installiert werden:
+
+```bash
+$ sudo apt-get -y install python3
 ```
  
 ## SOC-Script
 Als Erstes muss das Verzeichnis für das SOC-Script und Konfigurationsdatei angelegt und dorthin gewechselt werden:
-```console
-pi@raspberrypi ~ $ mkdir /opt/sae/soc
-pi@raspberrypi ~ $ cd /opt/sae/soc
+
+```bash
+$ mkdir /opt/sae/soc
+$ cd /opt/sae/soc
 ```
 
-Die Konfigurationsdatei muss den Namen `soc.ini` haben mit folgendem Inhalt (Zeilen, die mit # beginnen, nicht ändern!):
+Die Konfigurationsdatei muss den Namen `soc.ini` mit folgendem Inhalt (Zeilen, die mit # beginnen, nicht ändern!) haben:
+
 ```
 #email
 DeineUVO-Mailadresse
@@ -29,7 +32,8 @@ DieKompletteFahrgestell-Nr.deinesNiro
 ```
 
 Das eigentliche SOC-Python-Script sollte mit dem Namen `soc.py` und folgendem Inhalt angelegt werden:
-```console
+
+```python
 import sys
 import requests
 import uuid
@@ -221,27 +225,29 @@ if __name__ == '__main__':
 
 Damit das SOC-Python-Script von überall aus aufgerufen werden kann und trotzdem die `soc.ini` gefunden wird, hilft folgendes kleine Shell-Script `/opt/sae/soc/soc.sh`, das vom *Smart Appliance Enabler* aufgerufen wird:
 
-```console
+```bash
 #!/bin/sh
 cd /opt/sae/soc
 python3 ./soc.py
 ```
 
 Das Script muss noch ausführbar gemacht werden:
-```console
-pi@raspberrypi:/opt/sae/soc $ chmod +x soc.sh
+
+```bash
+$ chmod +x /opt/sae/soc/soc.sh
 ```
 
 ### Ausführung
 Die Antwortzeit kann sehr unterschiedlich sein (1 bis 30 Sekunden).
 
-```console
-pi@raspberrypi:/opt/sae/soc $ ./soc.sh
+```bash
+$ /opt/sae/soc/soc.sh
 soc: 65
 ```
 
-Im *Smart Appliance Enabler* wird als SOC-Script angegeben: `/opt/sae/soc/soc.sh`.
-Außerdem muss der nachfolgende *Reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
+Im *Smart Appliance Enabler* wird als SOC-Script `/opt/sae/soc/soc.sh` angegeben.
+Außerdem muss der nachfolgende *reguläre Ausdruck* angegeben werden, um aus den Ausgaben den eigentlichen Zahlenwert zu extrahieren:
+
 ```
 .*soc: (\d+).*
 ```

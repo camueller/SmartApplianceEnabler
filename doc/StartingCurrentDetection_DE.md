@@ -1,6 +1,6 @@
 # Anlaufstromerkennung
 
-Viele Geräte können nicht einfach eingeschaltet werden um direkt danach mit ihrer Arbeit zu beginnen, sondern müssen nach dem Einschalten zunächst programmiert werden. Dazu ist es erforderlich, dass das Gerät auch während dieser Zeit mit Strom versorgt wird. Bei Verwendung der Anlaufstromerkennung des *Smart Appliance Enabler* wird deshalb die Stromversorgung des Gerätes nur unterbrochen in der Zeit zwischen der Erkennung des Anlaufstromes und dem Empfang der Einschaltempfehlung des *Sunny Home Managers*.
+Viele Geräte können nicht einfach eingeschaltet werden um direkt danach mit ihrer Arbeit zu beginnen, sondern müssen nach dem Einschalten zunächst programmiert werden. Dazu ist es erforderlich, dass das Gerät auch während dieser Zeit mit Strom versorgt wird. Bei Verwendung der Anlaufstromerkennung des *Smart Appliance Enabler* wird deshalb die Stromversorgung des Gerätes nur in der Zeit zwischen der Erkennung des Anlaufstromes und dem Empfang der Einschaltempfehlung des *Sunny Home Managers* unterbrochen.
 
 Voraussetzung für die Nutzung der Anlaufstromerkennung ist deshalb das Bestehen des folgenden Tests:
 
@@ -17,18 +17,18 @@ Nach Erkennung des Abschaltstromes wird direkt wieder die Anlaufstromerkennung a
 ## Log
 Wird der Anlaufstrom erkannt, findet sich im Log ein entsprechender Eintrag:
 
-```console
+```bash
 $ grep "Starting current detected" /tmp/rolling-2021-01-08.log
 2021-01-08 10:43:57,469 DEBUG [pi4j-gpio-event-executor-2] d.a.s.c.StartingCurrentSwitch [StartingCurrentSwitch.java:298] F-00000001-000000000012-00: Starting current detected.
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `Starting current detected` und drückt Refresh.
+*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` den Text `Starting current detected` ein und drückt Refresh.
 
 Entsprechend findet sich im Log auch ein Eintrag, sobald der Abschaltstrom erkannt wurde:
 
-```console
+```bash
 $ grep "Finished current detected" /tmp/rolling-2021-01-08.log
 2021-01-08 13:04:25,374 DEBUG [Timer-0] d.a.s.c.StartingCurrentSwitch [StartingCurrentSwitch.java:316] F-00000001-000000000012-00: Finished current detected.
 ```
 
-*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `Finished current detected` und drückt Refresh.
+*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` den Text `Finished current detected` ein und drückt Refresh.

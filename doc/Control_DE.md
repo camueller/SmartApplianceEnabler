@@ -5,7 +5,7 @@ Derzeit unterstützt der *Smart Appliance Enabler* folgende Schalter:
 
 * [Zählerbasierter Zustandsmelder](MeterReportingSwitch_DE.md) ist automatisch aktiv, wenn kein anderer Schalter konfiguriert wird
 * [GPIO](GPIOSwitch_DE.md)
-* [Modbus](ModbusSwitch_DE.md) erscheint nur, wenn in den [Einstellungen](Settings_DE.md#user-content-modbus) mindesten ein Modbus konfiguriert wurde
+* [Modbus](ModbusSwitch_DE.md) erscheint nur, wenn in den [Einstellungen](Settings_DE.md#modbus) mindesten ein Modbus konfiguriert wurde
 * [HTTP](HttpSwitch_DE.md)
 * [Stufenschalter](LevelSwitch_DE.md)
 * [PWM-Schalter](PwmSwitch_DE.md)
@@ -21,8 +21,8 @@ Wenn als Gerätetyp `Elektroauto-Ladegerät` angegeben ist, kann auf dieser Seit
 
 Siehe auch: [Allgemeine Hinweise zur Konfiguration](Configuration_DE.md)
 
-## Schaltbefehl vom Sunny Home Manager
-<a name="control-request">
+## <a name="control-request"></a> Schaltbefehl vom Sunny Home Manager
+
 
 Wenn ein Schaltbefehl vom *Sunny Home Manager* für ein Gerät empfangen wird, führt das zu einem entsprechenden Log-Eintrag, der mit folgendem Befehl angezeigt werden kann:
 

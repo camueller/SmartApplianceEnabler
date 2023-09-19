@@ -26,19 +26,18 @@ The content (not the URL itself!) of the following URL must be copied into the *
 
 If the check is successful, a message with a green background *The XML document is valid.* appears above the *XML input*. In the event of errors, a message with a red background appears with a corresponding description of the error.
 
-### Copy configuration files between Raspberry Pi and PC
-<a name="scp">
+### <a name="scp"></a> Copy configuration files between Raspberry Pi and PC
+
 
 To transfer the files between Raspberry Pi and PC you can use `scp` under Linux, under Windows there is `WinSCP` ([Video with WinSCP instructions in German](https://www.youtube.com/watch?v=z6yJDMjTdMg )).
 
 *Webmin*: With the [Webmin file manager](Webmin_DE.md) the transfer between Raspberry Pi and PC can be done under Linux in the browser.
 
-## Server configuration
-<a name="etc-default-smartapplianceenabler">
+## <a name="etc-default-smartapplianceenabler"></a> Server configuration
+
 
 The configuration settings for the *Smart Appliance Enabler* can be found in the file `/etc/default/smartapplianceenabler`. The parameters contained therein (e.g. network address, port, Java settings, ...) are documented in the file itself. Normally you should be able to leave the file unchanged.
 
-## Log configuration
-<a name="log configuration">
+## <a name="log configuration"></a> Log configuration
 
 The logging is configured in the file `/opt/sae/logback-spring.xml`.
