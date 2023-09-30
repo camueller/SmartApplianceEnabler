@@ -46,10 +46,14 @@ export function selectorButton(selectorPrefix?: string, buttonClass?: string) {
 }
 
 export async function clickButton(t: TestController, selector: string, options?: any) {
-  if (isDebug()) { console.log(`Click button ${selector} ...`); }
-  await t.expect(await Selector(selector).exists).ok();
+  await clickSelector(t, Selector(selector), 'button')
+}
+
+export async function clickSelector(t: TestController, selector: Selector, name: string, options?: any) {
+  if (isDebug()) { console.log(`Click ${name} ...`); }
+  await t.expect(await selector.exists).ok();
   await t.click(selector, options);
-  if (isDebug()) { console.log('... button clicked.'); }
+  if (isDebug()) { console.log(`... ${name} clicked.`); }
 }
 
 export async function inputText(t: TestController, selector: Selector, text: string | undefined) {
@@ -68,20 +72,25 @@ export async function assertInput(t: TestController, selector: Selector, text: s
   await t.expect(actual.toString()).eql(expected.toString());
 }
 
-export async function setCheckboxEnabled(t: TestController, selector: Selector, enabled: boolean) {
+export async function setCheckboxEnabled(t: TestController, selector: Selector, check: boolean) {
   await t.expect(await Selector(selector).exists).ok();
-  const checked = JSON.parse(await isCheckboxChecked(t, selector.find('input')));
-  if ((enabled && !checked) || (!enabled && checked)) {
-    await t.click(selector);
+  const checked = await isCheckboxChecked(t, selector);
+  if ((check && !checked) || (!check && checked)) {
+    await clickSelector(t,  selector, 'checkbox');
   }
 }
 
 export async function assertCheckbox(t: TestController, selector: Selector, enabled: boolean) {
-  await t.expect(selector.withAttribute('aria-checked', enabled ? 'true' : 'false').exists).ok();
+  if(enabled) {
+    await t.expect(await isCheckboxChecked(t, selector)).ok();
+  } else {
+    await t.expect(selector.exists).ok();
+    await t.expect(await isCheckboxChecked(t, selector)).notOk();
+  }
 }
 
-async function isCheckboxChecked(t: TestController, selector: Selector) {
-  return await selector.getAttribute('aria-checked');
+function isCheckboxChecked(t: TestController, selector: Selector) {
+  return selector.filter('.mdc-checkbox--selected, .mat-mdc-checkbox-checked').exists;
 }
 
 export async function selectOption(t: TestController, selector: Selector, value: string) {
