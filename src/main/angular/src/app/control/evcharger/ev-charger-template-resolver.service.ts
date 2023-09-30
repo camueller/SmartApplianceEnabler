@@ -16,14 +16,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import {Observable, of} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {ControlService} from '../control-service';
 import {EvChargerTemplate} from './ev-charger-template';
 
 @Injectable()
-export class EvChargerTemplateResolver implements Resolve<EvChargerTemplate[]> {
+export class EvChargerTemplateResolver  {
 
   constructor(private controlService: ControlService) {
   }

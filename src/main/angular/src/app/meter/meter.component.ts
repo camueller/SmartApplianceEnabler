@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, CanDeactivate} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import {MeterFactory} from './meter-factory';
 import {TranslateService} from '@ngx-translate/core';
 import {FormControl, FormGroup} from '@angular/forms';
@@ -56,7 +56,7 @@ import {isRequired} from '../shared/form-util';
   templateUrl: './meter.component.html',
   styleUrls: ['./meter.component.scss'],
 })
-export class MeterComponent implements OnInit, CanDeactivate<MeterComponent> {
+export class MeterComponent  implements OnInit {
   @ViewChild(MeterS0Component)
   meterS0Comp: MeterS0Component;
   @ViewChild(MeterModbusComponent)

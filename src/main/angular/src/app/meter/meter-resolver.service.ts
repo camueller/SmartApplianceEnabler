@@ -1,12 +1,12 @@
 
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import {Meter} from './meter';
 import {MeterService} from './meter-service';
 import {Observable} from 'rxjs';
 
 @Injectable()
-export class MeterResolver implements Resolve<Meter> {
+export class MeterResolver  {
 
   constructor(private meterService: MeterService) {
   }

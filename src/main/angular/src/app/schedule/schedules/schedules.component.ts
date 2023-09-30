@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
-import {ActivatedRoute, CanDeactivate} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import {FormArray, FormGroup} from '@angular/forms';
 import {DayTimeframe} from '../timeframe/day/day-timeframe';
 import {TranslateService} from '@ngx-translate/core';
@@ -30,7 +30,7 @@ import {ScheduleModel} from '../schedule.model';
   templateUrl: './schedules.component.html',
   styleUrls: ['./schedules.component.scss'],
 })
-export class SchedulesComponent implements OnChanges, OnInit, CanDeactivate<ControlComponent> {
+export class SchedulesComponent  implements OnChanges, OnInit {
   @ViewChildren('scheduleComponents')
   scheduleComps: QueryList<ScheduleComponent>;
   form: FormGroup<SchedulesModel>;

@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, CanDeactivate} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import {ControlFactory} from './control-factory';
 import {TranslateService} from '@ngx-translate/core';
 import {AppliancesReloadService} from '../appliance/appliances-reload-service';
@@ -67,7 +67,7 @@ import {isRequired} from '../shared/form-util';
   templateUrl: './control.component.html',
   styleUrls: ['./control.component.scss'],
 })
-export class ControlComponent implements OnInit, CanDeactivate<ControlComponent> {
+export class ControlComponent  implements OnInit {
   @ViewChild(ControlEvchargerComponent)
   controlEvchargerComp: ControlEvchargerComponent;
   @ViewChild(ControlHttpComponent)

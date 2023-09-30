@@ -16,14 +16,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import {Injectable} from '@angular/core';
 import {ApplianceService} from './appliance.service';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 @Injectable()
-export class ApplianceIdsResolver implements Resolve<string[]> {
+export class ApplianceIdsResolver  {
 
   constructor(private applianceService: ApplianceService) {
   }

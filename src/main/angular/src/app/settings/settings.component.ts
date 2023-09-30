@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {ChangeDetectorRef, Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {ActivatedRoute, CanDeactivate} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {SettingsService} from './settings-service';
 import {Settings} from './settings';
@@ -43,7 +43,7 @@ import {SettingsModbusModel} from './modbus/settings-modbus.model';
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
-export class SettingsComponent implements OnInit, CanDeactivate<SettingsComponent> {
+export class SettingsComponent  implements OnInit {
   settings: Settings;
   settingsDefaults: SettingsDefaults;
   @ViewChildren('modbusSettings')

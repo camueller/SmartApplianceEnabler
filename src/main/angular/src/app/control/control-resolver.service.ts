@@ -1,11 +1,11 @@
-import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import {Control} from './control';
 import {ControlService} from './control-service';
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 
 @Injectable()
-export class ControlResolver implements Resolve<Control> {
+export class ControlResolver  {
 
   constructor(private controlService: ControlService) {
   }

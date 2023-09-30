@@ -1,11 +1,11 @@
-import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import {ControlService} from './control-service';
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {ControlDefaults} from './control-defaults';
 
 @Injectable()
-export class ControlDefaultsResolver implements Resolve<ControlDefaults> {
+export class ControlDefaultsResolver  {
 
   constructor(private controlService: ControlService) {
   }

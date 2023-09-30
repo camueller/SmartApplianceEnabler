@@ -17,13 +17,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {Appliance} from './appliance';
-import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import {Injectable} from '@angular/core';
 import {ApplianceService} from './appliance.service';
 import {Observable} from 'rxjs';
 
 @Injectable()
-export class ApplianceResolver implements Resolve<Appliance> {
+export class ApplianceResolver  {
 
   constructor(private applianceService: ApplianceService) {
   }

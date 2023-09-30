@@ -18,7 +18,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ApplianceService} from './appliance.service';
-import {ActivatedRoute, CanDeactivate, Router} from '@angular/router';
+import {ActivatedRoute, CanDeactivateFn, Router} from '@angular/router';
 import {AppliancesReloadService} from './appliances-reload-service';
 import {Location} from '@angular/common';
 import {AbstractControl, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
@@ -41,7 +41,7 @@ import {ApplianceModel} from './appliance.model';
   templateUrl: './appliance.component.html',
   styleUrls: ['./appliance.component.scss']
 })
-export class ApplianceComponent implements OnChanges, OnInit, CanDeactivate<ApplianceComponent> {
+export class ApplianceComponent  implements OnChanges, OnInit {
   applianceId: string;
   appliance: Appliance;
   applianceIdsUsedElsewhere: string[];
