@@ -51,6 +51,15 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         this.evId = evId;
     }
 
+    /**
+     * Should only be used for testing.
+     */
+    public SocRequest(Integer soc, Integer evId, Integer energy) {
+        this.soc = soc;
+        this.evId = evId;
+        this.energy = energy;
+    }
+
     protected Logger getLogger() {
         return LoggerFactory.getLogger(SocRequest.class);
     }
@@ -174,7 +183,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public boolean isFinished(LocalDateTime now) {
-        return energy != null && energy <= 0;
+        return energy == null || energy <= 0;
     }
 
     @Override

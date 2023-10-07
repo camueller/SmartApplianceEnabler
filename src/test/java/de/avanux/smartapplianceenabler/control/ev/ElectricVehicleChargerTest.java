@@ -68,6 +68,7 @@ public class ElectricVehicleChargerTest {
         when(appliance.getTimeframeIntervalHandler()).thenReturn(timeframeIntervalHandler);
         when(timeframeIntervalHandler.findTimeframeIntervalsUntilFirstGap()).thenReturn(new ArrayList<>());
         when(timeframeIntervalHandler.getActiveTimeframeInterval()).thenReturn(timeframeInterval);
+        when(timeframeIntervalHandler.getQueue()).thenReturn(Collections.singletonList(timeframeInterval));
     }
 
     private void log(String message) {
@@ -194,7 +195,7 @@ public class ElectricVehicleChargerTest {
         configureMocks(false, true, false);
         updateState();
         evCharger.activeIntervalChanged(now, applianceId, timeframeInterval, null, false);
-        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
         log("Disconnect vehicle");
         configureMocks(true, false, false);
         updateState();
@@ -236,6 +237,49 @@ public class ElectricVehicleChargerTest {
         configureMocks(false, true, false);
         updateState();
         evCharger.activeIntervalChanged(now, applianceId, timeframeInterval, null, false);
+        assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
+        log("Disconnect vehicle");
+        configureMocks(true, false, false);
+        updateState();
+        assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED, evCharger.getState());
+    }
+
+    @Test
+    public void updateState_requestEmptyButNotEmptyRequestExist()throws Exception {
+        List<TimeframeInterval> intervals = new ArrayList<>();
+        intervals.add(timeframeInterval);
+
+        var scheduledTimeframeInterval = new TimeframeInterval(null, new SocRequest(100, 1, 10000));
+        intervals.add(scheduledTimeframeInterval);
+
+        when(timeframeIntervalHandler.getQueue()).thenReturn(intervals);
+
+        log("Vehicle not yet connected");
+        configureMocks(true, false, false);
+        updateState();
+        assertEquals(EVChargerState.VEHICLE_NOT_CONNECTED, evCharger.getState());
+        log("Connect vehicle");
+        configureMocks(false, true, false);
+        updateState();
+        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
+        log("Start charging");
+        evCharger.startCharging();
+        configureMocks(false, true, true);
+        updateState();
+        assertEquals(EVChargerState.CHARGING, evCharger.getState());
+        log("Stop charging");
+        evCharger.stopCharging();
+        configureMocks(false, true, false);
+        updateState();
+        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
+        log("Start charging again");
+        evCharger.startCharging();
+        configureMocks(false, true, true);
+        updateState();
+        assertEquals(EVChargerState.CHARGING, evCharger.getState());
+        log("Active timeframe interval request empty");
+        configureMocks(false, true, false, 50);
+        updateState();
         assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
         log("Disconnect vehicle");
         configureMocks(true, false, false);
@@ -294,7 +338,7 @@ public class ElectricVehicleChargerTest {
         configureMocks(false, true, false);
         updateState();
         evCharger.activeIntervalChanged(now, applianceId, timeframeInterval, null, false);
-        assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
+        assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
         log("Disconnect vehicle");
         configureMocks(true, false, false);
         updateState();
