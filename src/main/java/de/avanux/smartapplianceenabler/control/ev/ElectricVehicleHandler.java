@@ -221,11 +221,12 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
             }
             this.socCalculationRequired = false;
         }
-        logger.debug( "{}: SOC retrieval: socCalculationRequired={} socChanged={} chargingAlmostCompleted={} socRetrievalForChargingAlmostCompleted={}",
-                applianceId, socCalculationRequired, socChanged, chargingAlmostCompleted, socRetrievalForChargingAlmostCompleted);
 
         ElectricVehicle electricVehicle = getConnectedVehicle();
         if(electricVehicle != null && electricVehicle.getSocScript() != null) {
+            logger.debug( "{}: SOC retrieval: socCalculationRequired={} socChanged={} chargingAlmostCompleted={} socRetrievalForChargingAlmostCompleted={}",
+                    applianceId, socCalculationRequired, socChanged, chargingAlmostCompleted, socRetrievalForChargingAlmostCompleted);
+
             Integer updateAfterIncrease = electricVehicle.getSocScript().getUpdateAfterIncrease();
             if(updateAfterIncrease == null) {
                 updateAfterIncrease = ElectricVehicleChargerDefaults.getUpdateSocAfterIncrease();
