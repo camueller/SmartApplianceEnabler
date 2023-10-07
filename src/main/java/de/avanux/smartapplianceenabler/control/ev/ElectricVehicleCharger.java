@@ -499,20 +499,20 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         if(newState == EVChargerState.VEHICLE_CONNECTED) {
             if(getForceInitialCharging() && wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED)) {
                 setPowerToMinimum();
-                startCharging();
+                this.on(now, true);
             }
         }
         if(newState == EVChargerState.CHARGING) {
             if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED) {
-                stopCharging();
+                this.on(now, false);
             }
             if(getForceInitialCharging() && wasInStateOneTime(EVChargerState.CHARGING)) {
                 logger.debug("{}: Stopping forced initial charging", applianceId);
-                stopCharging();
+                this.on(now, false);
             }
         }
         if(newState == EVChargerState.CHARGING_COMPLETED) {
-            stopCharging();
+            this.on(now, false);
             this.evHandler.onChargingCompleted();
         }
         if(newState == EVChargerState.VEHICLE_NOT_CONNECTED) {
