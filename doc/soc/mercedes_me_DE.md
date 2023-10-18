@@ -1,4 +1,7 @@
 # Mercedes Me
+
+### Mercedes hat die kostenlose API bis auf Weiteres eingestellt. Das hier beschriebene Skript funktioniert nicht mehr.
+
 Mercedes stellt eine API bereit, die es erlaubt, verschiedene Daten wie z.B. SoC oder Restreichweite des eigenen Fahrzeugs auszulesen. Anbei findet sich ein shellbasiertes Skript, das an das Projekt "Mercedes_me_Api" angelehnt ist (https://github.com/xraver/mercedes_me_api).
 
 Voraussetzung ist, dass man einen Mercedes Me Account erstellt und dort in der Diensteverwaltung für das Auto den Dienst "Schnittstelle Drittanbieter: Fahrzeugdaten" aktiviert hat. Nun loggt man sich im [Developer-Portal](https://developer.mercedes-benz.com/) ein. Dort muss ein Projekt erstellt werden, dem dann verschiedene Dienste zugeordnet werden können. Für den SoC ist der Dienst "Electric Vehicle Status" wichtig. Unter der "Bring your own car"-Option ist der Zugriff aufs eigene Fahrzeug kostenlos möglich. Beim Anlegen des Projekts wird eine Client Id und ein Client Secret erzeugt, die man später für die Authentisierung braucht.
