@@ -1,6 +1,6 @@
 # Mercedes Me
 
-### Mercedes hat die kostenlose API bis auf Weiteres eingestellt. Das hier beschriebene Skript funktioniert nicht mehr.
+### Mercedes hat die kostenlose API eingestellt. Das hier beschriebene Skript funktioniert nicht mehr.
 
 Mercedes stellt eine API bereit, die es erlaubt, verschiedene Daten wie z.B. SoC oder Restreichweite des eigenen Fahrzeugs auszulesen. Anbei findet sich ein shellbasiertes Skript, das an das Projekt "Mercedes_me_Api" angelehnt ist (https://github.com/xraver/mercedes_me_api).
 
