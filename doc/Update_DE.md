@@ -93,6 +93,6 @@ Es wird dringend empfohlen, die Konfigurationsdatei `Appliances.xml` vor dem Upd
 Das Update des *Smart Appliance Enabler* erfolgt durch [Austausch der war-Datei wie oben auf dieser Seite beschrieben](#durchf%C3%BChrung-des-updates).
 
 ### Docker
-Die [Docker-Compose-Datei](https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/docker/compose/docker-compose.yaml) wurde angepasst und startet vor dem *Smart Appliance Enabler* jeweils einen Container mit `pigpiod` und `mosquitto`.
+Die [Docker-Compose-Datei](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/run/etc/docker/compose/docker-compose.yml) wurde angepasst und startet vor dem *Smart Appliance Enabler* jeweils einen Container mit `pigpiod` und `mosquitto`.
 
 Ansonsten muss lediglich das Docker-Image in der gewünschten Version verwendet werden.

@@ -84,6 +84,6 @@ It is strongly recommended to back up the `Appliances.xml` configuration file be
 The *Smart Appliance Enabler* is updated by [exchanging the war file as described above on this page](#performing-the-update).
 
 ### Docker
-The file https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/docker/compose/docker-compose.yaml has been adjusted and starts a container with `pigpiod` and before the *Smart Appliance Enabler* `mosquito`.
+The file https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/run/etc/docker/compose/docker-compose.yml has been adjusted and starts a container with `pigpiod` and before the *Smart Appliance Enabler* `mosquito`.
 
 Otherwise, you only have to use the Docker image in the desired version.

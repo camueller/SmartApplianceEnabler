@@ -87,7 +87,7 @@ Für den *Smart Appliance Enabler* existiert eine vorkonfigurierte YAML-Datei, f
 
 ```bash
 $ sudo mkdir -p /etc/docker/compose/smartapplianceenabler
-$ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/docker/compose/docker-compose.yml \
+$ sudo wget https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/run/etc/docker/compose/docker-compose.yml \
     -P /etc/docker/compose/smartapplianceenabler
 ```
 
@@ -97,7 +97,7 @@ Hinweise zu den notwendigen Anpassungen finden sich als Kommentare in der Datei 
 Auch wenn der *Smart Appliance Enabler* als Docker-Container betrieben wird, bietet es sich an, den Container als Service des [Systemd](https://de.wikipedia.org/wiki/Systemd) zu verwalten. Dazu dient die Datei ```/etc/systemd/system/smartapplianceenabler-docker-compose.service```, die nachfolgend heruntergeladen und konfiguriert wird:
 
 ```bash
-$ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/systemd/system/smartapplianceenabler-docker-compose.service \
+$ sudo wget https://github.com/camueller/SmartApplianceEnabler/blob/master/run/lib/systemd/system/smartapplianceenabler-docker-compose.service \
     -P /etc/systemd/system
 $ sudo chown root.root /etc/systemd/system/smartapplianceenabler-docker-compose.service
 $ sudo chmod 644 /etc/systemd/system/smartapplianceenabler-docker-compose.service
@@ -296,7 +296,7 @@ $ docker stop sae
 Auch wenn der *Smart Appliance Enabler* als Docker-Container betrieben wird, bietet es sich an, den Container als Service des [Systemd](https://de.wikipedia.org/wiki/Systemd) zu verwalten. Dazu dient die Datei `/etc/systemd/system/smartapplianceenabler-docker.service`, die nachfolgend heruntergeladen und konfiguriert wird:
 
 ```bash
-$ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/systemd/system/smartapplianceenabler-docker.service -P /etc/systemd/system
+$ sudo wget https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/run/lib/systemd/system/smartapplianceenabler-docker.service -P /etc/systemd/system
 $ sudo chown root.root /etc/systemd/system/smartapplianceenabler-docker.service
 $ sudo chmod 755 /etc/systemd/system/smartapplianceenabler-docker.service
 ```
