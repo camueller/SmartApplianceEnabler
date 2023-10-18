@@ -49,7 +49,7 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
                 getLogger().debug("{} Handling event ControlStateChanged", getApplianceId());
                 EVChargerStateChangedEvent event = (EVChargerStateChangedEvent) message;
                 this.evChargerState = event.newState;
-                if(event.newState == EVChargerState.VEHICLE_CONNECTED && !socScript) {
+                if(event.newState == EVChargerState.VEHICLE_CONNECTED && (!socScript || !(this instanceof SocRequest))) {
                     setEnabled(true);
                 }
                 else if(isActive() && (event.newState == EVChargerState.VEHICLE_NOT_CONNECTED
