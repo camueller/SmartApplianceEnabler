@@ -38,7 +38,7 @@ _Test Text_:
 {"StatusSNS":{"Time":"2019-09-06T20:06:19","ENERGY":{"TotalStartTime":"2019-08-18T11:07:55","Total":0.003,"Yesterday":0.000,"Today":0.003,"Power":26,"ApparentPower":25,"ReactivePower":25,"Factor":0.06,"Voltage":239,"Current":0.106}}}
 ```
 
-Im rechten Teil des Fenster wird im oberen Teil direkt erklärt, was genau die einzelnen Teile der RegEx bewirken und im mittleren Teil das Ergebnis angzeigt.
+Im rechten Teil des Fenster wird im oberen Abschnitt direkt erklärt, was genau die einzelnen Teile der RegEx bewirken. Im mittleren Abschnitt wird das Ergebnis angezeigt.
 
 ![RegEx101-Example](../pics/RegEx101-Example.png)
 
