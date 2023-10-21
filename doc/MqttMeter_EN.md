@@ -6,9 +6,7 @@ For an MQTT meter, its `Topic` must be specified as well as the `Parameter`, whi
 
 If the MQTT message is delivered in **JSON format**, this should be set as `Format` because then by specifying the `Extraction path` the numerical value can be [extracted from the MQTT message](ValueExtraction_EN.md) very easily. If the optional `time extraction path` is specified, the time extracted from the MQTT message is used instead of the current time for further processing.
 
-Alternatively (or also downstream of the JSON interpretation), a [regular expression for extraction](ValueExtraction_EN.md) can be specified if the numerical value has to be extracted from a text (XML, ...). This also applies if the MQTT message appears to only contain the number, but it also contains a line break (CR/LF) or will be received as key-value-pair.
-
-I. e. if you configure the topic `metering/total/kWh/waermepumpe` as `Meter reading` and receive the value as text like `234.567`, the value needs to be extracted from `waermepumpe=234.567`. The corresponding regular expression would be in that case `(\d+.?\d*)`. The regular expression could be tested on [RegEx101](https://regex101.com/). Just insert the regular expression and the test string `waermepumpe=234.567` and the match of the given regular expression will be highlighted and also explained in detail.
+Alternatively (or also downstream of the JSON interpretation), a [regular expression for extraction](ValueExtraction_EN.md) can be specified if the numerical value has to be extracted from a text (XML, ...). This also applies if the MQTT message appears to only contain the number, but it also contains a line break (CR/LF).
 
 For parameter `Meter reading` the value has to be provided in kWh and for parameter `Power` the value has to be provided in W. If the values are supplied in other units, a `factor to value` must be specified, which is multiplied by the supplied value to convert it into the required unit. For example, if the parameter `Power` is supplied in mW, the value `0.001` must be specified as the `factor to value`.
 
