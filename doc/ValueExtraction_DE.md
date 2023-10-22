@@ -22,7 +22,7 @@ Damit der *Smart Appliance Enabler* weiss, dass die Antwort als JSON interpretie
 
 Die Wert-Extraktion mit einem [regulären Ausdruck](http://www.regexe.de/hilfe.jsp) funktioniert immer. Allerdings erschliesst sich deren Formulierung nicht jedem sofort. 
 
-Zum Testen, ob der gewählte reguläre Ausdruck den gewünschten Wert aus der Antwort extrahiert, eignet sich die Webseite [RegEx101](https://regex101.com/). Der Vorteil dieses Testers ist, dass er direkt während der Eingabe evaluiert.
+Zum Testen, ob der gewählte reguläre Ausdruck den gewünschten Wert aus der Antwort extrahiert, eignet sich die Webseite [RegEx101](https://regex101.com/). Der Vorteil dieses Testers ist, dass er direkt während der Eingabe evaluiert, es muss also nicht nach jeder Änderung auf einen Button geklickt und die Übertragung des Ergebnisses gewartet werden.
 
 Ausser dem regulären Ausdruck benötigt man die Antwort, aus welcher der Wert extrahiert werden soll. Wenn der *Smart Appliance Enabler* bereits mit diesem Gerät kommuniziert, kann dessen Antwort dem Log entnommen werden.
 
@@ -34,13 +34,13 @@ Im folgenden Beispiel liegt der Zählerstand für die Wärmepumpe als Key-Value-
 
 ![MeteringKeyValueExample](../pics/MeteringKeyValueExample.png)
 
-Damit ist die für die Wärmepumpe zu prüfende Zeichenkette wie folgt:
+Damit ist der reguläre Ausdruck sowie der Test-String für die Wärmepumpe wie folgt:
 
 _Regular Expression_: `(\d+.?\d*)`
 
 _Test String_: `waermepumpe=235.419998`
 
-![RegEx101-Example2](../pics/RegEx101-Example.png)
+![RegEx101-Example](../pics/RegEx101-Example.png)
 
 Der Wert `235.419998` wurde also erfolgreich mit obigem regulären Ausdruck aus der Antwort extrahiert.
 
