@@ -22,39 +22,30 @@ In order for the *Smart Appliance Enabler* to know that the response should be i
 
 Value extraction with a [Regular Expression](http://www.regexe.de/hilfe.jsp) always works. However, their formulation is not immediately clear to everyone.
 
-This [Java Regex Tester](https://www.freeformatter.com/java-regex-tester.html) can be used to test whether the selected regular expression extracts the desired value from the response.
+[RegEx101](https://regex101.com/) can be used to test whether the selected regular expression extracts the desired value from the response. The advantage of this online tool is it's ability to evaluate the input right as you type it in. So no need to click some buttons and wait for the result after each modification.
 
 In addition to the regular expression, you need the response from which the value is to be extracted. If the *Smart Appliance Enabler* is already communicating with this device, its response can be found in the log.
 
-The names shown in italics refer to the corresponding fields on the Regex Tester page.
+**If a regular expression is configured, no value should be configured as `Format` in the *Smart Appliance Enabler*!**
 
-_Java Regular Expression_: `.*"Power":(\d+).*`
+If the results are available as key-value-pairs, it must taken into account, that the given regular expression is applied to the whole string! So not only the value. This can be evaluated with [RegEx101](https://regex101.com/) too. 
 
-_Entry to test against_
-```json
-{"StatusSNS":{"Time":"2019-09-06T20:06:19","ENERGY":{"TotalStartTime":"2019-08-18T11:07:55","Total":0.003,"Yesterday":0.000,"Today":0.003,"Power":26,"ApparentPower":25,"ReactivePower":25,"Factor":0.06,"Voltage":239,"Current":0.106}}}
-```
+In the following example a meter value for a heat pump is given as key-value-pair:
 
-_Replace with (Optional)_: `$1`
+![MeteringKeyValueExample](../pics/MeteringKeyValueExample.png)
 
-_Flags_: `[x] Dotall`
+So for this heat pump the regular expression and the test string is as following:
 
-After clicking on `REPLACE FIRST` the following is displayed:
+_Regular Expression_: `(\d+.?\d*)`
 
-```
-Results
-.matches() method: true
-.lookingAt() method: true
-String replacement result:
-26
-```
+_Test String_: `waermepumpe=235.419998`
 
-So the value 26 was successfully extracted from the response using the regular expression above.
+![RegEx101-Example](../pics/RegEx101-Example.png)
 
-If a regular expression is configured, no value should be configured as `Format` in the *Smart Appliance Enabler*!
+The value `235.419998` was successfully extracted.
 
-In the *Smart Appliance Enabler* the following must be configured for this example:
+Within *Smart Appliance Enabler* the following regular expression needs to be configured:
 
-`Extraction regex`: `.*"Power":(\d+).*`
+`Regex für Extraktion`: `(\d+.?\d*)`
 
 `Format`: leave empty

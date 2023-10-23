@@ -22,40 +22,30 @@ Damit der *Smart Appliance Enabler* weiss, dass die Antwort als JSON interpretie
 
 Die Wert-Extraktion mit einem [regulären Ausdruck](http://www.regexe.de/hilfe.jsp) funktioniert immer. Allerdings erschliesst sich deren Formulierung nicht jedem sofort. 
 
-Zum Testen, ob der gewählte reguläre Ausdruck den gewünschten Wert aus der Antwort extrahiert, eignet sich dieser [Java Regex-Tester](https://www.freeformatter.com/java-regex-tester.html).
+Zum Testen, ob der gewählte reguläre Ausdruck den gewünschten Wert aus der Antwort extrahiert, eignet sich die Webseite [RegEx101](https://regex101.com/). Der Vorteil dieses Testers ist, dass er direkt während der Eingabe evaluiert, es muss also nicht nach jeder Änderung auf einen Button geklickt und die Übertragung des Ergebnisses gewartet werden.
 
 Ausser dem regulären Ausdruck benötigt man die Antwort, aus welcher der Wert extrahiert werden soll. Wenn der *Smart Appliance Enabler* bereits mit diesem Gerät kommuniziert, kann dessen Antwort dem Log entnommen werden.
 
-Die kursiv dargestellten Bezeichnungen beziehen sich auf die entsprechenden Felder der Regex-Tester-Seite.
+**Wenn ein regulärer Ausdruck konfiguriert wird, sollte im *Smart Appliance Enabler* als `Format` kein Wert konfiguriert werden!**
 
-_Java Regular Expression_: `.*"Power":(\d+).*`
+Liegen die auszuwertenden Daten als Key-Value-Paare vor, so muss beachtet werden, dass der reguläre Ausdruck auf die gesamte Zeichenkette zur Anwendung kommt! Also nicht nur auf das ermittelte Value. Auch das kann mit dem [RegEx101](https://regex101.com/) gegrüft werden.
 
-_Entry to test against_:
+Im folgenden Beispiel liegt der Zählerstand für die Wärmepumpe als Key-Value-Paar vor:
 
-```json
-{"StatusSNS":{"Time":"2019-09-06T20:06:19","ENERGY":{"TotalStartTime":"2019-08-18T11:07:55","Total":0.003,"Yesterday":0.000,"Today":0.003,"Power":26,"ApparentPower":25,"ReactivePower":25,"Factor":0.06,"Voltage":239,"Current":0.106}}}
-```
+![MeteringKeyValueExample](../pics/MeteringKeyValueExample.png)
 
-_Replace with (Optional)_: `$1`
+Damit ist der reguläre Ausdruck sowie der Test-String für die Wärmepumpe wie folgt:
 
-_Flags_: `[x] Dotall`
+_Regular Expression_: `(\d+.?\d*)`
 
-Nach Klick auf `REPLACE FIRST` wird angezeigt:
+_Test String_: `waermepumpe=235.419998`
 
-```
-Results
-.matches() method: true
-.lookingAt() method: true
-String replacement result:
-26
-```
+![RegEx101-Example](../pics/RegEx101-Example.png)
 
-Der Wert 26 wurde also erfolgreich mit obigem regulären Ausdruck aus der Antwort extrahiert.
+Der Wert `235.419998` wurde also erfolgreich mit obigem regulären Ausdruck aus der Antwort extrahiert.
 
-Wenn ein regulärer Ausdruck konfiguriert wird, sollte im *Smart Appliance Enabler* als `Format` kein Wert konfiguriert werden!
+Im *Smart Appliance Enabler* muss also der folgende reguläre Ausdruck konfiguriert werden:
 
-Im *Smart Appliance Enabler* muss für dieses Beispiel konfiguriert werden:
-
-`Regex für Extraktion`: `.*"Power":(\d+).*`
+`Regex für Extraktion`: `(\d+.?\d*)`
 
 `Format`: leer lassen
