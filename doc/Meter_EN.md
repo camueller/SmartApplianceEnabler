@@ -4,6 +4,7 @@ To configure a meter, the type of meter must be selected in the `Type` selection
 - [HTTP](HttpMeter_EN.md)
 - [Modbus](ModbusMeter_EN.md) only appears if at least one Modbus has been configured in the [Settings](Settings_EN.md#modbus).
 - [Master/Slave meter](MasterSlaveMeter_EN.md)
+- [MQTT](MqttMeter_EN.md)
 
 According to this selection, the fields that can be configured for the selected meter type are displayed.
 
