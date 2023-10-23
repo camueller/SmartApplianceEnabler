@@ -1,7 +1,9 @@
 # Wert-Extraktion 
 Bei Abfragen erhält der *Smart Appliance Enabler* oft eine umfangreiche Antwort (XML, JSON, ...), aus welcher der eigentliche Zahlenwert erst extrahiert werden muss.
 
-Dazu kann an diversen Stellen im *Smart Appliance Enabler* entweder ein (JSON-) Pfad (Feldname `Pfad für Extraktion`) oder ein regulärer Ausdruck (Feldname `Regex für Extraktion`) konfiguriert werden.
+Dazu kann an diversen Stellen im Smart Appliance Enabler entweder ein **JSON-Pfad** (Feldname: *Pfad für Extraktion*) und/oder ein regulärer Ausdruck (Feldname: *Regex für Extraktion*) konfiguriert werden.
+
+Wird **beides angegeben** (also JSON-Pfad und regulärer Ausdruck), dann wird der reguläre Ausdruck auf das Ergebnis des JSON-Pfad angewendet.
 
 ## Mit JSON-Pfad
 Diese Methode zur Wert-Extraktion funktioniert nur, wenn die Antwort im JSON-Format vorliegt!
@@ -20,21 +22,17 @@ Damit der *Smart Appliance Enabler* weiss, dass die Antwort als JSON interpretie
 
 ## Mit regulärem Ausdruck
 
-Die Wert-Extraktion mit einem [regulären Ausdruck](http://www.regexe.de/hilfe.jsp) funktioniert immer. Allerdings erschliesst sich deren Formulierung nicht jedem sofort. 
+Die Wert-Extraktion mit einem [regulären Ausdruck](http://www.regexe.de/hilfe.jsp) muss den gewünschten Wert in der ersten Capture Group liefern. 
 
 Zum Testen, ob der gewählte reguläre Ausdruck den gewünschten Wert aus der Antwort extrahiert, eignet sich die Webseite [RegEx101](https://regex101.com/). Der Vorteil dieses Testers ist, dass er direkt während der Eingabe evaluiert, es muss also nicht nach jeder Änderung auf einen Button geklickt und die Übertragung des Ergebnisses gewartet werden.
 
 Ausser dem regulären Ausdruck benötigt man die Antwort, aus welcher der Wert extrahiert werden soll. Wenn der *Smart Appliance Enabler* bereits mit diesem Gerät kommuniziert, kann dessen Antwort dem Log entnommen werden.
 
-**Wenn ein regulärer Ausdruck konfiguriert wird, sollte im *Smart Appliance Enabler* als `Format` kein Wert konfiguriert werden!**
-
-Liegen die auszuwertenden Daten als Key-Value-Paare vor, so muss beachtet werden, dass der reguläre Ausdruck auf die gesamte Zeichenkette zur Anwendung kommt! Also nicht nur auf das ermittelte Value. Auch das kann mit dem [RegEx101](https://regex101.com/) gegrüft werden.
-
-Im folgenden Beispiel liegt der Zählerstand für die Wärmepumpe als Key-Value-Paar vor:
+Im folgenden Beispiel ist der Zählerstand der Wärmepumpe in einem Text (`waermepumpe=...`) enthalten:
 
 ![MeteringKeyValueExample](../pics/MeteringKeyValueExample.png)
 
-Damit ist der reguläre Ausdruck sowie der Test-String für die Wärmepumpe wie folgt:
+Durch Eingabe der nachfolgenden Werte auf [RegEx101](https://regex101.com/) kann man prüfen, ob der reguläre Ausdruck den Zahlenwert korrekt extrahiert:
 
 _Regular Expression_: `(\d+.?\d*)`
 
@@ -42,7 +40,7 @@ _Test String_: `waermepumpe=235.419998`
 
 ![RegEx101-Example](../pics/RegEx101-Example.png)
 
-Der Wert `235.419998` wurde also erfolgreich mit obigem regulären Ausdruck aus der Antwort extrahiert.
+Der Wert `235.419998` wurde erfolgreich extrahiert und ist in der Capture Group 1 enthalten.
 
 Im *Smart Appliance Enabler* muss also der folgende reguläre Ausdruck konfiguriert werden:
 
