@@ -15,9 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SempControllerTest extends TestBase {
 
-    public static final String DEVICE_ID = "DeviceID1";
-    public static final String DEVICE_ID2 = "DeviceID2";
-    public static final String DEVICE_ID3 = "DeviceID3";
     private SempController sempController;
 
     public SempControllerTest() {
@@ -29,45 +26,70 @@ public class SempControllerTest extends TestBase {
         LocalDateTime now = toToday(6, 0, 0);
         List<Appliance> appliances = new ArrayList<>();
 
-        Appliance appliance1 = new ApplianceBuilder(DEVICE_ID)
+        Appliance appliance1 = new ApplianceBuilder("F-001")
                 .withMockSwitch(false)
                 .withRuntimeRequest(now, now.plusHours(4), now.plusHours(8), null, 3600, true)
                 .build(false);
         appliances.add(appliance1);
 
-        Appliance appliance2 = new ApplianceBuilder(DEVICE_ID2)
+        Appliance appliance2 = new ApplianceBuilder("F-002")
                 .withMockSwitch(false)
                 .withRuntimeRequest(now, now.plusHours(3), now.plusHours(7), null, 7200, false)
                 .build(false);
         appliances.add(appliance2);
 
-        Appliance appliance3 = new ApplianceBuilder(DEVICE_ID3)
+        Appliance appliance3 = new ApplianceBuilder("F-003")
                 .withMockSwitch(false)
                 .withRuntimeRequest(now, now.plusHours(2), now.plusHours(6), 1000, 1800, true)
                 .build(false);
         appliances.add(appliance3);
 
+        Appliance appliance4 = new ApplianceBuilder("F-004")
+                .withMockSwitch(false)
+                .withEnergyRequest(now, now.plusHours(1), now.plusHours(8), null, 10000, true)
+                .build(false);
+        appliances.add(appliance4);
+
+        Appliance appliance5 = new ApplianceBuilder("F-005")
+                .withMockSwitch(false)
+                .withEnergyRequest(now, now.plusHours(2), now.plusHours(10), 6000, 10000, true)
+                .build(false);
+        appliances.add(appliance5);
+
         ApplianceBuilder.init(appliances, null);
 
         Device2EM device2EM = sempController.createDevice2EM(now);
         List<PlanningRequest> planningRequests = device2EM.getPlanningRequest();
-        assertEquals(2, planningRequests.size());
+        assertEquals(4, planningRequests.size());
 
         List<Timeframe> timeframes = planningRequests.get(0).getTimeframes();
         assertEquals(1, timeframes.size());
-        assertTimeframe(timeframes.get(0), 4 * 3600,  8 * 3600, 3599, 3600);
+        assertTimeframe(timeframes.get(0), 4 * 3600,  8 * 3600, 3599, 3600, false);
 
         timeframes = planningRequests.get(1).getTimeframes();
         assertEquals(1, timeframes.size());
-        assertTimeframe(timeframes.get(0), 2 * 3600,  6 * 3600, 1000, 1800);
+        assertTimeframe(timeframes.get(0), 2 * 3600,  6 * 3600, 1000, 1800, false);
+
+        timeframes = planningRequests.get(2).getTimeframes();
+        assertEquals(1, timeframes.size());
+        assertTimeframe(timeframes.get(0), 1 * 3600,  8 * 3600, 9999, 10000, true);
+
+        timeframes = planningRequests.get(3).getTimeframes();
+        assertEquals(1, timeframes.size());
+        assertTimeframe(timeframes.get(0), 2 * 3600,  10 * 3600, 6000, 10000, true);
     }
 
-    private void assertTimeframe(Timeframe timeframe, Integer earliestStart, Integer latestEnd, Integer minRuningTime, Integer maxRunningTime) {
+    private void assertTimeframe(Timeframe timeframe, Integer earliestStart, Integer latestEnd, Integer min, Integer max, boolean energyRequest) {
         assertEquals(earliestStart, timeframe.getEarliestStart());
         assertEquals(latestEnd, timeframe.getLatestEnd());
         assertEquals(latestEnd, timeframe.getLatestEnd());
-        assertEquals(minRuningTime, timeframe.getMinRunningTime());
-        assertEquals(maxRunningTime, timeframe.getMaxRunningTime());
+        if(energyRequest) {
+            assertEquals(min, timeframe.getMinEnergy());
+            assertEquals(max, timeframe.getMaxEnergy());
+        } else {
+            assertEquals(min, timeframe.getMinRunningTime());
+            assertEquals(max, timeframe.getMaxRunningTime());
+        }
     }
 
     private void setDeviceInfo(DeviceInfo deviceInfo) {

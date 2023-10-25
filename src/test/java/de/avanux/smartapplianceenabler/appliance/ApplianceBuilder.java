@@ -130,6 +130,16 @@ public class ApplianceBuilder {
         return this;
     }
 
+    public ApplianceBuilder withEnergyRequest(LocalDateTime now, LocalDateTime intervalStart, LocalDateTime intervalEnd,
+                                               Integer min, Integer max, boolean enabled) {
+        Interval interval = new Interval(intervalStart, intervalEnd);
+        EnergyRequest request = new EnergyRequest(min, max);
+        request.setEnabled(enabled);
+        TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
+        getTimeframeIntervalHandler().addTimeframeInterval(now, timeframeInterval, false, true);
+        return this;
+    }
+
     public ApplianceBuilder withSocRequest(LocalDateTime now, Interval interval,
                                            Integer evId, Integer batteryCapacity, Integer soc, boolean enabled) {
         SocRequest request = new SocRequest(soc, evId);
