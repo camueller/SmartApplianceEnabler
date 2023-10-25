@@ -42,6 +42,7 @@ public class ElectricVehicleChargerTest {
     private ElectricVehicleCharger evCharger = Mockito.spy(new ElectricVehicleCharger());
     private EVChargerControl evChargerControl = mock(EVChargerControl.class);
     private ElectricVehicle ev;
+    private ElectricVehicleHandler evHandler = mock(ElectricVehicleHandler.class);
     private Appliance appliance = mock(Appliance.class);
     private TimeframeIntervalHandler timeframeIntervalHandler = mock(TimeframeIntervalHandler.class);
     private Request request = mock(Request.class);
@@ -62,6 +63,7 @@ public class ElectricVehicleChargerTest {
         evCharger.setControl(evChargerControl);
         evCharger.setApplianceId(applianceId);
         evCharger.setAppliance(appliance);
+        evCharger.setElectricVehicleHandler(evHandler);
         evCharger.setVehicles(Collections.singletonList(ev));
         evCharger.init();
 
@@ -69,6 +71,9 @@ public class ElectricVehicleChargerTest {
         when(timeframeIntervalHandler.findTimeframeIntervalsUntilFirstGap()).thenReturn(new ArrayList<>());
         when(timeframeIntervalHandler.getActiveTimeframeInterval()).thenReturn(timeframeInterval);
         when(timeframeIntervalHandler.getQueue()).thenReturn(Collections.singletonList(timeframeInterval));
+
+        when(evHandler.getChargeLoss()).thenReturn(10.0);
+        when(evHandler.getSocValues()).thenReturn(new SocValues());
     }
 
     private void log(String message) {

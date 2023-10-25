@@ -202,6 +202,10 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
     public void setMaxPower(int maxPower) {
     }
 
+    public void setElectricVehicleHandler(ElectricVehicleHandler evHandler) {
+        this.evHandler = evHandler;
+    }
+
     public List<ElectricVehicle> getVehicles() {
         return vehicles;
     }
@@ -221,7 +225,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         logger.debug("{}: voltage={} phases={} startChargingStateDetectionDelay={} chargePowerRepetition={}",
                 this.applianceId, getVoltage(), getPhases(), getStartChargingStateDetectionDelay(), this.chargePowerRepetition);
 
-        this.evHandler = new ElectricVehicleHandler();
         this.evHandler.setSocValuesChangedListener(this);
         this.evHandler.setApplianceId(applianceId);
         this.evHandler.setVehicles(vehicles);

@@ -246,6 +246,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         if(isElectricVehicleCharger()) {
             ElectricVehicleCharger evCharger = ((ElectricVehicleCharger) control);
             evCharger.setAppliance(this);
+            evCharger.setElectricVehicleHandler(new ElectricVehicleHandler());
         }
         if(control instanceof VariablePowerConsumer) {
             var powerConsumer = (VariablePowerConsumer) control;
