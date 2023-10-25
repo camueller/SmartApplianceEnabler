@@ -25,6 +25,7 @@ import de.avanux.smartapplianceenabler.control.VariablePowerConsumer;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.schedule.AbstractEnergyRequest;
+import de.avanux.smartapplianceenabler.schedule.RuntimeRequest;
 import de.avanux.smartapplianceenabler.schedule.TimeframeInterval;
 import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
 import org.slf4j.Logger;
@@ -395,29 +396,29 @@ public class SempController {
     createSempTimeFrame(LocalDateTime now, String deviceId, TimeframeInterval timeframeInterval) {
         Integer earliestStartSeconds = timeframeInterval.getEarliestStartSeconds(now);
         Integer latestEndSeconds = timeframeInterval.getLatestEndSeconds(now);
-        Integer minRunningTime = timeframeInterval.getRequest().getMin(now);
-        Integer maxRunningTime = timeframeInterval.getRequest().getMax(now);
-        if (maxRunningTime == null) {
-            maxRunningTime = 0;
+        Integer min = timeframeInterval.getRequest().getMin(now);
+        Integer max = timeframeInterval.getRequest().getMax(now);
+        if (max == null) {
+            max = 0;
         }
-        if(maxRunningTime > latestEndSeconds) {
-            maxRunningTime = latestEndSeconds;
+        if(timeframeInterval.getRequest() instanceof RuntimeRequest && max > latestEndSeconds) {
+            max = latestEndSeconds;
         }
-        if (minRunningTime == null) {
-            minRunningTime = maxRunningTime;
+        if (min == null) {
+            min = max;
         }
-        if (minRunningTime.equals(maxRunningTime)) {
+        if (min.equals(max)) {
             /** WORKAROUND:
              * For unknown reason the SunnyPortal displays the scheduled times only
              * if maxRunningTime AND minRunningTime are returned and are NOT EQUAL
              * Therefore we ensure that they are not equal by reducing minRunningTime by 1 second
              */
-            minRunningTime = minRunningTime >= 1 ? minRunningTime - 1 : 0;
+            min = min >= 1 ? min - 1 : 0;
         } else {
             // according to spec minRunningTime only has to be returned if different from maxRunningTime
-            minRunningTime = minRunningTime >= 0 ? minRunningTime : 0;
+            min = min >= 0 ? min : 0;
         }
-        maxRunningTime = maxRunningTime >= 0 ? maxRunningTime : 0;
+        max = max >= 0 ? max : 0;
 
         de.avanux.smartapplianceenabler.semp.webservice.Timeframe timeFrame
                 = new de.avanux.smartapplianceenabler.semp.webservice.Timeframe();
@@ -425,11 +426,11 @@ public class SempController {
         timeFrame.setEarliestStart(earliestStartSeconds);
         timeFrame.setLatestEnd(latestEndSeconds);
         if (timeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
-            timeFrame.setMinEnergy(timeframeInterval.getRequest().getMin(now));
-            timeFrame.setMaxEnergy(timeframeInterval.getRequest().getMax(now));
+            timeFrame.setMinEnergy(min);
+            timeFrame.setMaxEnergy(max);
         } else {
-            timeFrame.setMinRunningTime(minRunningTime);
-            timeFrame.setMaxRunningTime(maxRunningTime);
+            timeFrame.setMinRunningTime(min);
+            timeFrame.setMaxRunningTime(max);
         }
         logger.debug("{}: Timeframe created: {}", deviceId, timeFrame);
         return timeFrame;

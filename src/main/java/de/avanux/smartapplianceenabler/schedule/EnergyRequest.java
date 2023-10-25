@@ -80,8 +80,11 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
     }
 
     public Integer getMin(LocalDateTime now) {
-        var min = this.min != null ? this.min - getMeteredEnergy() : 0;
-        return min > 0 ? min : 0;
+        if(this.min != null) {
+            var min = this.min - getMeteredEnergy();
+            return min > 0 ? min : 0;
+        }
+        return null;
     }
 
     public void setMin(Integer min) {
