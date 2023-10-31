@@ -60,6 +60,11 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
         return id;
     }
 
+    @Override
+    public void setMqttClient(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
+
     public void setMqttTopic(String mqttTopic) {
         this.mqttTopic = mqttTopic;
     }
@@ -89,7 +94,9 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
     @Override
     public void init() {
         logger.debug("{}: Initializing ...", getApplianceId());
-        mqttClient = new MqttClient(getApplianceId(), getClass());
+        if(mqttClient == null) {
+            mqttClient = new MqttClient(getApplianceId(), getClass());
+        }
     }
 
     @Override
@@ -113,9 +120,9 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
             this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish-" + getClass().getSimpleName(),
                     MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
                 @Override
-                public void runTask() {
+                public void runTask(LocalDateTime now) {
                     try {
-                        publishControlMessage(isOn());
+                        publishControlMessage(now, isOn());
                     }
                     catch(Exception e) {
                         logger.error("{}: Error publishing MQTT message", getApplianceId(), e);
@@ -175,9 +182,9 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
                     executeTransaction(executor, true);
                     result = Integer.valueOf(write.child().getValue()).equals(((WriteHoldingRegisterExecutor) executor).getResult());
                 }
-                publishControlMessage(switchOn);
+                publishControlMessage(now, switchOn);
                 if(this.notificationHandler != null && switchOn != on) {
-                    publishControlMessage(switchOn);
+                    publishControlMessage(now, switchOn);
                     this.notificationHandler.sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
                 }
             }
@@ -225,8 +232,8 @@ public class ModbusSwitch extends ModbusSlave implements Control, Validateable, 
         return on;
     }
 
-    private void publishControlMessage(boolean on) {
-        MqttMessage message = new ControlMessage(LocalDateTime.now(), on);
+    private void publishControlMessage(LocalDateTime now, boolean on) {
+        MqttMessage message = new ControlMessage(now, on);
         mqttClient.publish(mqttTopic, message, false);
     }
 

@@ -77,6 +77,11 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
         return id;
     }
 
+    @Override
+    public void setMqttClient(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
+
     public void setMinPower(Integer minPower) {
         this.minPowerConsumption = minPower;
     }
@@ -110,7 +115,9 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     @Override
     public void init() {
         logger.debug("{}: Initializing ...", getApplianceId());
-        mqttClient = new MqttClient(getApplianceId(), getClass());
+        if(mqttClient == null) {
+            mqttClient = new MqttClient(getApplianceId(), getClass());
+        }
     }
 
     @Override
@@ -132,9 +139,9 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
                 this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish-" + getClass().getSimpleName(),
                         MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
                     @Override
-                    public void runTask() {
+                    public void runTask(LocalDateTime now) {
                         try {
-                            publishControlMessage(LocalDateTime.now(), getPower());
+                            publishControlMessage(now, getPower());
                         }
                         catch(Exception e) {
                             logger.error("{}: Error publishing MQTT message", getApplianceId(), e);

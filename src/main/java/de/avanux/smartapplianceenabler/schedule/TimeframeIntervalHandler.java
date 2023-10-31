@@ -151,8 +151,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
             this.fillQueueTimerTask = new GuardedTimerTask(this.applianceId, "FillQueueTimerTask",
                     FILL_QUEUE_INTERVAL_SECONDS * 1000) {
                 @Override
-                public void runTask() {
-                    fillQueue(LocalDateTime.now());
+                public void runTask(LocalDateTime now) {
+                    fillQueue(now);
                 }
             };
             if (timer != null) {
@@ -162,8 +162,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
             this.updateQueueTimerTask = new GuardedTimerTask(this.applianceId,
                     "UpdateActiveTimeframeInterval", UPDATE_QUEUE_INTERVAL_SECONDS * 1000) {
                 @Override
-                public void runTask() {
-                    updateQueue(LocalDateTime.now(), false);
+                public void runTask(LocalDateTime now) {
+                    updateQueue(now, false);
                 }
             };
             if (timer != null) {

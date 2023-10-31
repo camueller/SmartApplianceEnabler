@@ -71,8 +71,8 @@ public class PollPowerMeter implements ApplianceIdConsumer {
     private GuardedTimerTask buildPollPowerTask(Integer pollInterval) {
         return new GuardedTimerTask(this.applianceId, "PollPowerMeter", pollInterval * 1000) {
             @Override
-            public void runTask() {
-                pollPower(LocalDateTime.now());
+            public void runTask(LocalDateTime now) {
+                pollPower(now);
             }
         };
     }

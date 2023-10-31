@@ -61,6 +61,11 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
     }
 
     @Override
+    public void setMqttClient(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
+
+    @Override
     public void setMqttTopic(String mqttTopic) {
     }
 
@@ -82,7 +87,9 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
 
     @Override
     public void init() {
-        mqttClient = new MqttClient(applianceId, getClass());
+        if(mqttClient == null) {
+            mqttClient = new MqttClient(applianceId, getClass());
+        }
     }
 
     @Override
@@ -91,9 +98,9 @@ public class AlwaysOnSwitch implements Control, ApplianceIdConsumer, Notificatio
             this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
                     MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
                 @Override
-                public void runTask() {
+                public void runTask(LocalDateTime now) {
                     try {
-                        publishControlMessage(LocalDateTime.now(), true);
+                        publishControlMessage(now, true);
                     }
                     catch(Exception e) {
                         logger.error("{}: Error publishing MQTT message", applianceId, e);

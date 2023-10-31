@@ -119,7 +119,7 @@ public class StartingCurrentSwitch extends WrappedControl implements TimeframeIn
             switchOnTime = now;
             startingCurrentDetected = false;
         }
-        publishControlMessage(switchOn);
+        publishControlMessage(now, switchOn);
         if(getNotificationHandler() != null && switchOn != on) {
             getNotificationHandler().sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
         }
@@ -181,7 +181,7 @@ public class StartingCurrentSwitch extends WrappedControl implements TimeframeIn
             switchOnTime = now;
             Integer runtime = timeframeIntervalHandler.suggestRuntime();
             timeframeIntervalHandler.setRuntimeDemand(now, runtime, null, false);
-            publishControlMessage(on);
+            publishControlMessage(now, on);
         }
     }
 
@@ -195,8 +195,8 @@ public class StartingCurrentSwitch extends WrappedControl implements TimeframeIn
     }
 
     @Override
-    protected MqttMessage buildControlMessage(boolean on) {
-        return new StartingCurrentSwitchMessage(LocalDateTime.now(), on,
+    protected MqttMessage buildControlMessage(LocalDateTime now, boolean on) {
+        return new StartingCurrentSwitchMessage(now, on,
                 getPowerThreshold(), getStartingCurrentDetectionDuration(), getFinishedCurrentDetectionDuration());
     }
 }

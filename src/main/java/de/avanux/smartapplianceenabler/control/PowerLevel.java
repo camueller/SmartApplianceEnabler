@@ -31,6 +31,14 @@ public class PowerLevel {
     @XmlElement(name = "SwitchStatus", type = SwitchStatus.class)
     private List<SwitchStatus> switchStatuses;
 
+    public PowerLevel() {
+    }
+
+    public PowerLevel(Integer power, List<SwitchStatus> switchStatuses) {
+        this.power = power;
+        this.switchStatuses = switchStatuses;
+    }
+
     public Integer getPower() {
         return power;
     }

@@ -128,6 +128,11 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
     }
 
     @Override
+    public void setMqttClient(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
+
+    @Override
     public void setMqttTopic(String mqttTopic) {
     }
 
@@ -216,7 +221,9 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
 
     @Override
     public void init() {
-        mqttClient = new MqttClient(applianceId, getClass());
+        if(mqttClient == null) {
+            mqttClient = new MqttClient(applianceId, getClass());
+        }
         boolean useEvControlMock = Boolean.parseBoolean(System.getProperty("sae.evcontrol.mock", "false"));
         if(useEvControlMock) {
             this.control= new EVChargerControlMock();
@@ -267,10 +274,10 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             this.updateStateTimerTask = new GuardedTimerTask(this.applianceId,"UpdateState",
                     getPollInterval() * 1000) {
                 @Override
-                public void runTask() {
+                public void runTask(LocalDateTime now) {
                     // don't add code here since it is not used by integration tests
                     // add it in updateStateTimerTaskImpl()
-                    updateStateTimerTaskImpl(LocalDateTime.now());
+                    updateStateTimerTaskImpl(now);
                 }
             };
             // the initial delay is needed in order to have regular timeframe intervals created by TimeframeIntervalHandler
@@ -648,7 +655,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         return new GuardedTimerTask(this.applianceId,"ChargePowerRepetition",
                 this.chargePowerRepetition * 1000) {
             @Override
-            public void runTask() {
+            public void runTask(LocalDateTime now) {
                 control.setChargeCurrent(chargeCurrent);
             }
         };

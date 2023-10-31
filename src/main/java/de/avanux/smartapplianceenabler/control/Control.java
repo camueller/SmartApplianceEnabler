@@ -18,6 +18,8 @@
 package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceLifeCycle;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+
 import java.time.LocalDateTime;
 
 /**
@@ -29,6 +31,8 @@ public interface Control extends ApplianceLifeCycle {
     public String getId();
 
     boolean isControllable();
+
+    void setMqttClient(MqttClient mqttClient);
 
     void setMqttTopic(String mqttTopic);
 

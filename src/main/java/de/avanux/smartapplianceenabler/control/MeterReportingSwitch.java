@@ -67,6 +67,11 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
         this.applianceId = applianceId;
     }
 
+    @Override
+    public void setMqttClient(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
+
     public void setMqttTopic(String mqttTopic) {
         this.mqttPublishTopic = mqttTopic;
     }
@@ -110,7 +115,9 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
 
     @Override
     public void init() {
-        mqttClient = new MqttClient(applianceId, getClass());
+        if(mqttClient == null) {
+            mqttClient = new MqttClient(applianceId, getClass());
+        }
     }
 
     @Override
@@ -124,9 +131,8 @@ public class MeterReportingSwitch implements Control, ApplianceIdConsumer, Notif
             this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
                     MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
                 @Override
-                public void runTask() {
+                public void runTask(LocalDateTime now) {
                     try {
-                        LocalDateTime now = LocalDateTime.now();
                         publishControlMessage(now, isOn(now));
                     }
                     catch(Exception e) {

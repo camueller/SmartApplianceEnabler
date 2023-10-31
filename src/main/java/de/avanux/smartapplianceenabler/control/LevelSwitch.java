@@ -71,12 +71,24 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
         return id;
     }
 
+    protected void setControls(List<Control> controls) {
+        this.controls = controls;
+    }
+
+    protected void setPowerLevels(List<PowerLevel> powerLevels) {
+        this.powerLevels = powerLevels;
+    }
+
+    public void setMqttClient(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
+
     private String getWrappedControlTopic(String id) {
         return "Wrapped" + Control.TOPIC + WRAPPED_CONTROL_TOPIC_ID_SEPARATOR +  id;
     }
 
     private String getWrappedControlId(String topic) {
-        return topic.split(WRAPPED_CONTROL_TOPIC_ID_SEPARATOR)[1];
+        return topic.substring(topic.lastIndexOf(WRAPPED_CONTROL_TOPIC_ID_SEPARATOR) + 1);
     }
 
     @Override
@@ -153,7 +165,9 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
     @Override
     public void init() {
         logger.debug("{}: Initializing ...", this.applianceId);
-        mqttClient = new MqttClient(applianceId, getClass());
+        if(mqttClient == null) {
+            mqttClient = new MqttClient(applianceId, getClass());
+        }
         for(int i=0; i<this.controls.size(); i++) {
             String topic = getWrappedControlTopic(this.controls.get(i).getId());
             controls.get(i).setMqttTopic(topic);
@@ -191,7 +205,7 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
             this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
                     MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
                 @Override
-                public void runTask() {
+                public void runTask(LocalDateTime now) {
                     try {
                         publishControlMessage(now, getPower());
                     }
@@ -251,7 +265,7 @@ public class LevelSwitch implements VariablePowerConsumer, ApplianceIdConsumer, 
         }
     }
 
-    private int getPower() {
+    protected int getPower() {
         if(this.powerLevels != null) {
             Optional<PowerLevel> powerLevel = this.powerLevels.stream().filter(
                     pl -> pl.getSwitchStatuses().stream().allMatch(

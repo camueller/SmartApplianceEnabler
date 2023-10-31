@@ -150,9 +150,9 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
             this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish-" + getClass().getSimpleName(),
                     MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
                 @Override
-                public void runTask() {
+                public void runTask(LocalDateTime now) {
                     try {
-                        MqttMessage message = new MeterMessage(LocalDateTime.now(),
+                        MqttMessage message = new MeterMessage(now,
                                 pulsePowerMeter != null ? pulsePowerMeter.getAveragePower() : 0,
                                 pulseEnergyMeter != null ? pulseEnergyMeter.getEnergy() : 0
                         );

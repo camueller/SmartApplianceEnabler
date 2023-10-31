@@ -134,7 +134,7 @@ public class SwitchOption extends WrappedControl implements TimeframeIntervalHan
             detectingSwitchOn = false;
             switchOnDetected = false;
         }
-        publishControlMessage(switchOn);
+        publishControlMessage(now, switchOn);
         if(getNotificationHandler() != null) {
             getNotificationHandler().sendNotification(switchOn ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
         }
@@ -146,7 +146,7 @@ public class SwitchOption extends WrappedControl implements TimeframeIntervalHan
     }
 
     @Override
-    protected MqttMessage buildControlMessage(boolean on) {
-        return new SwitchOptionMessage(LocalDateTime.now(), on, powerThreshold, switchOnDetectionDuration, switchOffDetectionDuration);
+    protected MqttMessage buildControlMessage(LocalDateTime now, boolean on) {
+        return new SwitchOptionMessage(now, on, powerThreshold, switchOnDetectionDuration, switchOffDetectionDuration);
     }
 }

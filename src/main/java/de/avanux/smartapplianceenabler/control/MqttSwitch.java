@@ -85,6 +85,11 @@ public class MqttSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     }
 
     @Override
+    public void setMqttClient(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
+
+    @Override
     public void setMqttTopic(String mqttTopic) {
         this.mqttTopic = mqttTopic;
     }
@@ -132,7 +137,9 @@ public class MqttSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
     @Override
     public void init() {
         logger.debug("{}: Initializing ...", applianceId);
-        mqttClient = new MqttClient(applianceId, getClass());
+        if(mqttClient == null) {
+            mqttClient = new MqttClient(applianceId, getClass());
+        }
     }
 
     @Override
@@ -142,9 +149,9 @@ public class MqttSwitch implements Control, ApplianceLifeCycle, Validateable, Ap
             this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
                     MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
                 @Override
-                public void runTask() {
+                public void runTask(LocalDateTime now) {
                     try {
-                        publishControlMessage(LocalDateTime.now(), isOn());
+                        publishControlMessage(now, isOn());
                     }
                     catch(Exception e) {
                         logger.error("{}: Error publishing MQTT message", applianceId, e);

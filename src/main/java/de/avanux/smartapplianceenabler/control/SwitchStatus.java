@@ -29,6 +29,14 @@ public class SwitchStatus {
     @XmlAttribute
     private Boolean on;
 
+    public SwitchStatus() {
+    }
+
+    public SwitchStatus(String idref, Boolean on) {
+        this.idref = idref;
+        this.on = on;
+    }
+
     public String getIdref() {
         return idref;
     }

@@ -83,6 +83,10 @@ public class MqttClient {
         client = createClient(clientIdBuilder.toString(), brokerUri, loggerId);
     }
 
+    protected String getApplianceId() {
+        return applianceId;
+    }
+
     public static void setMqttBroker(MqttBroker mqttBroker) {
         MqttClient.mqttBroker = mqttBroker;
     }
@@ -260,7 +264,7 @@ public class MqttClient {
         publishMessage(fullTopic, message, retained);
     }
 
-    private void publishMessage(String fullTopic, MqttMessage message, boolean retained) {
+    public void publishMessage(String fullTopic, MqttMessage message, boolean retained) {
         message.setType(message.getClass().getSimpleName());
         String serializedMessage = genson.serialize(message);
         publishMessage(fullTopic, serializedMessage.getBytes(), retained, null);

@@ -93,6 +93,13 @@ public abstract class WrappedControl implements Control, ApplianceIdConsumer, No
         return control instanceof ModbusSlave ? Collections.singleton((ModbusSlave) control) : new HashSet<>();
     }
 
+    public void setMqttClient(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+        if(control != null) {
+            control.setMqttClient(mqttClient);
+        }
+    }
+
     protected MqttClient getMqttClient() {
         return mqttClient;
     }
@@ -130,7 +137,9 @@ public abstract class WrappedControl implements Control, ApplianceIdConsumer, No
     @Override
     public void init() {
         logger.debug("{}: Initializing ...", applianceId);
-        mqttClient = new MqttClient(applianceId, getClass());
+        if(mqttClient == null) {
+            mqttClient = new MqttClient(applianceId, getClass());
+        }
         if(this.control != null) {
             this.control.setMqttTopic(StartingCurrentSwitch.WRAPPED_CONTROL_TOPIC);
             this.control.setPublishControlStateChangedEvent(false);
@@ -163,9 +172,9 @@ public abstract class WrappedControl implements Control, ApplianceIdConsumer, No
             this.mqttPublishTimerTask = new GuardedTimerTask(applianceId, "MqttPublish-" + getClass().getSimpleName(),
                     MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
                 @Override
-                public void runTask() {
+                public void runTask(LocalDateTime now) {
                     try {
-                        publishControlMessage(isOn());
+                        publishControlMessage(now, isOn());
                     }
                     catch(Exception e) {
                         logger.error("{}: Error publishing MQTT message", applianceId, e);
@@ -231,10 +240,10 @@ public abstract class WrappedControl implements Control, ApplianceIdConsumer, No
         mqttClient.publish(WRAPPED_CONTROL_TOPIC, new ControlMessage(now, switchOn), true, false);
     }
 
-    protected void publishControlMessage(boolean on) {
-        MqttMessage message = buildControlMessage(on);
+    protected void publishControlMessage(LocalDateTime now, boolean on) {
+        MqttMessage message = buildControlMessage(now, on);
         mqttClient.publish(Control.TOPIC, message, false);
     }
 
-    abstract protected MqttMessage buildControlMessage(boolean on);
+    abstract protected MqttMessage buildControlMessage(LocalDateTime now, boolean on);
 }

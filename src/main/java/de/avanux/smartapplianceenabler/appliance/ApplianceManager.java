@@ -298,7 +298,7 @@ public class ApplianceManager implements Runnable {
         this.midnightTimerTask = new GuardedTimerTask(null,
                 "Midnight", 24 * 60 * 60 * 1000) {
             @Override
-            public void runTask() {
+            public void runTask(LocalDateTime now) {
                 atMidnight(holidaysUsed.value);
             }
         };

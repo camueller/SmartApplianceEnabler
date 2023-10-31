@@ -61,6 +61,11 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     }
 
     @Override
+    public void setMqttClient(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
+
+    @Override
     public void setMqttTopic(String mqttTopic) {
         this.mqttTopic = mqttTopic;
     }
@@ -85,7 +90,9 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     @Override
     public void init() {
         logger.debug("{}: Initializing ...", getApplianceId());
-        mqttClient = new MqttClient(getApplianceId(), getClass());
+        if(mqttClient == null) {
+            mqttClient = new MqttClient(getApplianceId(), getClass());
+        }
     }
 
     @Override
@@ -104,9 +111,9 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
                 this.mqttPublishTimerTask = new GuardedTimerTask(getApplianceId(), "MqttPublish-" + getClass().getSimpleName(),
                         MqttClient.MQTT_PUBLISH_PERIOD * 1000) {
                     @Override
-                    public void runTask() {
+                    public void runTask(LocalDateTime now) {
                         try {
-                            publishControlMessage(LocalDateTime.now(), isOn());
+                            publishControlMessage(now, isOn());
                         }
                         catch(Exception e) {
                             logger.error("{}: Error publishing MQTT message", getApplianceId(), e);

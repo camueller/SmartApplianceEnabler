@@ -48,6 +48,11 @@ public class MockSwitch implements Control, ApplianceIdConsumer {
     }
 
     @Override
+    public void setMqttClient(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
+
+    @Override
     public void setMqttTopic(String mqttTopic) {
     }
 

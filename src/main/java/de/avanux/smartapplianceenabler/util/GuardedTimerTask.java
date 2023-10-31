@@ -21,6 +21,7 @@ package de.avanux.smartapplianceenabler.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.TimerTask;
 
 /**
@@ -54,7 +55,7 @@ abstract public class GuardedTimerTask extends TimerTask {
         logger.trace("{}: Executing timer task name={} id={}", this.applianceId != null ? this.applianceId : "",
                 this.taskName, this.hashCode());
         try  {
-            runTask();
+            runTask(LocalDateTime.now());
         }
         catch(Throwable e) {
             logger.error(applianceId + ": Error executing timer task name=" + taskName + " id=" + this.hashCode(), e);
@@ -71,5 +72,5 @@ abstract public class GuardedTimerTask extends TimerTask {
     /**
      * Override this method instead of #run().
      */
-    abstract public void runTask();
+    abstract public void runTask(LocalDateTime now);
 }
