@@ -99,6 +99,15 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
     public void run() {
         if(socScript.getScript() != null) {
             var result = socScript.getResult();
+            if(this.triggeredAt != null && LocalDateTime.now().minusSeconds(3).isBefore(this.triggeredAt)) {
+                logger.debug("{}: SOC script is too fast - delay result processing", applianceId);
+                try {
+                    thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    logger.error("{}: SOC script result processing delay interrupted", applianceId);
+                }
+            }
+
             logger.debug("{}: SOC script execution result: {}", applianceId, result);
             if(result != null) {
                 this.listener.onSocScriptExecutionSuccess(
