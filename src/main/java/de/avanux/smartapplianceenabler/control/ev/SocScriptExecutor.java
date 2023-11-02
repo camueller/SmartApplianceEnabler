@@ -19,9 +19,11 @@
 package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
+import de.avanux.smartapplianceenabler.schedule.TimeframeIntervalHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
@@ -99,12 +101,18 @@ public class SocScriptExecutor implements Runnable, ApplianceIdConsumer {
     public void run() {
         if(socScript.getScript() != null) {
             var result = socScript.getResult();
-            if(this.triggeredAt != null && LocalDateTime.now().minusSeconds(3).isBefore(this.triggeredAt)) {
-                logger.debug("{}: SOC script is too fast - delay result processing", applianceId);
-                try {
-                    thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    logger.error("{}: SOC script result processing delay interrupted", applianceId);
+            if(this.triggeredAt != null) {
+                // we have to wait until timeframe interval queue has been filled; otherwise requests won't get enabled
+                var executionSeconds = Duration.between(this.triggeredAt, LocalDateTime.now()).toSeconds();
+                var minimumExecutionSeconds = TimeframeIntervalHandler.UPDATE_QUEUE_INTERVAL_SECONDS + 10;
+                var delaySeconds = minimumExecutionSeconds - executionSeconds;
+                if(delaySeconds > 0) {
+                    logger.debug("{}: SOC script is too fast - delay result processing by {} seconds", applianceId, delaySeconds);
+                    try {
+                        thread.sleep(delaySeconds * 1000);
+                    } catch (InterruptedException e) {
+                        logger.error("{}: SOC script result processing delay interrupted", applianceId);
+                    }
                 }
             }
 
