@@ -337,6 +337,7 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
             socValues.current = result.soc.intValue();
         }
         socValues.retrieved = result.soc.intValue();
+        socValues.retrievedTimestamp = now;
         if(socLastRetrieved != null) {
             Double chargeLossCalculated = calculateChargeLoss(getEnergyMeteredSinceLastSocScriptExecution(), socValues.retrieved, socLastRetrieved);
             if(chargeLossCalculated != null) {
