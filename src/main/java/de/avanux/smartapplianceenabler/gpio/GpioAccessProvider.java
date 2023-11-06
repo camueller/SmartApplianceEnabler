@@ -29,7 +29,7 @@ public class GpioAccessProvider {
     private static PigpioInterface pigpioInterfaceInstance = null;
 
     public static PigpioInterface getPigpioInterface() {
-        if(System.getProperty("os.arch").equals("arm")) {
+        if(System.getProperty("os.arch").equals("arm") || System.getProperty("os.arch").equals("aarch64")) {
             try {
                 if(pigpioInterfaceInstance == null) {
                     pigpioInterfaceInstance = PigpioJ.autoDetectedImplementation();
