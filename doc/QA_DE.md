@@ -48,7 +48,7 @@ Folgende Punkte prüfen:
 Zunächst muss sichergestellt sein, dass der *Smart Appliance Enabler* vom *Sunny Home Manager* gefunden wird ---> [SEMP1](#semp1)
 
 Wenn Zählerwerte nicht im *Sunny Portal* angezeigt werden, müssen folgende Werte in der [SEMP-Schnittstelle](SEMP_DE.md#xml) geprüft werden:
-- im `DeviceStatus` unter `PowerInfo` muss `AveragePower` grösser als 0 sein. Falls das nicht so ist, kann die Leisungsaufnahme möglicherweise nicht bestimmt werden. ---> [SAE3](#sae3)
+- im `DeviceStatus` unter `PowerInfo` muss `AveragePower` grösser als 0 sein. Falls das nicht so ist, kann die Leistungsaufnahme möglicherweise nicht bestimmt werden. ---> [SAE3](#sae3)
 - im `DeviceStatus` muss der `Status` den Wert `On` haben, sonst werden die Leistungswerte vom *Sunny Home Manager* ignoriert
 
 ### SEMP3
@@ -96,11 +96,7 @@ sae@raspberrypi:~ $ /usr/bin/java \
 Die Versionsnummer im Namen der war-Datei muss natürlich entsprechend der verwendeten Version angepasst werden!
 
 ### SAE3
-Die Leistungaufname des Gerätes, die an den *Sunny Home Manager* übermittelt wird, wird über den im *Smart Appliance Enabler* konfigurierten Zähler bestimmt. In Abhängkeit von dessen Typ kann man im Log die Leistungaufname sehen:
-- [S0](SOMeter_DE.md#log)
-- [HTTP](HttpMeter_DE.md#log): wenn die HTTP-Response mehr als den "nackten" Zahlenwert enthält, muss ein [regulärer Ausdruck zum Extrahieren](ValueExtraction_DE.md) konfiguriert werden!
-- [Modbus](ModbusMeter_DE.md#log)
-- [MQTT](MqttMeter_DE.md#log): wenn die MQTT-Response mehr als den "nackten" Zahlenwert enthält, muss ein [regulärer Ausdruck zum Extrahieren](ValueExtraction_DE.md) konfiguriert werden!
+Die Leistungaufname des Gerätes, die an den *Sunny Home Manager* übermittelt wird, wird über den im *Smart Appliance Enabler* [konfigurierten Zähler bestimmt](Meter_DE.md). In Abhängkeit von dessen Typ kann man im Log die Leistungaufname sehen.
 
 ### SAE4
 Wenn ein Schaltbefehl vom *Sunny Home Manager* empfangen wird, wird dieser an den für das Gerät im *Smart Appliance Enabler* konfigurierten Schalter weitergegeben. In Abhängkeit von dessen Typ kann man im Log den Schaltbefehl sehen:  

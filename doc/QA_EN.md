@@ -83,11 +83,7 @@ sae@raspberrypi:~ $ /usr/bin/java -Djava.awt.headless=true -Xmx256m -Duser.langu
 The version number in the name of the war file must of course be adjusted according to the version used!
 
 ### SAE3
-The power consumption of the device, which is transmitted to the *Sunny Home Manager*, is determined using the meter configured in the *Smart Appliance Enabler*. Depending on its type, you can see the power consumption in the log:
-- [S0](SOMeter_EN.md#log)
-- [HTTP](HttpMeter_EN.md#log): if the HTTP response contains more than the "bare" number value, a [Regular expression for extraction](ValueExtraction_EN.md) must be configured!
-- [Modbus](ModbusMeter_EN.md#log)
-- [MQTT](MqttMeter_DE.md#log): if the MQTT response contains more than the "bare" number value, a [Regular expression for extraction](ValueExtraction_EN.md) must be configured!
+The power consumption of the device, which is transmitted to the *Sunny Home Manager*, is determined using the [meter configured](Meter_EN.md) in the *Smart Appliance Enabler*. Depending on its type, you can see the power consumption in the log.
 
 ### SAE4
 If a control request is received from the *Sunny Home Manager*, this is passed on to the control configured for the device in the *Smart Appliance Enabler*. Depending on its type, you can see the control request in the log:
