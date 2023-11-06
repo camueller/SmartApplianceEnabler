@@ -98,7 +98,7 @@ public class NotificationHandler implements ApplianceIdConsumer {
         if(isRequestedNotification(type)) {
             logger.debug("{}: Checking notification preconditions: errorCountPerDay={}", applianceId, errorCountPerDay);
             if(!isErrorNotification(type) || shouldSendErrorNotification()) {
-                String message = Messages.getString(type.name());
+                String message = getMessage(type);
                 if(type == NotificationType.COMMUNICATION_ERROR) {
                     message = Messages.getString(NotificationType.COMMUNICATION_ERROR.name(), maxCommunicationErrors);
                 }
@@ -134,19 +134,35 @@ public class NotificationHandler implements ApplianceIdConsumer {
             logger.debug("{}: Ignoring notification of type {}", applianceId, type);
         }
     }
+
+    protected String getMessage(NotificationType type) {
+        return Messages.getString(type.name());
+    }
 }
 
 class Messages {
-    private static final Locale LOCALE = new Locale("de", "DE");
     private static final String BUNDLE_NAME = "messages";
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, LOCALE);
+    private static Locale locale = null;
+    private static ResourceBundle resourceBundle = null;
 
     private Messages() {
     }
 
+    private static ResourceBundle getResourceBundle() {
+        if(resourceBundle == null) {
+            if("de".equals(System.getProperty("user.language"))) {
+                locale = new Locale("de");
+            } else {
+                locale = new Locale("en");
+            }
+            resourceBundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
+        }
+        return resourceBundle;
+    }
+
     public static String getString(String key) {
         try {
-            return RESOURCE_BUNDLE.getString(key);
+            return getResourceBundle().getString(key);
         } catch (MissingResourceException e) {
             return buildErrorMessage(key);
         }
@@ -154,13 +170,13 @@ class Messages {
 
     public static String getString(String key, Object... params) {
         try {
-            return MessageFormat.format(RESOURCE_BUNDLE.getString(key), params);
+            return MessageFormat.format(getResourceBundle().getString(key), params);
         } catch (MissingResourceException e) {
             return buildErrorMessage(key);
         }
     }
 
     private static String buildErrorMessage(String key) {
-        return "Key " + key + " not found in resource bundle " + BUNDLE_NAME + " for locale " + LOCALE;
+        return "Key " + key + " not found in resource bundle " + BUNDLE_NAME + " for locale " + locale;
     }
 }
