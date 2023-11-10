@@ -12,6 +12,18 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [2.3.1](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.3.0) - 10.11.2023
+
+### Gefixt
+- Wallbox
+  - diverse Fixes im Bereich SOC-Scripts
+  - für SOC-Scripts kann jetzt optional ein Timeout konfiguriert werden, wobei ein Standardwert von 3 Minuten gilt
+  - Fehler in der "Fertig"-Erkennung behoben
+  - Fehler im zeitplanbasierten Laden behoben
+  - kein Einschaltbefehl im Lademodus "Optimiert"
+- Stufenschalter-Status wurde nicht richtig ermittelt
+- GPIO-Zugriff funktioniert auch mit 64bit-Linux
+
 ## [2.3.0](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.3.0) - 18.05.2023
 
 ### Neu
