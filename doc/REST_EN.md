@@ -16,14 +16,24 @@ curl -s -X PUT -F id=F-00000001-000000000002-00 -F runtime=600 http://127.0.0.1:
 ```
 
 ## Setting schedules
-Normally the schedules are read from the `Appliance.xml` file. However, it is possible to transfer the schedules to the *Smart Appliance Enabler* via REST. To do this, the schedule(s) must be combined in a root element `Schedules`, which is passed to *Smart Appliance Enabler* with specification of the appliance ID:
-```console
-curl -s -X POST -d '<Schedules xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.4"><Schedule><RuntimeRequest min="1800" max="3600" /><DayTimeframe><Start hour="0" minute="0" second="0" /><End hour="18" minute="59" second="59" /></DayTimeframe></Schedule></Schedules>' --header 'Content-Type: application/xml' http://localhost:8080/sae/schedules?id=F-00000001-000000000001-00
+Usually the schedules are read from the `Appliance.xml` file. However, it is possible to transfer the schedules to the *Smart Appliance Enabler* via REST. To do this, the schedule(s) must be combined in a root element `Schedules`, which is passed to *Smart Appliance Enabler* with specification of the appliance ID. The `Schedules` element contains one or more `Schedule` elements whose structure is derived from the [XML schema](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-2.0.xsd ).
+
+```bash
+$ curl \
+    -s \
+    -X POST \
+    -d '<Schedules xmlns="http://github.com/camueller/SmartApplianceEnabler/v2.0"><Schedule><RuntimeRequest min="1800" max="3600" /><DayTimeframe><Start hour="0" minute="0" second="0" /><End hour="18" minute="59" second="59" /></DayTimeframe></Schedule></Schedules>' \
+    --header 'Content-Type: application/xml' \
+    http://localhost:8080/sae/schedules?id=F-00000001-000000000001-00
 ```
+
 The `xmlns` attribute (especially the version of the *Smart Appliance Enabler* at the end) must match the `xmlns` attribute in the `Appliances.xml` file.
 
 The following should then be found in the *Smart Appliance Enabler* log:
-```console
-2020-01-12 18:31:10,606 DEBUG [http-nio-8080-exec-3] d.a.s.w.SaeController [SaeController.java:413] F-00000001-000000000099-00: Received request to activate 1 schedule(s)
-2020-01-12 18:31:10,614 DEBUG [http-nio-8080-exec-3] d.a.s.a.RunningTimeMonitor [RunningTimeMonitor.java:82] F-00000001-000000000099-00: Using enabled time frame 00:00:00.000-18:59:59.000/1800s/3600s
+```bash
+2023-11-10 14:00:35,643 DEBUG [http-nio-8080-exec-1] d.a.s.w.SaeController [SaeController.java:434] F-00000001-000000000001-00: Received request to activate 1 schedule(s)
+[...]
+2023-11-10 14:00:35,644 DEBUG [http-nio-8080-exec-1] d.a.s.s.TimeframeIntervalHandler [TimeframeIntervalHandler.java:190] F-00000001-000000000001-00: Cleaing queue
+2023-11-10 14:00:35,644 DEBUG [http-nio-8080-exec-1] d.a.s.s.TimeframeIntervalHandler [TimeframeIntervalHandler.java:195] F-00000001-000000000001-00: Starting to fill queue
+2023-11-10 14:00:35,655 DEBUG [http-nio-8080-exec-1] d.a.s.s.TimeframeIntervalHandler [TimeframeIntervalHandler.java:364] F-00000001-000000000001-00: Adding timeframeInterval to queue: CREATED/2023-11-10T00:00:00/2023-11-10T18:59:59::ENABLED/1800s/3600s
 ```

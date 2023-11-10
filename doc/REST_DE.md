@@ -28,13 +28,13 @@ $ curl \
 ```
 
 ## Setzen der Schedules
-Normalerweise werden die Schedules aus der Datei `Appliance.xml` gelesen. Es ist jedoch möglich, die Schedules via REST an den *Smart Appliance Enabler* zu übergeben. Dazu müssen der/die Schedules in einem Root-Element `Schedules` zusammengefasst werden, das an *Smart Appliance Enabler* unter Angabe der Appliance-ID übergeben wird:
+Normalerweise werden die Schedules aus der Datei `Appliance.xml` gelesen. Es ist jedoch möglich, die Schedules via REST an den *Smart Appliance Enabler* zu übergeben. Dazu müssen der/die Schedules in einem Root-Element `Schedules` zusammengefasst werden, das an *Smart Appliance Enabler* unter Angabe der Appliance-ID übergeben wird. Das `Schedules`-Element enthält ein oder mehrere `Schedule`-Elemente, deren Struktur sich aus dem [XML-Schema](https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/xsd/SmartApplianceEnabler-2.0.xsd) ergibt. 
 
 ```bash
 $ curl \
     -s \
     -X POST \
-    -d '<Schedules xmlns="http://github.com/camueller/SmartApplianceEnabler/v1.4"><Schedule><RuntimeRequest min="1800" max="3600" /><DayTimeframe><Start hour="0" minute="0" second="0" /><End hour="18" minute="59" second="59" /></DayTimeframe></Schedule></Schedules>' \
+    -d '<Schedules xmlns="http://github.com/camueller/SmartApplianceEnabler/v2.0"><Schedule><RuntimeRequest min="1800" max="3600" /><DayTimeframe><Start hour="0" minute="0" second="0" /><End hour="18" minute="59" second="59" /></DayTimeframe></Schedule></Schedules>' \
     --header 'Content-Type: application/xml' \
     http://localhost:8080/sae/schedules?id=F-00000001-000000000001-00
 ```
@@ -44,6 +44,9 @@ Das `xmlns`-Attribut (insbesondere die Version des *Smart Appliance Enabler* am 
 Im Log des *Smart Appliance Enabler* sollte sich danach folgendes finden:
 
 ```bash
-2020-01-12 18:31:10,606 DEBUG [http-nio-8080-exec-3] d.a.s.w.SaeController [SaeController.java:413] F-00000001-000000000099-00: Received request to activate 1 schedule(s)
-2020-01-12 18:31:10,614 DEBUG [http-nio-8080-exec-3] d.a.s.a.RunningTimeMonitor [RunningTimeMonitor.java:82] F-00000001-000000000099-00: Using enabled time frame 00:00:00.000-18:59:59.000/1800s/3600s
+2023-11-10 14:00:35,643 DEBUG [http-nio-8080-exec-1] d.a.s.w.SaeController [SaeController.java:434] F-00000001-000000000001-00: Received request to activate 1 schedule(s)
+[...]
+2023-11-10 14:00:35,644 DEBUG [http-nio-8080-exec-1] d.a.s.s.TimeframeIntervalHandler [TimeframeIntervalHandler.java:190] F-00000001-000000000001-00: Cleaing queue
+2023-11-10 14:00:35,644 DEBUG [http-nio-8080-exec-1] d.a.s.s.TimeframeIntervalHandler [TimeframeIntervalHandler.java:195] F-00000001-000000000001-00: Starting to fill queue
+2023-11-10 14:00:35,655 DEBUG [http-nio-8080-exec-1] d.a.s.s.TimeframeIntervalHandler [TimeframeIntervalHandler.java:364] F-00000001-000000000001-00: Adding timeframeInterval to queue: CREATED/2023-11-10T00:00:00/2023-11-10T18:59:59::ENABLED/1800s/3600s
 ```
