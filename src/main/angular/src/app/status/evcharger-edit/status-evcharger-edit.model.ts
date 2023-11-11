@@ -6,5 +6,6 @@ export interface StatusEvchargerEditModel {
   electricVehicle: FormControl<number>;
   socCurrent: FormControl<string>;
   socTarget: FormControl<number>;
+  chargeStartDow?: FormControl<number>;
   chargeEndDow?: FormControl<number>;
 }

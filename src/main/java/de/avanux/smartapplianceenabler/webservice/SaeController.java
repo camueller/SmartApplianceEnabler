@@ -649,19 +649,24 @@ public class SaeController {
                                 @RequestParam(value = "evid") Integer evId,
                                 @RequestParam(value = "socCurrent", required = false) Integer socCurrent,
                                 @RequestParam(value = "socTarget", required = false) Integer socTarget,
+                                @RequestParam(value = "chargeStart", required = false) String chargeStartString,
                                 @RequestParam(value = "chargeEnd", required = false) String chargeEndString
     ) {
         synchronized (lock) {
             try {
-                logger.debug("{}: Received energy request: evId={} socCurrent={} socTarget={} chargeEnd={}",
-                        applianceId, evId, socCurrent, socTarget, chargeEndString);
+                logger.debug("{}: Received energy request: evId={} socCurrent={} socTarget={} chargeStart={} chargeEnd={}",
+                        applianceId, evId, socCurrent, socTarget, chargeStartString, chargeEndString);
+                LocalDateTime chargeStart = null;
+                if (chargeStartString != null) {
+                    chargeStart = ZonedDateTime.parse(chargeStartString).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+                }
                 LocalDateTime chargeEnd = null;
                 if (chargeEndString != null) {
                     chargeEnd = ZonedDateTime.parse(chargeEndString).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
                 }
                 Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
                 if (appliance != null) {
-                    appliance.setEnergyDemand(LocalDateTime.now(), evId, socCurrent, socTarget, chargeEnd);
+                    appliance.setEnergyDemand(LocalDateTime.now(), evId, socCurrent, socTarget, chargeStart, chargeEnd);
                 } else {
                     logger.error("{}: Appliance not found", applianceId);
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);

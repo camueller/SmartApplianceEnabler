@@ -51,7 +51,7 @@ export class StatusComponent implements OnInit, OnDestroy {
   nodeRedDashboardUrl: string | undefined;
 
   ngOnInit() {
-    DaysOfWeek.getDows(this.translate).subscribe(dows => this.dows = dows);
+    DaysOfWeek.getDows(this.translate, false).subscribe(dows => this.dows = dows);
     this.loadApplianceStatuses(() => {
       this.applianceStatuses.filter(status => status.type === ApplianceType.EV_CHARGER).forEach(status => {
         this.controlService.getElectricVehicles(status.id).subscribe(electricVehicles => {

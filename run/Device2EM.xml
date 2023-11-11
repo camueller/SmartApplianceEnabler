@@ -2,14 +2,15 @@
 <Device2EM xmlns="http://www.sma.de/communication/schema/SEMP/v1">
     <DeviceInfo>
         <Identification>
-            <DeviceId>F-00000001-000000000008-00</DeviceId>
-            <DeviceName>Tasmota</DeviceName>
-            <DeviceType>Other</DeviceType>
-            <DeviceSerial>222222</DeviceSerial>
-            <DeviceVendor>Viessmann</DeviceVendor>
+            <DeviceId>F-00000001-000000000019-00</DeviceId>
+            <DeviceName>Wallbox</DeviceName>
+            <DeviceType>EVCharger</DeviceType>
+            <DeviceSerial>20180623</DeviceSerial>
+            <DeviceVendor>ESL</DeviceVendor>
         </Identification>
         <Characteristics>
-            <MaxPowerConsumption>4000</MaxPowerConsumption>
+            <MaxPowerConsumption>22000</MaxPowerConsumption>
+            <MinPowerConsumption>1380</MinPowerConsumption>
         </Characteristics>
         <Capabilities>
             <CurrentPower>

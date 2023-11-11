@@ -47,6 +47,8 @@ export class StatusEvchargerEditComponent implements OnInit {
   formSubmitted = new EventEmitter<any>();
   @Output()
   formCancelled = new EventEmitter<any>();
+  @ViewChild('chargeStartTimeComponent', {static: true})
+  chargeStartTimeComp: TimepickerComponent;
   @ViewChild('chargeEndTimeComponent', {static: true})
   chargeEndTimeComp: TimepickerComponent;
   form: FormGroup<StatusEvchargerEditModel>;
@@ -71,6 +73,7 @@ export class StatusEvchargerEditComponent implements OnInit {
     this.errorMessages = new ErrorMessages('StatusEvchargerEditComponent.error.', [
       new ErrorMessage('socCurrent', ValidatorType.pattern),
       new ErrorMessage('socTarget', ValidatorType.pattern),
+      new ErrorMessage('chargeStartTime', ValidatorType.pattern),
       new ErrorMessage('chargeEndTime', ValidatorType.pattern),
     ], this.translate);
     this.translate.get('StatusComponent.buttonStart').subscribe(translated => this.submitButtonTextStart = translated);
@@ -100,8 +103,11 @@ export class StatusEvchargerEditComponent implements OnInit {
       socTarget: new FormControl(this.electricVehicleSelected && this.electricVehicleSelected.defaultSocManual,
         Validators.pattern(InputValidatorPatterns.PERCENTAGE)),
     }, socValidator);
-    if (this.chargeModeSelected === ChargeMode.OPTIMIZED) {
-      this.form.addControl('chargeEndDow', new FormControl(undefined, Validators.required));
+    if (this.isChargeModeTimed) {
+      this.form.addControl('chargeStartDow', new FormControl(undefined, Validators.required));
+    }
+    if (this.isChargeModeOptimized || this.isChargeModeTimed) {
+      this.form.addControl('chargeEndDow', new FormControl(undefined, this.isChargeModeTimed ? undefined : Validators.required));
     }
     this.form.get('electricVehicle').valueChanges.subscribe(evIdSelected => {
       this.electricVehicleSelected = this.getElectricVehicle(evIdSelected);
@@ -111,6 +117,13 @@ export class StatusEvchargerEditComponent implements OnInit {
     this.form.statusChanges.subscribe(() => {
       this.errors = this.errorMessageHandler.applyErrorMessages(this.form, this.errorMessages);
     });
+  }
+
+  @ViewChild('chargeStartTimeComponent')
+  set chargeStartTimeComponent(chargeStartTimeComponent: ElementRef) {
+    if (chargeStartTimeComponent instanceof TimepickerComponent) {
+      this.chargeStartTimeComp = chargeStartTimeComponent;
+    }
   }
 
   @ViewChild('chargeEndTimeComponent')
@@ -147,6 +160,10 @@ export class StatusEvchargerEditComponent implements OnInit {
 
   get isChargeModeFast() {
     return this.chargeModeSelected === ChargeMode.FAST;
+  }
+
+  get isChargeModeTimed() {
+    return this.chargeModeSelected === ChargeMode.TIMED;
   }
 
   get isChargeModeOptimized() {
@@ -192,13 +209,17 @@ export class StatusEvchargerEditComponent implements OnInit {
     if (this.isChargeModeExcessEnergy) {
       this.statusService.updateSoc(this.status.id, socCurrent, socTarget).subscribe(() => this.formSubmitted.emit());
     } else {
-      let chargeEndTime: string|undefined;
+      let chargeStart: string|undefined;
       let chargeEnd: string|undefined;
-      if (this.isChargeModeOptimized) {
-        chargeEndTime = this.chargeEndTimeComp.updateModelFromForm();
+      if (this.isChargeModeTimed) {
+        const chargeStartTime = this.chargeStartTimeComp.updateModelFromForm();
+        chargeStart = TimeUtil.timestringOfNextMatchingDow(this.form.value.chargeStartDow, chargeStartTime);
+      }
+      if (this.isChargeModeOptimized || this.isChargeModeTimed) {
+        const chargeEndTime = this.chargeEndTimeComp.updateModelFromForm();
         chargeEnd = TimeUtil.timestringOfNextMatchingDow(this.form.value.chargeEndDow, chargeEndTime);
       }
-      this.statusService.requestEvCharge(this.status.id, evid?.toString(), socCurrent, socTarget, chargeEnd)
+      this.statusService.requestEvCharge(this.status.id, evid?.toString(), socCurrent, socTarget, chargeStart, chargeEnd)
         .subscribe(() => this.formSubmitted.emit());
     }
   }

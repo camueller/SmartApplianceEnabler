@@ -32,7 +32,23 @@
     </mat-form-field>
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.socUnit' | translate}}</span>
   </div>
-  <div class="StatusComponent__appliance-details-row" *ngIf="isChargeModeOptimized">
+  <div class="StatusComponent__appliance-details-row" *ngIf="isChargeModeTimed">
+    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.chargeLatestStartRequested' | translate}}</span>
+    <mat-form-field class="StatusEvchargerEditComponent__dayOfWeek">
+      <mat-label>{{'dayOfWeek' | translate}}</mat-label>
+      <mat-select formControlName="chargeStartDow" required="{{isRequired('chargeStartDow')}}">
+        <mat-option *ngFor="let dow of dows" [value]="dow.id">{{dow.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <app-timepicker label="{{'timeOfDay' | translate}}"
+                    formControlNameTP="chargeStartTime"
+                    [width]="'4rem'"
+                    [noErrorOnField]="true"
+                    required="true"
+                    #chargeStartTimeComponent
+    ></app-timepicker>
+  </div>
+  <div class="StatusComponent__appliance-details-row" *ngIf="isChargeModeOptimized || isChargeModeTimed">
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.chargeLatestEndRequested' | translate}}</span>
     <mat-form-field class="StatusEvchargerEditComponent__dayOfWeek">
       <mat-label>{{'dayOfWeek' | translate}}</mat-label>
@@ -42,9 +58,9 @@
     </mat-form-field>
     <app-timepicker label="{{'timeOfDay' | translate}}"
                     formControlNameTP="chargeEndTime"
-                    [width]="'3rem'"
+                    [width]="'4rem'"
                     [noErrorOnField]="true"
-                    required="true"
+                    [required]="!isChargeModeTimed"
                     #chargeEndTimeComponent
     ></app-timepicker>
   </div>

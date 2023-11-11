@@ -583,7 +583,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
     }
 
     public TimeframeInterval createTimeframeInterval(LocalDateTime now, Integer evId, Integer socCurrent, Integer socTarget,
-                                             LocalDateTime chargeEnd) {
+                                                     LocalDateTime chargeStart, LocalDateTime chargeEnd) {
         ElectricVehicle vehicle = this.evHandler.getVehicle(evId);
 
         SocRequest request = new SocRequest();
@@ -600,14 +600,12 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         if(chargeEnd == null) {
             DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(applianceId);
             int maxChargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
-            chargeEnd = now.plusSeconds(calculateChargeSeconds(vehicle, request.getMax(now), maxChargePower));
+            chargeEnd = (chargeStart != null ? chargeStart : now).plusSeconds(calculateChargeSeconds(vehicle, request.getMax(now), maxChargePower));
             request.setAcceptControlRecommendations(false);
         }
 
-        Interval interval = new Interval(now, chargeEnd);
-
+        Interval interval = new Interval(chargeStart != null ? chargeStart : now, chargeEnd);
         TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
-
         return timeframeInterval;
     }
 

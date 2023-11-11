@@ -595,13 +595,27 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
 
     public void adjustOptionalEnergyTimeframeIntervalStart() {
         if(queue.size() > 1) {
-            TimeframeInterval secondTimeframeInterval = queue.get(1);
-            if(secondTimeframeInterval.getRequest() instanceof OptionalEnergySocRequest) {
-                TimeframeInterval firstTimeframeInterval = queue.get(0);
-                LocalDateTime expectedStart = firstTimeframeInterval.getInterval().getEnd().plusSeconds(1);
-                if(!secondTimeframeInterval.getInterval().getStart().equals(expectedStart)) {
+            TimeframeInterval optionalEnergyTimeframeInterval = queue.get(1);
+            if(optionalEnergyTimeframeInterval.getRequest() instanceof OptionalEnergySocRequest) {
+                TimeframeInterval previousTimeframeInterval = queue.get(0);
+                LocalDateTime expectedStart = previousTimeframeInterval.getInterval().getEnd().plusSeconds(1);
+                if(!optionalEnergyTimeframeInterval.getInterval().getStart().equals(expectedStart)) {
                     logger.debug("{}: Adjust start of optional energy timeframe interval to: {}", applianceId, expectedStart);
-                    secondTimeframeInterval.getInterval().setStart(expectedStart);
+                    optionalEnergyTimeframeInterval.getInterval().setStart(expectedStart);
+                }
+            }
+        }
+    }
+
+    public void adjustOptionalEnergyTimeframeIntervalEnd() {
+        if(queue.size() > 1) {
+            TimeframeInterval optionalEnergyTimeframeInterval = queue.get(0);
+            if(optionalEnergyTimeframeInterval.getRequest() instanceof OptionalEnergySocRequest) {
+                TimeframeInterval subsequentTimeframeInterval = queue.get(1);
+                LocalDateTime expectedEnd = subsequentTimeframeInterval.getInterval().getStart().plusSeconds(-1);
+                if(!optionalEnergyTimeframeInterval.getInterval().getStart().equals(expectedEnd)) {
+                    logger.debug("{}: Adjust end of optional energy timeframe interval to: {}", applianceId, expectedEnd);
+                    optionalEnergyTimeframeInterval.getInterval().setEnd(expectedEnd);
                 }
             }
         }

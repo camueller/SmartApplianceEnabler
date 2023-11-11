@@ -456,7 +456,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         }
     }
 
-    public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socTarget, LocalDateTime chargeEnd) {
+    public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socTarget, LocalDateTime chargeStart, LocalDateTime chargeEnd) {
         if (isElectricVehicleCharger()) {
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
             if(meterMessage != null && meterMessage.energy > 0.1) {
@@ -472,11 +472,15 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
             }
 
             TimeframeInterval timeframeInterval =
-                    evCharger.createTimeframeInterval(now, evId, socCurrent, socTarget, chargeEnd);
-            timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, true, true);
+                    evCharger.createTimeframeInterval(now, evId, socCurrent, socTarget, chargeStart, chargeEnd);
+            timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, chargeStart == null, false);
+            if(chargeStart != null) {
+                timeframeIntervalHandler.adjustOptionalEnergyTimeframeIntervalEnd();
+            }
+            timeframeIntervalHandler.updateQueue(now, false);
 
-            if(chargeEnd == null) {
-                // if no charge end is provided we switch on immediately with full power
+            if(chargeStart == null && chargeEnd == null) {
+                // if no chargeStart and no chargeEnd is provided we switch on immediately with full power
                 DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(this.id);
                 int chargePower = deviceInfo.getCharacteristics().getMaxPowerConsumption();
                 setApplianceState(now, true, false, chargePower,"Switching on ev charger with maximum power");
