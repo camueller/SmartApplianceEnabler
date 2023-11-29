@@ -12,7 +12,7 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
-## [2.3.1](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.3.0) - 10.11.2023
+## [2.3.1](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.3.1) - 10.11.2023
 
 ### Gefixt
 - Wallbox
