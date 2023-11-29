@@ -473,11 +473,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
 
             TimeframeInterval timeframeInterval =
                     evCharger.createTimeframeInterval(now, evId, socCurrent, socTarget, chargeStart, chargeEnd);
-            timeframeIntervalHandler.addTimeframeInterval(now, timeframeInterval, chargeStart == null, false);
-            if(chargeStart != null) {
-                timeframeIntervalHandler.adjustOptionalEnergyTimeframeIntervalEnd();
-            }
-            timeframeIntervalHandler.updateQueue(now, false);
+            timeframeIntervalHandler.addTimeframeIntervalAndAdjustOptionalEnergyTimeframe(now, timeframeInterval, chargeStart == null);
 
             if(chargeStart == null && chargeEnd == null) {
                 // if no chargeStart and no chargeEnd is provided we switch on immediately with full power

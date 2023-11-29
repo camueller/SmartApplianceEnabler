@@ -21,11 +21,14 @@ package de.avanux.smartapplianceenabler.schedule;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.appliance.TimeframeIntervalChangedListener;
 import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public interface Request extends Serializable, ApplianceIdConsumer, TimeframeIntervalChangedListener {
+
+    void setMqttClient(MqttClient mqttClient);
 
     void disconnectMqttClient();
 

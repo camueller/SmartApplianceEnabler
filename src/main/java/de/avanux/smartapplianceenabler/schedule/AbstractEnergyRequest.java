@@ -31,14 +31,18 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
 
     private transient boolean updateTimeframeIntervalEnd;
     private transient EVChargerState evChargerState;
-    private transient boolean socScript;
+    private transient boolean socScriptUsed;
 
     protected Logger getLogger() {
         return LoggerFactory.getLogger(AbstractEnergyRequest.class);
     }
 
-    public void setSocScript(boolean socScript) {
-        this.socScript = socScript;
+    public boolean isSocScriptUsed() {
+        return socScriptUsed;
+    }
+
+    public void setSocScriptUsed(boolean socScript) {
+        this.socScriptUsed = socScript;
     }
 
     @Override
@@ -49,7 +53,7 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
                 getLogger().debug("{} Handling event ControlStateChanged", getApplianceId());
                 EVChargerStateChangedEvent event = (EVChargerStateChangedEvent) message;
                 this.evChargerState = event.newState;
-                if(event.newState == EVChargerState.VEHICLE_CONNECTED && (!socScript || !(this instanceof SocRequest))) {
+                if(event.newState == EVChargerState.VEHICLE_CONNECTED && (!socScriptUsed || !(this instanceof SocRequest))) {
                     setEnabled(true);
                 }
                 else if(isActive() && (event.newState == EVChargerState.VEHICLE_NOT_CONNECTED

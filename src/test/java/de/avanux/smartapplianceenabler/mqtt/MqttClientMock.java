@@ -18,12 +18,14 @@
 
 package de.avanux.smartapplianceenabler.mqtt;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MqttClientMock extends MqttClient {
 
-    private Map<String, MqttMessageHandler> messageHandlerForSubscribedTopic = new HashMap();
+    private Map<String, List<MqttMessageHandler>> messageHandlerForSubscribedTopic = new HashMap();
 
     public MqttClientMock(String applianceId, Class clazz) {
         super(applianceId, clazz);
@@ -37,13 +39,23 @@ public class MqttClientMock extends MqttClient {
         String fullTopic = expandTopic
                 ? (set ? getApplianceTopicForSet(getApplianceId(), topic) : getApplianceTopic(getApplianceId(), topic))
                 : topic;
-        messageHandlerForSubscribedTopic.put(fullTopic, messageHandler);
+        var messageHandlers = messageHandlerForSubscribedTopic.get(fullTopic);
+        if(messageHandlers == null) {
+            messageHandlers = new ArrayList<>();
+        }
+        messageHandlers.add(messageHandler);
+        messageHandlerForSubscribedTopic.put(fullTopic, messageHandlers);
+    }
+
+    protected void unsubscribeMessage(String fullTopic) {
+        // this removes all subscribers of the topic since we cannot identify the message handler to be removed from list of subscribers
+        messageHandlerForSubscribedTopic.remove(fullTopic);
     }
 
     public void publishMessage(String fullTopic, MqttMessage message, boolean retained) {
-        var messageHandler = messageHandlerForSubscribedTopic.get(fullTopic);
-        if(messageHandler != null) {
-            messageHandler.messageArrived(fullTopic, message);
+        var messageHandlers = messageHandlerForSubscribedTopic.get(fullTopic);
+        if(messageHandlers != null) {
+            List.copyOf(messageHandlers).stream().forEach(messageHandler -> messageHandler.messageArrived(fullTopic, message));
         }
     }
 

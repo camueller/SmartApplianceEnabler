@@ -119,7 +119,7 @@ public class DayTimeframe extends AbstractTimeframe implements Timeframe {
             List<Integer> dowValues = getDaysOfWeekValues();
             // if today's interval already ended we ignore today
             int dayOffset = (interval.getEnd().isBefore(now) ? 1 : 0);
-            for(int i=dayOffset;i<7+dayOffset;i++) {
+            for(int i=dayOffset; i<7+dayOffset; i++) {
                 LocalDateTime timeFrameStart = interval.getStart().plusDays(i);
                 LocalDateTime timeFrameEnd = interval.getEnd().plusDays(i);
                 if(dowValues != null) {
@@ -128,11 +128,11 @@ public class DayTimeframe extends AbstractTimeframe implements Timeframe {
                         dow = DOW_HOLIDAYS;
                     }
                     if(dowValues.contains(dow)) {
-                        intervals.add(createTimeframeInterval(new Interval(timeFrameStart, timeFrameEnd), schedule));
+                        intervals.add(createTimeframeInterval(new Interval(timeFrameStart, timeFrameEnd), schedule.getRequest()));
                     }
                 }
                 else {
-                    intervals.add(createTimeframeInterval(new Interval(timeFrameStart, timeFrameEnd), schedule));
+                    intervals.add(createTimeframeInterval(new Interval(timeFrameStart, timeFrameEnd), schedule.getRequest()));
                 }
             }
         }

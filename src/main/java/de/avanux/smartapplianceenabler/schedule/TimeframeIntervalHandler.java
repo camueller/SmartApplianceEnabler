@@ -38,7 +38,7 @@ import java.util.*;
 public class TimeframeIntervalHandler implements ApplianceIdConsumer {
 
     private Logger logger = LoggerFactory.getLogger(TimeframeIntervalHandler.class);
-    String TOPIC = "TimeframeIntervalQueue";
+    final static public String TOPIC = "TimeframeIntervalQueue";
     public static final int CONSIDERATION_INTERVAL_DAYS = 2;
     public static final int FILL_QUEUE_INTERVAL_SECONDS = 3600;
     public static final int UPDATE_QUEUE_INTERVAL_SECONDS = 30;
@@ -95,31 +95,24 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
             }
         });
         this.mqttClient.subscribe(MqttEventName.EVChargerStateChanged, (topic, message) -> {
-            if(message instanceof EVChargerStateChangedEvent && control instanceof ElectricVehicleCharger) {
+            if(message instanceof EVChargerStateChangedEvent) {
                 logger.debug("{} Handling event EVChargerStateChanged", applianceId);
                 EVChargerStateChangedEvent event = (EVChargerStateChangedEvent) message;
                 if(event.newState == EVChargerState.VEHICLE_CONNECTED) {
-                    ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
-                    if(evCharger == null || evCharger.getElectricVehicleHandler() == null) {
-                        return;
-                    }
-                    ElectricVehicle ev = evCharger.getElectricVehicleHandler().getVehicle(event.evId);
-                    if(ev != null) {
-                        queue.stream()
-                                .filter(timeframeInterval -> timeframeInterval.getRequest() instanceof SocRequest)
-                                .filter(timeframeInterval -> !(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest))
-                                .forEach(timeframeInterval ->
-                                        updateSocRequest((SocRequest) timeframeInterval.getRequest(), ev.getBatteryCapacity(), null));
-                        if(findOptionalEnergyIntervalForEVCharger() == null) {
-                            TimeframeInterval timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(
-                                    event.getTime(), ev.getId(), applianceId);
-                            if(timeframeInterval != null) {
-                                updateSocRequest((SocRequest) timeframeInterval.getRequest(),
-                                        ev.getBatteryCapacity(), ev.getDefaultSocOptionalEnergy());
-                                addTimeframeInterval(event.getTime(), timeframeInterval, true, true);
-                                updateQueue(event.getTime(), false);
-                                activateTimeframeInterval(event.getTime(), timeframeInterval);
-                            }
+                    queue.stream()
+                            .filter(timeframeInterval -> timeframeInterval.getRequest() instanceof SocRequest)
+                            .filter(timeframeInterval -> !(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest))
+                            .forEach(timeframeInterval ->
+                                    updateSocRequest((SocRequest) timeframeInterval.getRequest(), event.batteryCapacity, null));
+                    if(findOptionalEnergyIntervalForEVCharger() == null) {
+                        TimeframeInterval timeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(
+                                event.getTime(), event.evId, applianceId);
+                        if(timeframeInterval != null) {
+                            updateSocRequest((SocRequest) timeframeInterval.getRequest(),
+                                    event.batteryCapacity, event.defaultSocOptionalEnergy);
+                            addTimeframeInterval(event.getTime(), timeframeInterval, true, true);
+                            updateQueue(event.getTime(), false);
+                            activateTimeframeInterval(event.getTime(), timeframeInterval);
                         }
                     }
                 }
@@ -144,6 +137,10 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
 
     public void removeTimeframeIntervalChangedListener(TimeframeIntervalChangedListener listener) {
         this.timeframeIntervalChangedListeners.remove(listener);
+    }
+
+    protected Set<TimeframeIntervalChangedListener> getTimeframeIntervalChangedListener() {
+        return this.timeframeIntervalChangedListeners;
     }
 
     public void setTimer(Timer timer) {
@@ -249,22 +246,18 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         Holder<Boolean> removalPending = new Holder<>(false);
         deactivatableTimeframeInterval.ifPresent(timeframeInterval -> {
             if(!optionalEnergyTimeframeIntervalMoved.value) {
-                timeframeInterval.stateTransitionTo(now, TimeframeIntervalState.EXPIRED);
+                timeframeInterval.stateTransitionTo(TimeframeIntervalState.EXPIRED);
                 timeframeInterval.getRequest().setEnabled(false);
                 if(timeframeInterval.isRemovable(now)) {
                     removeTimeframeInterval(now, timeframeInterval);
-                    if(control instanceof ElectricVehicleCharger
-                            && !(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest)
-                            && queue.size() == 0) {
-                        ElectricVehicle connectedVehicle = ((ElectricVehicleCharger) control).getElectricVehicleHandler().getConnectedVehicle();
-                        TimeframeInterval optionalEnergyTimeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(
-                                now, connectedVehicle.getId(), applianceId);
-                        if(optionalEnergyTimeframeInterval != null) {
-                            updateSocRequest((SocRequest) optionalEnergyTimeframeInterval.getRequest(),
-                                    connectedVehicle.getBatteryCapacity(),
-                                    connectedVehicle.getDefaultSocOptionalEnergy());
+                    if(queue.size() > 0) {
+                        var nextTimeframeInterval = queue.get(0);
+                        if(nextTimeframeInterval.getRequest() instanceof OptionalEnergySocRequest) {
+                            adjustSecondTimeframeIntervalStart(timeframeInterval, nextTimeframeInterval);
                         }
-                        addTimeframeInterval(now, optionalEnergyTimeframeInterval, false, false);
+                    }
+                    if(!(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest)) {
+                        createAndActivateOptionalEnergyTimeframeIntervalForEVCharger(now);
                     }
                 }
                 else {
@@ -312,13 +305,13 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         publishQueue(now);
     }
 
-    private void logQueue(LocalDateTime now) {
+    protected void logQueue(LocalDateTime now) {
         queue.forEach(timeframeInterval -> logger.debug("{}: {}",
                 applianceId,
                 timeframeInterval.toString(now)));
     }
 
-    private void publishQueue(LocalDateTime now) {
+    protected void publishQueue(LocalDateTime now) {
         TimeframeIntervalQueueEntry[] queueEntries = queue.stream().map(timeframeInterval -> new TimeframeIntervalQueueEntry(
                 timeframeInterval.getState().toString(),
                 timeframeInterval.getInterval().getStart().format(DateTimeFormatter.ISO_DATE_TIME),
@@ -363,13 +356,13 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
     public void addTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval, boolean asFirst, boolean updateQueue) {
         logger.debug("{}: Adding timeframeInterval to queue: {}", applianceId, timeframeInterval.toString(now));
         timeframeInterval.setApplianceId(applianceId);
-        timeframeInterval.getRequest().setApplianceId(applianceId);
         Request request = timeframeInterval.getRequest();
+        request.setApplianceId(applianceId);
         request.init();
         if(request instanceof EnergyRequest && control instanceof ElectricVehicleCharger) {
             var evHandler = ((ElectricVehicleCharger) control).getElectricVehicleHandler();
             if(evHandler.getConnectedVehicle() != null) {
-                ((EnergyRequest) request).setSocScript(evHandler.getConnectedVehicle().getSocScript() != null);
+                ((EnergyRequest) request).setSocScriptUsed(evHandler.getConnectedVehicle().getSocScript() != null);
             }
         }
         addTimeframeIntervalChangedListener(request);
@@ -380,33 +373,36 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
             TimeframeInterval activeTimeframeInterval = getActiveTimeframeInterval();
             if(activeTimeframeInterval != null) {
                 deactivateTimeframeInterval(now, activeTimeframeInterval);
-
-                LocalDateTime firstIntervalStart = activeTimeframeInterval.getInterval().getStart();
-                LocalDateTime addedIntervalEnd = timeframeInterval.getInterval().getEnd();
-                if(firstIntervalStart.isEqual(addedIntervalEnd) || firstIntervalStart.isBefore(addedIntervalEnd)) {
-                    Interval firstIntervalAdjusted = new Interval(addedIntervalEnd.plusSeconds(1),
-                            activeTimeframeInterval.getInterval().getEnd());
-                    activeTimeframeInterval.setInterval(firstIntervalAdjusted);
-                }
             }
             queue.addFirst(timeframeInterval);
+            adjustSecondTimeframeIntervalStart(timeframeInterval, activeTimeframeInterval);
         } else {
             queue.add(timeframeInterval);
         }
-        timeframeInterval.stateTransitionTo(now, TimeframeIntervalState.QUEUED);
+        timeframeInterval.stateTransitionTo(TimeframeIntervalState.QUEUED);
         if(updateQueue) {
             updateQueue(now, false);
         }
     }
 
-    private void activateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
-        logger.debug("{}: Activate timeframe interval: {}", applianceId, timeframeInterval.toString(now));
-        timeframeInterval.stateTransitionTo(now, TimeframeIntervalState.ACTIVE);
+    public void addTimeframeIntervalAndAdjustOptionalEnergyTimeframe(LocalDateTime now, TimeframeInterval timeframeInterval, boolean asFirst) {
+        addTimeframeInterval(now, timeframeInterval, asFirst, false);
+        if(asFirst) {
+            adjustOptionalEnergyTimeframeIntervalStart();
+        } else {
+            adjustOptionalEnergyTimeframeIntervalEnd();
+        }
+        updateQueue(now, false);
     }
 
-    private void deactivateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
+    protected void activateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
+        logger.debug("{}: Activate timeframe interval: {}", applianceId, timeframeInterval.toString(now));
+        timeframeInterval.stateTransitionTo(TimeframeIntervalState.ACTIVE);
+    }
+
+    protected void deactivateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
         logger.debug("{}: Deactivate timeframe interval: {}", applianceId, timeframeInterval.toString(now));
-        timeframeInterval.stateTransitionTo(now, TimeframeIntervalState.QUEUED);
+        timeframeInterval.stateTransitionTo(TimeframeIntervalState.QUEUED);
     }
 
     public void removeTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
@@ -529,6 +525,20 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         return null;
     }
 
+    public void createAndActivateOptionalEnergyTimeframeIntervalForEVCharger(LocalDateTime now) {
+        if(control instanceof ElectricVehicleCharger && findOptionalEnergyIntervalForEVCharger() == null) {
+            ElectricVehicle connectedVehicle = ((ElectricVehicleCharger) control).getElectricVehicleHandler().getConnectedVehicle();
+            TimeframeInterval optionalEnergyTimeframeInterval = createOptionalEnergyTimeframeIntervalForEVCharger(
+                    now, connectedVehicle.getId(), applianceId);
+            if(optionalEnergyTimeframeInterval != null) {
+                updateSocRequest((SocRequest) optionalEnergyTimeframeInterval.getRequest(),
+                        connectedVehicle.getBatteryCapacity(),
+                        connectedVehicle.getDefaultSocOptionalEnergy());
+            }
+            addTimeframeInterval(now, optionalEnergyTimeframeInterval, false, false);
+        }
+    }
+
     public void updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(LocalDateTime now,  Integer evId, Integer batteryCapacity,
                                                                        Integer socCurrent, Integer socTarget) {
         TimeframeInterval timeframeInterval = findOptionalEnergyIntervalForEVCharger();
@@ -587,41 +597,55 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         logger.debug("{}: Moving to second place in queue: {}", applianceId, getActiveTimeframeInterval().toString(now));
         queue.remove(activeTimeframeInterval);
         queue.add(1, activeTimeframeInterval);
-        activeTimeframeInterval.stateTransitionTo(now, TimeframeIntervalState.QUEUED);
+        activeTimeframeInterval.stateTransitionTo(TimeframeIntervalState.QUEUED);
         activeTimeframeInterval.setInterval(
                 createOptionalEnergyIntervalForEVCharger(queue.get(0).getInterval().getEnd().plusSeconds(1),
                         null, queue.size() > 2 ? queue.get(2) : null));
     }
 
     public void adjustOptionalEnergyTimeframeIntervalStart() {
-        if(queue.size() > 1) {
-            TimeframeInterval optionalEnergyTimeframeInterval = queue.get(1);
-            if(optionalEnergyTimeframeInterval.getRequest() instanceof OptionalEnergySocRequest) {
-                TimeframeInterval previousTimeframeInterval = queue.get(0);
-                LocalDateTime expectedStart = previousTimeframeInterval.getInterval().getEnd().plusSeconds(1);
-                if(!optionalEnergyTimeframeInterval.getInterval().getStart().equals(expectedStart)) {
-                    logger.debug("{}: Adjust start of optional energy timeframe interval to: {}", applianceId, expectedStart);
-                    optionalEnergyTimeframeInterval.getInterval().setStart(expectedStart);
-                }
+        TimeframeInterval optionalEnergyTimeframeInterval = findOptionalEnergyIntervalForEVCharger();
+        if(optionalEnergyTimeframeInterval != null) {
+            var optionalEnergyTimeframeIntervalIndex = queue.indexOf(optionalEnergyTimeframeInterval);
+            var optionalEnergyTimeframeIntervalIsLast = queue.size() - 1 == optionalEnergyTimeframeIntervalIndex;
+            if(queue.size() > 1 && optionalEnergyTimeframeIntervalIsLast) {
+                TimeframeInterval previousTimeframeInterval = queue.get(optionalEnergyTimeframeIntervalIndex - 1);
+                adjustSecondTimeframeIntervalStart(previousTimeframeInterval, optionalEnergyTimeframeInterval);
             }
         }
     }
 
     public void adjustOptionalEnergyTimeframeIntervalEnd() {
-        if(queue.size() > 1) {
-            TimeframeInterval optionalEnergyTimeframeInterval = queue.get(0);
-            if(optionalEnergyTimeframeInterval.getRequest() instanceof OptionalEnergySocRequest) {
-                TimeframeInterval subsequentTimeframeInterval = queue.get(1);
-                LocalDateTime expectedEnd = subsequentTimeframeInterval.getInterval().getStart().plusSeconds(-1);
-                if(!optionalEnergyTimeframeInterval.getInterval().getStart().equals(expectedEnd)) {
-                    logger.debug("{}: Adjust end of optional energy timeframe interval to: {}", applianceId, expectedEnd);
-                    optionalEnergyTimeframeInterval.getInterval().setEnd(expectedEnd);
-                }
+        TimeframeInterval optionalEnergyTimeframeInterval = findOptionalEnergyIntervalForEVCharger();
+        if(optionalEnergyTimeframeInterval != null) {
+            var optionalEnergyTimeframeIntervalIndex = queue.indexOf(optionalEnergyTimeframeInterval);
+            var optionalEnergyTimeframeIntervalIsLast = queue.size() - 1 == optionalEnergyTimeframeIntervalIndex;
+            if(queue.size() > 1 && !optionalEnergyTimeframeIntervalIsLast) {
+                TimeframeInterval subsequentTimeframeInterval = queue.get(optionalEnergyTimeframeIntervalIndex + 1);
+                adjustFirstTimeframeIntervalEnd(optionalEnergyTimeframeInterval, subsequentTimeframeInterval);
             }
         }
     }
 
-    private void updateSocRequest(SocRequest request, Integer batteryCapacity, Integer soc) {
+    public void adjustSecondTimeframeIntervalStart(TimeframeInterval interval1, TimeframeInterval interval2) {
+        if(interval1 != null && interval2 != null) {
+            LocalDateTime expectedStart = interval1.getInterval().getEnd().plusSeconds(1);
+            if(!interval2.getInterval().getStart().equals(expectedStart)) {
+                logger.debug("{}: Adjust start of timeframe interval to: {}", applianceId, expectedStart);
+                interval2.getInterval().setStart(expectedStart);
+            }
+        }
+    }
+
+    private void adjustFirstTimeframeIntervalEnd(TimeframeInterval interval1, TimeframeInterval interval2) {
+        LocalDateTime expectedEnd = interval2.getInterval().getStart().plusSeconds(-1);
+        if(!interval1.getInterval().getStart().equals(expectedEnd)) {
+            logger.debug("{}: Adjust end of timeframe interval to: {}", applianceId, expectedEnd);
+            interval1.getInterval().setEnd(expectedEnd);
+        }
+    }
+
+    protected void updateSocRequest(SocRequest request, Integer batteryCapacity, Integer soc) {
         if(soc != null) {
             request.setSoc(soc);
         }

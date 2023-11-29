@@ -32,6 +32,13 @@ public class OptionalEnergySocRequest extends SocRequest {
         setSoc(100);
     }
 
+    /**
+     * Should only be used for testing.
+     */
+    public OptionalEnergySocRequest(Integer soc, Integer evId, Integer energy) {
+        super(soc, evId, energy);
+    }
+
     protected Logger getLogger() {
         return LoggerFactory.getLogger(OptionalEnergySocRequest.class);
     }

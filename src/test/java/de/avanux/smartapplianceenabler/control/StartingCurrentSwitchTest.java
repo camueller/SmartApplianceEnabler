@@ -22,9 +22,9 @@ import de.avanux.smartapplianceenabler.TestBase;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
@@ -32,14 +32,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static de.avanux.smartapplianceenabler.control.WrappedControl.WRAPPED_CONTROL_TOPIC;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class StartingCurrentSwitchTest extends TestBase {
-
-    private StartingCurrentSwitch startingCurrentSwitch;
-    private String applianceId = "F-001";
+    private StartingCurrentSwitch sut;
     private StartingCurrentSwitchListener startingCurrentSwitchListener;
     private Control control;
     private MqttClient mqttClient;
@@ -47,19 +43,22 @@ public class StartingCurrentSwitchTest extends TestBase {
     private GuardedTimerTask mqttPublishTimerTask;
 
     private Timer timer = mock(Timer.class);
-    private LocalDateTime now = LocalDateTime.now();
+    private LocalDateTime now;
 
-    public StartingCurrentSwitchTest() {
-        startingCurrentSwitch = new StartingCurrentSwitch();
+    @BeforeEach
+    void setup() {
+        sut = new StartingCurrentSwitch();
+
+        now = LocalDateTime.now();
 
         mqttClient = spy(new MqttClientMock(applianceId, StartingCurrentSwitch.class));
         mqttClientInOrder = inOrder(mqttClient);
 
-        startingCurrentSwitch = spy(new StartingCurrentSwitch());
-        startingCurrentSwitch.setApplianceId(getClass().getSimpleName());
+        sut = spy(new StartingCurrentSwitch());
+        sut.setApplianceId(getClass().getSimpleName());
         control = mock(Control.class);
-        startingCurrentSwitch.setControl(control);
-        startingCurrentSwitch.setMqttClient(mqttClient);
+        sut.setControl(control);
+        sut.setMqttClient(mqttClient);
 
         Mockito.doAnswer(invocation -> {
             mqttPublishTimerTask = (GuardedTimerTask) invocation.getArgument(0);
@@ -67,33 +66,33 @@ public class StartingCurrentSwitchTest extends TestBase {
             return null;
         }).when(timer).schedule(Mockito.any(TimerTask.class), Mockito.eq(20000L), Mockito.eq(20000L));
 
-        startingCurrentSwitch.init();
-        startingCurrentSwitch.start(now, timer);
+        sut.init();
+        sut.start(now, timer);
     }
 
     @Test
     public void detectStartingCurrent() throws Exception {
         // ... the appliance should be switched on
         verify(mqttClient).publish(WRAPPED_CONTROL_TOPIC, new ControlMessage(now, true), true, false);
-        mqttClient.publishMessage(fullTopic(WRAPPED_CONTROL_TOPIC), new ControlMessage(now, true), false);
+        mqttClient.publishMessage(fullTopic(applianceId, WRAPPED_CONTROL_TOPIC), new ControlMessage(now, true), false);
 
         // ... but from the outside perspective the control is switched off
         mqttClientInOrder.verify(mqttClient).publish(Control.TOPIC, new StartingCurrentSwitchMessage(now, false, 15, 30, 300), false);
         verify(timer).schedule(any(TimerTask.class), eq(20000L), eq(20000L));
 
-        mqttClient.publishMessage(fullTopic(Meter.TOPIC), new MeterMessage(now, 0, 0), false);
+        mqttClient.publishMessage(fullTopic(applianceId, Meter.TOPIC), new MeterMessage(now, 0, 0), false);
         verify(mqttClient, never()).publish(MqttEventName.WrappedControlSwitchOnDetected.toString(), new MqttMessage(now), true, false);
 
         now = now.plusSeconds(10);
-        mqttClient.publishMessage(fullTopic(Meter.TOPIC), new MeterMessage(now, 10, 0), false);
+        mqttClient.publishMessage(fullTopic(applianceId, Meter.TOPIC), new MeterMessage(now, 10, 0), false);
         verify(mqttClient, never()).publish(eq(MqttEventName.WrappedControlSwitchOnDetected), any(MqttMessage.class));
 
         now = now.plusSeconds(30);
-        mqttClient.publishMessage(fullTopic(Meter.TOPIC), new MeterMessage(now, 20, 0), false);
+        mqttClient.publishMessage(fullTopic(applianceId, Meter.TOPIC), new MeterMessage(now, 20, 0), false);
         verify(mqttClient, never()).publish(eq(MqttEventName.WrappedControlSwitchOnDetected), any(MqttMessage.class));
 
         now = now.plusSeconds(31);
-        mqttClient.publishMessage(fullTopic(Meter.TOPIC), new MeterMessage(now, 31, 0), false);
+        mqttClient.publishMessage(fullTopic(applianceId, Meter.TOPIC), new MeterMessage(now, 31, 0), false);
         verify(mqttClient).publish(eq(MqttEventName.WrappedControlSwitchOnDetected), any(MqttMessage.class));
 
         // power threshold exceeded for more than configured starting current detection duration
@@ -101,45 +100,36 @@ public class StartingCurrentSwitchTest extends TestBase {
         verify(mqttClient).publish(WRAPPED_CONTROL_TOPIC, new ControlMessage(now, false), true, false);
         // ... and also from the outside perspective the control is switched off
         mqttPublishTimerTask.runTask(now);
-        mqttClientInOrder.verify(mqttClient).publishMessage(fullTopic(Control.TOPIC), new StartingCurrentSwitchMessage(now, false, 15, 30, 300), false);
+        mqttClientInOrder.verify(mqttClient).publishMessage(fullTopic(applianceId, Control.TOPIC), new StartingCurrentSwitchMessage(now, false, 15, 30, 300), false);
     }
 
     @Test
     public void detectFinishedCurrent() throws Exception {
         LocalDateTime now = LocalDateTime.now();
-        mqttClient.publishMessage(fullTopic(Control.TOPIC + "/set"), new ControlMessage(now, true), false);
-        mqttClient.publishMessage(fullTopic(WRAPPED_CONTROL_TOPIC), new ControlMessage(now, true), false);
+        mqttClient.publishMessage(fullTopic(applianceId, Control.TOPIC + "/set"), new ControlMessage(now, true), false);
+        mqttClient.publishMessage(fullTopic(applianceId, WRAPPED_CONTROL_TOPIC), new ControlMessage(now, true), false);
 
         // ... from the outside perspective the control is switched on
         mqttClientInOrder.verify(mqttClient).publish(Control.TOPIC, new StartingCurrentSwitchMessage(now, false, 15, 30, 300), false);
 
         now = now.plusSeconds(10);
-        mqttClient.publishMessage(fullTopic(Meter.TOPIC), new MeterMessage(now, 50, 0), false);
+        mqttClient.publishMessage(fullTopic(applianceId, Meter.TOPIC), new MeterMessage(now, 50, 0), false);
         verify(mqttClient, never()).publish(eq(MqttEventName.WrappedControlSwitchOffDetected), any(MqttMessage.class));
 
         now = now.plusSeconds(30);
-        mqttClient.publishMessage(fullTopic(Meter.TOPIC), new MeterMessage(now, 10, 0), false);
+        mqttClient.publishMessage(fullTopic(applianceId, Meter.TOPIC), new MeterMessage(now, 10, 0), false);
         verify(mqttClient, never()).publish(eq(MqttEventName.WrappedControlSwitchOffDetected), any(MqttMessage.class));
 
         // with minRunningTime not yet reached ...
         now = now.plusSeconds(331);
-        mqttClient.publishMessage(fullTopic(Meter.TOPIC), new MeterMessage(now, 10, 0), false);
+        mqttClient.publishMessage(fullTopic(applianceId, Meter.TOPIC), new MeterMessage(now, 10, 0), false);
         // ... no WrappedControlSwitchOffDetected is sent
         verify(mqttClient, never()).publish(eq(MqttEventName.WrappedControlSwitchOffDetected), any(MqttMessage.class));
 
         // after minRunningTime reached ...
         now = now.plusSeconds(231);
-        mqttClient.publishMessage(fullTopic(Meter.TOPIC), new MeterMessage(now, 10, 0), false);
+        mqttClient.publishMessage(fullTopic(applianceId, Meter.TOPIC), new MeterMessage(now, 10, 0), false);
         // ... WrappedControlSwitchOffDetected is sent
         verify(mqttClient).publish(eq(MqttEventName.WrappedControlSwitchOffDetected), any(MqttMessage.class));
-    }
-
-
-    private String fullTopic(String topic) {
-        return "sae/" + applianceId + "/" + topic;
-    }
-
-    private String fullEventTopic(MqttEventName event) {
-        return "sae/" + applianceId + "/Event/" + event.getName();
     }
 }

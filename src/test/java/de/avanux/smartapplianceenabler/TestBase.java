@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 abstract public class TestBase {
 
+    protected String applianceId = "F-001";
+
     protected MqttClient mqttClient = Mockito.mock(MqttClient.class);
 
     public void mqttMessageArrivedOnSubscribe(MqttEventName event, MqttMessage... messages) {
@@ -34,6 +36,14 @@ abstract public class TestBase {
             Arrays.asList(messages).forEach(message -> messageHandler.messageArrived(Meter.TOPIC, message));
             return null;
         }).when(mqttClient).subscribe(Mockito.eq(topic), Mockito.eq(expandTopic), Mockito.any(MqttMessageHandler.class));
+    }
+
+    protected String fullTopic(String applianceId, String topic) {
+        return "sae/" + applianceId + "/" + topic;
+    }
+
+    protected String fullEventTopic(String applianceId, MqttEventName event) {
+        return "sae/" + applianceId + "/Event/" + event.getName();
     }
 
     protected LocalDateTime toYesterday(Integer hour, Integer minute, Integer second) {

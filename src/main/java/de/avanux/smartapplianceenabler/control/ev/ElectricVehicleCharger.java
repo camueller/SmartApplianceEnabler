@@ -44,8 +44,6 @@ import javax.xml.bind.annotation.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -289,7 +287,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
 
     public void updateStateTimerTaskImpl(LocalDateTime now) {
         updateState(now);
-        updateActiveTimeframeIntervalRequest(now);
+        updateActiveTimeframeIntervalFromCalculatedChargeSeconds(now);
         updateSoc(now);
     }
 
@@ -535,7 +533,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         }
 
         publishEVChargerSocChangedEvent(now, this.evHandler.getSocValues());
-        publishEVChargerStateChangedEvent(now, previousState, newState, this.evHandler.getConnectedOrFirstVehicleId());
+        publishEVChargerStateChangedEvent(now, previousState, newState, this.evHandler.getConnectedVehicle());
         publishControlMessage(isOn());
 
         // SOC has to be retrieved after listener notification in order to allow for new listeners interested in SOC
@@ -609,7 +607,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         return timeframeInterval;
     }
 
-    private void updateActiveTimeframeIntervalRequest(LocalDateTime now) {
+    private void updateActiveTimeframeIntervalFromCalculatedChargeSeconds(LocalDateTime now) {
         if(isCharging()) {
             TimeframeInterval activeTimeframeInterval = this.appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval();
             if(activeTimeframeInterval != null && activeTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
@@ -788,8 +786,13 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
     }
 
     private void publishEVChargerStateChangedEvent(LocalDateTime now, EVChargerState previousState,
-                                                   EVChargerState newState, Integer evId) {
-        EVChargerStateChangedEvent event = new EVChargerStateChangedEvent(now, previousState, newState, evId);
+                                                   EVChargerState newState, ElectricVehicle ev) {
+        EVChargerStateChangedEvent event = new EVChargerStateChangedEvent(now, previousState, newState);
+        if(ev != null) {
+            event.evId = ev.getId();
+            event.batteryCapacity = ev.getBatteryCapacity();
+            event.defaultSocOptionalEnergy = ev.getDefaultSocOptionalEnergy();
+        }
         mqttClient.publish(MqttEventName.EVChargerStateChanged, event, false);
     }
 

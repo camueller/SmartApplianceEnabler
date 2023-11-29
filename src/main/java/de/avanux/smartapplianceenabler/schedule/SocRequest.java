@@ -106,6 +106,10 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         this.evId = evId;
     }
 
+    public Integer getBatteryCapacity() {
+        return socVariablesInitialized().batteryCapacity;
+    }
+
     public void setBatteryCapacity(Integer batteryCapacity) {
         socVariablesInitialized().batteryCapacity = batteryCapacity;
     }

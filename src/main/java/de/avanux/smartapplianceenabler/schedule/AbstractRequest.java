@@ -64,7 +64,7 @@ abstract public class AbstractRequest implements Request {
         return mqttClient;
     }
 
-    protected void setMqttClient(MqttClient mqttClient) {
+    public void setMqttClient(MqttClient mqttClient) {
         this.mqttClient = mqttClient;
     }
 

@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlTransient
 abstract public class AbstractTimeframe {
 
-    protected TimeframeInterval createTimeframeInterval(Interval interval, Schedule schedule) {
-        Request clonedRequest = SerializationUtils.clone(schedule.getRequest());
+    protected TimeframeInterval createTimeframeInterval(Interval interval, Request request) {
+        Request clonedRequest = SerializationUtils.clone(request);
         TimeframeInterval timeframeInterval = new TimeframeInterval(interval, clonedRequest);
         return timeframeInterval;
     }

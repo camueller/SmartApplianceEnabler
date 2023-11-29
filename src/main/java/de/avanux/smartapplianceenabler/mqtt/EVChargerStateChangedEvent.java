@@ -26,11 +26,13 @@ public class EVChargerStateChangedEvent extends MqttEvent {
     public EVChargerState previousState;
     public EVChargerState newState;
     public Integer evId;
+    public Integer batteryCapacity;
+    public Integer defaultSocOptionalEnergy;
 
     public EVChargerStateChangedEvent() {
     }
 
-    public EVChargerStateChangedEvent(LocalDateTime time, EVChargerState previousState, EVChargerState newState, Integer evId) {
+    public EVChargerStateChangedEvent(LocalDateTime time, EVChargerState previousState, EVChargerState newState) {
         setTime(time);
         this.previousState = previousState;
         this.newState = newState;

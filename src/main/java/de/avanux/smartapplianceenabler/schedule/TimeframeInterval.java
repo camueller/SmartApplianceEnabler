@@ -73,7 +73,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
         stateHistory.add(initialState != null ? initialState : TimeframeIntervalState.CREATED);
     }
 
-    public void stateTransitionTo(LocalDateTime now, TimeframeIntervalState state) {
+    public void stateTransitionTo(TimeframeIntervalState state) {
         this.stateHistory.add(state);
     }
 
@@ -114,7 +114,7 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
                 )
             )
             && ! getRequest().isControlOn()
-            && (! (getRequest() instanceof OptionalEnergySocRequest) || getRequest().getMax(now) <= 0)
+            && (! (getRequest() instanceof OptionalEnergySocRequest) || (getRequest().getMax(now) != null && getRequest().getMax(now) <= 0))
         )
         || (
                 getRequest() instanceof OptionalEnergySocRequest

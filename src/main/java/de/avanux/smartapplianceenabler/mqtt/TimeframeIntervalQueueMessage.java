@@ -18,6 +18,9 @@
 
 package de.avanux.smartapplianceenabler.mqtt;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -30,6 +33,22 @@ public class TimeframeIntervalQueueMessage extends MqttMessage {
     public TimeframeIntervalQueueMessage(LocalDateTime time, TimeframeIntervalQueueEntry[] entries) {
         super(time);
         this.entries = entries;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TimeframeIntervalQueueMessage that = (TimeframeIntervalQueueMessage) o;
+
+        return new EqualsBuilder().append(entries, that.entries).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(entries).toHashCode();
     }
 
     @Override
