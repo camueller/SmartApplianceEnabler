@@ -39,16 +39,14 @@ export class DaysOfWeek {
   private static subject: Subject<DayOfWeek[]>;
 
   public static getDows(translate: TranslateService, includedHoliday = true): Observable<DayOfWeek[]> {
-    if (! DaysOfWeek.subject) {
-      const filteredDows = DaysOfWeek.daysOfWeek.filter(dow => dow.id !== 8);
-      DaysOfWeek.subject = new BehaviorSubject(DaysOfWeek.daysOfWeek);
-      const keys = filteredDows.map(dayOfWeek => dayOfWeek.name);
-      translate.get(keys).subscribe(
-        translatedKeys => {
-          filteredDows.forEach(dayOfWeek => dayOfWeek.name = translatedKeys[dayOfWeek.name]);
-          DaysOfWeek.subject.next(filteredDows);
-        });
-    }
-    return DaysOfWeek.subject;
+    const filteredDows = DaysOfWeek.daysOfWeek.filter(dow => includedHoliday || dow.id !== 8);
+    const subject = new BehaviorSubject(DaysOfWeek.daysOfWeek);
+    const keys = filteredDows.map(dayOfWeek => dayOfWeek.name);
+    translate.get(keys).subscribe(
+      translatedKeys => {
+        filteredDows.forEach(dayOfWeek => dayOfWeek.name = translatedKeys[dayOfWeek.name]);
+        subject.next(filteredDows);
+      });
+    return subject;
   }
 }
