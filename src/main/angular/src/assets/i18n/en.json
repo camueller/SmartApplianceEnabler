@@ -477,7 +477,7 @@
   "StatusComponent.energyLatestEnd": "Latest end: ",
   "StatusComponent.chargeMode": "Charge mode",
   "StatusComponent.chargeMode.FAST": "Fast",
-  "StatusComponent.chargeMode.FAST.description": "The vehicle is immediately charged with the configured maximum power. There is not optimization regarding energy costs or usage of excess energy. Afterwards charging mode changes to \"Excess energy\" automatically.",
+  "StatusComponent.chargeMode.FAST.description": "The vehicle will be charged from the beginning of the specified time period until the end of the time period or the target SOC is reached. Afterwards charging mode changes to \"Excess energy\" automatically.",
   "StatusComponent.chargeMode.TIMED": "Timed",
   "StatusComponent.chargeMode.TIMED.description": "The vehicle will be charged with the configured maximum power from the beginning of the specified period of time. Charging stops when the end of the time period or the target SOC is reached. There is not optimization regarding energy costs or usage of excess energy. Afterwards charging mode changes to \"Excess energy\" automatically.",
   "StatusComponent.chargeMode.OPTIMIZED": "Optimized",
