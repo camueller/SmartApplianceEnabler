@@ -259,7 +259,7 @@ public class TimeframeIntervalHandlerTest extends TestBase {
                 now = LocalDateTime.of(now.toLocalDate(), LocalTime.of(21, 30, 0));
                 sut.updateQueue(now, false);
 
-                assertEquals(sut.getQueue().get(0).getInterval().getStart(), now);
+                assertEquals(now, sut.getQueue().get(0).getInterval().getStart());
             }
 
             @Test

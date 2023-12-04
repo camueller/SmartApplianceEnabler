@@ -112,7 +112,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                                     event.batteryCapacity, event.defaultSocOptionalEnergy);
                             addTimeframeInterval(event.getTime(), timeframeInterval, true, true);
                             updateQueue(event.getTime(), false);
-                            activateTimeframeInterval(event.getTime(), timeframeInterval);
+//                            activateTimeframeInterval(event.getTime(), timeframeInterval);
                         }
                     }
                 }
@@ -253,7 +253,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                     if(queue.size() > 0) {
                         var nextTimeframeInterval = queue.get(0);
                         if(nextTimeframeInterval.getRequest() instanceof OptionalEnergySocRequest) {
-                            adjustSecondTimeframeIntervalStart(timeframeInterval, nextTimeframeInterval);
+                            adjustTimeframeIntervalStart(nextTimeframeInterval, now);
                         }
                     }
                     if(!(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest)) {
@@ -628,11 +628,14 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
     }
 
     public void adjustSecondTimeframeIntervalStart(TimeframeInterval interval1, TimeframeInterval interval2) {
-        if(interval1 != null && interval2 != null) {
-            LocalDateTime expectedStart = interval1.getInterval().getEnd().plusSeconds(1);
-            if(!interval2.getInterval().getStart().equals(expectedStart)) {
-                logger.debug("{}: Adjust start of timeframe interval to: {}", applianceId, expectedStart);
-                interval2.getInterval().setStart(expectedStart);
+        adjustTimeframeIntervalStart(interval2, interval1.getInterval().getEnd().plusSeconds(1));
+    }
+
+    public void adjustTimeframeIntervalStart(TimeframeInterval interval, LocalDateTime start) {
+        if(start != null && interval != null) {
+            if(!interval.getInterval().getStart().equals(start)) {
+                logger.debug("{}: Adjust start of timeframe interval to: {}", applianceId, start);
+                interval.getInterval().setStart(start);
             }
         }
     }
