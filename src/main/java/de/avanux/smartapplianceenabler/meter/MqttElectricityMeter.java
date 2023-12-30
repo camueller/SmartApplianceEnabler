@@ -157,9 +157,11 @@ public class MqttElectricityMeter implements Meter, ApplianceLifeCycle, Validate
                 if(contentHandler != null) {
                     contentHandler.parse(messageString);
 
-                    var timeString = contentHandler.readValue(timePath);
-                    if(timeString != null) {
-                        time = LocalDateTime.parse(timeString);
+                    if(timePath != null) {
+                        var timeString = contentHandler.readValue(timePath);
+                        if(timeString != null) {
+                            time = LocalDateTime.parse(timeString);
+                        }
                     }
 
                     inputValue = contentHandler.readValue(path);
