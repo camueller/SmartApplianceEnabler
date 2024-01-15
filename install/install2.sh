@@ -26,14 +26,14 @@ if [ "$INSTALL_MBUSD" = true ] ; then
   PACKAGES="$PACKAGES git cmake"
 fi
 if [ "$INSTALL_WEBMIN" = true ] ; then
-  PACKAGES="$PACKAGES perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl shared-mime-info apt-show-versions python "
+  PACKAGES="$PACKAGES perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl shared-mime-info apt-show-versions python3"
 fi
 if [ -n "$WIFI_SSID" ] ; then
   IP_ADDRESS=`ip addr | grep wlan0 | grep inet | awk '{print $2}' | awk -F '/' '{print $1}'`
   echo "IP_ADDRESS=$IP_ADDRESS" >> $LOG
 fi
 
-echo "$PREFIX Waiting until boot is complete ..." >> $LOG
+echo "$PREFIX Waiting before updating the software catalog ..." >> $LOG
 sleep 30
 
 echo "$PREFIX Update software catalog ..." >> $LOG
@@ -91,7 +91,7 @@ fi
 wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/logback-spring.xml -P $SAE_HOME 2>>$LOG
 chmod 644 $SAE_HOME/logback-spring.xml 2>&1 >> $LOG
 
-SAE_VERSION=`curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/camueller/SmartApplianceEnabler/releases | jq -c '.[] | select( .prerelease == false) | .tag_name' | head -n 1 | tr -d '"'`
+SAE_VERSION=`curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/camueller/SmartApplianceEnabler/releases | jq -c '.[] | select( .prerelease == false) | .tag_name' | head -n 1 | tr -d '"'`
 wget "https://github.com/camueller/SmartApplianceEnabler/releases/download/"$SAE_VERSION"/SmartApplianceEnabler-"$SAE_VERSION".war" -P $SAE_HOME 2>>$LOG
 
 chown -R sae:sae $SAE_HOME 2>&1 >> $LOG
@@ -101,17 +101,21 @@ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/lib/syste
 chown root.root /lib/systemd/system/smartapplianceenabler.service 2>&1 >> $LOG
 chmod 755 /lib/systemd/system/smartapplianceenabler.service 2>&1 >> $LOG
 
-systemctl enable smartapplianceenabler.service 2>&1 >> $LOG
+systemctl enable smartapplianceenabler 2>&1 >> $LOG
 systemctl daemon-reload 2>&1 >> $LOG
 
 echo "$PREFIX Starting SAE ..." >> $LOG
-systemctl start smartapplianceenabler.service 2>&1 >> $LOG
+systemctl start smartapplianceenabler 2>&1 >> $LOG
+sleep 15
+systemctl status smartapplianceenabler >> $LOG
 
 if [ "$INSTALL_WEBMIN" = true ] ; then
   echo "$PREFIX Installing Webmin ..." >> $LOG
-  wget "http://prdownloads.sourceforge.net/webadmin/webmin_"$WEBMIN_VERSION"_all.deb" -P /tmp 2>>$LOG
+  wget "https://sourceforge.net/projects/webadmin/files/webmin/$WEBMIN_VERSION/webmin_"$WEBMIN_VERSION"_all.deb/download" -O /tmp/webmin_"$WEBMIN_VERSION"_all.deb 2>>$LOG
   dpkg -i "/tmp/webmin_"$WEBMIN_VERSION"_all.deb" 2>&1 >> $LOG
-  sudo systemctl start webmin.service >> $LOG
+  sudo systemctl start webmin >> $LOG
+  sleep 15
+  sudo systemctl status webmin >> $LOG
 fi
 
 if [ "$INSTALL_MBUSD" = true ] ; then
