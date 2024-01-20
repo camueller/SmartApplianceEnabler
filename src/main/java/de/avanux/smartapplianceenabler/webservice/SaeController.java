@@ -926,19 +926,16 @@ public class SaeController {
                 applianceStatus.setOn(controlMessage != null && controlMessage.on);
                 if(appliance.getTimeframeIntervalHandler() != null
                         && appliance.getTimeframeIntervalHandler().getQueue() != null) {
-                    TimeframeInterval nextTimeframeInterval
-                            = appliance.getTimeframeIntervalHandler().getQueue().size() > 0
-                            ? appliance.getTimeframeIntervalHandler().getQueue().get(0)
-                            : null;
-                    if (nextTimeframeInterval != null) {
+                    TimeframeInterval firstTimeframeInterval = appliance.getTimeframeIntervalHandler().getFirstTimeframeInterval();
+                    if (firstTimeframeInterval != null) {
                         applianceStatus.setPlanningRequested(true);
-                        if(nextTimeframeInterval.getRequest().isEnabled()) {
-                            applianceStatus.setEarliestStart(nextTimeframeInterval.getEarliestStartSeconds(now));
-                            applianceStatus.setLatestStart(nextTimeframeInterval.getLatestStartSeconds(now));
+                        if(firstTimeframeInterval.getRequest().isEnabled()) {
+                            applianceStatus.setEarliestStart(firstTimeframeInterval.getEarliestStartSeconds(now));
+                            applianceStatus.setLatestStart(firstTimeframeInterval.getLatestStartSeconds(now));
                         }
-                        applianceStatus.setOptionalEnergy(nextTimeframeInterval.getRequest().isUsingOptionalEnergy(now));
-                        if (nextTimeframeInterval.getState() == TimeframeIntervalState.QUEUED) {
-                            addRequestValuesToApplianceStatus(now, applianceStatus, control, nextTimeframeInterval.getRequest(), 0);
+                        applianceStatus.setOptionalEnergy(firstTimeframeInterval.getRequest().isUsingOptionalEnergy(now));
+                        if (firstTimeframeInterval.getState() == TimeframeIntervalState.QUEUED) {
+                            addRequestValuesToApplianceStatus(now, applianceStatus, control, firstTimeframeInterval.getRequest(), 0);
                         }
                     }
                     if (control instanceof ElectricVehicleCharger) {
@@ -969,28 +966,33 @@ public class SaeController {
                             }
                             applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
                             int whRemainingToCharge = 0;
-                            if(nextTimeframeInterval != null) {
-                                if(nextTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
-                                    Integer max = nextTimeframeInterval.getRequest().getMax(now);
+                            if(firstTimeframeInterval != null) {
+                                if(firstTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
+                                    Integer max = firstTimeframeInterval.getRequest().getMax(now);
                                     whRemainingToCharge = max != null ? max : 0;
                                 }
-                                if(nextTimeframeInterval.getRequest() instanceof SocRequest) {
-                                    applianceStatus.setSocTarget(((SocRequest) nextTimeframeInterval.getRequest()).getSocOrDefault());
+                                if(firstTimeframeInterval.getRequest() instanceof SocRequest) {
+                                    applianceStatus.setSocTarget(((SocRequest) firstTimeframeInterval.getRequest()).getSocOrDefault());
                                 }
-                                if (!nextTimeframeInterval.getRequest().isUsingOptionalEnergy(now)) {
+                                if (firstTimeframeInterval.getRequest().isUsingOptionalEnergy(now)) {
+                                    if(appliance.getTimeframeIntervalHandler().getQueue().size() > 1) {
+                                        var secondTimeframeInterval = appliance.getTimeframeIntervalHandler().getQueue().get(1);
+                                        applianceStatus.setPlannedEnergyAmount(secondTimeframeInterval.getRequest().getMax(now));
+                                    }
+                                } else {
                                     applianceStatus.setPlannedEnergyAmount(whAlreadyCharged + whRemainingToCharge);
-                                    applianceStatus.setLatestEnd(nextTimeframeInterval.getLatestEndSeconds(now));
+                                    applianceStatus.setLatestEnd(firstTimeframeInterval.getLatestEndSeconds(now));
                                 }
                             }
                         }
                     }
-                    if (nextTimeframeInterval != null && nextTimeframeInterval.getState() == TimeframeIntervalState.ACTIVE) {
+                    if (firstTimeframeInterval != null && firstTimeframeInterval.getState() == TimeframeIntervalState.ACTIVE) {
                         applianceStatus.setPlanningRequested(true);
-                        addRequestValuesToApplianceStatus(now, applianceStatus, control, nextTimeframeInterval.getRequest(), nextTimeframeInterval.getRequest().getRuntime(now));
-                        if (! nextTimeframeInterval.getRequest().isEnabled() && nextTimeframeInterval.getRequest().isEnabledBefore()) {
+                        addRequestValuesToApplianceStatus(now, applianceStatus, control, firstTimeframeInterval.getRequest(), firstTimeframeInterval.getRequest().getRuntime(now));
+                        if (! firstTimeframeInterval.getRequest().isEnabled() && firstTimeframeInterval.getRequest().isEnabledBefore()) {
                             applianceStatus.setInterruptedSince(
                                     Long.valueOf(
-                                            Duration.between(nextTimeframeInterval.getRequest().getControlStatusChangedAt(), now).toSeconds()
+                                            Duration.between(firstTimeframeInterval.getRequest().getControlStatusChangedAt(), now).toSeconds()
                                     ).intValue());
                         }
                     }

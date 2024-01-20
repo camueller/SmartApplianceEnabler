@@ -12,7 +12,7 @@
       <div [class]="bulbClass" *ngIf="!isRed()"></div>
     </ng-template>
 
-    <div [class]="bulbClass" [class.TrafficLightComponent__slowLight]="true" *ngIf="isYellow()"></div>
+    <div [class]="bulbClass" [class.TrafficLightComponent__slowLight]="true" *ngIf="isYellow() && !isYellowBlink()"></div>
     <div [class]="bulbClass" [class.TrafficLightComponent__slowLight]="true"
          [class.TrafficLightComponent__slowLight-blink]="isYellowBlink()"
          *ngIf="isYellowBlink()"
