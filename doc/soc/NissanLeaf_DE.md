@@ -15,34 +15,22 @@ $ sudo apt-get -y install python3-pip
 Danach muss die Python-Implementierung des Carwings-API installiert werden. Dabei werden keine Dateien in das aktuelle Verzeichnis geschrieben!
 
 ```bash
-$ pip3 install pycarwings2
+$ pip3 install pycarwings2 --break-system-packages
+Defaulting to user installation because normal site-packages is not writeable
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
 Collecting pycarwings2
-  Downloading https://files.pythonhosted.org/packages/df/ad/407f3d2239f6b2d74ea6082cfe2344aa413860811157a32b30e1a4441b74/pycarwings2-2.9-py3-none-any.whl
-Collecting pycryptodome (from pycarwings2)
-  Downloading https://www.piwheels.org/simple/pycryptodome/pycryptodome-3.9.0-cp35-cp35m-linux_armv7l.whl (9.8MB)
-    100% |████████████████████████████████| 9.8MB 18kB/s 
-Collecting requests (from pycarwings2)
-  Downloading https://files.pythonhosted.org/packages/51/bd/23c926cd341ea6b7dd0b2a00aba99ae0f828be89d72b2190f27c11d4b7fb/requests-2.22.0-py2.py3-none-any.whl (57kB)
-    100% |████████████████████████████████| 61kB 903kB/s 
-Collecting PyYAML (from pycarwings2)
-  Downloading https://www.piwheels.org/simple/pyyaml/PyYAML-5.1.2-cp35-cp35m-linux_armv7l.whl (45kB)
-    100% |████████████████████████████████| 51kB 652kB/s 
-Collecting iso8601 (from pycarwings2)
-  Downloading https://files.pythonhosted.org/packages/ef/57/7162609dab394d38bbc7077b7ba0a6f10fb09d8b7701ea56fa1edc0c4345/iso8601-0.1.12-py2.py3-none-any.whl
-Collecting chardet<3.1.0,>=3.0.2 (from requests->pycarwings2)
-  Downloading https://files.pythonhosted.org/packages/bc/a9/01ffebfb562e4274b6487b4bb1ddec7ca55ec7510b22e4c51f14098443b8/chardet-3.0.4-py2.py3-none-any.whl (133kB)
-    100% |████████████████████████████████| 143kB 984kB/s 
-Collecting certifi>=2017.4.17 (from requests->pycarwings2)
-  Downloading https://files.pythonhosted.org/packages/69/1b/b853c7a9d4f6a6d00749e94eb6f3a041e342a885b87340b79c1ef73e3a78/certifi-2019.6.16-py2.py3-none-any.whl (157kB)
-    100% |████████████████████████████████| 163kB 867kB/s 
-Collecting urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1 (from requests->pycarwings2)
-  Downloading https://files.pythonhosted.org/packages/e6/60/247f23a7121ae632d62811ba7f273d0e58972d75e58a94d329d51550a47d/urllib3-1.25.3-py2.py3-none-any.whl (150kB)
-    100% |████████████████████████████████| 153kB 704kB/s 
-Collecting idna<2.9,>=2.5 (from requests->pycarwings2)
-  Downloading https://files.pythonhosted.org/packages/14/2c/cd551d81dbe15200be1cf41cd03869a46fe7226e7450af7a6545bfc474c9/idna-2.8-py2.py3-none-any.whl (58kB)
-    100% |████████████████████████████████| 61kB 1.1MB/s 
-Installing collected packages: pycryptodome, chardet, certifi, urllib3, idna, requests, PyYAML, iso8601, pycarwings2
-Successfully installed PyYAML-5.1.2 certifi-2019.6.16 chardet-3.0.4 idna-2.8 iso8601-0.1.12 pycarwings2-2.9 pycryptodome-3.9.0 requests-2.22.0 urllib3-1.25.3
+  Downloading https://www.piwheels.org/simple/pycarwings2/pycarwings2-2.14-py3-none-any.whl (17 kB)
+Collecting PyYAML
+  Downloading https://www.piwheels.org/simple/pyyaml/PyYAML-6.0.1-cp311-cp311-linux_armv7l.whl (45 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 45.4/45.4 kB 619.5 kB/s eta 0:00:00
+Collecting iso8601
+  Downloading https://www.piwheels.org/simple/iso8601/iso8601-2.1.0-py3-none-any.whl (7.5 kB)
+Requirement already satisfied: requests in /usr/lib/python3/dist-packages (from pycarwings2) (2.28.1)
+Collecting pycryptodome
+  Downloading https://www.piwheels.org/simple/pycryptodome/pycryptodome-3.20.0-cp35-abi3-linux_armv7l.whl (2.0 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 2.6 MB/s eta 0:00:00
+Installing collected packages: PyYAML, pycryptodome, iso8601, pycarwings2
+Successfully installed PyYAML-6.0.1 iso8601-2.1.0 pycarwings2-2.14 pycryptodome-3.20.0
 ```
 
 Jetzt kann das Verzeichnis für das SOC-Script und Konfigurationsdatei angelegt und dorthin gewechselt werden:
