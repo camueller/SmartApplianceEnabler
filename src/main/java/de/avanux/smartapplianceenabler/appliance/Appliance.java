@@ -463,12 +463,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                 logger.debug("{}: skipping ev charger configuration to continue charging process already started", id);
             }
             else {
-                logger.debug("{}: will do ev charger configuration", id);
-                var evHandler = evCharger.getElectricVehicleHandler();
-                evHandler.setConnectedVehicleId(evId);
-                evHandler.setSocInitial(socCurrent);
-                evHandler.setSocCurrent(socCurrent);
-                evHandler.setSocInitialTimestamp(now);
+                evCharger.getElectricVehicleHandler().initConfiguration(now, evId, socCurrent);
             }
 
             TimeframeInterval timeframeInterval =
@@ -498,10 +493,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                 }
                 timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
                         ev.getId(), ev.getBatteryCapacity(), socCurrent, socTarget);
-                var evHandler = evCharger.getElectricVehicleHandler();
-                evHandler.setSocInitial(socCurrent);
-                evHandler.setSocInitialTimestamp(now);
-                evHandler.setSocCurrent(socCurrent);
+                evCharger.getElectricVehicleHandler().updateConfiguration(now, socCurrent);
                 evCharger.resetChargingCompletedToVehicleConnected(now);
             }
             else {

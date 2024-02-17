@@ -158,6 +158,27 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         return null;
     }
 
+    public void initConfiguration(LocalDateTime now, Integer connectedVehicleId, Integer socCurrent) {
+        logger.debug("{}: initialize ev charger configuration: connectedVehicleId={} socCurrent={}", applianceId, connectedVehicleId, socCurrent);
+        this.connectedVehicleId = connectedVehicleId;
+        this.socValues.initial = socCurrent;
+        this.socValues.current = socCurrent;
+        if(this.socValues.initialTimestamp == null) {
+            this.socValues.initialTimestamp = now;
+        }
+    }
+
+    public void updateConfiguration(LocalDateTime now, Integer socCurrent) {
+        logger.debug("{}: update ev charger configuration: socCurrent={}", applianceId, socCurrent);
+        this.socValues.initial = socCurrent;
+        if(this.socValues.initialTimestamp == null) {
+            this.socValues.initialTimestamp = now;
+        }
+        this.socValues.current = socCurrent;
+        this.socValues.retrieved = socCurrent;
+        this.socValues.retrievedTimestamp = now;
+    }
+
     public void setSocValuesChangedListener(SocValuesChangedListener socValuesChangedListener) {
         this.socValuesChangedListener = socValuesChangedListener;
     }
@@ -170,27 +191,13 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         return this.socValues.initial != null ? this.socValues.initial : 0;
     }
 
-    public void setSocInitial(Integer socInitial) {
-        this.socValues.initial = socInitial;
-    }
-
     public Integer getSocCurrent() {
         return this.socValues.current != null ? this.socValues.current : 0;
-    }
-
-    public void setSocCurrent(Integer socCurrent) {
-        this.socValues.current = socCurrent;
     }
 
     public Long getSocInitialTimestamp() {
         ZoneOffset zoneOffset = ZoneId.systemDefault().getRules().getOffset(LocalDateTime.now());
         return socValues.initialTimestamp != null ? socValues.initialTimestamp.toEpochSecond(zoneOffset) * 1000 : null;
-    }
-
-    public void setSocInitialTimestamp(LocalDateTime socInitialTimestamp) {
-        if(this.socValues.initialTimestamp == null) {
-            this.socValues.initialTimestamp = socInitialTimestamp;
-        }
     }
 
     private void setSocValuesBatteryCapacityFromConnectedVehicle() {
@@ -321,7 +328,7 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         logger.warn("{}: SOC script execution failed", applianceId);
         this.connectedVehicleId = getConnectedOrFirstVehicleId();
         handleSocScriptExecutionResult(now, this.connectedVehicleId, new SocScriptExecutionResult(
-                socValues.initial == null ? 0: socValues.current, null, null, null));
+                socValues.initial == null ? 0 : socValues.current, null, null, null));
     }
 
     private void handleSocScriptExecutionResult(LocalDateTime now, int evId, SocScriptExecutionResult result) {
