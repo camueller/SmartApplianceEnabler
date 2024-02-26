@@ -330,6 +330,7 @@
   "ElectricVehicleComponent.script.update.afterIncrease.tooltip": "Die Ausführung erfolgt, nachdem der berechnete SOC sich um den angegebenen Prozentwert geändert hat.",
   "ElectricVehicleComponent.script.update.afterSeconds": "nach Zeit [HH:MM]",
   "ElectricVehicleComponent.script.update.afterSeconds.tooltip": "Die Zeit zwischen zwei Ausführungen beträgt mindestens den angegebenen Wert.",
+  "ElectricVehicleComponent.script.update.enabled": "Aktiviert",
   "ElectricVehicleComponent.error.batteryCapacity_pattern": "Die Batteriekapazität muss eine Zahl sein",
   "ElectricVehicleComponent.error.phases_pattern": "Die Phasenanzahl muss eine Zahl sein",
   "ElectricVehicleComponent.error.maxChargePower_pattern": "Die maximale Ladeleistung muss eine Zahl sein",

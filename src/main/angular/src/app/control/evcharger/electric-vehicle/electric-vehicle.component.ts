@@ -109,12 +109,14 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
     this.form.addControl('latitudeExtractionRegex', new FormControl(socScript?.latitudeExtractionRegex));
     this.form.addControl('longitudeExtractionRegex', new FormControl(socScript?.longitudeExtractionRegex));
 
+    this.form.addControl('scriptUpdateSocEnabled', new FormControl(socScript?.updateEnabled ?? true));
     this.form.addControl('scriptUpdateSocAfterIncrease', new FormControl(socScript?.updateAfterIncrease,
       Validators.pattern(InputValidatorPatterns.PERCENTAGE)));
     this.form.addControl('scriptUpdateSocAfterSeconds', new FormControl(socScript?.updateAfterSeconds,
       Validators.pattern(InputValidatorPatterns.INTEGER)));
     this.form.addControl('scriptTimeoutSeconds', new FormControl(socScript?.timeoutSeconds,
       Validators.pattern(InputValidatorPatterns.INTEGER)));
+    this.setScriptUpdateSocAfter(socScript.updateEnabled);
   }
 
   updateForm() {
@@ -131,7 +133,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       this.form.controls.pluginTimeExtractionRegex.setValue(socScript.pluginTimeExtractionRegex);
       this.form.controls.latitudeExtractionRegex.setValue(socScript.latitudeExtractionRegex);
       this.form.controls.longitudeExtractionRegex.setValue(socScript.longitudeExtractionRegex);
-
+      this.form.controls.scriptUpdateSocEnabled.setValue(socScript.updateEnabled);
       this.form.controls.scriptUpdateSocAfterIncrease.setValue(socScript.updateAfterIncrease);
       this.form.controls.scriptUpdateSocAfterSeconds.setValue(socScript.updateAfterSeconds);
       this.form.controls.scriptTimeoutSeconds.setValue(socScript.timeoutSeconds);
@@ -153,6 +155,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
     const pluginTimeExtractionRegex = this.form.controls.pluginTimeExtractionRegex?.value;
     const latitudeExtractionRegex = this.form.controls.latitudeExtractionRegex?.value;
     const longitudeExtractionRegex = this.form.controls.longitudeExtractionRegex?.value;
+    const updateSocEnabled = this.form.controls.scriptUpdateSocEnabled?.value;
     const updateSocAfterIncrease = this.form.controls.scriptUpdateSocAfterIncrease?.value;
     const updateSocAfterTime = this.updateAfterSecondsComponent.updateModelFromForm();
 
@@ -176,9 +179,15 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       this.electricVehicle.socScript.pluginTimeExtractionRegex = pluginTimeExtractionRegex;
       this.electricVehicle.socScript.latitudeExtractionRegex = latitudeExtractionRegex;
       this.electricVehicle.socScript.longitudeExtractionRegex = longitudeExtractionRegex;
-      this.electricVehicle.socScript.updateAfterIncrease = updateSocAfterIncrease;
-      this.electricVehicle.socScript.updateAfterSeconds = updateSocAfterTime
+      this.electricVehicle.socScript.updateEnabled = updateSocEnabled;
+      if(updateSocEnabled) {
+        this.electricVehicle.socScript.updateAfterIncrease = updateSocAfterIncrease;
+        this.electricVehicle.socScript.updateAfterSeconds = updateSocAfterTime
         && updateSocAfterTime.length > 0 ? TimeUtil.toSeconds(updateSocAfterTime) : undefined;
+      } else {
+        this.electricVehicle.socScript.updateAfterIncrease = undefined;
+        this.electricVehicle.socScript.updateAfterSeconds = undefined;
+      }
       this.electricVehicle.socScript.timeoutSeconds = scriptTimeoutSeconds;
     }
     return this.electricVehicle;
@@ -190,6 +199,24 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
 
   public get socScriptFileModes() {
     return [FileMode.read, FileMode.execute];
+  }
+
+  public get isScriptUpdateSocAfterSecondsEnabled() {
+    return this.form.controls.scriptUpdateSocAfterSeconds.enabled;
+  }
+
+  updateScriptUpdateSocAfter() {
+    this.setScriptUpdateSocAfter(this.form.controls.scriptUpdateSocEnabled.value);
+  }
+
+  setScriptUpdateSocAfter(enabled: boolean) {
+    if (enabled) {
+      this.form.controls.scriptUpdateSocAfterIncrease.enable();
+      this.form.controls.scriptUpdateSocAfterSeconds.enable();
+    } else {
+      this.form.controls.scriptUpdateSocAfterIncrease.disable();
+      this.form.controls.scriptUpdateSocAfterSeconds.disable();
+    }
   }
 
   removeElectricVehicle() {

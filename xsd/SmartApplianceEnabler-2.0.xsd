@@ -238,6 +238,7 @@
     <xs:complexType name="SocScriptType">
         <xs:attribute name="script" type="xs:string" />
         <xs:attribute name="extractionRegex" type="xs:string" />
+        <xs:attribute name="updateEnabled" type="xs:boolean" />
         <xs:attribute name="updateAfterIncrease" type="xs:int" />
         <xs:attribute name="updateAfterSeconds" type="xs:int" />
         <xs:attribute name="timeoutSeconds" type="xs:int" />

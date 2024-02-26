@@ -231,8 +231,8 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
 
         ElectricVehicle electricVehicle = getConnectedVehicle();
         if(electricVehicle != null && electricVehicle.getSocScript() != null) {
-            logger.debug( "{}: SOC retrieval: socCalculationRequired={} socChanged={} chargingAlmostCompleted={} socRetrievalForChargingAlmostCompleted={}",
-                    applianceId, socCalculationRequired, socChanged, chargingAlmostCompleted, socRetrievalForChargingAlmostCompleted);
+            logger.debug( "{}: SOC retrieval: socRetrievalForUpdateEnabled={} socCalculationRequired={} socChanged={} chargingAlmostCompleted={} socRetrievalForChargingAlmostCompleted={}",
+                    applianceId, electricVehicle.getSocScript().isUpdateEnabled(), socCalculationRequired, socChanged, chargingAlmostCompleted, socRetrievalForChargingAlmostCompleted);
 
             Integer updateAfterIncrease = electricVehicle.getSocScript().getUpdateAfterIncrease();
             if(updateAfterIncrease == null) {
@@ -240,10 +240,15 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
             }
             Integer updateAfterSeconds = electricVehicle.getSocScript().getUpdateAfterSeconds();
             if(this.socValues.initial == null
-                    || this.socValues.retrieved == null
-                    || (chargingAlmostCompleted && !socRetrievalForChargingAlmostCompleted)
-                    || ((this.socValues.retrieved + updateAfterIncrease <= this.socValues.current)
-                    && (updateAfterSeconds == null || now.minusSeconds(updateAfterSeconds).isAfter(this.socValues.retrievedTimestamp)))
+                || this.socValues.retrieved == null
+                || electricVehicle.getSocScript().isUpdateEnabled() &&
+                (
+                    (chargingAlmostCompleted && !socRetrievalForChargingAlmostCompleted)
+                    || (
+                        (this.socValues.retrieved + updateAfterIncrease <= this.socValues.current)
+                        && (updateAfterSeconds == null || now.minusSeconds(updateAfterSeconds).isAfter(this.socValues.retrievedTimestamp))
+                    )
+                )
             ) {
                 logger.debug( "{}: SOC retrieval is required: {}", applianceId, this.socValues);
                 triggerSocScriptExecution(getConnectedOrFirstVehicleId());

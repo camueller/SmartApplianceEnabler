@@ -106,6 +106,7 @@ export class TimepickerComponent implements OnChanges, OnInit, AfterViewChecked 
     if (control) {
       control.setValue(this.value);
     }
+    this.setEnabled(this.enabled);
   }
 
   setEnabled(enabled: boolean) {

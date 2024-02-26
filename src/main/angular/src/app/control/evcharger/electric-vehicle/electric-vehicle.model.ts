@@ -16,6 +16,7 @@ export interface ElectricVehicleModel {
   pluginTimeExtractionRegex: FormControl<string>;
   latitudeExtractionRegex: FormControl<string>;
   longitudeExtractionRegex: FormControl<string>;
+  scriptUpdateSocEnabled: FormControl<boolean>;
   scriptUpdateSocAfterIncrease: FormControl<number>;
   scriptUpdateSocAfterSeconds: FormControl<number>;
   scriptTimeoutSeconds: FormControl<number>;

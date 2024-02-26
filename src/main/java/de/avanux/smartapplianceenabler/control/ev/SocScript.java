@@ -38,6 +38,8 @@ public class SocScript implements ApplianceIdConsumer {
     @XmlAttribute
     private String script;
     @XmlAttribute
+    private Boolean updateEnabled;
+    @XmlAttribute
     private Integer updateAfterIncrease;
     @XmlAttribute
     private Integer updateAfterSeconds;
@@ -62,6 +64,10 @@ public class SocScript implements ApplianceIdConsumer {
 
     public void setScript(String script) {
         this.script = script;
+    }
+
+    public boolean isUpdateEnabled() {
+        return this.updateEnabled == null || this.updateEnabled;
     }
 
     public Integer getUpdateAfterIncrease() {

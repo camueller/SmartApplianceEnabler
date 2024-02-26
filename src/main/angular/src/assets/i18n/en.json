@@ -330,6 +330,7 @@
   "ElectricVehicleComponent.script.update.afterIncrease.tooltip": "Execution is repeated after the calculated SOC has changed by the specified percentage",
   "ElectricVehicleComponent.script.update.afterSeconds": "after time [HH:MM]",
   "ElectricVehicleComponent.script.update.afterSeconds.tooltip": "Execution is repeated if the specified time has passed since the last execution",
+  "ElectricVehicleComponent.script.update.enabled": "Enabled",
   "ElectricVehicleComponent.error.batteryCapacity_pattern": "The battery capacity has to be a number",
   "ElectricVehicleComponent.error.phases_pattern": "Phases has to be a number",
   "ElectricVehicleComponent.error.maxChargePower_pattern": "The maximum charge power has to be a number",

@@ -11,6 +11,7 @@ export class SocScript {
   pluginTimeExtractionRegex: string;
   latitudeExtractionRegex: string;
   longitudeExtractionRegex: string;
+  updateEnabled: boolean;
   updateAfterIncrease: number;
   updateAfterSeconds: number;
   timeoutSeconds: number;

@@ -92,7 +92,9 @@ export class ControlEvchargerComponent implements OnChanges, OnInit {
         this.evCharger = new EvCharger();
         this.evCharger.vehicles = [this.createElectricVehicle()];
       }
-      this.updateForm();
+      if(! changes.evCharger.isFirstChange()) {
+        this.updateForm();
+      }
     }
   }
 
