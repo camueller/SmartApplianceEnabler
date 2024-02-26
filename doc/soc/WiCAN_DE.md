@@ -1,7 +1,4 @@
 # WiCAN ODB2 Adapter
-Leider können die meisten heimischen Wallboxen noch kein ISO 15118 (umfangreiche Kommunikation über Powerline Communication (PLC) zum Fahrzeug), weshalb die Wallbox nicht den SOC des Fahrzeugs kennt. Für einige Fahrzeuge existieren sogenannte *SOC-Scripts*, welche meist einen Zugriff der Hersteller-Homepage emulieren, um an den SOC zu kommen. Die Scripts sind meist **nicht dauerhaft stabil**, weil jede Änderung der Hersteller-Homepage eine Anpassung der SOC-Scripts bzw. der verwendeten Bibliotheken nach sich zieht. Manche Hersteller bieten den Zugriff auf Fahrzeugdaten auch über **kostenpflichtige Dienste** an.
-
-Diese Probleme lassen sich umgehen, indem der SOC im Fahrzeug über die in jedem Fahrzeug vorhandene **ODB2-Schnittstelle** ausgelesen wird.
 
 ![meatPi](../../pics/meatPi.png)
 
@@ -117,6 +114,6 @@ Created symlink /etc/systemd/system/multi-user.target.wants/wican-status.service
 In der Konfiguration muss unter "Wallbox" konfiguriert werden:
 
 - Script zum Auslesen des SOC: `/opt/sae/soc/soc.sh`
-- Ausführungswiederholung: nach SOC-Änderung [%]: `100`
+- Ausführungswiederholung: [] Aktiviert (nicht ausgewählt)
 
 Damit wird ereicht, dass das Script nur einmalig nach dem Verbinden mit der Wallbox ausgeführt wird, weil das SOC-Script nur zu diesem Zeitpunkt den korrekten Wert liefern kann.
