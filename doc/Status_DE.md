@@ -29,13 +29,18 @@ Durch Klick auf die `Starten`-Schaltfläche wird das Gerät sofort eingeschaltet
 Nach einen **Klick auf das grüne Ampellicht** kann man den `Lademodus` für den aktuellen Ladevorgang festlegen.
 
 In Abhängigkeit des gewählten Lademodus werden die Felder `SOC: Ist` und/oder `SOC: Soll` angzeigt, wobei Folgendes gilt:
-- wenn ein [SOC-Script](soc/SOC_DE.md) für das ausgewählte Fahrzeug angegeben wurde, wird das Eingabefeld `SOC: Ist` mit dem aktuellen Wert zu diesem Zeitpunkt vorbelegt. Ohne SOC-Script kann er im Auto abgelesen und hier eingegeben werden, wenn man dem *Sunny Home Manager* eine gute Planung ermöglichen will. Ansonsten wird 0 angenommen und ein entsprechend hoher Energiebedarf gemeldet.
+- wenn das [automatisierte Auslesen des SOC](soc/SOC_DE.md) für das ausgewählte Fahrzeug konfguriert wurde, wird das Eingabefeld `SOC: Ist` mit dem aktuellen Wert zu diesem Zeitpunkt vorbelegt. Andernfalls kann er im Auto abgelesen und hier eingegeben werden, um dem *Sunny Home Manager* eine gute Planung zu ermöglichen.
 - wird im Eingabefeld `SOC: Soll` kein Wert eingegeben, wird 100% angenommen und ein entsprechend hoher Energiebedarf an den *Sunny Home Manager* gemeldet.
 
 ### Lademodus: Schnell
 Das Fahrzeug wird sofort mit der konfigurierten, maximalen Leistung geladen. Es erfolgt keine Optimierung hinsichtlich Stromkosten und der Nutzung von PV-Strom.
 
 ![Eingabefelder Lademodus Schnell](../pics/fe/StatusEVEditFast_DE.png)
+
+### Lademodus: Zeitgesteuert
+Das Fahrzeug wird ab dem Beginn der angegebenen Zeitspanne geladen, bis das Ende der Zeitspanne oder der Soll-SOC erreicht ist. Es erfolgt keine Optimierung hinsichtlich Stromkosten und der Nutzung von PV-Strom. Danach wird automatisch in den Lademodus "PV-Überschuss" gewechselt.
+
+![Eingabefelder Lademodus Zeitgesteuert](../pics/fe/StatusEVEditTimed_DE.png)
 
 ### Lademodus: Optimiert
 Das Ladegerät wird mit so viel überschüssigem PV-Strom wie möglich betrieben. Dabei wird sichergestellt, dass der vorgegebene SOC zum eingegebenen Zeitpunkt erreicht ist, notfalls durch Bezug von Strom aus den Netz. Danach wird automatisch in den Lademodus "PV-Überschuss" gewechselt.

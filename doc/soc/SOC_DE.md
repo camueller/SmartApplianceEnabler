@@ -1,5 +1,5 @@
 # State of charge (SOC) automatisiert auslesen
-Leider können die meisten heimischen Wallboxen noch kein ISO 15118 (umfangreiche Kommunikation über Powerline Communication (PLC) zum Fahrzeug), weshalb die Wallbox nicht den SOC des Fahrzeugs kennt.
+Leider können die meisten Wallboxen noch kein ISO 15118 (umfangreiche Kommunikation über Powerline Communication (PLC) zum Fahrzeug), weshalb die Wallbox nicht den SOC des Fahrzeugs kennt.
 
 Zum automatisierten Auslesen des SOC durch den *Smart Appliance Enabler* existieren zwei Möglichkeiten:
 - SOC-Script

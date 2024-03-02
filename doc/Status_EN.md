@@ -29,13 +29,18 @@ By clicking on the `Start` button, the device is switched on immediately.
 After a **click on the green traffic light** you can set the `charge mode` for the current charge process.
 
 Depending on the `charge mode` selected, the fields `SOC: Current` and/or `SOC: Target` are displayed, where the following applies:
-- if a [SOC-Script](soc/SOC_EN.md) was specified for the selected vehicle, the input field `SOC: Current` is pre-assigned with the current value at this point in time. Without the SOC script, it can be read in the car and entered here if you want to enable the *Sunny Home Manager* to plan well. Otherwise 0 is assumed and a correspondingly high energy demand is reported.
+- if [automated reading of the SOC](soc/SOC_EN.md) was configured for the selected vehicle, the input field `SOC: Current` is pre-assigned with the current value at this point in time. Without, it can be read in the car and entered here if you want to enable the *Sunny Home Manager* to plan well.
 - If no value is entered in the `SOC: Target` input field, 100% is assumed and a correspondingly high energy requirement is reported to the *Sunny Home Manager*.
 
 ### Charge mode: fast
 The charge process starts immediately with maximum power. There is no optimization with regard to electricity costs and the use of PV electricity.
 
 ![Eingabefelder Lademodus Schnell](../pics/fe/StatusEVEditFast_EN.png)
+
+### Charge mode: timed
+The vehicle will be charged with the configured maximum power from the beginning of the specified period of time. Charging stops when the end of the time period or the target SOC is reached. There is not optimization regarding energy costs or usage of excess energy. Afterwards charging mode changes to "Excess energy" automatically.
+
+![Eingabefelder Lademodus Zeitgesteuert](../pics/fe/StatusEVEditTimed_DE.png)
 
 ### Charge mode: optimized
 The charger runs on as much excess PV power as possible. This ensures that the specified SOC is reached at the specified time, if necessary by drawing electricity from the grid. After that, the system automatically switches to charge mode "Excess energy".

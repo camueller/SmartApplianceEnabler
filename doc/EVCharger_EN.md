@@ -57,17 +57,17 @@ For the target SOC default values can be set:
 
 The *default value for manual charging* only contains the pre-assignment of the field for the target SOC in the input mask, which is displayed after clicking on the green traffic light.
 
-If a *default value for excess energy* is set, after connecting the vehicle, excess energy will only be charged up to this value and then the charging process will be stopped.
+If a *default value for excess energy* is set, excess energy will only be charged up to this value and then the charging process will be stopped.
 
-The AC wallboxes supported by the *Smart Appliance Enabler* cannot determine the current SOC of the vehicle and communicate this value to the *Smart Appliance Enabler*! In order to determine the energy demand as precisely as possible, however, this value must be known. The *Smart Appliance Enabler* therefore offers the option of integrating a [script for automated querying of the SOC](soc/SOC_EN.md), provided this is supported by the vehicle manufacturer.
+The AC wallboxes supported by the *Smart Appliance Enabler* cannot determine the current SOC of the vehicle and communicate this value to the *Smart Appliance Enabler*! In order to determine the energy demand as precisely as possible, however, this value must be known. The *Smart Appliance Enabler* therefore offers the option of [automated reading of the SOC](soc/SOC_EN.md).
 
-If several vehicles are configured, automatic detection of the vehicle connected to the wallbox is only possible if the [scripts for automated querying of the SOC](soc/SOC_DE.md) can also supply at least one of the following values in addition to the SOC:
+If several vehicles are configured, automatic detection of the vehicle connected to the wallbox is only possible if the [automated reading of the SOC](soc/SOC_EN.md) can supply at least one of the following values in addition to the SOC:
 
 - Connection status of the charging cable
 - Time of plugging in the charging cable
 - Latitude/longitude of vehicle
 
-If available, these values must be extracted from the output of the [Script for automated querying of the SOC](soc/SOC_EN.md) in addition to the actual SOC with [Regular Expressions(Regex)](ValueExtraction_EN.md).
+If available, these values must be extracted using [Regular Expressions(Regex)](ValueExtraction_EN.md).
 
 ![Fahrzeugkonfiguration](../pics/fe/EV_EN.png)
 
@@ -77,28 +77,29 @@ In the *Sunny Home Manager*, the consumer configuration for a wallbox should loo
 ![Vebraucherkonfiguration Wallbox](../pics/shm/VerbraucherKonfigurationEVCharger.png)
 
 ## Charging process
-If a *SOC script* has been configured, it will **run automatically after connecting the vehicle to the wallbox**.
+If a [automated reading of the SOC](soc/SOC_EN.md) has been configured, it will **run automatically after connecting the vehicle to the wallbox**.
 
 There is also the option of entering the current and target SOC when [manually starting the charging process](Status_EN.md#user-content-click-green-ev).
 
 Based on the values for
 - `Battery capcity`: from vehicle configuration
-- `Current SOC`: delivered by the SOC script or entered via the [traffic light control](Status_EN.md#user-content-click-green-ev)
+- `Current SOC`: delivered by the [automated reading of the SOC](soc/SOC_EN.md) or entered via the [traffic light control](Status_EN.md#user-content-click-green-ev)
 - `Targate SOC` default value from the vehicle configuration or entered via [traffic light control](Status_EN.md#user-content-click-green-ev)
 
 ...the **initial energy** is calculated, which is to be requested from the *Sunny Home Manager*.
 
 During the charging process, the **current SOC is calculated** from:
-- `last known SOC`: from the SOC script (start of charging or last execution) or input via traffic lights (at the start of charging)
+- `last known SOC`: from [automated reading of the SOC](soc/SOC_EN.md) (start of charging or last execution) or input via traffic lights (at the start of charging)
 - `charged energy`:  metered by meter
 - `battery capacity`: from the vehicle configuration
-- `charge loss`: initial from the vehicle configuration; if the SOC script is configured, the actual charging loss are calculated and used
+- `charge loss`: initial from the vehicle configuration; if *repeat execution* of [automated reading of the SOC](soc/SOC_EN.md) is enabled, the actual charging loss are calculated and used
 
 The energy requested by the *Sunny Home Manager* is **continuously calculated** from the difference between the calculated SOC and the target SOC.
 
-During the charging process, the **SOC script is executed periodically**. If the calculated SOC either increases by a configured value (default: 20%) or a configured time has passed since the SOC script was last executed, the SOC script is executed again. The calculated SOC is compared with the actual SOC and the actual charge loss are calculated from this. The actual charge loss are taken into account for all subsequent calculations of the SOC until the next execution of the SOC script during the current charging process.
 
-**Without SOC script** and without [entering the current actual state of charge](Status_EN.md#user-content-click-green-ev), the *Smart Appliance Enabler* assumes an current SOC of 0% when the vehicle gets connected and reports a correspondingly large energy requirement. Although this worsens the planning of the *Sunny Home Manager*, regardless of this, the wallbox stops charging at the latest when the vehicle is fully charged.
+If **repeate execution** for the [automated reading of the SOC](soc/SOC_EN.md) is enabled, it will be **executed periodically** during the loading process. If the calculated SOC either increases by a configured value (default: 20%) or a configured time has passed since last executed, it will be executed again. The calculated SOC is compared with the actual SOC and the actual charge loss are calculated from this. The actual charge loss are taken into account for all subsequent calculations of the SOC until the next execution during the current charging process.
+
+**Without [automated reading of the SOC](soc/SOC_EN.md)** and without [entering the current actual state of charge](Status_EN.md#user-content-click-green-ev), the *Smart Appliance Enabler* assumes an current SOC of 0% when the vehicle gets connected and reports a correspondingly large energy requirement. Although this worsens the planning of the *Sunny Home Manager*, regardless of this, the wallbox stops charging at the latest when the vehicle is fully charged.
 
 ### Example
 The course of a charging process using excess energy is illustrated here using excerpts from the log:
@@ -107,7 +108,7 @@ After the vehicle has been connected to the Wallbox:
 ```
 2021-05-02 13:04:04,740 DEBUG: Vehicle state changed: previousState=VEHICLE_NOT_CONNECTED newState=VEHICLE_CONNECTED
 ```
-... the SOC script was executed and returns 51%:
+... [automated reading of the SOC](soc/SOC_EN.md) was executed and returned a value of 51%:
 ```
 2021-05-02 13:04:05,048 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
 2021-05-02 13:04:59,092 DEBUG: SoC: 51.0
@@ -121,13 +122,13 @@ To calculate the SOC, the value configured for the vehicle for charging loss (`c
 ```
 2021-05-02 13:06:25,018 DEBUG: SOC calculation: socCurrent=51% socRetrievedOrInitial=51% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=0Wh chargeLoss=11%
 ```
-The charging process has progressed and the calculated SOC is 20% above the SOC of the last execution of the SOC script (default value of the configuration) - so a new execution is necessary:
+The charging process has progressed and the calculated SOC is 20% above the SOC of the last execution of the [automated reading of the SOC](soc/SOC_EN.md) (default value of the configuration) - so a new execution is necessary:
 ```
 2021-05-03 09:26:45,464 DEBUG: SOC calculation: socCurrent=71% socRetrievedOrInitial=51% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7796Wh chargeLoss=11%
 2021-05-03 09:26:45,468 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
 2021-05-03 09:27:37,613 DEBUG: SoC: 72.0
 ```
-The calculated SOC is 71%, the value returned by the SOC script is 72%. The energy that has "arrived" in the vehicle can be calculated from the SOC change (`energyReceivedByEv`). From this and the amount of energy used according to the meter, the actual charge loss can be calculated - here 4%:
+The calculated SOC is 71%, the value returned by [automated reading of the SOC](soc/SOC_EN.md) is 72%. The energy that has "arrived" in the vehicle can be calculated from the SOC change (`energyReceivedByEv`). From this and the amount of energy used according to the meter, the actual charge loss can be calculated - here 4%:
 ```
 2021-05-03 09:27:37,674 DEBUG: charge loss calculation: chargeLoss=4% socCurrent=72% socLastRetrieval=51% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7844Wh energyReceivedByEv=7560Wh
 ```
@@ -139,13 +140,13 @@ At this point, the target SOC for this charging process was increased to 100% ma
 ```
 2021-05-03 09:56:15,985 DEBUG: Received request to update SOC: socCurrent=74 socTarget=100
 ```
-The calculated SOC is again 20% above the SOC of the last execution of the SOC script - so a new execution is necessary:
+The calculated SOC is again 20% above the SOC of the last execution of the [automated reading of the SOC](soc/SOC_EN.md) - so a new execution is necessary:
 ```
 2021-05-03 11:47:05,529 DEBUG: SOC retrieval is required: SocValues{batteryCapacity=36000Wh, initial=51%, retrieved=72%, current=92%}
 2021-05-03 11:47:05,532 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
 2021-05-03 11:47:59,060 DEBUG: SoC: 90.0
 ```
-The calculated SOC was 92%, the value returned by the SOC script was 90%. The calculation of the actual charge loss gives 14%:
+The calculated SOC was 92%, the value returned by [automated reading of the SOC](soc/SOC_EN.md) was 90%. The calculation of the actual charge loss gives 14%:
 ```
 2021-05-03 11:47:59,119 DEBUG: charge loss calculation: chargeLoss=14% socCurrent=90% socLastRetrieval=72% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=7416Wh energyReceivedByEv=6480Wh
 ```
@@ -153,7 +154,7 @@ From now on, the newly calculated value of 14% will be used to calculate the SOC
 ```
 2021-05-03 11:48:05,532 DEBUG: SOC calculation: socCurrent=90% socRetrievedOrInitial=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=10Wh chargeLoss=14%
 ```
-The calculated remaining amount of energy required to achieve the target SOC is less than 1 kWh for the first time - this is why another execution of the SOC script is triggered to ensure that the vehicle is actually close to reaching the target SOC:
+The calculated remaining amount of energy required to achieve the target SOC is less than 1 kWh for the first time - this is why another execution of the [automated reading of the SOC](soc/SOC_EN.md) is triggered to ensure that the vehicle is actually close to reaching the target SOC:
 ```
 2021-05-03 12:55:05,777 DEBUG: energy calculation: 360Wh evId=1 batteryCapactiy=36000Wh currentSoc=99% targetSoc=100%
 2021-05-03 12:55:05,767 DEBUG: SOC calculation: socCurrent=99% socRetrievedOrInitial=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=3515Wh chargeLoss=14%
@@ -162,7 +163,7 @@ The calculated remaining amount of energy required to achieve the target SOC is 
 2021-05-03 12:55:05,772 DEBUG: Executing SoC script: /opt/sae/soc/soc.sh
 2021-05-03 12:55:58,372 DEBUG: SoC: 98.0
 ```
-The calculated SOC is 99%, the value returned by the SOC script is 98%. The charging loss can be calculated from this: 23% in this phase of charging:
+The calculated SOC is 99%, the value returned by the [automated reading of the SOC](soc/SOC_EN.md) is 98%. The charging loss can be calculated from this: 23% in this phase of charging:
 ```
 2021-05-03 12:55:58,436 DEBUG: charge loss calculation: chargeLoss=23% socCurrent=98% socLastRetrieval=90% batteryCapacity=36000Wh energyMeteredSinceLastSocScriptExecution=3552Wh energyReceivedByEv=2880Wh
 ```
@@ -194,8 +195,8 @@ sae@raspi:~ $ grep "Received control" -A 3 /tmp/rolling-2020-11-18.log
 
 *Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `Received control` after `Only show lines with text` and press Refresh.
 
-### SOC script
-The [Log](Logging_EN.md) contains the following lines for each execution of the SOC script:
+### Automated reading of the SOC
+The [Log](Logging_EN.md) contains the following lines for each execution of the [automated reading of the SOC](soc/SOC_EN.md):
 
 ```console
 sae@raspi:~ $ grep "SocScript" /tmp/rolling-2021-01-09.log

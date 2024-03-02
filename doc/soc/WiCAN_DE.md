@@ -13,9 +13,9 @@ Sobald das **Fahrzeug mit der Wallbox verbunden** wird, wird vom *Smart Applianc
 
 Ca. 3 Minuten nach dem Abschalten des Fahrzeugs **schaltet sich auch der WiCAN ODB2-Adapter aus**, um die Fahrzeug-Batterie nicht zu belasten.
 
-## Konfiguration WiCAN ODB2-Adapter
+## Konfiguration des WiCAN ODB2-Adapter
 
-Wichtige Einstellungen der Konfiguration des WiCAN sind:
+Wichtige Einstellungen der Konfiguration des WiCAN ODB2-Adapter sind:
 
 ### AP Config
 - Mode: AP+Station
@@ -61,7 +61,7 @@ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/so
 $ chmod +x /opt/sae/soc/*.sh
 ```
 
-**Die Scripts `wican-status.sh` und `wican-soc.sh` müssen für das jeweilige Fahrzeug angessat werden**: In `wican-status.sh` muss die CAN-Nachricht zu Anfordern des SOC eingetragen werden.  In `wican-soc.sh` muss aus der Antwort der SOC extrahiert werden. Ohne Anpassungen funktionieren beide Script aktuell für den Nissan Leaf ZE1. Die CAN-Nachrichten für ein bestimmtes Fahrzeug lassen sich meist in einschlägigen Internet-Foren finden oder auch mittels **Apps wie "Car Scanner"**, welche vom WiCAN-OBD2-Adapter unterstützt wird.
+**Die Scripts `wican-status.sh` und `wican-soc.sh` müssen für das jeweilige Fahrzeug angepasst werden**: In `wican-status.sh` muss die CAN-Nachricht zu Anfordern des SOC eingetragen werden.  In `wican-soc.sh` muss aus der Antwort der SOC extrahiert werden. Ohne Anpassungen funktionieren beide Script aktuell für den Nissan Leaf ZE1. Die CAN-Nachrichten für ein bestimmtes Fahrzeug lassen sich meist in einschlägigen Internet-Foren finden oder auch mittels **Apps wie "Car Scanner"**, welche vom WiCAN-OBD2-Adapter unterstützt wird.
 
 Zum Starten der ersten beiden Scripts werden Systemd-Services verwendet: 
 ```bash

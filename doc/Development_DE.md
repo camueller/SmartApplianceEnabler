@@ -57,6 +57,44 @@ Eine Shell im Jenkins-Docker-Container öffnet:
 ```bash
 sudo docker exec -it jenkins bash
 ```
+#### Jenkins-Agent auf Raspberry Pi
+Zur Erzeugung des Raspberry Pi Images für Release-Builds muss ein Jenkins-Agent auf einem Raspberry Pi installiert sein.
+
+##### Docker
+Zunächst muss `Docker` auf dem Raspberry Pi installiert werden:
+
+```bash
+curl -sSL https://get.docker.com | sudo sh
+```
+Danach kann man die Docker-Installation überprüfen:
+
+```bash
+$ docker version
+Client: Docker Engine - Community
+ Version:           19.03.13
+[...]
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          19.03.13
+[...]
+
+```
+##### Jenkins-Agent
+
+Dazu sollte auf dem Raspberry Pi zunächst der User `jenkins` angelegt werden:
+```bash
+$ sudo useradd jenkins
+$ sudo usermod -a -G sudo,docker jenkins
+$ sudo passwd jenkins
+```
+Die weitere Installation ist in der [Jenkins-Dokumentation beschrieben](https://www.jenkins.io/doc/book/using/using-agents/).
+
+
+```bash
+cd ~
+git clone https://github.com/camueller/SmartApplianceEnabler.git
+```
 
 ### Mosquitto
 Damit der *Smart Appliance Enabler* getestet werden kann, ist ein MQTT-Broker erforderlich. Hier wird dazu Mosquitto eingesetzt, der ebenfalls als Docker-Container läuft und wie folgt gestartet wird:
