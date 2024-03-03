@@ -1,5 +1,5 @@
-# Shelly Plug (S)
-Mit dem [Shelly plug](https://shelly.cloud/shelly-plug/) oder dem [Shelly Plug S](https://shelly.cloud/knowledge-base/devices/shelly-plug-s/), der mit dem WLAN verbunden ist, lässt sich ein Gerät schalten sowie dessen aktueller Stromverbrauch messen.
+# Shelly Plug
+Mit dem [Shelly plug](https://shelly.cloud/shelly-plug/), der mit dem WLAN verbunden ist, lässt sich ein Gerät schalten sowie dessen aktueller Stromverbrauch messen.
 
 ## Verwendung als Stromzähler
 Für die Verwendung als Stromzähler sind folgende Einstellungen notwendig (IP-Adresse bzw. Hostname ist anzupassen):
@@ -9,6 +9,26 @@ Für die Verwendung als Stromzähler sind folgende Einstellungen notwendig (IP-A
 | Format                                         | JSON                       |
 | URL                                            | http://192.168.1.1/meter/0 |
 | Pfad für Extraktion (bei Parameter `Leistung`) | $.power                    |
+
+## Verwendung als Schalter
+Für die Verwendung als Schalter sind folgende Einstellungen notwendig (IP-Adresse bzw. Hostname ist anzupassen):
+
+| Feld                  | Wert                                   |
+|-----------------------|----------------------------------------|
+| Aktion "Einschalten"  | http://192.168.1.xxx/relay/0?turn=on   |
+| Aktion "Ausschalten"  | http://192.168.1.xxx/relay/0?turn=off  |
+
+# Shelly Plug S
+Mit dem [Shelly Plug S](https://shelly.cloud/knowledge-base/devices/shelly-plug-s/), der mit dem WLAN verbunden ist, lässt sich ein Gerät schalten sowie dessen aktueller Stromverbrauch messen.
+
+## Verwendung als Stromzähler
+Für die Verwendung als Stromzähler sind folgende Einstellungen notwendig (IP-Adresse bzw. Hostname ist anzupassen):
+
+| Feld                                           | Wert                                         |
+|------------------------------------------------|----------------------------------------------|
+| Format                                         | JSON                                         |
+| URL                                            | http://192.168.1.1/rpc/Switch.GetStatus?id=0 |
+| Pfad für Extraktion (bei Parameter `Leistung`) | $.apower                                     |
 
 ## Verwendung als Schalter
 Für die Verwendung als Schalter sind folgende Einstellungen notwendig (IP-Adresse bzw. Hostname ist anzupassen):
