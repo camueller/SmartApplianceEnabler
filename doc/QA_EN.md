@@ -7,7 +7,8 @@
 - Entries such as: "EM gateway not found", "EM device not found" often appear in the system logbook. ---> [SP3](#sp3)
 
 ### Sunny Home Manager
-- The device does not turn on ---> [SEMP3](#semp3), [SEMP4](#semp4), [SAE4](#sae4), [SAE7](#sae7)
+- Device does not turn on ---> [SEMP3](#semp3), [SEMP4](#semp4), [SEMP5](#semp5), [SAE4](#sae4), [SAE7](#sae7)
+- Device is unexpectedly turned on ---> [SEMP4](#semp4)
 
 ### Smart Appliance Enabler
 - Is the *Smart Appliance Enabler* running? ---> [SAE1](#sae1)
@@ -68,6 +69,24 @@ If the consumer **must** run, it will send a switch-on command **at the latest**
 You can [check in the log](Control_EN.md#control-request) whether a control request is received from the *Sunny Home Manager*. If a corresponding log entry is found and the device is still not switched, it is not the *Sunny Home Manager*. ---> [SAE4](#sae4)
 
 ### SEMP4
+If switching processes do not meet expectations, you should first check what information the *Smart Appliance Enabler* transmitted to the *Sunny Home Manager* via [SEMP interface](SEMP_DE.md#xml) immediately before the unexpected switching process. To do this, you first have to find the [unexpected switching command](#sae4) in the [log file](Logging_DE.md). From this point, search **backward** for `Reporting device status from control`. This line marks the beginning of a query by the *Sunny Home Manager* and contains
+- the *current switching status* (`status=...`)
+- the information whether switching commands are currently being accepted (`eMSignalsAccepted=`)
+- Runtime or energy requirements (`Timeframe added to PlanningRequest`)
+
+*Example*
+
+The following log shows that the device is not switched on (`status=Off`), but switching commands are accepted (`eMSignalsAccepted=true`). There is also an energy requirement for 0Wh (`0Wh`) up to 9360Wh (`172096s`), which must be met from now (`0s`) to 172096 seconds (`172096s`).
+```
+2024-03-07 18:27:55,157 DEBUG [http-nio-8080-exec-6] d.a.s.s.w.SempController [SempController.java:336] F-00000001-000000000019-00: Reporting device status from control
+2024-03-07 18:27:55,157 DEBUG [http-nio-8080-exec-6] d.a.s.s.w.SempController [SempController.java:345] F-00000001-000000000019-00: DeviceStatus{eMSignalsAccepted=true, status=Off, errorCode=null}
+2024-03-07 18:27:55,157 DEBUG [http-nio-8080-exec-6] d.a.s.s.w.SempController [SempController.java:351] F-00000001-000000000019-00: Reporting power info from meter.
+2024-03-07 18:27:55,158 DEBUG [http-nio-8080-exec-6] d.a.s.s.w.SempController [SempController.java:365] F-00000001-000000000019-00: PowerInfo{averagePower=0, minPower=null, maxPower=null, timestamp=0, averagingInterval=60}
+2024-03-07 18:27:55,158 DEBUG [http-nio-8080-exec-6] d.a.s.s.w.SempController [SempController.java:435] F-00000001-000000000019-00: Timeframe created: 0s-172096s:0Wh/9360Wh
+2024-03-07 18:27:55,159 DEBUG [http-nio-8080-exec-6] d.a.s.s.w.SempController [SempController.java:387] F-00000001-000000000019-00: Timeframe added to PlanningRequest: 0s-172096s:0Wh/9360Wh
+```
+
+### SEMP5
 From the point of view of SMA, the information that the *Sunny Home Manager* received is relevant for the error analysis. Its [SEMP logs can also be called up](ConnectionAssist_EN.md) and should be used for any service requests to SMA. SMA will not deal with logs from the *Smart Appliance Enabler*.
 
 ### SAE1
