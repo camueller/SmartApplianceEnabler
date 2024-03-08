@@ -113,10 +113,12 @@ public class TimeframeIntervalHandlerTest extends TestBase {
 
     @Test
     public void clearQueue() {
-        var existingTimeframeInterval = buildTimeframeIntervalForNow(LocalTime.now().minusHours(1).getHour(), 0, 0, 23, 59, 59, buildOptionalEnergySocRequest());
+        var socRequest = spy(buildOptionalEnergySocRequest());
+        var existingTimeframeInterval = buildTimeframeIntervalForNow(LocalTime.now().minusHours(1).getHour(), 0, 0, 23, 59, 59, socRequest);
         sut.addTimeframeInterval(now, existingTimeframeInterval, true, true);
         sut.clearQueue();
         assertEquals(0, sut.getQueue().size());
+        verify(socRequest).remove();
     }
 
     @Nested
