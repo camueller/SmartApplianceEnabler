@@ -10,14 +10,14 @@
     "test:default": "testcafe chrome \"src/*.spec.ts\"",
     "test:localhost4200": "SKIP_MQTT_CONFIGURATION=true E2E_TEST_URL=http://localhost:4200/?lang=de testcafe chrome \"src/*.spec.ts\"",
     "test:localhost8080": "SKIP_MQTT_CONFIGURATION=true E2E_TEST_URL=http://localhost:8080/?lang=de testcafe chrome \"src/*.spec.ts\"",
-    "test:chrome":  "E2E_TEST_URL=http://server:8081/?lang=de DEBUG=true testcafe \"browserstack:chrome@109.0:Windows 10\" \"src/*.spec.ts\"",
-    "test:firefox": "E2E_TEST_URL=http://server:8081/?lang=de DEBUG=true testcafe \"browserstack:firefox@109.0:Windows 10\" \"src/*.spec.ts\"",
-    "test:safari":  "E2E_TEST_URL=http://server:8081/?lang=de DEBUG=true testcafe \"browserstack:safari@15.6:OS X Monterey\" \"src/*.spec.ts\""
+    "test:chrome":  "E2E_TEST_URL=http://server:8081/?lang=de DEBUG=true testcafe \"browserstack:chrome@122.0:Windows 11\" \"src/*.spec.ts\"",
+    "test:firefox": "E2E_TEST_URL=http://server:8081/?lang=de DEBUG=true testcafe \"browserstack:firefox@123.0:Windows 11\" \"src/*.spec.ts\"",
+    "test:safari":  "E2E_TEST_URL=http://server:8081/?lang=de DEBUG=true testcafe \"browserstack:safari@17.3:OS X Sonoma\" \"src/*.spec.ts\""
   },
   "private": true,
   "dependencies": {
     "testcafe": "~3.3.0",
-    "testcafe-browser-provider-browserstack": "^1.15.1",
+    "testcafe-browser-provider-browserstack": "^1.15.2",
     "ts-node": "~10.9.1",
     "typescript": "~5.2.2"
   }
