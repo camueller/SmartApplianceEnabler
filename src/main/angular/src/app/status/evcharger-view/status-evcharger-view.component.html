@@ -25,7 +25,7 @@
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyCharged' | translate}}</span>
     <span class="StatusComponent__appliance-status-value">{{toKWh(status.chargedEnergyAmount)}} kWh</span>
   </div>
-  <div class="StatusComponent__appliance-status" *ngIf="status.plannedEnergyAmount != null">
+  <div class="StatusComponent__appliance-status" *ngIf="status.plannedEnergyAmount != null && status.plannedEnergyAmount > 0">
     <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyPlanned' | translate}}</span>
     <span class="StatusComponent__appliance-status-value">{{toKWh(status.plannedEnergyAmount)}} kWh</span>
   </div>
