@@ -264,7 +264,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
                         setPower(now, controlMessage.power);
                     }
                 }
-                this.on(controlMessage.getTime(), controlMessage.on);
+                this.on(controlMessage.getTime(), controlMessage.on, false);
             }
         });
         this.timer = timer;
@@ -456,9 +456,13 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         return true;
     }
 
-    public boolean on(LocalDateTime now, boolean switchOn) {
+    /**
+     * @param force should be true if this method is called as part of a state change
+     */
+    public boolean on(LocalDateTime now, boolean switchOn, boolean force) {
+        var on = isOn();
         // only change state if requested state differs from actual state
-        if(isOn() ^ switchOn) {
+        if((on ^ switchOn) || force) {
             if(switchOn) {
                 logger.info("{}: Switching on", applianceId);
                 startCharging();
@@ -469,7 +473,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             }
         }
         else {
-            logger.debug("{}: Requested state already set.", applianceId);
+            logger.debug("{}: Requested state already set: switchOn={} on={}", applianceId, switchOn, on);
         }
         return true;
     }
@@ -484,9 +488,11 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         if(isWithinSwitchChargingStateDetectionDelay(true, startChargingStateDetectionDelay, currentMillis,
                 startChargingTimestamp)) {
             if(this.startChargingRequested) {
+                logger.debug("{}: isOn=true because startChargingRequested=true", applianceId);
                 return true;
             }
             if(this.stopChargingRequested) {
+                logger.debug("{}: isOn=false because stopChargingRequested=true", applianceId);
                 return false;
             }
         }
@@ -494,34 +500,37 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
     }
 
     private void onEVChargerStateChanged(LocalDateTime now, EVChargerState previousState, EVChargerState newState) {
-        this.startChargingRequested = false;
-        this.stopChargingRequested = false;
         NotificationType notificationType = NotificationType.valueOf("EVCHARGER_" + newState);
         if(this.notificationHandler != null) {
             this.notificationHandler.sendNotification(notificationType);
         }
+        if(newState == EVChargerState.ERROR) {
+            setStartChargingRequested(false);
+            setStopChargingRequested(false);
+        }
         if(newState == EVChargerState.VEHICLE_CONNECTED) {
             if(getForceInitialCharging() && wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED)) {
                 setPowerToMinimum();
-                this.on(now, true);
+                this.on(now, true, true);
             }
         }
         if(newState == EVChargerState.CHARGING) {
+            setStartChargingRequested(false);
             if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED) {
-                this.on(now, false);
+                this.on(now, false, true);
             }
             if(getForceInitialCharging() && wasInStateOneTime(EVChargerState.CHARGING)) {
                 logger.debug("{}: Stopping forced initial charging", applianceId);
-                this.on(now, false);
+                this.on(now, false, true);
             }
         }
         if(newState == EVChargerState.CHARGING_COMPLETED) {
-            this.on(now, false);
+            this.on(now, false, true);
             this.evHandler.onChargingCompleted();
         }
         if(newState == EVChargerState.VEHICLE_NOT_CONNECTED) {
             if(isOn()) {
-                on(now, false);
+                on(now, false, true);
             }
             Meter meter = appliance.getMeter();
             if(meter != null) {
@@ -707,15 +716,16 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
     public synchronized void startCharging() {
         if(!startChargingRequested) {
             logger.debug("{}: Start charging process", applianceId);
-            this.startChargingRequested = true;
-            this.stopChargingRequested = false;
+            setStartChargingRequested(true);
+            setStopChargingRequested(false);
             control.startCharging();
             this.switchChargingStateTimestamp = System.currentTimeMillis();
             publishControlMessage(true);
         }
     }
 
-    public void setStartChargingRequested(boolean startChargingRequested) {
+    protected void setStartChargingRequested(boolean startChargingRequested) {
+        logger.debug("{}: startChargingRequested={}", applianceId, startChargingRequested);
         this.startChargingRequested = startChargingRequested;
     }
 
@@ -723,8 +733,8 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         if(!stopChargingRequested) {
             logger.debug("{}: Stop charging process", applianceId);
             publishControlMessage(false);
-            this.startChargingRequested = false;
-            this.stopChargingRequested = true;
+            setStartChargingRequested(false);
+            setStopChargingRequested(true);
             control.stopCharging();
             boolean wasInChargingAfterLastVehicleConnected = wasInStateAfterLastState(EVChargerState.CHARGING, EVChargerState.VEHICLE_CONNECTED);
             this.switchChargingStateTimestamp = wasInChargingAfterLastVehicleConnected ? System.currentTimeMillis() : null;
@@ -735,7 +745,8 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         }
     }
 
-    public void setStopChargingRequested(boolean stopChargingRequested) {
+    protected void setStopChargingRequested(boolean stopChargingRequested) {
+        logger.debug("{}: stopChargingRequested={}", applianceId, stopChargingRequested);
         this.stopChargingRequested = stopChargingRequested;
     }
 
