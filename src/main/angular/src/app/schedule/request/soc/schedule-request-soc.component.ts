@@ -91,7 +91,7 @@ export class ScheduleRequestSocComponent implements OnChanges, OnInit {
     this.form.addControl('evId', new FormControl(this.evId, Validators.required));
     this.form.addControl('soc', new FormControl(this.soc,
       [Validators.required, Validators.pattern(InputValidatorPatterns.PERCENTAGE)]));
-    this.form.addControl('enabledExternally', new FormControl(!this.socRequest.enabled));
+    this.form.addControl('enabledExternally', new FormControl(this.socRequest.enabled === false));
   }
 
   updateModelFromForm(): SocRequest | undefined {

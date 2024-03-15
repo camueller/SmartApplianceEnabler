@@ -76,7 +76,7 @@ export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
     this.form.addControl('minRuntime', new FormControl(this.minRuntime, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)));
     this.form.addControl('maxRuntime', new FormControl(this.maxRuntime,
       [Validators.required, Validators.pattern(InputValidatorPatterns.TIME_OF_DAY_24H)]));
-    this.form.addControl('enabledExternally', new FormControl(!this.runtimeRequest.enabled));
+    this.form.addControl('enabledExternally', new FormControl(this.runtimeRequest.enabled === false));
   }
 
   updateModelFromForm(): RuntimeRequest | undefined {
