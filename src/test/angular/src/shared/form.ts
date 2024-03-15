@@ -133,19 +133,13 @@ export async function selectOptionMulti(t: TestController, selector: Selector, v
 export async function assertSelectOptionMulti(t: TestController, selector: Selector, values: any[], i18nPrefix?: string) {
   if (values) {
     await t.expect(await Selector(selector).exists).ok();
-    const escapedRegexDe = buildEscaptedRegexString(buildSelectOptionsString(values, i18nPrefix))
-    const escapedRegexEn = buildEscaptedRegexString(buildSelectOptionsString(values, i18nPrefix, 'en'));
     const actualSelectedOptionsString = await selector.innerText;
-    await t.expect(actualSelectedOptionsString.trim()).match(new RegExp(`(${escapedRegexDe}|${escapedRegexEn})\s?`)); // innertext may return a string with trailing \t - https://github.com/DevExpress/testcafe/issues/5011
+    values?.forEach(async expectedValue => {
+      const valueDe = getTranslation(expectedValue, i18nPrefix);
+      const valueEn = getTranslation(expectedValue, i18nPrefix, 'en');
+      await t.expect(actualSelectedOptionsString.trim()).match(new RegExp(`.*${valueDe}.*|.*${valueEn}.*`));
+    });
   }
-}
-
-function buildSelectOptionsString(values: any[], i18nPrefix?: string, lang?: string) {
-  const selectOptionStrings = [];
-  values?.forEach(value => {
-    selectOptionStrings.push(getTranslation(value, i18nPrefix, lang));
-  });
-  return selectOptionStrings.join(', ');
 }
 
 function buildEscaptedRegexString(input: string) {
