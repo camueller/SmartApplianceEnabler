@@ -66,22 +66,22 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "smartapplianceenabler:build",
-            "disableHostCheck": true
+            "disableHostCheck": true,
+            "buildTarget": "smartapplianceenabler:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "smartapplianceenabler:build:production"
+              "buildTarget": "smartapplianceenabler:build:production"
             },
             "raspi2": {
-              "browserTarget": "smartapplianceenabler:build:raspi2"
+              "buildTarget": "smartapplianceenabler:build:raspi2"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "smartapplianceenabler:build"
+            "buildTarget": "smartapplianceenabler:build"
           }
         },
         "lint": {
