@@ -259,7 +259,7 @@ public class TimeframeIntervalHandlerTest extends TestBase {
                 sut.addTimeframeInterval(now, nextTimeframeInterval, false, true);
 
                 now = LocalDateTime.of(now.toLocalDate(), LocalTime.of(21, 30, 0));
-                sut.updateQueue(now, false);
+                sut.updateQueue(now);
 
                 assertEquals(now, sut.getQueue().get(0).getInterval().getStart());
             }
@@ -273,7 +273,7 @@ public class TimeframeIntervalHandlerTest extends TestBase {
                 when(request.isFinished(any(LocalDateTime.class))).thenReturn(true);
                 when(request.getMax(any(LocalDateTime.class))).thenReturn(0);
                 now = LocalDateTime.of(now.toLocalDate(), LocalTime.of(21, 30, 0));
-                sut.updateQueue(now, false);
+                sut.updateQueue(now);
 
                 assertEquals(0, sut.getQueue().size());
             }

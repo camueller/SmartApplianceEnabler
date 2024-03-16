@@ -111,7 +111,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                             updateSocRequest((SocRequest) timeframeInterval.getRequest(),
                                     event.batteryCapacity, event.defaultSocOptionalEnergy);
                             addTimeframeInterval(event.getTime(), timeframeInterval, true, true);
-                            updateQueue(event.getTime(), false);
+                            updateQueue(event.getTime());
 //                            activateTimeframeInterval(event.getTime(), timeframeInterval);
                         }
                     }
@@ -160,7 +160,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                     "UpdateActiveTimeframeInterval", UPDATE_QUEUE_INTERVAL_SECONDS * 1000) {
                 @Override
                 public void runTask(LocalDateTime now) {
-                    updateQueue(now, false);
+                    updateQueue(now);
                 }
             };
             if (timer != null) {
@@ -214,9 +214,14 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         publishQueue(now);
     }
 
-    public void updateQueue(LocalDateTime now, boolean ignoreStartTime) {
-        if(ignoreStartTime) {
-            logger.warn("{}: Forcing queue update with ignored timeframe interval start time", applianceId);
+    public void updateQueue(LocalDateTime now) {
+        updateQueue(now, null);
+    }
+
+    public void updateQueue(LocalDateTime now, Integer considerTimeframeIntervalsActivatableWithinSeconds) {
+        if(considerTimeframeIntervalsActivatableWithinSeconds != null) {
+            logger.warn("{}: Considering timeframe intervals activatable withing {} seconds",
+                    applianceId, considerTimeframeIntervalsActivatableWithinSeconds);
         }
         queue.forEach(timeframeInterval -> timeframeInterval.getRequest().update());
         logger.debug("{}: Current Queue{}", applianceId, queue.size() > 0 ? ":" : " is empty");
@@ -232,7 +237,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
             }
         });
 
-        Optional<TimeframeInterval> activatableTimeframeInterval = getActivatableTimeframeInterval(now, ignoreStartTime);
+        Optional<TimeframeInterval> activatableTimeframeInterval = getActivatableTimeframeInterval(now, considerTimeframeIntervalsActivatableWithinSeconds);
         Holder<Boolean> optionalEnergyTimeframeIntervalMoved = new Holder<>(false);
         if(activatableTimeframeInterval.isPresent()) {
             TimeframeInterval activeTimeframeInterval = getActiveTimeframeInterval();
@@ -268,7 +273,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         });
 
         // re-evaluate after potential de-activation
-        activatableTimeframeInterval = getActivatableTimeframeInterval(now, ignoreStartTime);
+        activatableTimeframeInterval = getActivatableTimeframeInterval(now, considerTimeframeIntervalsActivatableWithinSeconds);
         if(activatableTimeframeInterval.isPresent() && ! removalPending.value) {
             if(! hasActiveTimeframeInterval()) {
                 activateTimeframeInterval(now, activatableTimeframeInterval.get());
@@ -327,12 +332,16 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         mqttClient.publish(TOPIC, message, false);
     }
 
-    private Optional<TimeframeInterval> getActivatableTimeframeInterval(LocalDateTime now, boolean ignoreStartTime) {
+    private Optional<TimeframeInterval> getActivatableTimeframeInterval(LocalDateTime now) {
+        return getActivatableTimeframeInterval(now, null);
+    }
+
+    private Optional<TimeframeInterval> getActivatableTimeframeInterval(LocalDateTime now, Integer withinSeconds) {
         if(hasActiveTimeframeInterval()) {
             return Optional.empty();
         }
         return queue.stream()
-                .filter(timeframeInterval -> timeframeInterval.isActivatable(now, ignoreStartTime))
+                .filter(timeframeInterval -> timeframeInterval.isActivatable(now, withinSeconds))
                 .findFirst();
     }
 
@@ -382,7 +391,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         }
         timeframeInterval.stateTransitionTo(TimeframeIntervalState.QUEUED);
         if(updateQueue) {
-            updateQueue(now, false);
+            updateQueue(now);
         }
     }
 
@@ -393,7 +402,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         } else {
             adjustOptionalEnergyTimeframeIntervalEnd();
         }
-        updateQueue(now, false);
+        updateQueue(now);
     }
 
     protected void activateTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
@@ -570,7 +579,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                 request.setEnabled(true);
                 updateSocRequest((SocRequest) timeframeInterval.getRequest(), batteryCapacity, socTarget);
                 addTimeframeInterval(now, timeframeInterval, true, true);
-                updateQueue(now, false);
+                updateQueue(now);
                 activateTimeframeInterval(now, timeframeInterval);
             }
         }

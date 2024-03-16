@@ -301,14 +301,18 @@ public class SempController {
             logger.debug("{}: Received control request: {}", deviceControl.getDeviceId(), deviceControl);
             Appliance appliance = ApplianceManager.getInstance().findAppliance(deviceControl.getDeviceId());
             if (appliance != null) {
-                // Work-around: if SHM sends switch-on command before timeframe interval start we have
-                // to force activation of timeframe interval
-                if(deviceControl.isOn()) {
-                    TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
-                    if(timeframeIntervalHandler != null) {
+                TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+                if(timeframeIntervalHandler != null) {
+                    if(deviceControl.isOn()) {
                         TimeframeInterval activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
                         if(activeTimeframeInterval == null) {
-                            timeframeIntervalHandler.updateQueue(now, true);
+                            // Work-around: if SHM sends switch-on command before timeframe interval start we try to find
+                            // a timeframe interval which can be activated within 5 minutes
+                            timeframeIntervalHandler.updateQueue(now, 300);
+                        }
+                        if(timeframeIntervalHandler.getActiveTimeframeInterval() == null) {
+                            logger.warn("{}: No active timeframe interval. Ignoring control request.", deviceControl.getDeviceId());
+                            return;
                         }
                     }
                 }
