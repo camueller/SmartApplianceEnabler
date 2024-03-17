@@ -110,6 +110,23 @@ $ sudo systemctl enable wican-status
 Created symlink /etc/systemd/system/multi-user.target.wants/wican-status.service → /etc/systemd/system/wican-status.service.
 ```
 
+Die Konsole-Ausgaben der Scripts sind durch den Befehl `journalctl` verfügbar:
+```bash
+sudo journalctl _SYSTEMD_UNIT=wican-soc.service
+-- Journal begins at Fri 2023-09-08 09:07:38 CEST, ends at Sun 2024-03-17 08:08:08 CET. --
+Feb 25 14:39:03 raspi2 wican-soc.sh[27329]: Waiting for messages ...
+Feb 25 17:18:45 raspi2 wican-soc.sh[27329]: Message received:
+Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6802,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[16,53,97,1,255,255,252,24]}]}
+Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6919,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[33,2,175,255,255,252,79,255]}]}
+Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6929,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[34,255,244,72,6,138,48,212]}]}
+Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6939,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[35,148,76,56,207,3,145,0]}]}
+Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6942,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[36,1,112,0,36,0,0,11]}]}
+Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6958,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[37,179,232,0,15,180,27,128]}]}
+Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6962,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[38,0,5,255,255,252,79,255]}]}
+Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6978,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[39,255,252,170,1,174,255,255]}]}
+Feb 25 17:18:45 raspi2 wican-soc.sh[27329]: Waiting for messages ...
+```
+
 ## Konfiguration des Smart Appliance Enabler
 In der Konfiguration muss unter "Wallbox" konfiguriert werden:
 
