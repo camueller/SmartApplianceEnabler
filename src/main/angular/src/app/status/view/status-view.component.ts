@@ -63,6 +63,13 @@ export class StatusViewComponent implements OnInit {
     return this.translatedStrings['StatusComponent.plannedMaxRunningTime'];
   }
 
+  getCurrentPower(applianceStatus: Status): number {
+    if (applianceStatus.currentChargePower) {
+      return this.toKWh(applianceStatus.currentChargePower);
+    }
+    return 0;
+  }
+
   toHourMinuteWithUnits(seconds: number): string {
     if (seconds == null) {
       return '';

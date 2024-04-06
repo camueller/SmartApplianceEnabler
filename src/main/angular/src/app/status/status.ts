@@ -17,6 +17,7 @@ export class Status {
   latestEnd: number;
   on: boolean;
   controllable: boolean;
+  variablePowerConsumer: boolean;
   interruptedSince: number;
   optionalEnergy: boolean;
   evIdCharging: number;

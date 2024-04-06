@@ -38,6 +38,7 @@ public class ApplianceStatus {
     private Integer latestEnd;
     private boolean on;
     private boolean controllable;
+    private boolean variablePowerConsumer;
     private Integer interruptedSince;
     private boolean optionalEnergy;
     private Integer evIdCharging;
@@ -192,6 +193,14 @@ public class ApplianceStatus {
 
     public void setControllable(boolean controllable) {
         this.controllable = controllable;
+    }
+
+    public boolean isVariablePowerConsumer() {
+        return variablePowerConsumer;
+    }
+
+    public void setVariablePowerConsumer(boolean variablePowerConsumer) {
+        this.variablePowerConsumer = variablePowerConsumer;
     }
 
     public Integer getInterruptedSince() {

@@ -37,6 +37,10 @@
         <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMaxRunningTime)}}</span>
       </div>
     </div>
+    <div class="StatusComponent__appliance-status" *ngIf="status.variablePowerConsumer">
+      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyChargePower' | translate}}</span>
+      <span class="StatusComponent__appliance-status-value">{{getCurrentPower(status)}} kW</span>
+    </div>
     <div *ngIf="status.remainingMinEnergy != null">
       <div class="StatusComponent__appliance-status">
         <span class="StatusComponent__appliance-status-label">{{'StatusComponent.remainingMinEnergy' | translate}}</span>

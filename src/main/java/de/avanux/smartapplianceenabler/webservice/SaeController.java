@@ -922,6 +922,7 @@ public class SaeController {
 
                 applianceStatus.setControllable(true);
                 Control control = appliance.getControl();
+                applianceStatus.setVariablePowerConsumer(control instanceof VariablePowerConsumer);
                 Meter meter = appliance.getMeter();
                 applianceStatus.setOn(controlMessage != null && controlMessage.on);
                 if(appliance.getTimeframeIntervalHandler() != null
@@ -938,54 +939,60 @@ public class SaeController {
                             addRequestValuesToApplianceStatus(now, applianceStatus, control, firstTimeframeInterval.getRequest(), 0);
                         }
                     }
-                    if (control instanceof ElectricVehicleCharger) {
-                        ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
-                        applianceStatus.setState(evCharger.getState().name());
-                        if(!evCharger.isVehicleNotConnected()) {
-                            var evHandler = evCharger.getElectricVehicleHandler();
-                            applianceStatus.setEvIdCharging(evHandler.getConnectedOrFirstVehicleId());
-                            ZonedDateTime zdt = ZonedDateTime.of(evCharger.getStateLastChangedTimestamp(), ZoneId.systemDefault());
-                            applianceStatus.setStateLastChangedTimestamp(zdt.toInstant().toEpochMilli());
-                            applianceStatus.setSocInitial(evHandler.getSocInitial());
-                            applianceStatus.setSocInitialTimestamp(evHandler.getSocInitialTimestamp());
-                            applianceStatus.setSoc(evHandler.getSocCurrent());
-                            applianceStatus.setSocTarget(evHandler.getSocCurrent());
 
-                            int whAlreadyCharged = 0;
-                            int chargePower = 0;
-                            if (meter != null) {
-                                String applianceMeterTopic = MqttClient.getApplianceTopic(appliance.getId(), Meter.TOPIC);
-                                MeterMessage meterMessage = this.meterMessages.get(applianceMeterTopic);
-                                if(meterMessage != null) {
-                                    whAlreadyCharged = Double.valueOf(meterMessage.energy * 1000.0f).intValue();
-                                    chargePower = meterMessage.power;
-                                }
+                    if(control instanceof VariablePowerConsumer) {
+                        VariablePowerConsumer variablePowerConsumer = (VariablePowerConsumer) control;
+                        int chargePower = 0;
+                        int whAlreadyCharged = 0;
+                        if (meter != null) {
+                            String applianceMeterTopic = MqttClient.getApplianceTopic(appliance.getId(), Meter.TOPIC);
+                            MeterMessage meterMessage = this.meterMessages.get(applianceMeterTopic);
+                            if(meterMessage != null) {
+                                whAlreadyCharged = Double.valueOf(meterMessage.energy * 1000.0f).intValue();
+                                chargePower = meterMessage.power;
                             }
-                            if (controlMessage != null && controlMessage.on) {
-                                applianceStatus.setCurrentChargePower(chargePower);
-                            }
-                            applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
-                            int whRemainingToCharge = 0;
-                            if(firstTimeframeInterval != null) {
-                                if(firstTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
-                                    Integer max = firstTimeframeInterval.getRequest().getMax(now);
-                                    whRemainingToCharge = max != null ? max : 0;
-                                }
-                                if(firstTimeframeInterval.getRequest() instanceof SocRequest) {
-                                    applianceStatus.setSocTarget(((SocRequest) firstTimeframeInterval.getRequest()).getSocOrDefault());
-                                }
-                                if (firstTimeframeInterval.getRequest().isUsingOptionalEnergy(now)) {
-                                    if(appliance.getTimeframeIntervalHandler().getQueue().size() > 1) {
-                                        var secondTimeframeInterval = appliance.getTimeframeIntervalHandler().getQueue().get(1);
-                                        applianceStatus.setPlannedEnergyAmount(secondTimeframeInterval.getRequest().getMax(now));
+                        }
+                        if (controlMessage != null && controlMessage.on) {
+                            applianceStatus.setCurrentChargePower(chargePower);
+                        }
+
+                        if (control instanceof ElectricVehicleCharger) {
+                            ElectricVehicleCharger evCharger = (ElectricVehicleCharger) control;
+                            applianceStatus.setState(evCharger.getState().name());
+                            if(!evCharger.isVehicleNotConnected()) {
+                                var evHandler = evCharger.getElectricVehicleHandler();
+                                applianceStatus.setEvIdCharging(evHandler.getConnectedOrFirstVehicleId());
+                                ZonedDateTime zdt = ZonedDateTime.of(evCharger.getStateLastChangedTimestamp(), ZoneId.systemDefault());
+                                applianceStatus.setStateLastChangedTimestamp(zdt.toInstant().toEpochMilli());
+                                applianceStatus.setSocInitial(evHandler.getSocInitial());
+                                applianceStatus.setSocInitialTimestamp(evHandler.getSocInitialTimestamp());
+                                applianceStatus.setSoc(evHandler.getSocCurrent());
+                                applianceStatus.setSocTarget(evHandler.getSocCurrent());
+
+                                applianceStatus.setChargedEnergyAmount(whAlreadyCharged);
+                                int whRemainingToCharge = 0;
+                                if(firstTimeframeInterval != null) {
+                                    if(firstTimeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
+                                        Integer max = firstTimeframeInterval.getRequest().getMax(now);
+                                        whRemainingToCharge = max != null ? max : 0;
                                     }
-                                } else {
-                                    applianceStatus.setPlannedEnergyAmount(whAlreadyCharged + whRemainingToCharge);
-                                    applianceStatus.setLatestEnd(firstTimeframeInterval.getLatestEndSeconds(now));
+                                    if(firstTimeframeInterval.getRequest() instanceof SocRequest) {
+                                        applianceStatus.setSocTarget(((SocRequest) firstTimeframeInterval.getRequest()).getSocOrDefault());
+                                    }
+                                    if (firstTimeframeInterval.getRequest().isUsingOptionalEnergy(now)) {
+                                        if(appliance.getTimeframeIntervalHandler().getQueue().size() > 1) {
+                                            var secondTimeframeInterval = appliance.getTimeframeIntervalHandler().getQueue().get(1);
+                                            applianceStatus.setPlannedEnergyAmount(secondTimeframeInterval.getRequest().getMax(now));
+                                        }
+                                    } else {
+                                        applianceStatus.setPlannedEnergyAmount(whAlreadyCharged + whRemainingToCharge);
+                                        applianceStatus.setLatestEnd(firstTimeframeInterval.getLatestEndSeconds(now));
+                                    }
                                 }
                             }
                         }
                     }
+
                     if (firstTimeframeInterval != null && firstTimeframeInterval.getState() == TimeframeIntervalState.ACTIVE) {
                         applianceStatus.setPlanningRequested(true);
                         addRequestValuesToApplianceStatus(now, applianceStatus, control, firstTimeframeInterval.getRequest(), firstTimeframeInterval.getRequest().getRuntime(now));
