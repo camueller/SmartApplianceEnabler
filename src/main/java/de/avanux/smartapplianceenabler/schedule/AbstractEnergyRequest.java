@@ -64,6 +64,7 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
         });
     }
 
+    @Override
     public void remove() {
         super.remove();
         getMqttClient().unsubscribe(MqttEventName.EVChargerStateChanged);

@@ -176,6 +176,12 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
         update();
     }
 
+    @Override
+    public void remove() {
+        super.remove();
+        getMqttClient().unsubscribe(MqttEventName.EVChargerSocChanged);
+    }
+
     public Integer calculateEnergy(int batteryCapacity) {
         Integer currentSoc = getSocCurrentOrDefault();
         Integer targetSoc = getSocOrDefault();
