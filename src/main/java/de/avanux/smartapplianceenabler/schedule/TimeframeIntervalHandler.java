@@ -262,7 +262,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                             adjustTimeframeIntervalStart(nextTimeframeInterval, now);
                         }
                     }
-                    if(!(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest)) {
+                    if(!(timeframeInterval.getRequest() instanceof OptionalEnergySocRequest) && queue.size() == 0) {
                         createAndActivateOptionalEnergyTimeframeIntervalForEVCharger(now);
                     }
                 }
