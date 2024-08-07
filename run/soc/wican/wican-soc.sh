@@ -23,7 +23,13 @@ while true; do
   BYTE1=`cat $CAN_MESSAGE_FILE | grep "data\":\[36" | jq .frame[0].data[7]`
   BYTE2=`cat $CAN_MESSAGE_FILE | grep "data\":\[37" | jq .frame[0].data[1]`
   BYTE3=`cat $CAN_MESSAGE_FILE | grep "data\":\[37" | jq .frame[0].data[2]`
-  SOC=$((($BYTE1 << 16 | $BYTE2 << 8 | $BYTE3) / 10000))
-  TIMESTAMP=`date --iso-8601=seconds`
-  $PUB -r -m "{\"soc\":$SOC, \"time\":\"$TIMESTAMP\"}"
+  BYTE4=`cat $CAN_MESSAGE_FILE | grep "data\":\[36" | jq .frame[0].data[4]`
+  BYTE5=`cat $CAN_MESSAGE_FILE | grep "data\":\[36" | jq .frame[0].data[5]`
+  if [ -n "$BYTE1" ] && [ -n "$BYTE2" ] && [ -n "$BYTE3" ] && [ -n "$BYTE4" ] && [ -n "$BYTE5" ]; then
+    SOC=$((($BYTE1 << 16 | $BYTE2 << 8 | $BYTE3) / 10000))
+    SOC_FIXED=`echo "x=1.211*$SOC-15; scale=0; x/1" | bc -l`
+    SOH=$((($BYTE4 << 8 | $BYTE5) / 102))
+    TIMESTAMP=`date --iso-8601=seconds`
+    $PUB -r -m "{\"soc\":$SOC_FIXED, \"soh\":$SOH, \"time\":\"$TIMESTAMP\"}"
+  fi
 done
