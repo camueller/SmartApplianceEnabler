@@ -169,12 +169,17 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
     }
 
     public void updateConfiguration(LocalDateTime now, Integer socCurrent) {
-        logger.debug("{}: update ev charger configuration: socCurrent={}", applianceId, socCurrent);
+        logger.debug("{}: update ev charger configuration: socCurrent={} socValues={}", applianceId, socCurrent, socValues);
+        if(this.socValues.initial == null) {
+            this.socValues.initial = socCurrent;
+        }
         if(this.socValues.initialTimestamp == null) {
             this.socValues.initialTimestamp = now;
         }
         this.socValues.current = socCurrent;
+        this.socValues.retrieved = socCurrent;
         this.socValues.retrievedTimestamp = now;
+        socRetrievalEnergyMeterValue = meterMessage != null ? meterMessage.energy : 0.0;
     }
 
     public void setSocValuesChangedListener(SocValuesChangedListener socValuesChangedListener) {
