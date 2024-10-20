@@ -378,7 +378,7 @@ public class MqttClient {
     protected void unsubscribeMessage(String fullTopic) {
         try {
             messageHandlerForSubscribedTopic.remove(fullTopic);
-            if(connect()) {
+            if(!shutdownInProgress && connect()) {
                 client.unsubscribe(fullTopic);
                 logger.debug("{}: Messages unsubscribed: topic={}", loggerId, fullTopic);
             }

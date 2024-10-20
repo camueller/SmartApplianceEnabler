@@ -71,6 +71,7 @@ abstract public class AbstractRequest implements Request {
     public void disconnectMqttClient() {
         if(mqttClient != null) {
             mqttClient.disconnect();
+            mqttClient = null;
         }
     }
 
@@ -192,6 +193,7 @@ abstract public class AbstractRequest implements Request {
     @Override
     public void remove() {
         getMqttClient().unsubscribe(Control.TOPIC);
+        disconnectMqttClient();
     }
 
     @Override
