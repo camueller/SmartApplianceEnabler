@@ -62,8 +62,8 @@ export class StatusService extends SaeService {
     return this.http.put(url, '', {responseType: 'text'});
   }
 
-  updateSoc(applianceid: string, socCurrent: number|undefined, socTarget: number|undefined): Observable<any> {
-    let url = `${SaeService.API}/evcharge?applianceid=${applianceid}`;
+  updateSoc(applianceid: string, evid: string, socCurrent: number|undefined, socTarget: number|undefined): Observable<any> {
+    let url = `${SaeService.API}/evcharge?applianceid=${applianceid}&evid=${evid}`;
     if (socCurrent) {
       url += `&socCurrent=${socCurrent}`;
     }

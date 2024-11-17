@@ -459,11 +459,20 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socTarget, LocalDateTime chargeStart, LocalDateTime chargeEnd) {
         if (isElectricVehicleCharger()) {
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
-            if(meterMessage != null && meterMessage.energy > 0.1) {
+            ElectricVehicleHandler evHandler = evCharger.getElectricVehicleHandler();
+            ElectricVehicle ev = evHandler.getConnectedVehicle();
+            if(ev.getId() == evId && meterMessage != null && meterMessage.energy > 0.1) {
                 logger.debug("{}: skipping ev charger configuration to continue charging process already started", id);
             }
             else {
-                evCharger.getElectricVehicleHandler().initConfiguration(now, evId, socCurrent);
+                evHandler.initConfiguration(now, evId, socCurrent);
+            }
+
+            if(ev.getId() != evId) {
+                timeframeIntervalHandler.removeActiveTimeframeInterval(now);
+                ev = evHandler.getConnectedVehicle();
+                timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
+                        ev.getId(), ev.getBatteryCapacity(), socCurrent, socTarget);
             }
 
             TimeframeInterval timeframeInterval =
@@ -482,18 +491,24 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         }
     }
 
-    public void updateSoc(LocalDateTime now,  Integer socCurrent, Integer socTarget) {
+    public void updateSoc(LocalDateTime now,  Integer evId, Integer socCurrent, Integer socTarget) {
         if (isElectricVehicleCharger()) {
             ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
+            ElectricVehicleHandler evHandler = evCharger.getElectricVehicleHandler();
             ElectricVehicle ev = evCharger.getElectricVehicleHandler().getConnectedVehicle();
             if(ev != null) {
                 if(!evCharger.isOn() && !isAcceptControlRecommendations()) {
                     logger.debug("{}: Removing timeframe interval of stopped charging process", id);
                     timeframeIntervalHandler.removeActiveTimeframeInterval(now);
                 }
+                if(ev.getId() != evId) {
+                    evHandler.initConfiguration(now, evId, socCurrent);
+                    timeframeIntervalHandler.removeOptionalEnergyTimeframe(now);
+                    ev = evHandler.getConnectedVehicle();
+                }
                 timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
                         ev.getId(), ev.getBatteryCapacity(), socCurrent, socTarget);
-                evCharger.getElectricVehicleHandler().updateConfiguration(now, socCurrent);
+                evHandler.updateConfiguration(now, socCurrent);
                 evCharger.resetChargingCompletedToVehicleConnected(now);
             }
             else {

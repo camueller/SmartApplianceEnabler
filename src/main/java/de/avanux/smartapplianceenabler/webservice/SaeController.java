@@ -681,16 +681,17 @@ public class SaeController {
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void updateSoc(HttpServletResponse response,
                           @RequestParam(value = "applianceid") String applianceId,
+                          @RequestParam(value = "evid") Integer evId,
                           @RequestParam(value = "socCurrent", required = false) Integer socCurrent,
                           @RequestParam(value = "socTarget", required = false) Integer socTarget
     ) {
         synchronized (lock) {
             try {
-                logger.debug("{}: Received request to update SOC: socCurrent={} socTarget={}",
-                        applianceId, socCurrent, socTarget);
+                logger.debug("{}: Received request to update SOC: evId={} socCurrent={} socTarget={}",
+                        applianceId, evId, socCurrent, socTarget);
                 Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
                 if (appliance != null) {
-                    appliance.updateSoc(LocalDateTime.now(), socCurrent, socTarget);
+                    appliance.updateSoc(LocalDateTime.now(), evId, socCurrent, socTarget);
                 } else {
                     logger.error("{}: Appliance not found", applianceId);
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);

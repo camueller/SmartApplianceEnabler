@@ -613,6 +613,13 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                         null, queue.size() > 2 ? queue.get(2) : null));
     }
 
+    public void removeOptionalEnergyTimeframe(LocalDateTime now) {
+        TimeframeInterval timeframeInterval = findOptionalEnergyIntervalForEVCharger();
+        if(timeframeInterval != null) {
+            removeTimeframeInterval(now, timeframeInterval);
+        }
+    }
+
     public void adjustOptionalEnergyTimeframeIntervalStart() {
         TimeframeInterval optionalEnergyTimeframeInterval = findOptionalEnergyIntervalForEVCharger();
         if(optionalEnergyTimeframeInterval != null) {

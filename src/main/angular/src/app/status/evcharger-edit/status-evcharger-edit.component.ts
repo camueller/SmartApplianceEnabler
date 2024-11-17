@@ -207,7 +207,7 @@ export class StatusEvchargerEditComponent implements OnInit {
     const socCurrent = getValidInt(this.form.value.socCurrent);
     const socTarget = this.form.value.socTarget;
     if (this.isChargeModeExcessEnergy) {
-      this.statusService.updateSoc(this.status.id, socCurrent, socTarget).subscribe(() => this.formSubmitted.emit());
+      this.statusService.updateSoc(this.status.id, evid?.toString(), socCurrent, socTarget).subscribe(() => this.formSubmitted.emit());
     } else {
       let chargeStart: string|undefined;
       let chargeEnd: string|undefined;
