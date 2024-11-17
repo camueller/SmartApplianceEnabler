@@ -458,27 +458,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
 
     public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socTarget, LocalDateTime chargeStart, LocalDateTime chargeEnd) {
         if (isElectricVehicleCharger()) {
-            ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
-            ElectricVehicleHandler evHandler = evCharger.getElectricVehicleHandler();
-            ElectricVehicle ev = evHandler.getConnectedVehicle();
-            if(ev.getId() == evId && meterMessage != null && meterMessage.energy > 0.1) {
-                logger.debug("{}: skipping ev charger configuration to continue charging process already started", id);
-            }
-            else {
-                evHandler.initConfiguration(now, evId, socCurrent);
-            }
-
-            if(ev.getId() != evId) {
-                timeframeIntervalHandler.removeActiveTimeframeInterval(now);
-                ev = evHandler.getConnectedVehicle();
-                timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
-                        ev.getId(), ev.getBatteryCapacity(), socCurrent, socTarget);
-            }
-
-            TimeframeInterval timeframeInterval =
-                    evCharger.createTimeframeInterval(now, evId, socCurrent, socTarget, chargeStart, chargeEnd);
-            timeframeIntervalHandler.addTimeframeIntervalAndAdjustOptionalEnergyTimeframe(now, timeframeInterval, chargeStart == null);
-
+            ((ElectricVehicleCharger) this.control).setEnergyDemand(now, evId, socCurrent, socTarget, chargeStart, chargeEnd);
             if(chargeStart == null && chargeEnd == null) {
                 // if no chargeStart and no chargeEnd is provided we switch on immediately with full power
                 DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(this.id);
@@ -493,27 +473,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
 
     public void updateSoc(LocalDateTime now,  Integer evId, Integer socCurrent, Integer socTarget) {
         if (isElectricVehicleCharger()) {
-            ElectricVehicleCharger evCharger = (ElectricVehicleCharger) this.control;
-            ElectricVehicleHandler evHandler = evCharger.getElectricVehicleHandler();
-            ElectricVehicle ev = evCharger.getElectricVehicleHandler().getConnectedVehicle();
-            if(ev != null) {
-                if(!evCharger.isOn() && !isAcceptControlRecommendations()) {
-                    logger.debug("{}: Removing timeframe interval of stopped charging process", id);
-                    timeframeIntervalHandler.removeActiveTimeframeInterval(now);
-                }
-                if(ev.getId() != evId) {
-                    evHandler.initConfiguration(now, evId, socCurrent);
-                    timeframeIntervalHandler.removeOptionalEnergyTimeframe(now);
-                    ev = evHandler.getConnectedVehicle();
-                }
-                timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
-                        ev.getId(), ev.getBatteryCapacity(), socCurrent, socTarget);
-                evHandler.updateConfiguration(now, socCurrent);
-                evCharger.resetChargingCompletedToVehicleConnected(now);
-            }
-            else {
-                logger.warn("{}: no ev connected", id);
-            }
+            ((ElectricVehicleCharger) this.control).updateSoc(now, evId, socCurrent, socTarget, isAcceptControlRecommendations());
         }
         else {
             logger.warn("{}: SOC can only be set for ev charger!", id);

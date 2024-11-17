@@ -771,6 +771,53 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         }
     }
 
+    public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socTarget, LocalDateTime chargeStart, LocalDateTime chargeEnd) {
+        logger.debug("{}: Set energy demand for ev={} socCurrent={} socTarget={} chargeStart={} chargeEnd={}", applianceId, evId, socCurrent, socTarget, chargeStart, chargeEnd);
+        var timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+        var ev = this.evHandler.getConnectedVehicle();
+        if(ev.getId() == evId && meterMessage != null && meterMessage.energy > 0.1) {
+            logger.debug("{}: skipping ev charger configuration to continue charging process already started", applianceId);
+        }
+        else {
+            this.evHandler.initConfiguration(now, evId, socCurrent);
+        }
+
+        if(ev.getId() != evId) {
+            timeframeIntervalHandler.removeActiveTimeframeInterval(now);
+            ev = this.evHandler.getConnectedVehicle();
+            timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
+                    ev.getId(), ev.getBatteryCapacity(), socCurrent, socTarget);
+        }
+
+        TimeframeInterval timeframeInterval =
+                createTimeframeInterval(now, evId, socCurrent, socTarget, chargeStart, chargeEnd);
+        timeframeIntervalHandler.addTimeframeIntervalAndAdjustOptionalEnergyTimeframe(now, timeframeInterval, chargeStart == null);
+    }
+
+    public void updateSoc(LocalDateTime now,  Integer evId, Integer socCurrent, Integer socTarget, boolean acceptControlRecommendations) {
+        logger.debug("{}: Update SOC for ev={} socCurrent={} socTarget={} acceptControlRecommendations={}", applianceId, evId, socCurrent, socTarget, acceptControlRecommendations);
+        var ev = this.evHandler.getConnectedVehicle();
+        var timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+        if(ev != null) {
+            if(!isOn() && !acceptControlRecommendations) {
+                logger.debug("{}: Removing timeframe interval of stopped charging process", applianceId);
+                timeframeIntervalHandler.removeActiveTimeframeInterval(now);
+            }
+            if(ev.getId() != evId) {
+                evHandler.initConfiguration(now, evId, socCurrent);
+                timeframeIntervalHandler.removeOptionalEnergyTimeframe(now);
+                ev = evHandler.getConnectedVehicle();
+            }
+            timeframeIntervalHandler.updateSocOfOptionalEnergyTimeframeIntervalForEVCharger(now,
+                    ev.getId(), ev.getBatteryCapacity(), socCurrent, socTarget);
+            evHandler.updateConfiguration(now, socCurrent);
+            resetChargingCompletedToVehicleConnected(now);
+        }
+        else {
+            logger.warn("{}: no ev connected", id);
+        }
+    }
+
     public synchronized void updateSoc(LocalDateTime now) {
         if(! isVehicleNotConnected()) {
             var request = appliance.getTimeframeIntervalHandler() != null
