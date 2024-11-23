@@ -163,6 +163,7 @@ public class ElectricVehicleHandler implements ApplianceIdConsumer, SocScriptExe
         this.connectedVehicleId = connectedVehicleId;
         this.socValues.initial = socCurrent;
         this.socValues.current = socCurrent;
+        this.socValues.retrieved = socCurrent;
         if(this.socValues.initialTimestamp == null) {
             this.socValues.initialTimestamp = now;
         }
