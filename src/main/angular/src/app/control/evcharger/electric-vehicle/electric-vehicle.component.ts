@@ -116,7 +116,7 @@ export class ElectricVehicleComponent implements OnChanges, OnInit {
       Validators.pattern(InputValidatorPatterns.INTEGER)));
     this.form.addControl('scriptTimeoutSeconds', new FormControl(socScript?.timeoutSeconds,
       Validators.pattern(InputValidatorPatterns.INTEGER)));
-    this.setScriptUpdateSocAfter(socScript.updateEnabled);
+    this.setScriptUpdateSocAfter(socScript?.updateEnabled);
   }
 
   updateForm() {
