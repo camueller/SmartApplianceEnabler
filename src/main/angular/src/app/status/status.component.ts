@@ -141,7 +141,11 @@ export class StatusComponent implements OnInit, OnDestroy {
       onRedClicked(status: Status, onActionCompleted: Subject<any>) {
         this_.applianceIdClicked = status.id;
         this_.statusService.toggleAppliance(status.id, false).subscribe(() => {
-          this_.statusService.setAcceptControlRecommendations(status.id, false).subscribe();
+          if(this_.isEvCharger(status)) {
+            this_.statusService.clearEvChargeRequest(status.id).subscribe();
+          } else {
+            this_.statusService.setAcceptControlRecommendations(status.id, false).subscribe();
+          }
           this_.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, status.id, false, () => onActionCompleted.next(true));
         });
       },

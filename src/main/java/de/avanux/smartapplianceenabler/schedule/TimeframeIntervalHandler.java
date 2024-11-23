@@ -628,6 +628,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
             if(queue.size() > 1 && optionalEnergyTimeframeIntervalIsLast) {
                 TimeframeInterval previousTimeframeInterval = queue.get(optionalEnergyTimeframeIntervalIndex - 1);
                 adjustSecondTimeframeIntervalStart(previousTimeframeInterval, optionalEnergyTimeframeInterval);
+            } else if(queue.size() == 1) {
+                adjustTimeframeIntervalStart(optionalEnergyTimeframeInterval, LocalDateTime.now());
             }
         }
     }

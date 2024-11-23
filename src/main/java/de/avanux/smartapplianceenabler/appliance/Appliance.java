@@ -471,6 +471,14 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         }
     }
 
+    public void clearEnergyDemand(LocalDateTime now) {
+        var activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
+        if(!(activeTimeframeInterval.getRequest() instanceof OptionalEnergySocRequest)) {
+            timeframeIntervalHandler.removeTimeframeInterval(now, activeTimeframeInterval);
+        }
+        timeframeIntervalHandler.adjustOptionalEnergyTimeframeIntervalStart();
+    }
+
     public void updateSoc(LocalDateTime now,  Integer evId, Integer socCurrent, Integer socTarget) {
         if (isElectricVehicleCharger()) {
             ((ElectricVehicleCharger) this.control).updateSoc(now, evId, socCurrent, socTarget, isAcceptControlRecommendations());

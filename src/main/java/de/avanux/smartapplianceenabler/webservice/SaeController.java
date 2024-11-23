@@ -677,6 +677,27 @@ public class SaeController {
         }
     }
 
+    @RequestMapping(value = EVCHARGE_URL, method = RequestMethod.DELETE)
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public void clearEnergyDemand(HttpServletResponse response,
+                                @RequestParam(value = "applianceid") String applianceId
+    ) {
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Received request to clear energy demand");
+                Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+                if (appliance != null) {
+                    appliance.clearEnergyDemand(LocalDateTime.now());
+                } else {
+                    logger.error("{}: Appliance not found", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
+            }
+        }
+    }
+
     @RequestMapping(value = EVCHARGE_URL, method = RequestMethod.PATCH)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void updateSoc(HttpServletResponse response,

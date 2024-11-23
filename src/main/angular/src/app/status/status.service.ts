@@ -62,6 +62,12 @@ export class StatusService extends SaeService {
     return this.http.put(url, '', {responseType: 'text'});
   }
 
+  clearEvChargeRequest(applianceid: string) {
+    let url = `${SaeService.API}/evcharge?applianceid=${applianceid}`;
+    this.logger.debug('Clear ev charge request using ' + url);
+    return this.http.delete(url);
+  }
+
   updateSoc(applianceid: string, evid: string, socCurrent: number|undefined, socTarget: number|undefined): Observable<any> {
     let url = `${SaeService.API}/evcharge?applianceid=${applianceid}&evid=${evid}`;
     if (socCurrent) {
