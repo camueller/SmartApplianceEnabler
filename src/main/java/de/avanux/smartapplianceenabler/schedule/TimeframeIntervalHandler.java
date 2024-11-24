@@ -515,7 +515,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         }
         Request request = new OptionalEnergySocRequest(evId);
         request.setApplianceId(applianceId);
-        return new TimeframeInterval(interval, request);
+        var timeframeInterval = new TimeframeInterval(interval, request);
+        logger.debug("{}: Created timeframe interval: {}", applianceId, timeframeInterval.toString(now));
+        return timeframeInterval;
     }
 
     private Interval createOptionalEnergyIntervalForEVCharger(LocalDateTime now,
