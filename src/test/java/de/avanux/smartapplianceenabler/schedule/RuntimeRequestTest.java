@@ -73,7 +73,7 @@ public class RuntimeRequestTest extends TestBase {
             @DisplayName("after a switch-on message max runtime is reduced by the duration since this")
             public void switchOnMessageReceived() {
                 var now = LocalDateTime.now();
-                mqttMessageArrivedOnSubscribe(Control.TOPIC, true,
+                mqttMessageArrivedOnSubscribe(Control.TOPIC, true, true,
                         new ControlMessage(now.minusMinutes(30), true)
                 );
 
@@ -90,7 +90,7 @@ public class RuntimeRequestTest extends TestBase {
                 @DisplayName("if switched on max runtime is reduced by switched-on durations and duration since last switch-on message")
                 public void switchedOn() {
                     var now = LocalDateTime.now();
-                    mqttMessageArrivedOnSubscribe(Control.TOPIC, true,
+                    mqttMessageArrivedOnSubscribe(Control.TOPIC, true, true,
                             new ControlMessage(now.minusMinutes(60), true),
                             new ControlMessage(now.minusMinutes(50), false),
                             new ControlMessage(now.minusMinutes(20), true)
@@ -106,7 +106,7 @@ public class RuntimeRequestTest extends TestBase {
                 @DisplayName("if switched off max runtime is reduced by switched-on durations")
                 public void switchedOff() {
                     var now = LocalDateTime.now();
-                    mqttMessageArrivedOnSubscribe(Control.TOPIC, true,
+                    mqttMessageArrivedOnSubscribe(Control.TOPIC, true, true,
                             new ControlMessage(now.minusMinutes(60), true),
                             new ControlMessage(now.minusMinutes(50), false),
                             new ControlMessage(now.minusMinutes(30), true),
@@ -144,7 +144,7 @@ public class RuntimeRequestTest extends TestBase {
             @DisplayName("after a switch-on message max runtime is reduced by the duration since this")
             public void switchOnMessageReceived() {
                 var now = LocalDateTime.now();
-                mqttMessageArrivedOnSubscribe(Control.TOPIC, true,
+                mqttMessageArrivedOnSubscribe(Control.TOPIC, true, true,
                         new ControlMessage(now.minusMinutes(15), true)
                 );
 
@@ -161,7 +161,7 @@ public class RuntimeRequestTest extends TestBase {
                 @DisplayName("if switched on max runtime is reduced by switched-on durations and duration since last switch-on message")
                 public void switchedOn() {
                     var now = LocalDateTime.now();
-                    mqttMessageArrivedOnSubscribe(Control.TOPIC, true,
+                    mqttMessageArrivedOnSubscribe(Control.TOPIC, true, true,
                             new ControlMessage(now.minusMinutes(60), true),
                             new ControlMessage(now.minusMinutes(50), false),
                             new ControlMessage(now.minusMinutes(10), true)
@@ -177,7 +177,7 @@ public class RuntimeRequestTest extends TestBase {
                 @DisplayName("if switched off max runtime is reduced by switched-on durations")
                 public void switchedOff() {
                     var now = LocalDateTime.now();
-                    mqttMessageArrivedOnSubscribe(Control.TOPIC, true,
+                    mqttMessageArrivedOnSubscribe(Control.TOPIC, true, true,
                             new ControlMessage(now.minusMinutes(60), true),
                             new ControlMessage(now.minusMinutes(50), false),
                             new ControlMessage(now.minusMinutes(30), true),

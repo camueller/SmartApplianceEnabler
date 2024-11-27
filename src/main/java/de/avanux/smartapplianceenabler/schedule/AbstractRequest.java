@@ -163,7 +163,7 @@ abstract public class AbstractRequest implements Request {
 
     @Override
     public void init() {
-        getMqttClient().subscribe(Control.TOPIC, true, (topic, message) -> {
+        getMqttClient().subscribe(Control.TOPIC, true, true, (topic, message) -> {
             if(message instanceof ControlMessage) {
                 controlMessage = (ControlMessage) message;
                 getLogger().trace("{}: MQTT message received: {}", applianceId, controlMessage);

@@ -38,6 +38,14 @@ abstract public class TestBase {
         }).when(mqttClient).subscribe(Mockito.eq(topic), Mockito.eq(expandTopic), Mockito.any(MqttMessageHandler.class));
     }
 
+    public void mqttMessageArrivedOnSubscribe(String topic, boolean expandTopic, boolean set, MqttMessage... messages) {
+        Mockito.doAnswer(invocation -> {
+            var messageHandler = (MqttMessageHandler) invocation.getArgument(3);
+            Arrays.asList(messages).forEach(message -> messageHandler.messageArrived(Meter.TOPIC, message));
+            return null;
+        }).when(mqttClient).subscribe(Mockito.eq(topic), Mockito.eq(expandTopic), Mockito.eq(set), Mockito.any(MqttMessageHandler.class));
+    }
+
     protected String fullTopic(String applianceId, String topic) {
         return "sae/" + applianceId + "/" + topic;
     }
