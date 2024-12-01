@@ -238,9 +238,8 @@ public class TimeframeIntervalHandlerTest extends TestBase {
 
                 sut.fillQueue(now);
 
-                assertEquals(2, sut.getQueue().size());
+                assertEquals(1, sut.getQueue().size());
                 assertEquals(buildTimeframeInterval(now.toLocalDate(), 0, 11, 0, 0, 13, 0, 0, schedule.getRequest(), TimeframeIntervalState.QUEUED), sut.getQueue().get(0));
-                assertEquals(buildTimeframeInterval(now.toLocalDate(), 1, 11, 0, 0, 13, 0, 0, schedule.getRequest(), TimeframeIntervalState.QUEUED), sut.getQueue().get(1));
             }
         }
     }

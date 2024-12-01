@@ -22,6 +22,7 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.appliance.TimeframeIntervalChangedListener;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.StartingCurrentSwitch;
+import de.avanux.smartapplianceenabler.control.VariablePowerConsumer;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerState;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicle;
 import de.avanux.smartapplianceenabler.control.ev.ElectricVehicleCharger;
@@ -199,7 +200,9 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                         || timeframeInterval.getInterval().getStart().isAfter(lastTimeframeInterval.getInterval().getEnd()))
                         && timeframeInterval.isIntervalSufficient(now)
                 )
-                .limit(control instanceof StartingCurrentSwitch ? (queue.size() == 0 ? 1 : 0) : Integer.MAX_VALUE)
+                .limit(
+                        (control instanceof StartingCurrentSwitch || control instanceof VariablePowerConsumer)
+                                ? (queue.isEmpty() ? 1 : 0) : Integer.MAX_VALUE)
                 .forEach(timeframeInterval -> {
                     if(control instanceof StartingCurrentSwitch) {
                         // if appliance is switched off, the starting current has already been detected and the
@@ -420,7 +423,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         queue.remove(timeframeInterval);
         removeTimeframeIntervalChangedListener(timeframeInterval.getRequest());
         timeframeInterval.getRequest().remove();
-        if(control instanceof StartingCurrentSwitch) {
+        if(control instanceof StartingCurrentSwitch || control instanceof VariablePowerConsumer) {
             fillQueue(now);
         }
     }
