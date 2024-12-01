@@ -193,7 +193,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     }
 
     private int getPower() {
-        return Double.valueOf(((getDutyCycle() / (double) range - minDutyCycle / 100) / ((this.maxDutyCycle - this.minDutyCycle) / 100)) * maxPowerConsumption).intValue();
+        return Double.valueOf((getDutyCycle() * maxPowerConsumption) /  (((this.maxDutyCycle - this.minDutyCycle) / 100) * (double) range)).intValue();
     }
 
     protected int calculateDutyCycle(int power) {
