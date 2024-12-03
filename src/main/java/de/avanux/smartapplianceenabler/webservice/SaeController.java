@@ -1030,6 +1030,7 @@ public class SaeController {
             }
 
             applianceStatuses.add(applianceStatus);
+            logger.trace(applianceStatus.toString());
         }
         return applianceStatuses;
     }

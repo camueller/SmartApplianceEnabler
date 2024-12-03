@@ -282,4 +282,39 @@ public class ApplianceStatus {
     public void setSocTarget(Integer socTarget) {
         this.socTarget = socTarget;
     }
+
+    @Override
+    public String toString() {
+        return "ApplianceStatus{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", vendor='" + vendor + '\'' +
+                ", runningTime=" + runningTime +
+                ", remainingMinRunningTime=" + remainingMinRunningTime +
+                ", remainingMaxRunningTime=" + remainingMaxRunningTime +
+                ", remainingMinEnergy=" + remainingMinEnergy +
+                ", remainingMaxEnergy=" + remainingMaxEnergy +
+                ", plannedEnergyAmount=" + plannedEnergyAmount +
+                ", chargedEnergyAmount=" + chargedEnergyAmount +
+                ", currentChargePower=" + currentChargePower +
+                ", planningRequested=" + planningRequested +
+                ", earliestStart=" + earliestStart +
+                ", latestStart=" + latestStart +
+                ", latestEnd=" + latestEnd +
+                ", on=" + on +
+                ", controllable=" + controllable +
+                ", variablePowerConsumer=" + variablePowerConsumer +
+                ", interruptedSince=" + interruptedSince +
+                ", optionalEnergy=" + optionalEnergy +
+                ", evIdCharging=" + evIdCharging +
+                ", state='" + state + '\'' +
+                ", stateLastChangedTimestamp=" + stateLastChangedTimestamp +
+                ", soc=" + soc +
+                ", socTimestamp=" + socTimestamp +
+                ", socInitial=" + socInitial +
+                ", socInitialTimestamp=" + socInitialTimestamp +
+                ", socTarget=" + socTarget +
+                '}';
+    }
 }
