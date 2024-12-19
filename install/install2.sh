@@ -26,7 +26,7 @@ if [ "$INSTALL_MBUSD" = true ] ; then
   PACKAGES="$PACKAGES git cmake"
 fi
 if [ "$INSTALL_WEBMIN" = true ] ; then
-  PACKAGES="$PACKAGES perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl shared-mime-info apt-show-versions python3"
+  PACKAGES="$PACKAGES libnet-ssleay-perl libio-pty-perl libauthen-pam-perl perl-openssl-abi-3"
 fi
 if [ -n "$WIFI_SSID" ] ; then
   IP_ADDRESS=`ip addr | grep wlan0 | grep inet | awk '{print $2}' | awk -F '/' '{print $1}'`
