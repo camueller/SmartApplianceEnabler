@@ -1,5 +1,4 @@
 # Fragen / Probleme und Antworten
-
 ## Fragen / Probleme
 ### Sunny Portal
 - Verbraucher lässt sich nicht im Sunny Portal hinzufügen ---> [SEMP1](#semp1), [SP1](#sp1)
@@ -10,6 +9,7 @@
 ### Sunny Home Manager
 - Gerät wird nicht eingeschaltet ---> [SEMP3](#semp3), [SEMP4](#semp4), [SEMP5](#semp5), [SAE4](#sae4), [SAE7](#sae7)
 - Gerät wird unerwartet eingeschaltet ---> [SEMP4](#semp4)
+- Gerät mit Überschuß-Zeitplan wird bereits zu Beginn des Zeitfensters eingeschaltet, obwohl kein Überschuß vorhanden ist [SEMP6](#semp6)
 
 ### Smart Appliance Enabler
 - Läuft der *Smart Appliance Enabler*? ---> [SAE1](#sae1)
@@ -91,6 +91,18 @@ Nachfolgendes Log zeigt, dass das Gerät nicht eingeschaltet ist (`status=Off`),
 
 ### SEMP5
 Aus Sicht von SMA ist bei der Fehleranalyse relevant, welche Informationen der *Sunny Home Manager* erhalten hat. Dessen [SEMP-Logs lassen sich ebenfalls abrufen](ConnectionAssist_DE.md) und sollten für eventuelle Service-Anfragen bei SMA verwendet werden. Mit Logs des *Smart Appliance Enabler* wird man sich bei SMA nicht auseinandersetzen.
+
+### SEMP6
+Der *Sunny Home Manager* muss zur Planung der Gerätelaufzeiten die Kosten dafür kennen, die mit der Laufzeit dieser Geräte vebunden sind. Deshalb müssen folgende Parameter sinnvolle Werte (also normalerweise größer als 0) haben:
+
+- Sunny Portal: Konfiguraton -> Anlageneigenschaften -> Tab: Parameter -> 
+  - Stromtarif
+  - Vergütung
+- SMA Energy App: Einstellungen -> Tarife
+  - Stromtarif
+  - Einspeisevergütung
+
+**Achtung: Es sieht so aus, als wenn die Werte im Sunny Portal und in der SMA Energy App nicht synchronisiert werden, d.h. man muss im Sunny Portal und der SMA Energy App die Werte einstellen.** 
 
 ### SAE1
 Der Befehl zur Prüfung, ob der *Smart Appliance Enabler* läuft, findet sich in der [Installationsanleitung](InstallationManual_DE.md#status) bzw. in der [Docker-Anleitung](Docker_DE.md#container-status).

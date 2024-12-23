@@ -9,6 +9,7 @@
 ### Sunny Home Manager
 - Device does not turn on ---> [SEMP3](#semp3), [SEMP4](#semp4), [SEMP5](#semp5), [SAE4](#sae4), [SAE7](#sae7)
 - Device is unexpectedly turned on ---> [SEMP4](#semp4)
+- Device with excess energy time plan is started right at the beginning of the timeframe even though there is no excess energy [SEMP6](#semp6)
 
 ### Smart Appliance Enabler
 - Is the *Smart Appliance Enabler* running? ---> [SAE1](#sae1)
@@ -88,6 +89,18 @@ The following log shows that the device is not switched on (`status=Off`), but s
 
 ### SEMP5
 From the point of view of SMA, the information that the *Sunny Home Manager* received is relevant for the error analysis. Its [SEMP logs can also be called up](ConnectionAssist_EN.md) and should be used for any service requests to SMA. SMA will not deal with logs from the *Smart Appliance Enabler*.
+
+### SEMP6
+In order to plan the device runtimes, the *Sunny Home Manager* must know the costs associated with the running time of these devices. Therefore, the following parameters must have meaningful values (i.e. usually greater than 0):
+
+- Sunny Portal: Configuration -> PV System Properties -> Tab: Parameters ->
+  - Electricity Tariff
+  - Reimbursement
+- SMA Energy App: Settings -> Tariffs
+  - Electricity Tariff
+  - Reimbursement
+
+**Attention: It looks as if the values in Sunny Portal and the SMA Energy App are not synchronized, i.e. you have to set the values in Sunny Portal and the SMA Energy App.**
 
 ### SAE1
 The command to check whether the *Smart Appliance Enabler* is running can be found in the [Installation Guide](InstallationManual_EN.md#status) or in the [Docker Guide](Docker_EN.md#container-status).
