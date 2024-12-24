@@ -36,7 +36,7 @@ The following graphic from the [Sunny Portal](https://www.sunnyportal.com/) show
 
 ## Requirements
 
-The *Smart Appliance Enabler* was implemented in **Java** and basically runs on any device for which a Java Virtual Machine with Java 11 exists. In addition to the compiled code, various scripts are provided in which **Linux** is assumed to be the operating system. If devices are to be connected via [GPIO](https://www.itwissen.info/GPIO-general-purpose-input-output.html), the *Smart Appliance Enabler* requires a [**Raspberry Pi**]( doc/Raspberry_EN.md) as hardware.
+The *Smart Appliance Enabler* was implemented in **Java** and basically runs on any device for which a Java runtime with version >= 11 exists. In addition to the compiled code, various scripts are provided in which **Linux** is assumed to be the operating system. If devices are to be connected via [GPIO](https://www.itwissen.info/GPIO-general-purpose-input-output.html), the *Smart Appliance Enabler* requires a [**Raspberry Pi**]( doc/Raspberry_EN.md) as hardware.
 
 ## Electricity meter
 
