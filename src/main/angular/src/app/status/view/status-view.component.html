@@ -11,8 +11,10 @@
           <span class="StatusComponent__appliance-status-label">{{'StatusComponent.interruptedSince' | translate}}</span>
           <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.interruptedSince)}}</span>
         </div>
-        <span class="StatusComponent__appliance-status-label">{{'StatusComponent.latestStart' | translate}}</span>
-        <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.latestStart)}}</span>
+        <div *ngIf="!!status?.latestStart && status.latestStart > 0">
+          <span class="StatusComponent__appliance-status-label">{{'StatusComponent.latestStart' | translate}}</span>
+          <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.latestStart)}}</span>
+        </div>
       </div>
       <div *ngIf="isTrafficLightGreen()">
         <span class="StatusComponent__appliance-status-label">{{'StatusComponent.runningTimeCompleted' | translate}}</span>
