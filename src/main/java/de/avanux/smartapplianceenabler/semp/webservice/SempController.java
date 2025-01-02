@@ -351,13 +351,20 @@ public class SempController {
         PowerInfo powerInfo = new PowerInfo();
         String applianceMeterTopic = MqttClient.getApplianceTopic(appliance.getId(), Meter.TOPIC);
         MeterMessage meterMessage = this.meterMessages.get(applianceMeterTopic);
+        DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
         if (meterMessage != null) {
             logger.debug("{}: Reporting power info from meter.", appliance.getId());
-            powerInfo.setAveragePower(meterMessage.power);
+            var maxPowerConsumption = deviceInfo.getCharacteristics().getMaxPowerConsumption();
+            var averagePowerLimit = 2 * maxPowerConsumption;
+            if(meterMessage.power > averagePowerLimit) {
+                logger.error("{}: Limiting reported averagePower to {}W. Metered value was {}W.", appliance.getId(), averagePowerLimit, meterMessage.power);
+                powerInfo.setAveragePower(averagePowerLimit);
+            } else {
+                powerInfo.setAveragePower(meterMessage.power);
+            }
             powerInfo.setAveragingInterval(60); // always report 60 for SEMP regardless of real averaging interval
         } else {
             logger.debug("{}: Reporting power info from device characteristics.", appliance.getId());
-            DeviceInfo deviceInfo = ApplianceManager.getInstance().getDeviceInfo(appliance.getId());
             if (deviceStatus.getStatus() == Status.On && deviceInfo.getCharacteristics() != null) {
                 powerInfo.setAveragePower(deviceInfo.getCharacteristics().getMaxPowerConsumption());
             } else {
