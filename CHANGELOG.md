@@ -12,6 +12,27 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+## [2.4.0](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.4.0) - 04.01.2025
+
+### Gefixt
+- bei MQTT-Zählern ist der "Pfad für Zeitextraktion" optional, das war nicht so
+- beim zeitlichen Ablauf von Timeframes/Requests wurde nicht alle Resourcen freigegeben, was zu falschen Reaktionen und volllaufendem Speicher geführt hat
+- Durch einen Einschalt-Befehl des SHM konnte ein Vebraucher nach Ablauf des Zeitplans eingeschaltet werden; das erfolgt nur noch, wenn der nächste Zeitplan innerhalb von 5 Minuten beginnt [#541](https://github.com/camueller/SmartApplianceEnabler/issues/541)
+- Web-Oberfläche
+  - "Geplante Laufzeit" wird nicht mehr ohne Wert angezeigt
+- Wallbox
+  - Fertig-Status wird erkannt, wenn das Laden durch das Fahrzeug beendet wird 
+  - Übernahme der SOC-Werte aus der Ampel war in bestimmten Fällen nicht richtig
+
+### Neu
+- neuer Lade-Modus "zeitgesteuert" zur Nutzung dynamischer Stromtarife
+- Beschränkung des via SEMP übermittelten Wertes für "averagePower" auf das Doppelte der maximalen Leistungsaufnahme, um fehlerhafte Daten (als Folge potentieller Fehler im SAE) im Sunny Portal zu verhindern
+- Web-Oberfläche
+  - die aktuelle Leistungsaufnahme wird für alle Verbraucher mit variabler Leistungsaufnahme angezeigt
+  - beim Klick auf das rote Ampellicht wird bei Wallboxen das Laden gestoppt **und** der aktive Zeitplan gelöscht. Bisher wurde zwar das Laden gestoppt, aber weitere Schaltbefehle vom SHM wurden nicht akzeptiert
+- Wallbox
+  - SOC-Scripts können so konfiguriert werden, dass sie nur einmalig nach dem Verbinden des Fahrzeugs mit der Wallbox ausgeführt werden
+
 ## [2.3.1](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.3.1) - 10.11.2023
 
 ### Gefixt
