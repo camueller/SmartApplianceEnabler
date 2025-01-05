@@ -416,7 +416,7 @@ public class TimeframeIntervalHandlerTest extends TestBase {
         @Test
         public void nonStartingCurrentControl() {
             assertEquals(1, sut.getTimeframeIntervalChangedListener().size());
-            sut.removeTimeframeInterval(now, timeframeInterval);
+            sut.removeTimeframeInterval(now, timeframeInterval, false);
             assertEquals(0, sut.getQueue().size());
             assertEquals(0, sut.getTimeframeIntervalChangedListener().size());
             verify(timeframeInterval.getRequest()).remove();

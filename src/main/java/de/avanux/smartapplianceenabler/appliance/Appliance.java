@@ -474,7 +474,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     public void clearEnergyDemand(LocalDateTime now) {
         var activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
         if(!(activeTimeframeInterval.getRequest() instanceof OptionalEnergySocRequest)) {
-            timeframeIntervalHandler.removeTimeframeInterval(now, activeTimeframeInterval);
+            timeframeIntervalHandler.removeTimeframeInterval(now, activeTimeframeInterval, false);
         }
         timeframeIntervalHandler.adjustOptionalEnergyTimeframeIntervalStart();
     }

@@ -253,12 +253,14 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
 
         Optional<TimeframeInterval> deactivatableTimeframeInterval = getDeactivatableTimeframeInterval(now);
         Holder<Boolean> removalPending = new Holder<>(false);
+        Holder<Boolean> removedRequestEnabled = new Holder<>(false);
         deactivatableTimeframeInterval.ifPresent(timeframeInterval -> {
             if(!optionalEnergyTimeframeIntervalMoved.value) {
                 timeframeInterval.stateTransitionTo(TimeframeIntervalState.EXPIRED);
+                removedRequestEnabled.value = timeframeInterval.getRequest().isEnabled();
                 timeframeInterval.getRequest().setEnabled(false);
                 if(timeframeInterval.isRemovable(now)) {
-                    removeTimeframeInterval(now, timeframeInterval);
+                    removeTimeframeInterval(now, timeframeInterval, removedRequestEnabled.value);
                     if(queue.size() > 0) {
                         var nextTimeframeInterval = queue.get(0);
                         if(nextTimeframeInterval.getRequest() instanceof OptionalEnergySocRequest) {
@@ -284,7 +286,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         }
 
         Optional<TimeframeInterval> removableTimeframeInterval = getRemovableTimeframeInterval(now);
-        removableTimeframeInterval.ifPresent(timeframeInterval -> removeTimeframeInterval(now, timeframeInterval));
+        removableTimeframeInterval.ifPresent(timeframeInterval -> removeTimeframeInterval(
+                now, timeframeInterval, removedRequestEnabled.value));
 
         for(int i=0; i<queue.size(); i++) {
             queue.get(i).getRequest().setNext(i == 0);
@@ -418,12 +421,18 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         timeframeInterval.stateTransitionTo(TimeframeIntervalState.QUEUED);
     }
 
-    public void removeTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval) {
+    public void removeTimeframeInterval(LocalDateTime now, TimeframeInterval timeframeInterval, boolean enable) {
         logger.debug("{}: Remove timeframe interval: {}", applianceId, timeframeInterval.toString(now));
         queue.remove(timeframeInterval);
         removeTimeframeIntervalChangedListener(timeframeInterval.getRequest());
         timeframeInterval.getRequest().remove();
-        if(control instanceof StartingCurrentSwitch || control instanceof VariablePowerConsumer) {
+        if(control instanceof StartingCurrentSwitch) {
+            fillQueue(now);
+            if(enable) {
+                getFirstTimeframeInterval().getRequest().setEnabled(true);
+            }
+        }
+        if(control instanceof VariablePowerConsumer) {
             fillQueue(now);
         }
     }
@@ -431,7 +440,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
     public void removeActiveTimeframeInterval(LocalDateTime now) {
         TimeframeInterval activeTimeframeInterval = getActiveTimeframeInterval();
         if(activeTimeframeInterval != null) {
-            removeTimeframeInterval(now, activeTimeframeInterval);
+            removeTimeframeInterval(now, activeTimeframeInterval, false);
         }
     }
 
@@ -621,7 +630,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
     public void removeOptionalEnergyTimeframe(LocalDateTime now) {
         TimeframeInterval timeframeInterval = findOptionalEnergyIntervalForEVCharger();
         if(timeframeInterval != null) {
-            removeTimeframeInterval(now, timeframeInterval);
+            removeTimeframeInterval(now, timeframeInterval, false);
         }
     }
 
