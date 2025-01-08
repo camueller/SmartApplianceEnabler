@@ -28,4 +28,4 @@ in Rechnung gestellt, also in etwa der Betrag, den auch jeder Sanitär-/Heizungs
 
 Von der Rechnung können 20 Prozent bei der Einkommensteuererklärung als **haushaltsnahe Dienstleistung** abgerechnet werden, solange die Gesamtsumme aller Rechnungen den Betrag von 4.000 Euro/Jahr nicht übersteigt.
 
-Anfragen für kostenpflichtigen Support bitte an **axel.mueller@avanux.de**
+[Anfragen für kostenpflichtigen Support bitte in dem entsprechenden Forum mit Angabe von Kontaktdaten stellen](https://github.com/camueller/SmartApplianceEnabler/discussions/categories/anfragen-f%C3%BCr-kommerziellen-support). Ich melde mich dann kurzfristig. Nachdem wir einen anderen Kommunikationskanal etabliert haben, können Sie den Post hier wieder löschen, damit ihre Kontaktdaten nicht mehr sichtbar sind.

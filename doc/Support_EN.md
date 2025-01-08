@@ -26,4 +26,4 @@ The paid support will be charged with
 
 which is roughly the amount that every plumbing/heating engineer bills. Since I know exactly what to do when it comes to installing and configuring the *Smart Appliance Enabler*, in most cases everything is already done in one or two hours.
 
-Please send inquiries for paid support to **axel.mueller@avanux.de**
+[Please post requests for paid support in the relevant forum, including contact details](https://github.com/camueller/SmartApplianceEnabler/discussions/categories/anfragen-f%C3%BCr-kommerziellen-support). I will get back to you shortly. Once we have established another communication channel, you can delete the post here so that your contact details are no longer visible.
