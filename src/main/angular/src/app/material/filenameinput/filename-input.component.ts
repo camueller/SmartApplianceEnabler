@@ -9,9 +9,10 @@ import {interval} from 'rxjs';
 import {getValidString} from '../../shared/form-util';
 
 @Component({
-  selector: 'app-filenameinput',
-  templateUrl: './filename-input.component.html',
-  styleUrls: ['./filename-input.component.scss']
+    selector: 'app-filenameinput',
+    templateUrl: './filename-input.component.html',
+    styleUrls: ['./filename-input.component.scss'],
+    standalone: false
 })
 export class FilenameInputComponent implements OnInit {
   @Input()

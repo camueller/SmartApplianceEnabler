@@ -30,13 +30,13 @@ import {isRequired} from '../../shared/form-util';
 import {ControlMeterreportingModel} from './control-meterreporting.model';
 
 @Component({
-  selector: 'app-control-meterreporting',
-  templateUrl: './control-meterreporting.component.html',
-  styles: [
-  ],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+    selector: 'app-control-meterreporting',
+    templateUrl: './control-meterreporting.component.html',
+    styles: [],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    standalone: false
 })
 export class ControlMeterreportingComponent implements OnChanges, OnInit {
   @Input()

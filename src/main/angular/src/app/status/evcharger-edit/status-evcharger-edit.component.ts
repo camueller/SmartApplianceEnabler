@@ -30,9 +30,10 @@ const socValidator = (control: AbstractControl): { [key: string]: boolean } => {
 };
 
 @Component({
-  selector: 'app-status-evcharger-edit',
-  templateUrl: './status-evcharger-edit.component.html',
-  styleUrls: ['./status-evcharger-edit.component.scss', '../status.component.scss']
+    selector: 'app-status-evcharger-edit',
+    templateUrl: './status-evcharger-edit.component.html',
+    styleUrls: ['./status-evcharger-edit.component.scss', '../status.component.scss'],
+    standalone: false
 })
 export class StatusEvchargerEditComponent implements OnInit {
   @Input()

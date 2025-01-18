@@ -26,9 +26,10 @@ import {SchedulesModel} from './schedules.model';
 import {ScheduleModel} from '../schedule.model';
 
 @Component({
-  selector: 'app-schedules',
-  templateUrl: './schedules.component.html',
-  styleUrls: ['./schedules.component.scss'],
+    selector: 'app-schedules',
+    templateUrl: './schedules.component.html',
+    styleUrls: ['./schedules.component.scss'],
+    standalone: false
 })
 export class SchedulesComponent  implements OnChanges, OnInit {
   @ViewChildren('scheduleComponents')

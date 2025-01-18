@@ -7,9 +7,10 @@ import {ApplianceType} from '../../appliance/appliance-type';
 import {EnvPipeService} from '../../shared/env-pipe-service';
 
 @Component({
-  selector: 'app-sidenav',
-  templateUrl: './sidenav.component.html',
-  styleUrls: ['./sidenav.component.scss']
+    selector: 'app-sidenav',
+    templateUrl: './sidenav.component.html',
+    styleUrls: ['./sidenav.component.scss'],
+    standalone: false
 })
 export class SidenavComponent implements OnInit {
 

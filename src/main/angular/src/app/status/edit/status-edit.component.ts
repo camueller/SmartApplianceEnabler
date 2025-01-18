@@ -11,9 +11,10 @@ import {TimepickerComponent} from '../../material/timepicker/timepicker.componen
 import {StatusEditModel} from './status-edit.model';
 
 @Component({
-  selector: 'app-status-edit',
-  templateUrl: './status-edit.component.html',
-  styleUrls: ['./status-edit.component.scss', '../status.component.scss']
+    selector: 'app-status-edit',
+    templateUrl: './status-edit.component.html',
+    styleUrls: ['./status-edit.component.scss', '../status.component.scss'],
+    standalone: false
 })
 export class StatusEditComponent implements OnInit {
   @Input()

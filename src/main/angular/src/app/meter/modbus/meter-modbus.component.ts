@@ -19,13 +19,14 @@ import {ValueNameChangedEvent} from '../value-name-changed-event';
 import {MeterModbusModel} from './meter-modbus.model';
 
 @Component({
-  selector: 'app-meter-modbus',
-  templateUrl: './meter-modbus.component.html',
-  styleUrls: ['./meter-modbus.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-meter-modbus',
+    templateUrl: './meter-modbus.component.html',
+    styleUrls: ['./meter-modbus.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class MeterModbusComponent implements OnChanges, OnInit {
   @Input()

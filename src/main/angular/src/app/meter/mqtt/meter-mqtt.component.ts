@@ -15,13 +15,14 @@ import {MeterMqttModel} from './meter-mqtt.model';
 import {getValidString, isRequired} from 'src/app/shared/form-util';
 
 @Component({
-  selector: 'app-meter-mqtt',
-  templateUrl: './meter-mqtt.component.html',
-  styleUrls: ['./meter-mqtt.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-meter-mqtt',
+    templateUrl: './meter-mqtt.component.html',
+    styleUrls: ['./meter-mqtt.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class MeterMqttComponent implements OnChanges, OnInit {
   @Input()

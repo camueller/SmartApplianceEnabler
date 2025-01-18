@@ -6,9 +6,10 @@ import {HttpConfiguration} from './http-configuration';
 import {HttpConfigurationModel} from './http-configuration.model';
 
 @Component({
-  selector: 'app-http-configuration',
-  templateUrl: './http-configuration.component.html',
-  styleUrls: ['./http-configuration.component.scss']
+    selector: 'app-http-configuration',
+    templateUrl: './http-configuration.component.html',
+    styleUrls: ['./http-configuration.component.scss'],
+    standalone: false
 })
 export class HttpConfigurationComponent implements OnChanges, OnInit {
   @Input()

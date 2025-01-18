@@ -49,9 +49,10 @@ import {ScheduleModel} from './schedule.model';
 import { isRequired } from '../shared/form-util';
 
 @Component({
-  selector: 'app-schedule',
-  templateUrl: './schedule.component.html',
-  styleUrls: ['./schedule.component.scss'],
+    selector: 'app-schedule',
+    templateUrl: './schedule.component.html',
+    styleUrls: ['./schedule.component.scss'],
+    standalone: false
 })
 export class ScheduleComponent implements OnChanges, AfterViewInit {
   @Input()

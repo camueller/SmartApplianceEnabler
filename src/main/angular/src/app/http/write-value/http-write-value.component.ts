@@ -13,9 +13,10 @@ import {ValueNameChangedEvent} from '../../meter/value-name-changed-event';
 import {HttpWriteValueModel} from './http-write-value.model';
 
 @Component({
-  selector: 'app-http-write-value',
-  templateUrl: './http-write-value.component.html',
-  styleUrls: ['./http-write-value.component.scss'],
+    selector: 'app-http-write-value',
+    templateUrl: './http-write-value.component.html',
+    styleUrls: ['./http-write-value.component.scss'],
+    standalone: false
 })
 export class HttpWriteValueComponent implements OnChanges, OnInit {
   @Input()

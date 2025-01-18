@@ -30,10 +30,11 @@ import {ModbusWriteModel} from './modbus-write.model';
 import {ModbusWriteValueModel} from '../write-value/modbus-write-value.model';
 
 @Component({
-  selector: 'app-modbus-write',
-  templateUrl: './modbus-write.component.html',
-  styleUrls: ['./modbus-write.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-modbus-write',
+    templateUrl: './modbus-write.component.html',
+    styleUrls: ['./modbus-write.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ModbusWriteComponent implements OnChanges, OnInit {
   @Input()

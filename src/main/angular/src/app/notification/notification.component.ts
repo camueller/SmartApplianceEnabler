@@ -8,9 +8,10 @@ import {NotificationModel} from './notification.model';
 import {isRequired} from '../shared/form-util';
 
 @Component({
-  selector: 'app-notification',
-  templateUrl: './notification.component.html',
-  styleUrls: ['./notification.component.scss'],
+    selector: 'app-notification',
+    templateUrl: './notification.component.html',
+    styleUrls: ['./notification.component.scss'],
+    standalone: false
 })
 export class NotificationComponent implements OnChanges {
   @Input()

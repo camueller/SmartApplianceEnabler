@@ -4,9 +4,10 @@ import {TrafficLightClick} from './traffic-light-click';
 import {Subject} from 'rxjs';
 
 @Component({
-  selector: 'app-traffic-light',
-  templateUrl: './traffic-light.component.html',
-  styleUrls: ['./traffic-light.scss']
+    selector: 'app-traffic-light',
+    templateUrl: './traffic-light.component.html',
+    styleUrls: ['./traffic-light.scss'],
+    standalone: false
 })
 export class TrafficLightComponent implements OnChanges, OnInit {
   @Input()

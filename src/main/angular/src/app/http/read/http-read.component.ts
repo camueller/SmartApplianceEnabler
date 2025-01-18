@@ -27,10 +27,11 @@ import {HttpReadModel} from './http-read.model';
 import {HttpReadValueModel} from '../read-value/http-read-value.model';
 
 @Component({
-  selector: 'app-http-read',
-  templateUrl: './http-read.component.html',
-  styleUrls: ['./http-read.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-http-read',
+    templateUrl: './http-read.component.html',
+    styleUrls: ['./http-read.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class HttpReadComponent implements OnChanges, OnInit {
   @Input()

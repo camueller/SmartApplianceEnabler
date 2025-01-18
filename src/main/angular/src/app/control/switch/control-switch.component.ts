@@ -12,12 +12,13 @@ import {isRequired} from '../../shared/form-util';
 import {ControlSwitchModel} from './control-switch.model';
 
 @Component({
-  selector: 'app-control-switch',
-  templateUrl: './control-switch.component.html',
-  styleUrls: ['./control-switch.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+    selector: 'app-control-switch',
+    templateUrl: './control-switch.component.html',
+    styleUrls: ['./control-switch.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    standalone: false
 })
 export class ControlSwitchComponent implements OnChanges, OnInit {
   @Input()

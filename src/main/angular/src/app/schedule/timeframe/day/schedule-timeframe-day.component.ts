@@ -14,12 +14,13 @@ import {ScheduleTimeframeDayModel} from './schedule-timeframe-day.model';
 import {isRequired} from 'src/app/shared/form-util';
 
 @Component({
-  selector: 'app-schedule-timeframe-day',
-  templateUrl: './schedule-timeframe-day.component.html',
-  styleUrls: ['./schedule-timeframe-day.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+    selector: 'app-schedule-timeframe-day',
+    templateUrl: './schedule-timeframe-day.component.html',
+    styleUrls: ['./schedule-timeframe-day.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    standalone: false
 })
 export class ScheduleTimeframeDayComponent implements OnChanges, OnInit {
   @Input()

@@ -13,9 +13,10 @@ import {SettingsDefaults} from '../settings-defaults';
 import {SettingsModbusModel} from './settings-modbus.model';
 
 @Component({
-  selector: 'app-settings-modbus',
-  templateUrl: './settings-modbus.component.html',
-  styleUrls: ['./settings-modbus.component.scss']
+    selector: 'app-settings-modbus',
+    templateUrl: './settings-modbus.component.html',
+    styleUrls: ['./settings-modbus.component.scss'],
+    standalone: false
 })
 export class SettingsModbusComponent implements OnChanges, OnInit {
   @Input()

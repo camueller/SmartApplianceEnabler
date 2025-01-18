@@ -37,9 +37,10 @@ import {ListItem} from '../shared/list-item';
 import {ApplianceModel} from './appliance.model';
 
 @Component({
-  selector: 'app-appliance',
-  templateUrl: './appliance.component.html',
-  styleUrls: ['./appliance.component.scss']
+    selector: 'app-appliance',
+    templateUrl: './appliance.component.html',
+    styleUrls: ['./appliance.component.scss'],
+    standalone: false
 })
 export class ApplianceComponent  implements OnChanges, OnInit {
   applianceId: string;

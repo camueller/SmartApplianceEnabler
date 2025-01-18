@@ -25,9 +25,10 @@ import {isRequired} from '../../shared/form-util';
 import {MeterSlaveModel} from './meter-slave.model';
 
 @Component({
-  selector: 'app-meter-slave',
-  templateUrl: './meter-slave.component.html',
-  styleUrls: ['./meter-slave.component.scss']
+    selector: 'app-meter-slave',
+    templateUrl: './meter-slave.component.html',
+    styleUrls: ['./meter-slave.component.scss'],
+    standalone: false
 })
 export class MeterSlaveComponent implements OnChanges, OnInit {
   @Input()

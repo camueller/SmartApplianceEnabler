@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import { Component } from '@angular/core';
 
 @Component({
-  template: '<h2>Page not found</h2>'
+    template: '<h2>Page not found</h2>',
+    standalone: false
 })
 export class PageNotFoundComponent {}

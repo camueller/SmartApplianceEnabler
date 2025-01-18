@@ -28,9 +28,10 @@ import {ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {MeterMasterModel} from './meter-master.model';
 
 @Component({
-  selector: 'app-meter-master',
-  templateUrl: './meter-master.component.html',
-  styleUrls: ['./meter-master.component.scss']
+    selector: 'app-meter-master',
+    templateUrl: './meter-master.component.html',
+    styleUrls: ['./meter-master.component.scss'],
+    standalone: false
 })
 export class MeterMasterComponent implements OnChanges, OnInit {
   @Input()

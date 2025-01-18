@@ -14,12 +14,13 @@ import {MeterS0Model} from './meter-s0.model';
 import { isRequired } from 'src/app/shared/form-util';
 
 @Component({
-  selector: 'app-meter-s0',
-  templateUrl: './meter-s0.component.html',
-  styleUrls: ['./meter-s0.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+    selector: 'app-meter-s0',
+    templateUrl: './meter-s0.component.html',
+    styleUrls: ['./meter-s0.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    standalone: false
 })
 export class MeterS0Component implements OnChanges, OnInit {
   @Input()

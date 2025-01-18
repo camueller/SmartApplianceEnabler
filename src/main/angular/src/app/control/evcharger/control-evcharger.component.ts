@@ -39,12 +39,13 @@ import {ControlEvchargerModel} from './control-evcharger.model';
 import {ElectricVehicleModel} from './electric-vehicle/electric-vehicle.model';
 
 @Component({
-  selector: 'app-control-evcharger',
-  templateUrl: './control-evcharger.component.html',
-  styleUrls: ['./control-evcharger.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+    selector: 'app-control-evcharger',
+    templateUrl: './control-evcharger.component.html',
+    styleUrls: ['./control-evcharger.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    standalone: false
 })
 export class ControlEvchargerComponent implements OnChanges, OnInit {
   @Input()

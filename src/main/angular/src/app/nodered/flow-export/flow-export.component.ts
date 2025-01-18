@@ -4,10 +4,10 @@ import {MqttSettings} from '../../settings/mqtt-settings';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-flow-export',
-  templateUrl: './flow-export.component.html',
-  styles: [
-  ]
+    selector: 'app-flow-export',
+    templateUrl: './flow-export.component.html',
+    styles: [],
+    standalone: false
 })
 export class FlowExportComponent implements OnInit {
 

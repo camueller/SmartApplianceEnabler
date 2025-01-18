@@ -12,9 +12,10 @@ import {ControlStartingcurrentModel} from './control-startingcurrent.model';
 import { isRequired } from 'src/app/shared/form-util';
 
 @Component({
-  selector: 'app-control-startingcurrent',
-  templateUrl: './control-startingcurrent.component.html',
-  styleUrls: ['./control-startingcurrent.component.scss']
+    selector: 'app-control-startingcurrent',
+    templateUrl: './control-startingcurrent.component.html',
+    styleUrls: ['./control-startingcurrent.component.scss'],
+    standalone: false
 })
 export class ControlStartingcurrentComponent implements OnChanges, OnInit {
   @Input()

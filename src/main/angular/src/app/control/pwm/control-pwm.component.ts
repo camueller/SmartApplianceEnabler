@@ -29,13 +29,14 @@ import {ErrorMessage, ValidatorType} from '../../shared/error-message';
 import {ControlPwmModel} from './control-pwm.model';
 
 @Component({
-  selector: 'app-control-pwm',
-  templateUrl: './control-pwm.component.html',
-  styleUrls: ['./control-pwm.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-control-pwm',
+    templateUrl: './control-pwm.component.html',
+    styleUrls: ['./control-pwm.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ControlPwmComponent implements OnChanges, OnInit {
   @Input()

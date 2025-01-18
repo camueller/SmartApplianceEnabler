@@ -11,12 +11,13 @@ import {ScheduleRequestEnergyModel} from './schedule-request-energy.model';
 import { isRequired } from 'src/app/shared/form-util';
 
 @Component({
-  selector: 'app-schedule-request-energy',
-  templateUrl: './schedule-request-energy.component.html',
-  styleUrls: ['./schedule-request-energy.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+    selector: 'app-schedule-request-energy',
+    templateUrl: './schedule-request-energy.component.html',
+    styleUrls: ['./schedule-request-energy.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    standalone: false
 })
 export class ScheduleRequestEnergyComponent implements OnChanges, OnInit {
   @Input()

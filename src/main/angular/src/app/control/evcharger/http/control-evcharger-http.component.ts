@@ -32,13 +32,14 @@ import {HttpReadModel} from '../../../http/read/http-read.model';
 import {HttpWriteModel} from '../../../http/write/http-write.model';
 
 @Component({
-  selector: 'app-control-evcharger-http',
-  templateUrl: './control-evcharger-http.component.html',
-  styleUrls: ['./control-evcharger-http.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-control-evcharger-http',
+    templateUrl: './control-evcharger-http.component.html',
+    styleUrls: ['./control-evcharger-http.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ControlEvchargerHttpComponent implements OnChanges, OnInit {
   @Input()

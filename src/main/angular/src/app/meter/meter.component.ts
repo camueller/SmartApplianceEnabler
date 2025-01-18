@@ -52,9 +52,10 @@ import {MeterModel} from './meter.model';
 import {isRequired} from '../shared/form-util';
 
 @Component({
-  selector: 'app-meter',
-  templateUrl: './meter.component.html',
-  styleUrls: ['./meter.component.scss'],
+    selector: 'app-meter',
+    templateUrl: './meter.component.html',
+    styleUrls: ['./meter.component.scss'],
+    standalone: false
 })
 export class MeterComponent  implements OnInit {
   @ViewChild(MeterS0Component)

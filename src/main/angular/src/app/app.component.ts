@@ -27,9 +27,10 @@ import {EnvPipe} from './shared/env-pipe';
 import {EnvPipeService} from './shared/env-pipe-service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    standalone: false
 })
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav')

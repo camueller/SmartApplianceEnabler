@@ -12,12 +12,13 @@ import {TimepickerComponent} from '../../../material/timepicker/timepicker.compo
 import {ScheduleRequestRuntimeModel} from './schedule-request-runtime.model';
 
 @Component({
-  selector: 'app-schedule-request-runtime',
-  templateUrl: './schedule-request-runtime.component.html',
-  styleUrls: ['./schedule-request-runtime.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+    selector: 'app-schedule-request-runtime',
+    templateUrl: './schedule-request-runtime.component.html',
+    styleUrls: ['./schedule-request-runtime.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    standalone: false
 })
 export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {
   @Input()

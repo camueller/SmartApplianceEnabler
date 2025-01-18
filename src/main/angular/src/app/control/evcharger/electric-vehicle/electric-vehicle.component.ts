@@ -17,9 +17,10 @@ import {ElectricVehicleModel} from './electric-vehicle.model';
 import {isRequired} from 'src/app/shared/form-util';
 
 @Component({
-  selector: 'app-electric-vehicle',
-  templateUrl: './electric-vehicle.component.html',
-  styleUrls: ['./electric-vehicle.component.scss'],
+    selector: 'app-electric-vehicle',
+    templateUrl: './electric-vehicle.component.html',
+    styleUrls: ['./electric-vehicle.component.scss'],
+    standalone: false
 })
 export class ElectricVehicleComponent implements OnChanges, OnInit {
   @Input()

@@ -12,12 +12,13 @@ import {ScheduleRequestSocModel} from './schedule-request-soc.model';
 import { isRequired } from 'src/app/shared/form-util';
 
 @Component({
-  selector: 'app-schedule-request-soc',
-  templateUrl: './schedule-request-soc.component.html',
-  styleUrls: ['./schedule-request-soc.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+    selector: 'app-schedule-request-soc',
+    templateUrl: './schedule-request-soc.component.html',
+    styleUrls: ['./schedule-request-soc.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    standalone: false
 })
 export class ScheduleRequestSocComponent implements OnChanges, OnInit {
   @Input()

@@ -4,7 +4,10 @@ import {LanguageService} from './language-service';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {EnvPipeService} from './env-pipe-service';
 
-@Pipe({name: 'env'})
+@Pipe({
+    name: 'env',
+    standalone: false
+})
 export class EnvPipe implements PipeTransform {
   private matTooltipDisabled = false;
 

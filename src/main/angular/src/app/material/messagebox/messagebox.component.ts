@@ -7,9 +7,10 @@ export enum MessageBoxLevel {
 }
 
 @Component({
-  selector: 'messagebox',
-  templateUrl: './messagebox.component.html',
-  styleUrls: ['./messagebox.component.scss']
+    selector: 'messagebox',
+    templateUrl: './messagebox.component.html',
+    styleUrls: ['./messagebox.component.scss'],
+    standalone: false
 })
 export class MessageboxComponent implements OnInit {
 

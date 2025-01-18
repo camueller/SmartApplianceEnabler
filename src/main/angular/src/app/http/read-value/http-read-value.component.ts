@@ -13,9 +13,10 @@ import {HttpMethod} from '../http-method';
 import {HttpReadValueModel} from './http-read-value.model';
 
 @Component({
-  selector: 'app-http-read-value',
-  templateUrl: './http-read-value.component.html',
-  styleUrls: ['./http-read-value.component.scss'],
+    selector: 'app-http-read-value',
+    templateUrl: './http-read-value.component.html',
+    styleUrls: ['./http-read-value.component.scss'],
+    standalone: false
 })
 export class HttpReadValueComponent implements OnChanges, OnInit {
   @Input()

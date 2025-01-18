@@ -27,10 +27,11 @@ import {HttpWriteModel} from './http-write.model';
 import {HttpWriteValueModel} from '../write-value/http-write-value.model';
 
 @Component({
-  selector: 'app-http-write',
-  templateUrl: './http-write.component.html',
-  styleUrls: ['./http-write.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-http-write',
+    templateUrl: './http-write.component.html',
+    styleUrls: ['./http-write.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class HttpWriteComponent implements OnChanges, OnInit {
   @Input()

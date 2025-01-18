@@ -21,9 +21,10 @@ import {MqttSettings} from '../settings/mqtt-settings';
 import {MatDialog} from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-status',
-  templateUrl: './status.component.html',
-  styleUrls: ['./status.component.scss']
+    selector: 'app-status',
+    templateUrl: './status.component.html',
+    styleUrls: ['./status.component.scss'],
+    standalone: false
 })
 export class StatusComponent implements OnInit, OnDestroy {
 

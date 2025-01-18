@@ -30,13 +30,14 @@ import {ControlModbusModel} from './control-modbus.model';
 import {ModbusWriteModel} from '../../modbus/write/modbus-write.model';
 
 @Component({
-  selector: 'app-control-modbus',
-  templateUrl: './control-modbus.component.html',
-  styleUrls: ['./control-modbus.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-control-modbus',
+    templateUrl: './control-modbus.component.html',
+    styleUrls: ['./control-modbus.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ControlModbusComponent implements OnChanges, OnInit {
   @Input()

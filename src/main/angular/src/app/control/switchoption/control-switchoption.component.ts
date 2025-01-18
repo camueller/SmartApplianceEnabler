@@ -29,9 +29,10 @@ import {ControlSwitchoptionModel} from './control-switchoption.model';
 import {isRequired} from 'src/app/shared/form-util';
 
 @Component({
-  selector: 'app-control-switchoption',
-  templateUrl: './control-switchoption.component.html',
-  styleUrls: ['./control-switchoption.component.scss']
+    selector: 'app-control-switchoption',
+    templateUrl: './control-switchoption.component.html',
+    styleUrls: ['./control-switchoption.component.scss'],
+    standalone: false
 })
 export class ControlSwitchOptionComponent implements OnChanges, OnInit {
   @Input()

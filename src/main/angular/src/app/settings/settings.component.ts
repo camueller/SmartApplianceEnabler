@@ -39,9 +39,10 @@ import {SettingsModel} from './settings.model';
 import {SettingsModbusModel} from './modbus/settings-modbus.model';
 
 @Component({
-  selector: 'app-settings',
-  templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss']
+    selector: 'app-settings',
+    templateUrl: './settings.component.html',
+    styleUrls: ['./settings.component.scss'],
+    standalone: false
 })
 export class SettingsComponent  implements OnInit {
   settings: Settings;

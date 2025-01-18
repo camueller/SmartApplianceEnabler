@@ -13,12 +13,13 @@ import {getValidInt, isRequired} from '../../../shared/form-util';
 import {ScheduleTimeframeConsecutivedaysModel} from './schedule-timeframe-consecutivedays.model';
 
 @Component({
-  selector: 'app-schedule-timeframe-consecutivedays',
-  templateUrl: './schedule-timeframe-consecutivedays.component.html',
-  styleUrls: ['./schedule-timeframe-consecutivedays.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ]
+    selector: 'app-schedule-timeframe-consecutivedays',
+    templateUrl: './schedule-timeframe-consecutivedays.component.html',
+    styleUrls: ['./schedule-timeframe-consecutivedays.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    standalone: false
 })
 export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnInit {
   @Input()

@@ -24,13 +24,14 @@ import {ValueNameChangedEvent} from '../value-name-changed-event';
 import {MeterHttpModel} from './meter-http.model';
 
 @Component({
-  selector: 'app-meter-http',
-  templateUrl: './meter-http.component.html',
-  styleUrls: ['./meter-http-component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-meter-http',
+    templateUrl: './meter-http.component.html',
+    styleUrls: ['./meter-http-component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class MeterHttpComponent implements OnChanges, OnInit {
   @Input()

@@ -11,9 +11,10 @@ import {isRequired} from 'src/app/shared/form-util';
 import {ModbusReadValueModel} from './modbus-read-value.model';
 
 @Component({
-  selector: 'app-modbus-read-value',
-  templateUrl: './modbus-read-value.component.html',
-  styleUrls: ['./modbus-read-value.component.scss'],
+    selector: 'app-modbus-read-value',
+    templateUrl: './modbus-read-value.component.html',
+    styleUrls: ['./modbus-read-value.component.scss'],
+    standalone: false
 })
 export class ModbusReadValueComponent implements OnChanges, OnInit {
   @Input()

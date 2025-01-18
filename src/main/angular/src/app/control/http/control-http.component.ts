@@ -31,13 +31,14 @@ import {HttpReadModel} from '../../http/read/http-read.model';
 import {HttpWriteModel} from '../../http/write/http-write.model';
 
 @Component({
-  selector: 'app-control-http',
-  templateUrl: './control-http.component.html',
-  styleUrls: ['./control-http.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-control-http',
+    templateUrl: './control-http.component.html',
+    styleUrls: ['./control-http.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ControlHttpComponent implements OnChanges, OnInit {
   @Input()

@@ -63,9 +63,10 @@ import {ControlModel} from './control.model';
 import {isRequired} from '../shared/form-util';
 
 @Component({
-  selector: 'app-control',
-  templateUrl: './control.component.html',
-  styleUrls: ['./control.component.scss'],
+    selector: 'app-control',
+    templateUrl: './control.component.html',
+    styleUrls: ['./control.component.scss'],
+    standalone: false
 })
 export class ControlComponent  implements OnInit {
   @ViewChild(ControlEvchargerComponent)

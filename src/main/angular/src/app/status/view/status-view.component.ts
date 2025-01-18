@@ -5,9 +5,10 @@ import {Status} from '../status';
 import {TrafficLightState} from '../traffic-light/traffic-light-state';
 
 @Component({
-  selector: 'app-status-view',
-  templateUrl: './status-view.component.html',
-  styleUrls: ['./status-view.component.scss', '../status.component.scss']
+    selector: 'app-status-view',
+    templateUrl: './status-view.component.html',
+    styleUrls: ['./status-view.component.scss', '../status.component.scss'],
+    standalone: false
 })
 export class StatusViewComponent implements OnInit {
 

@@ -62,13 +62,14 @@ import {ControlLevelModel, ControlLevelSupportedTypes, PowerLevelModel, SwitchSt
 import {buildFormArrayWithEmptyFormGroups, isRequired} from '../../shared/form-util';
 
 @Component({
-  selector: 'app-control-level',
-  templateUrl: './control-level.component.html',
-  styleUrls: ['./control-level.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-control-level',
+    templateUrl: './control-level.component.html',
+    styleUrls: ['./control-level.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ControlLevelComponent implements OnChanges, OnInit {
   @Input()

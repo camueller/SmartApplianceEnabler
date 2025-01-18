@@ -35,13 +35,14 @@ import {ModbusReadModel} from '../../../modbus/read/modbus-read.model';
 import {ModbusWriteModel} from '../../../modbus/write/modbus-write.model';
 
 @Component({
-  selector: 'app-control-evcharger-modbus',
-  templateUrl: './control-evcharger-modbus.component.html',
-  styleUrls: ['./control-evcharger-modbus.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-control-evcharger-modbus',
+    templateUrl: './control-evcharger-modbus.component.html',
+    styleUrls: ['./control-evcharger-modbus.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ControlEvchargerModbusComponent implements OnChanges, OnInit {
   @Input()

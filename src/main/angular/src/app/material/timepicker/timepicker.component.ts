@@ -36,9 +36,10 @@ FormControlName.prototype.ngOnChanges = function () {
 };
 
 @Component({
-  selector: 'app-timepicker',
-  templateUrl: './timepicker.component.html',
-  styles: []
+    selector: 'app-timepicker',
+    templateUrl: './timepicker.component.html',
+    styles: [],
+    standalone: false
 })
 export class TimepickerComponent implements OnChanges, OnInit, AfterViewChecked {
   @Input()

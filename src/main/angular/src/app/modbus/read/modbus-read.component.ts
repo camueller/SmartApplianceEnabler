@@ -30,10 +30,11 @@ import {ModbusReadModel} from './modbus-read.model';
 import { ModbusReadValueModel } from '../read-value/modbus-read-value.model';
 
 @Component({
-  selector: 'app-modbus-read',
-  templateUrl: './modbus-read.component.html',
-  styleUrls: ['./modbus-read.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-modbus-read',
+    templateUrl: './modbus-read.component.html',
+    styleUrls: ['./modbus-read.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ModbusReadComponent implements OnChanges, OnInit {
   @Input()

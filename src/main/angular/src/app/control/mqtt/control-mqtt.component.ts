@@ -18,13 +18,14 @@ import {getValidString, isRequired} from '../../shared/form-util';
 import {ControlMqttModel} from './control-mqtt.model';
 
 @Component({
-  selector: 'app-control-mqtt',
-  templateUrl: './control-mqtt.component.html',
-  styleUrls: ['./control-mqtt.component.scss'],
-  viewProviders: [
-    {provide: ControlContainer, useExisting: FormGroupDirective}
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-control-mqtt',
+    templateUrl: './control-mqtt.component.html',
+    styleUrls: ['./control-mqtt.component.scss'],
+    viewProviders: [
+        { provide: ControlContainer, useExisting: FormGroupDirective }
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ControlMqttComponent implements OnChanges, OnInit {
   @Input()

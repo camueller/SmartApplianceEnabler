@@ -11,9 +11,10 @@ import {ModbusWriteValueModel} from './modbus-write-value.model';
 import { isRequired } from 'src/app/shared/form-util';
 
 @Component({
-  selector: 'app-modbus-write-value',
-  templateUrl: './modbus-write-value.component.html',
-  styleUrls: ['./modbus-write-value.component.scss'],
+    selector: 'app-modbus-write-value',
+    templateUrl: './modbus-write-value.component.html',
+    styleUrls: ['./modbus-write-value.component.scss'],
+    standalone: false
 })
 export class ModbusWriteValueComponent implements OnChanges, OnInit {
   @Input()
