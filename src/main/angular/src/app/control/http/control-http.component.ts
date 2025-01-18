@@ -160,7 +160,7 @@ export class ControlHttpComponent implements OnChanges, OnInit {
 
   expandParentForm() {
     this.form.addControl('httpWrites', buildFormArrayWithEmptyFormGroups(this.httpSwitch.httpWrites));
-    const readControlState = this.httpSwitch.httpRead?.readValues.length > 0 ?? false;
+    const readControlState = this.httpSwitch.httpRead.readValues.length > 0;
     this.form.addControl('readControlState', new FormControl(readControlState));
     this.readControlState = readControlState;
     this.form.controls.readControlState.valueChanges.subscribe(value => {

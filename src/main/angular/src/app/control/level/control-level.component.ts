@@ -216,7 +216,7 @@ export class ControlLevelComponent implements OnChanges, OnInit {
     }
     this.controlIds.push(nextId.toString());
     this.controlsFormArray.push(new FormGroup({} as ControlLevelSupportedTypes))
-    for(let i=0; i<this.powerLevelFormArray?.length ?? 0; i++) {
+    for(let i=0; i<this.powerLevelFormArray.length; i++) {
       const switchStatusFormGroup = new FormGroup<SwitchStatusModel>({
         idref: new FormControl(nextId.toString()),
         on: new FormControl(false)
