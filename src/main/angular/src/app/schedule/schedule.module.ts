@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MaterialModule} from '../material/material.module';
-import {HttpClient, HttpClientModule} from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import {SchedulesComponent} from './schedules/schedules.component';
@@ -16,33 +16,27 @@ import {ScheduleResolver} from './schedule-resolver.service';
 import {HttpLoaderFactory} from '../shared/http-loader-factory';
 import {SharedModule} from '../shared/shared.module';
 
-@NgModule({
-  declarations: [
-    ScheduleComponent,
-    SchedulesComponent,
-    ScheduleRequestRuntimeComponent,
-    ScheduleRequestEnergyComponent,
-    ScheduleRequestSocComponent,
-    ScheduleTimeframeConsecutivedaysComponent,
-    ScheduleTimeframeDayComponent,
-  ],
-  imports: [
-    CommonModule,
-    MaterialModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    SharedModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
-    })
-  ],
-  providers: [
-    ScheduleService,
-    ScheduleResolver,
-  ]
-})
+@NgModule({ declarations: [
+        ScheduleComponent,
+        SchedulesComponent,
+        ScheduleRequestRuntimeComponent,
+        ScheduleRequestEnergyComponent,
+        ScheduleRequestSocComponent,
+        ScheduleTimeframeConsecutivedaysComponent,
+        ScheduleTimeframeDayComponent,
+    ], imports: [CommonModule,
+        MaterialModule,
+        ReactiveFormsModule,
+        SharedModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        })], providers: [
+        ScheduleService,
+        ScheduleResolver,
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class ScheduleModule { }

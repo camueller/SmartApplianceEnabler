@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {SaeService} from '../shared/sae-service';
 import {Schedule} from './schedule';
 import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Logger} from '../log/logger';
 import {map} from 'rxjs/operators';
 import {ConsecutiveDaysTimeframe} from './timeframe/consecutivedays/consecutive-days-timeframe';

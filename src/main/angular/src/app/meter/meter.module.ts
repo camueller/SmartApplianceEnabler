@@ -7,7 +7,7 @@ import {MeterS0Component} from './s0/meter-s0.component';
 import {MaterialModule} from '../material/material.module';
 import {HttpModule} from '../http/http.module';
 import {ModbusModule} from '../modbus/modbus.module';
-import {HttpClient, HttpClientModule} from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MeterService} from './meter-service';
@@ -20,21 +20,17 @@ import {MeterSlaveComponent} from './slave/meter-slave.component';
 import {MeterMqttComponent} from './mqtt/meter-mqtt.component';
 import {SharedModule} from '../shared/shared.module';
 
-@NgModule({
-  declarations: [
-    MeterComponent,
-    MeterMasterComponent,
-    MeterModbusComponent,
-    MeterMqttComponent,
-    MeterHttpComponent,
-    MeterS0Component,
-    MeterSlaveComponent,
-  ],
-    imports: [
-        CommonModule,
+@NgModule({ declarations: [
+        MeterComponent,
+        MeterMasterComponent,
+        MeterModbusComponent,
+        MeterMqttComponent,
+        MeterHttpComponent,
+        MeterS0Component,
+        MeterSlaveComponent,
+    ], imports: [CommonModule,
         MaterialModule,
         HttpModule,
-        HttpClientModule,
         ModbusModule,
         NotificationModule,
         ReactiveFormsModule,
@@ -45,12 +41,10 @@ import {SharedModule} from '../shared/shared.module';
                 deps: [HttpClient]
             }
         }),
-        SharedModule
-    ],
-  providers: [
-    MeterService,
-    MeterResolver,
-    MeterDefaultsResolver,
-  ]
-})
+        SharedModule], providers: [
+        MeterService,
+        MeterResolver,
+        MeterDefaultsResolver,
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class MeterModule { }

@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MaterialModule} from '../material/material.module';
-import {HttpClient, HttpClientModule} from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import {StatusComponent} from './status.component';
@@ -16,20 +16,16 @@ import {FlowExportComponent} from '../nodered/flow-export/flow-export.component'
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import {SharedModule} from '../shared/shared.module';
 
-@NgModule({
-  declarations: [
-    FlowExportComponent,
-    StatusComponent,
-    StatusEditComponent,
-    StatusEvchargerEditComponent,
-    StatusEvchargerViewComponent,
-    StatusViewComponent,
-    TrafficLightComponent,
-  ],
-    imports: [
-        ClipboardModule,
+@NgModule({ declarations: [
+        FlowExportComponent,
+        StatusComponent,
+        StatusEditComponent,
+        StatusEvchargerEditComponent,
+        StatusEvchargerViewComponent,
+        StatusViewComponent,
+        TrafficLightComponent,
+    ], imports: [ClipboardModule,
         CommonModule,
-        HttpClientModule,
         MaterialModule,
         ReactiveFormsModule,
         SharedModule,
@@ -39,10 +35,8 @@ import {SharedModule} from '../shared/shared.module';
                 useFactory: HttpLoaderFactory,
                 deps: [HttpClient]
             }
-        }),
-    ],
-  providers: [
-    StatusService
-  ]
-})
+        })], providers: [
+        StatusService,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class StatusModule { }

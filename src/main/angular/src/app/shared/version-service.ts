@@ -20,7 +20,7 @@ import {Injectable} from '@angular/core';
 import {Info} from '../settings/info';
 import {SaeService} from './sae-service';
 import {map} from 'rxjs/operators';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {Octokit} from '@octokit/rest';
 

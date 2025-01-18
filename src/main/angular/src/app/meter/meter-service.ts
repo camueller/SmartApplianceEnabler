@@ -4,7 +4,7 @@ import {MeterFactory} from './meter-factory';
 import {Observable} from 'rxjs';
 import {Meter} from './meter';
 import {MeterDefaults} from './meter-defaults';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Logger} from '../log/logger';
 import {map} from 'rxjs/operators';
 

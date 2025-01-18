@@ -11,7 +11,7 @@ import {ControlEvchargerComponent} from './evcharger/control-evcharger.component
 import {ControlEvchargerHttpComponent} from './evcharger/http/control-evcharger-http.component';
 import {ControlStartingcurrentComponent} from './startingcurrent/control-startingcurrent.component';
 import {ElectricVehicleResolver} from './evcharger/electric-vehicle-resolver.service';
-import {HttpClient, HttpClientModule} from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {ElectricVehicleComponent} from './evcharger/electric-vehicle/electric-vehicle.component';
 import {HttpModule} from '../http/http.module';
@@ -30,46 +30,40 @@ import {EnvPipe} from '../shared/env-pipe';
 import {SharedModule} from '../shared/shared.module';
 import {ControlMqttComponent} from './mqtt/control-mqtt.component';
 
-@NgModule({
-  declarations: [
-    ControlComponent,
-    ControlEvchargerComponent,
-    ControlEvchargerHttpComponent,
-    ControlEvchargerModbusComponent,
-    ControlHttpComponent,
-    ControlMeterreportingComponent,
-    ControlModbusComponent,
-    ControlMqttComponent,
-    ControlLevelComponent,
-    ControlPwmComponent,
-    ControlStartingcurrentComponent,
-    ControlSwitchComponent,
-    ControlSwitchOptionComponent,
-    ElectricVehicleComponent,
-  ],
-  imports: [
-    CommonModule,
-    MaterialModule,
-    HttpModule,
-    HttpClientModule,
-    ModbusModule,
-    NotificationModule,
-    ReactiveFormsModule,
-    SharedModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
-    }),
-  ],
-  providers: [
-    ControlService,
-    ControlResolver,
-    ControlDefaultsResolver,
-    ElectricVehicleResolver,
-    EvChargerTemplateResolver,
-  ]
-})
+@NgModule({ declarations: [
+        ControlComponent,
+        ControlEvchargerComponent,
+        ControlEvchargerHttpComponent,
+        ControlEvchargerModbusComponent,
+        ControlHttpComponent,
+        ControlMeterreportingComponent,
+        ControlModbusComponent,
+        ControlMqttComponent,
+        ControlLevelComponent,
+        ControlPwmComponent,
+        ControlStartingcurrentComponent,
+        ControlSwitchComponent,
+        ControlSwitchOptionComponent,
+        ElectricVehicleComponent,
+    ], imports: [CommonModule,
+        MaterialModule,
+        HttpModule,
+        ModbusModule,
+        NotificationModule,
+        ReactiveFormsModule,
+        SharedModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        })], providers: [
+        ControlService,
+        ControlResolver,
+        ControlDefaultsResolver,
+        ElectricVehicleResolver,
+        EvChargerTemplateResolver,
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class ControlModule { }

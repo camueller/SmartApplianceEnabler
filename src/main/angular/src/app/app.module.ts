@@ -28,7 +28,7 @@ import {PageNotFoundComponent} from './not-found.component';
 import {SettingsComponent} from './settings/settings.component';
 import {ApplianceResolver} from './appliance/appliance-resolver.service';
 import {AppliancesReloadService} from './appliance/appliances-reload-service';
-import {HttpClient, HttpClientModule} from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {SettingsService} from './settings/settings-service';
 import {SettingsResolver} from './settings/settings-resolver.service';
@@ -54,54 +54,48 @@ import {ApplianceIdsResolver} from './appliance/appliance-ids-resolver';
 import {LanguageService} from './shared/language-service';
 import {SharedModule} from './shared/shared.module';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    ApplianceComponent,
-    HeaderComponent,
-    LayoutComponent,
-    PageNotFoundComponent,
-    SettingsComponent,
-    SettingsModbusComponent,
-    SidenavComponent,
-  ],
-  imports: [
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    BrowserModule,
-    ControlModule,
-    HttpClientModule,
-    MaterialModule,
-    MeterModule,
-    NotificationModule,
-    ReactiveFormsModule,
-    ScheduleModule,
-    SharedModule,
-    StatusModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
-    })
-  ],
-  providers: [
-    ApplianceService,
-    AppliancesReloadService,
-    ApplianceResolver,
-    ApplianceIdsResolver,
-    CanDeactivateGuard,
-    DialogService,
-    LanguageService,
-    Logger,
-    {provide: Options, useValue: {level: Level.DEBUG}},
-    SettingsService,
-    SettingsResolver,
-    SettingsDefaultsResolver,
-    VersionService,
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        ApplianceComponent,
+        HeaderComponent,
+        LayoutComponent,
+        PageNotFoundComponent,
+        SettingsComponent,
+        SettingsModbusComponent,
+        SidenavComponent,
+    ],
+    bootstrap: [AppComponent], imports: [AppRoutingModule,
+        BrowserAnimationsModule,
+        BrowserModule,
+        ControlModule,
+        MaterialModule,
+        MeterModule,
+        NotificationModule,
+        ReactiveFormsModule,
+        ScheduleModule,
+        SharedModule,
+        StatusModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        })], providers: [
+        ApplianceService,
+        AppliancesReloadService,
+        ApplianceResolver,
+        ApplianceIdsResolver,
+        CanDeactivateGuard,
+        DialogService,
+        LanguageService,
+        Logger,
+        { provide: Options, useValue: { level: Level.DEBUG } },
+        SettingsService,
+        SettingsResolver,
+        SettingsDefaultsResolver,
+        VersionService,
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule {
 }

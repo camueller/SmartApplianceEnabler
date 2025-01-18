@@ -21,7 +21,7 @@ import {Appliance} from './appliance';
 import {Observable} from 'rxjs';
 import {ApplianceHeader} from './appliance-header';
 import {SaeService} from '../shared/sae-service';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Logger} from '../log/logger';
 import {map} from 'rxjs/operators';
 

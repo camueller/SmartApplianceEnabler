@@ -4,7 +4,7 @@ import {Observable, of} from 'rxjs';
 import {Control} from './control';
 import {ControlDefaults} from './control-defaults';
 import {SaeService} from '../shared/sae-service';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Logger} from '../log/logger';
 import {catchError, map} from 'rxjs/operators';
 import {ElectricVehicle} from './evcharger/electric-vehicle/electric-vehicle';

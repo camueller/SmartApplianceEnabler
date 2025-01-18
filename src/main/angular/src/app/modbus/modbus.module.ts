@@ -6,7 +6,7 @@ import {ModbusReadValueComponent} from './read-value/modbus-read-value.component
 import {ModbusReadComponent} from './read/modbus-read.component';
 import {MaterialModule} from '../material/material.module';
 import {ReactiveFormsModule} from '@angular/forms';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {HttpLoaderFactory} from '../shared/http-loader-factory';
 import {SharedModule} from '../shared/shared.module';

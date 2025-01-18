@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {SaeService} from '../shared/sae-service';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Status} from './status';
 import {Logger} from '../log/logger';
 import {map, tap} from 'rxjs/operators';
