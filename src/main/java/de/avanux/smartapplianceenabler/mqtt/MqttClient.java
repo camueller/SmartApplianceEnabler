@@ -18,14 +18,19 @@
 
 package de.avanux.smartapplianceenabler.mqtt;
 
-import com.owlike.genson.Genson;
-import com.owlike.genson.GensonBuilder;
-import com.owlike.genson.reflect.VisibilityFilter;
-import org.eclipse.paho.client.mqttv3.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.eclipse.paho.client.mqttv3.IMqttClient;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +49,7 @@ public class MqttClient {
     public final static int MQTT_PUBLISH_PERIOD = 20;
     private IMqttClient client;
     private static org.eclipse.paho.client.mqttv3.MqttClient instance;
-    private Genson genson;
+    private Gson gson;
     private static ExecutorService executor;
     private boolean shutdownInProgress = false;
 
@@ -52,12 +57,7 @@ public class MqttClient {
         this.applianceId = applianceId;
         loggerId = applianceId.length() > 0 ? applianceId + "-MQTT-" + clazz.getSimpleName() : clazz.getSimpleName();
 
-        this.genson = new GensonBuilder()
-                .useFields(true, VisibilityFilter.PRIVATE)
-                .useMethods(false)
-                .useClassMetadata(false)
-                .useRuntimeType(true)
-                .create();
+        this.gson = new GsonBuilder().create();
 
         StringBuilder clientIdBuilder = new StringBuilder();
         if(applianceId.length() > 0) {
@@ -266,8 +266,9 @@ public class MqttClient {
 
     public void publishMessage(String fullTopic, MqttMessage message, boolean retained) {
         message.setType(message.getClass().getSimpleName());
-        String serializedMessage = genson.serialize(message);
-        publishMessage(fullTopic, serializedMessage.getBytes(), retained, null);
+        Writer writer = new StringWriter();
+        this.gson.toJson(message, writer);
+        publishMessage(fullTopic, writer.toString().getBytes(), retained, null);
     }
 
     public void publishMessage(String fullTopic, byte[] message, boolean retained, OnErrorCallback onErrorCallback) {
@@ -345,11 +346,11 @@ public class MqttClient {
         String messageType = null;
         try {
             logger.trace("{}: Message received: topic={} payload={}", loggerId, receivedTopic, receivedMessage);
-            MqttMessage messageWithType = this.genson.deserialize(receivedMessage.getPayload(), MqttMessage.class);
+            MqttMessage messageWithType = gson.fromJson(new StringReader(new String(receivedMessage.getPayload())), MqttMessage.class);
             messageType = messageWithType.getType();
             String className = "de.avanux.smartapplianceenabler.mqtt." + messageType;
-            Class toType = Class.forName(className);
-            MqttMessage message = (MqttMessage) this.genson.deserialize(receivedMessage.getPayload(), toType);
+            Class<?> toType = Class.forName(className);
+            MqttMessage message = (MqttMessage) gson.fromJson(new StringReader(new String(receivedMessage.getPayload())), toType);
             messageHandler.messageArrived(receivedTopic, message);
         }
         catch (ClassNotFoundException e) {

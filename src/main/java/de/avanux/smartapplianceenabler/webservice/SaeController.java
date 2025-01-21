@@ -388,7 +388,7 @@ public class SaeController {
 
     @RequestMapping(value = SCHEDULES_URL, method = RequestMethod.GET, produces = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public List<Schedule> getSchedules(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
+    public Schedules getSchedules(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {
         synchronized (lock) {
             try {
                 logger.debug("{}: Received request for schedules", applianceId);
@@ -396,10 +396,12 @@ public class SaeController {
                 if (appliance != null) {
                     List<Schedule> schedules = appliance.getSchedules();
                     if (schedules == null) {
-                        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                        schedules = new ArrayList<>();
                     }
-                    logger.debug("{}: Returning {} schedules", applianceId, schedules != null ? schedules.size() : 0);
-                    return schedules;
+                    logger.debug("{}: Returning {} schedules", applianceId, schedules.size());
+                    var result = new Schedules();
+                    result.setSchedules(schedules);
+                    return result;
                 }
                 logger.error("{}: Appliance not found", applianceId);
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -412,11 +414,11 @@ public class SaeController {
 
     @RequestMapping(value = SCHEDULES_URL, method = RequestMethod.PUT, consumes = "application/json")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
-    public void setSchedules(@RequestParam(value = "id") String applianceId, @RequestBody List<Schedule> schedules) {
+    public void setSchedules(@RequestParam(value = "id") String applianceId, @RequestBody Schedules schedules) {
         synchronized (lock) {
             try {
-                logger.debug("{}: Received request to set {} schedules", applianceId, schedules.size());
-                ApplianceManager.getInstance().setSchedules(applianceId, schedules);
+                logger.debug("{}: Received request to set {} schedules", applianceId, schedules.getSchedules().size());
+                ApplianceManager.getInstance().setSchedules(applianceId, schedules.getSchedules());
             } catch (Throwable e) {
                 logger.error("Error in " + getClass().getSimpleName(), e);
             }

@@ -18,9 +18,16 @@
 
 package de.avanux.smartapplianceenabler.webservice;
 
-import com.owlike.genson.Genson;
-import com.owlike.genson.GensonBuilder;
-import com.owlike.genson.reflect.VisibilityFilter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.jayway.jsonpath.DocumentContext;
+import de.avanux.smartapplianceenabler.control.Control;
+import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
+import de.avanux.smartapplianceenabler.meter.Meter;
+import de.avanux.smartapplianceenabler.schedule.Request;
+import de.avanux.smartapplianceenabler.schedule.Timeframe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpInputMessage;
@@ -32,30 +39,37 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Converter that can convert HTTP to JSON using Genson.
+ * Converter that can convert HTTP to JSON.
+ * FIXME: Rename file
  */
-public class GensonHttpMessageConverter implements HttpMessageConverter {
+public class JsonHttpMessageConverter implements HttpMessageConverter {
 
-    private Logger logger = LoggerFactory.getLogger(GensonHttpMessageConverter.class);
+    private Logger logger = LoggerFactory.getLogger(JsonHttpMessageConverter.class);
     public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
     private List<MediaType> supportedMediaTypes = new ArrayList<>();
-    private Genson genson;
+    private Gson gson;
+    private DocumentContext context;
 
-    public GensonHttpMessageConverter() {
+    public JsonHttpMessageConverter() {
         this.supportedMediaTypes.add(MediaType.APPLICATION_JSON);
         this.supportedMediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
         this.supportedMediaTypes.add(new MediaType("application", "*+json", DEFAULT_CHARSET));
 
-        this.genson = new GensonBuilder()
-                .useFields(true, VisibilityFilter.PRIVATE)
-                .useMethods(false)
-                .useClassMetadata(true)
-                .useRuntimeType(true)
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(Meter.class, new MeterTypeAdapter())
+                .registerTypeAdapter(Control.class, new ControlTypeAdapter())
+                .registerTypeAdapter(EVChargerControl.class, new EVChargerControlTypeAdapter())
+                .registerTypeAdapter(Request.class, new RequestTypeAdapter())
+                .registerTypeAdapter(Timeframe.class, new TimeframeTypeAdapter())
+                .setPrettyPrinting()
                 .create();
     }
 
@@ -76,15 +90,22 @@ public class GensonHttpMessageConverter implements HttpMessageConverter {
 
     @Override
     public Object read(Class toType, HttpInputMessage httpInputMessage) throws IOException, HttpMessageNotReadableException {
-        logger.trace("Deserializing JSON to " + toType);
         String body = StreamUtils.copyToString(httpInputMessage.getBody(), Charset.defaultCharset());
-        return this.genson.deserialize(body, toType);
+        logger.trace("Deserializing JSON object to " + toType.getName());
+        return gson.fromJson(new StringReader(body), toType);
     }
 
     @Override
     public void write(Object object, MediaType mediaType, HttpOutputMessage httpOutputMessage) throws IOException, HttpMessageNotWritableException {
         logger.trace("Serializing " + object.getClass() + " to JSON");
-        String json = this.genson.serialize(object);
-        httpOutputMessage.getBody().write(json.getBytes());
+        Writer writer = new StringWriter();
+
+        JsonElement element = this.gson.toJsonTree(object);
+        if(element.isJsonObject()) {
+            element.getAsJsonObject().add("@class", new JsonPrimitive(object.getClass().getName()));
+        }
+        this.gson.toJson(element, writer);
+
+        httpOutputMessage.getBody().write(writer.toString().getBytes());
     }
 }

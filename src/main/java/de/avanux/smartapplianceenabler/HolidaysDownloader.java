@@ -17,8 +17,9 @@
  */
 package de.avanux.smartapplianceenabler;
 
-import com.owlike.genson.Genson;
-import com.owlike.genson.GensonBuilder;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
 import de.avanux.smartapplianceenabler.util.Downloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,13 +58,13 @@ public class HolidaysDownloader extends Downloader {
         try {
             String resolvedUrl = getResolvedUrl();
             logger.debug("Will download holidays from " + resolvedUrl);
-            Genson genson = new GensonBuilder().useRuntimeType(true).create();
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             String out = downloadAsString(resolvedUrl);
             logger.debug("Holidays JSON: " + out);
             Reader reader = new StringReader(out);
 
-            Map<String, Object> json = genson.deserialize(reader, Map.class);
+            Map<String, Object> json = gson.fromJson(reader, Map.class);
             for(String holidayName : json.keySet()) {
                 Map<String, Object> dateAndHint = (Map<String, Object>) json.get(holidayName);
                 String datumString = dateAndHint.get("datum").toString();

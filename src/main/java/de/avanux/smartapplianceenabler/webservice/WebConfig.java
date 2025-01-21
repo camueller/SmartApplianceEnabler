@@ -60,8 +60,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(new GensonHttpMessageConverter());
-        logger.debug("Registered " + GensonHttpMessageConverter.class.getName());
+        converters.add(new JsonHttpMessageConverter());
+        logger.debug("Registered " + JsonHttpMessageConverter.class.getName());
         converters.addAll(this.messageConverters.getConverters());
     }
 
