@@ -581,6 +581,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                 request.setSoc(socTarget);
             }
             request.setEnabled(true);
+            request.updateForced();
         }
         else {
             logger.debug("{}: create optional energy timeframe interval with evId={} batteryCapacity={} socCurrent={} socTarget={}",
