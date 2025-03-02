@@ -810,7 +810,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
                 logger.debug("{}: Removing timeframe interval of stopped charging process", applianceId);
                 timeframeIntervalHandler.removeActiveTimeframeInterval(now);
             }
-            if(ev.getId() != evId) {
+            if(!Objects.equals(ev.getId(), evId)) {
                 evHandler.initConfiguration(now, evId, socCurrent);
                 timeframeIntervalHandler.removeOptionalEnergyTimeframe(now);
                 ev = evHandler.getConnectedVehicle();
