@@ -76,12 +76,14 @@ export class StatusComponent implements OnInit, OnDestroy {
     if (immediateRefresh) {
       this.loadApplianceStatuses(() => {});
     }
-    this.loadApplianceStatusesSubscription = interval(60 * 1000)
-      .subscribe(() => this.loadApplianceStatuses(() => {}));
+    if(! this.loadApplianceStatusesSubscription) {
+      this.loadApplianceStatusesSubscription = interval(60 * 1000)
+        .subscribe(() => this.loadApplianceStatuses(() => {}));
+    }
   }
 
   stopRefreshStatus() {
-    this.loadApplianceStatusesSubscription.unsubscribe();
+    this.loadApplianceStatusesSubscription?.unsubscribe();
   }
 
   loadApplianceStatuses(onComplete: () => void) {
