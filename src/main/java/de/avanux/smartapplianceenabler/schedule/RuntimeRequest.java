@@ -108,9 +108,18 @@ public class RuntimeRequest extends AbstractRequest {
 
     @Override
     public String toString(LocalDateTime now) {
+        return toString(LocalDateTime.now(), true);
+    }
+
+    @Override
+    public String toString(LocalDateTime now, boolean includeTimeframeInterval) {
+        String text = super.toString();
+        if(this.timeframeInterval != null && includeTimeframeInterval) {
+            text += "::";
+            text += this.timeframeInterval.toString(now, false);
+        }
         Integer min = getMin(now);
         Integer max = getMax(now);
-        String text = super.toString();
         text += "/";
         if(min != null) {
             text += min.toString();

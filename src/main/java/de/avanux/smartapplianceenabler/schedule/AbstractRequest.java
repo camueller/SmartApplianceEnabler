@@ -46,7 +46,7 @@ abstract public class AbstractRequest implements Request {
     private transient ControlMessage lastControlMessage;
     private transient LocalDateTime controlStatusChangedAt;
     private transient Boolean acceptControlRecommendations;
-    private transient TimeframeIntervalStateProvider timeframeIntervalStateProvider;
+    protected transient TimeframeInterval timeframeInterval;
     private transient MqttClient mqttClient;
     private transient ControlMessage controlMessage;
 
@@ -95,8 +95,8 @@ abstract public class AbstractRequest implements Request {
         return controlMessage;
     }
 
-    public void setTimeframeIntervalStateProvider(TimeframeIntervalStateProvider timeframeIntervalStateProvider) {
-        this.timeframeIntervalStateProvider = timeframeIntervalStateProvider;
+    public void setTimeframeInterval(TimeframeInterval timeframeInterval) {
+        this.timeframeInterval = timeframeInterval;
     }
 
     abstract public Integer getMin(LocalDateTime now);
@@ -138,13 +138,13 @@ abstract public class AbstractRequest implements Request {
     }
 
     public boolean isActive() {
-        return this.timeframeIntervalStateProvider != null
-                && this.timeframeIntervalStateProvider.getState() == TimeframeIntervalState.ACTIVE;
+        return this.timeframeInterval != null
+                && this.timeframeInterval.getState() == TimeframeIntervalState.ACTIVE;
     }
 
     protected boolean isExpired() {
-        return this.timeframeIntervalStateProvider != null
-                && this.timeframeIntervalStateProvider.getState() == TimeframeIntervalState.EXPIRED;
+        return this.timeframeInterval != null
+                && this.timeframeInterval.getState() == TimeframeIntervalState.EXPIRED;
     }
 
     public boolean isControlOn() {
@@ -236,30 +236,13 @@ abstract public class AbstractRequest implements Request {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-
-        if (o == null || getClass() != o.getClass()) return false;
-
-        AbstractRequest that = (AbstractRequest) o;
-
-        return new EqualsBuilder()
-                .append(enabled, that.enabled)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(enabled)
-                .toHashCode();
-    }
-
-    @Override
     public String toString() {
         return isEnabled() ? "ENABLED" : "DISABLED";
     }
 
     @Override
     public abstract String toString(LocalDateTime now);
+
+    @Override
+    public abstract String toString(LocalDateTime now, boolean includeTimeframeInterval);
 }

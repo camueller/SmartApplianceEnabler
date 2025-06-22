@@ -116,7 +116,16 @@ public class EnergyRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public String toString(LocalDateTime now) {
+        return toString(LocalDateTime.now(), true);
+    }
+
+    @Override
+    public String toString(LocalDateTime now, boolean includeTimeframeInterval) {
         String text = super.toString();
+        if(this.timeframeInterval != null && includeTimeframeInterval) {
+            text += "::";
+            text += this.timeframeInterval.toString(now, false);
+        }
         text += "/";
         if(min != null) {
             text += getMin(now).toString();

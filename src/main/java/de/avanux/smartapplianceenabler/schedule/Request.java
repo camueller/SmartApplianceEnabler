@@ -36,7 +36,7 @@ public interface Request extends Serializable, ApplianceIdConsumer, TimeframeInt
 
     boolean isUsingOptionalEnergy(LocalDateTime now);
 
-    void setTimeframeIntervalStateProvider(TimeframeIntervalStateProvider timeframeIntervalStateProvider);
+    void setTimeframeInterval(TimeframeInterval timeframeInterval);
 
     Integer getMin(LocalDateTime now);
 
@@ -73,4 +73,6 @@ public interface Request extends Serializable, ApplianceIdConsumer, TimeframeInt
     void remove();
 
     String toString(LocalDateTime now);
+
+    String toString(LocalDateTime now, boolean includeTimeframeInterval);
 }

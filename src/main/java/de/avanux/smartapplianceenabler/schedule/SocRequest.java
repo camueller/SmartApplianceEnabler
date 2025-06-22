@@ -197,39 +197,22 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SocRequest that = (SocRequest) o;
-
-        return new EqualsBuilder()
-                .appendSuper(super.equals(o))
-                .append(getSocOrDefault(), that.getSocOrDefault())
-                .append(evId, that.evId)
-                .append(energy, that.energy)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .appendSuper(super.hashCode())
-                .append(getSocOrDefault())
-                .append(evId)
-                .append(energy)
-                .toHashCode();
-    }
-
-    @Override
     public String toString() {
         return toString(LocalDateTime.now());
     }
 
     @Override
     public String toString(LocalDateTime now) {
+        return toString(LocalDateTime.now(), true);
+    }
+
+    @Override
+    public String toString(LocalDateTime now, boolean includeTimeframeInterval) {
         String text = super.toString();
+        if(this.timeframeInterval != null && includeTimeframeInterval) {
+            text += "::";
+            text += this.timeframeInterval.toString(now, false);
+        }
         text += "/";
         text += "evId=" + evId;
         text += "/";

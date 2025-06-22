@@ -30,14 +30,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EnergyRequestTest extends TestBase {
     private EnergyRequest sut;
-    private TimeframeIntervalStateProvider timeframeIntervalStateProvider = Mockito.mock(TimeframeIntervalStateProvider.class);
+    private TimeframeInterval timeframeInterval = Mockito.mock(TimeframeInterval.class);
 
     @BeforeEach
     void setup() {
         sut = new EnergyRequest();
         sut.setApplianceId("F-001");
         sut.setMqttClient(mqttClient);
-        sut.setTimeframeIntervalStateProvider(timeframeIntervalStateProvider);
+        sut.setTimeframeInterval(timeframeInterval);
     }
 
     @Nested
@@ -46,7 +46,7 @@ public class EnergyRequestTest extends TestBase {
 
         @BeforeEach
         void init() {
-            Mockito.when(timeframeIntervalStateProvider.getState()).thenReturn(TimeframeIntervalState.ACTIVE);
+            Mockito.when(timeframeInterval.getState()).thenReturn(TimeframeIntervalState.ACTIVE);
         }
 
         @Test
@@ -72,7 +72,7 @@ public class EnergyRequestTest extends TestBase {
 
         @BeforeEach
         void setup() {
-            Mockito.when(timeframeIntervalStateProvider.getState()).thenReturn(TimeframeIntervalState.QUEUED);
+            Mockito.when(timeframeInterval.getState()).thenReturn(TimeframeIntervalState.QUEUED);
         }
 
         @Test

@@ -20,9 +20,7 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import de.avanux.smartapplianceenabler.TestBase;
 import de.avanux.smartapplianceenabler.control.Control;
-import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
-import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,14 +33,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RuntimeRequestTest extends TestBase {
     private RuntimeRequest sut;
-    private TimeframeIntervalStateProvider timeframeIntervalStateProvider = Mockito.mock(TimeframeIntervalStateProvider.class);
+    private TimeframeInterval timeframeInterval = Mockito.mock(TimeframeInterval.class);
 
     @BeforeEach
     void setup() {
         sut = new RuntimeRequest();
         sut.setApplianceId("F-001");
         sut.setMqttClient(mqttClient);
-        sut.setTimeframeIntervalStateProvider(timeframeIntervalStateProvider);
+        sut.setTimeframeInterval(timeframeInterval);
         sut.setMax(3600);
     }
 
@@ -52,7 +50,7 @@ public class RuntimeRequestTest extends TestBase {
 
         @BeforeEach
         void setup() {
-            Mockito.when(timeframeIntervalStateProvider.getState()).thenReturn(TimeframeIntervalState.ACTIVE);
+            Mockito.when(timeframeInterval.getState()).thenReturn(TimeframeIntervalState.ACTIVE);
         }
 
         @Nested
@@ -199,7 +197,7 @@ public class RuntimeRequestTest extends TestBase {
 
         @BeforeEach
         void init() {
-            Mockito.when(timeframeIntervalStateProvider.getState()).thenReturn(TimeframeIntervalState.QUEUED);
+            Mockito.when(timeframeInterval.getState()).thenReturn(TimeframeIntervalState.QUEUED);
         }
 
         @Nested

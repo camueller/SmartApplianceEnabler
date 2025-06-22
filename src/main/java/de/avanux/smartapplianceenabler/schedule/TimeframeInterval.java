@@ -31,7 +31,7 @@ import java.util.Vector;
 /**
  * A TimeframeInterval associates a timeframe with an interval.
  */
-public class TimeframeInterval implements ApplianceIdConsumer, TimeframeIntervalStateProvider {
+public class TimeframeInterval implements ApplianceIdConsumer {
     private transient Logger logger = LoggerFactory.getLogger(TimeframeInterval.class);
     private Interval interval;
     private Request request;
@@ -41,14 +41,14 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
     public TimeframeInterval(Interval interval, Request request) {
         this.interval = interval;
         this.request = request;
-        this.request.setTimeframeIntervalStateProvider(this);
+        this.request.setTimeframeInterval(this);
         initState(null);
     }
 
     public TimeframeInterval(TimeframeIntervalState state, Interval interval, Request request) {
         this.interval = interval;
         this.request = request;
-        this.request.setTimeframeIntervalStateProvider(this);
+        this.request.setTimeframeInterval(this);
         initState(state);
     }
 
@@ -77,7 +77,6 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
         this.stateHistory.add(state);
     }
 
-    @Override
     public TimeframeIntervalState getState() {
         return stateHistory != null ? stateHistory.lastElement() : null;
     }
@@ -190,7 +189,6 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
 
         return new EqualsBuilder()
                 .append(interval, that.interval)
-                .append(request, that.request)
                 .append(getState(), that.getState())
                 .isEquals();
     }
@@ -199,7 +197,6 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(interval)
-                .append(request)
                 .append(getState())
                 .toHashCode();
     }
@@ -210,6 +207,10 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
     }
 
     public String toString(LocalDateTime now) {
+        return toString(LocalDateTime.now(), true);
+    }
+
+    public String toString(LocalDateTime now, boolean includeRequest) {
         String text = "";
         if(getState() != null) {
             text += getState();
@@ -219,8 +220,8 @@ public class TimeframeInterval implements ApplianceIdConsumer, TimeframeInterval
             text += interval.toString();
         }
         text += "::";
-        if(request != null){
-            text += request.toString(now);
+        if(includeRequest && request != null){
+            text += request.toString(now, false);
         }
         return text;
     }
