@@ -186,7 +186,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
 
     public void clearQueue() {
         logger.debug("{}: Cleaing queue", applianceId);
-        queue.stream().forEach(interval -> interval.getRequest().remove());
+        var intervals = new ArrayList<TimeframeInterval>(queue);
+        intervals.forEach(interval -> removeTimeframeInterval(LocalDateTime.now(), interval, false));
         queue.clear();
     }
 
