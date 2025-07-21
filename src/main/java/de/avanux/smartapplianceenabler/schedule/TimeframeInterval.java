@@ -97,8 +97,7 @@ public class TimeframeInterval implements ApplianceIdConsumer {
     }
 
     public boolean isDeactivatable(LocalDateTime now) {
-        return getState() == TimeframeIntervalState.ACTIVE
-                && (
+        return (
                        now.isAfter(getInterval().getEnd())
                     || request.isFinished(now)
                     || (request instanceof RuntimeRequest && ((RuntimeRequest) request).hasStartingCurrentSwitch()

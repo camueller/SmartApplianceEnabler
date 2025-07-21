@@ -104,7 +104,7 @@ public class TimeframeIntervalHandlerTest extends TestBase {
             event.batteryCapacity = 36000;
             event.defaultSocOptionalEnergy = 80;
             mqttClient.publishMessage(fullEventTopic(applianceId, MqttEventName.EVChargerStateChanged), event, false);
-            assertQueueEntry(0, now, timeframeInterval.getInterval().getStart().minusSeconds(1), new OptionalEnergySocRequest(evId));
+            assertQueueEntry(0, now, timeframeInterval.getInterval().getStart().minusSeconds(1), new OptionalEnergySocRequest(100, 1, null, false));
             assertQueueEntry(1, timeframeInterval.getInterval().getStart(), timeframeInterval.getInterval().getEnd(), request);
             assertEquals(event.batteryCapacity, ((SocRequest) sut.getQueue().get(1).getRequest()).getBatteryCapacity());
             verify(request).updateForced();
@@ -435,7 +435,7 @@ public class TimeframeIntervalHandlerTest extends TestBase {
     }
 
     private OptionalEnergySocRequest buildOptionalEnergySocRequest() {
-        return decorateRequest(new OptionalEnergySocRequest(80, evId, 10000));
+        return decorateRequest(new OptionalEnergySocRequest(80, evId, 10000, false));
     }
 
     private SocRequest buildSocRequest() {
@@ -477,12 +477,25 @@ public class TimeframeIntervalHandlerTest extends TestBase {
         var timeframeInterval = sut.getQueue().get(index);
         assertIntervalStartOrEnd(timeframeInterval.getInterval().getStart(), startHour, startMinute, startSeconds);
         assertIntervalStartOrEnd(timeframeInterval.getInterval().getEnd(), endHour, endMinute, endSeconds);
-        assertEquals(request, timeframeInterval.getRequest());
+        assertRequest(request, timeframeInterval.getRequest());
     }
 
     private void assertIntervalStartOrEnd(LocalDateTime startOrEnd, int hour, int minute, int seconds) {
         assertEquals(startOrEnd.getHour(), hour);
         assertEquals(startOrEnd.getMinute(), minute);
         assertEquals(startOrEnd.getSecond(), seconds);
+    }
+
+    private void assertRequest(Request expected, Request actual) {
+        var now = LocalDateTime.now();
+        assertEquals(expected.isEnabled(), actual.isEnabled());
+        assertEquals(expected.getMin(now), actual.getMin(now));
+        assertEquals(expected.getMax(now), actual.getMax(now));
+        if(expected instanceof OptionalEnergySocRequest) {
+            var expectedOptionalEnergySocRequest = (OptionalEnergySocRequest) expected;
+            var actualOptionalEnergySocRequest = (OptionalEnergySocRequest) actual;
+            assertEquals(expectedOptionalEnergySocRequest.getEvId(), actualOptionalEnergySocRequest.getEvId());
+            assertEquals(expectedOptionalEnergySocRequest.getSocOrDefault(), actualOptionalEnergySocRequest.getSocOrDefault());
+        }
     }
 }

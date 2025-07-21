@@ -708,28 +708,16 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         final int additionalIntervalSeconds = UPDATE_QUEUE_INTERVAL_SECONDS + 1; // in order to make interval sufficient!
         final LocalDateTime requiredIntervalEnd = now.plusSeconds(
                 latestEnd != null ? latestEnd : runtime + additionalIntervalSeconds);
-        TimeframeInterval activeTimeframeInterval = getActiveTimeframeInterval();
-        if(activeTimeframeInterval != null) {
-            if(activeTimeframeInterval.getRequest() instanceof RuntimeRequest) {
-                if(requiredIntervalEnd.isAfter(activeTimeframeInterval.getInterval().getEnd())) {
-                    activeTimeframeInterval.getInterval().setEnd(requiredIntervalEnd);
-                }
-                RuntimeRequest request = (RuntimeRequest) activeTimeframeInterval.getRequest();
+        TimeframeInterval timeframeInterval = getFirstTimeframeInterval();
+        if(timeframeInterval != null) {
+            if(timeframeInterval.getRequest() instanceof RuntimeRequest) {
+                timeframeInterval.getInterval().setStart(now);
+                timeframeInterval.getInterval().setEnd(requiredIntervalEnd);
+                RuntimeRequest request = (RuntimeRequest) timeframeInterval.getRequest();
                 request.setEnabled(true);
                 request.setMax(runtime);
                 request.setAcceptControlRecommendations(acceptControlRecommendations);
             }
-        }
-        else {
-            RuntimeRequest request = new RuntimeRequest(null, runtime);
-            request.setEnabled(true);
-            request.setAcceptControlRecommendations(acceptControlRecommendations);
-            Interval interval = new Interval(now, requiredIntervalEnd);
-            TimeframeInterval timeframeInterval = new TimeframeInterval(interval, request);
-            if(control instanceof StartingCurrentSwitch) {
-                clearQueue();
-            }
-            addTimeframeInterval(now, timeframeInterval, true, true);
         }
     }
 

@@ -35,8 +35,9 @@ public class OptionalEnergySocRequest extends SocRequest {
     /**
      * Should only be used for testing.
      */
-    public OptionalEnergySocRequest(Integer soc, Integer evId, Integer energy) {
+    public OptionalEnergySocRequest(Integer soc, Integer evId, Integer energy, Boolean enabled) {
         super(soc, evId, energy);
+        setEnabled(enabled);
     }
 
     protected Logger getLogger() {
@@ -56,22 +57,6 @@ public class OptionalEnergySocRequest extends SocRequest {
     @Override
     public Integer getMin(LocalDateTime now) {
         return 0;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        // there should always only be one instance of this request
-        // therefore multiple instances should considered to be equal
-        // this behaviour is also required to be able to remove itself as listener successfully
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 47)
-                .toHashCode();
     }
 
     @Override
