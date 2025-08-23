@@ -32,6 +32,7 @@ import de.avanux.smartapplianceenabler.util.Holder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -146,16 +147,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
 
     public void setTimer(Timer timer) {
         if(control != null) {
-            this.fillQueueTimerTask = new GuardedTimerTask(this.applianceId, "FillQueueTimerTask",
-                    FILL_QUEUE_INTERVAL_SECONDS * 1000) {
-                @Override
-                public void runTask(LocalDateTime now) {
-                    fillQueue(now);
-                }
-            };
-            if (timer != null) {
-                timer.schedule(fillQueueTimerTask, 0, fillQueueTimerTask.getPeriod());
-            }
+            fillQueue(LocalDateTime.now(), false);
 
             this.updateQueueTimerTask = new GuardedTimerTask(this.applianceId,
                     "UpdateActiveTimeframeInterval", UPDATE_QUEUE_INTERVAL_SECONDS * 1000) {
@@ -185,15 +177,16 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
     }
 
     public void clearQueue() {
-        logger.debug("{}: Cleaing queue", applianceId);
+        logger.debug("{}: Clearing queue", applianceId);
         var intervals = new ArrayList<TimeframeInterval>(queue);
         intervals.forEach(interval -> removeTimeframeInterval(LocalDateTime.now(), interval, false));
         queue.clear();
     }
 
-    public void fillQueue(LocalDateTime now) {
+    public void fillQueue(LocalDateTime now, boolean startFromMidnightTomorrow) {
         logger.debug("{}: Starting to fill queue", applianceId);
-        Interval considerationInterval = new Interval(now, now.plusDays(CONSIDERATION_INTERVAL_DAYS));
+        LocalDateTime nextMidnight = LocalDate.now().atStartOfDay().plusDays(1);
+        Interval considerationInterval = new Interval(startFromMidnightTomorrow ? nextMidnight : now, now.plusDays(CONSIDERATION_INTERVAL_DAYS));
         TimeframeInterval lastTimeframeInterval = queue.peekLast();
         List<TimeframeInterval> timeframeIntervals = findTimeframeIntervals(now, considerationInterval);
         timeframeIntervals.stream()
@@ -427,14 +420,11 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         queue.remove(timeframeInterval);
         removeTimeframeIntervalChangedListener(timeframeInterval.getRequest());
         timeframeInterval.getRequest().remove();
+        fillQueue(now, control instanceof VariablePowerConsumer);
         if(control instanceof StartingCurrentSwitch) {
-            fillQueue(now);
             if(enable) {
                 getFirstTimeframeInterval().getRequest().setEnabled(true);
             }
-        }
-        if(control instanceof VariablePowerConsumer) {
-            fillQueue(now);
         }
     }
 

@@ -153,7 +153,7 @@ public class TimeframeIntervalHandlerTest extends TestBase {
                 var schedule = new Schedule(true, timeframe, buildRuntimeRequest());
                 sut.setSchedules(Collections.singletonList(schedule));
 
-                sut.fillQueue(now);
+                sut.fillQueue(now, false);
 
                 assertEquals(2, sut.getQueue().size());
                 assertEquals(buildTimeframeInterval(now.toLocalDate(), 0, 11, 0, 0, 13, 0, 0, schedule.getRequest(), TimeframeIntervalState.QUEUED), sut.getQueue().get(0));
@@ -168,7 +168,7 @@ public class TimeframeIntervalHandlerTest extends TestBase {
                 var schedule = new Schedule(true, timeframe, buildRuntimeRequest());
                 sut.setSchedules(Collections.singletonList(schedule));
 
-                sut.fillQueue(now);
+                sut.fillQueue(now, false);
 
                 assertEquals(2, sut.getQueue().size());
                 assertEquals(buildTimeframeInterval(now.toLocalDate(), 1, 8, 0, 0, 10, 30, 0, schedule.getRequest(), TimeframeIntervalState.QUEUED), sut.getQueue().get(0));
@@ -198,7 +198,7 @@ public class TimeframeIntervalHandlerTest extends TestBase {
                 var schedule = new Schedule(true, timeframe, request);
                 sut.setSchedules(Collections.singletonList(schedule));
 
-                sut.fillQueue(now);
+                sut.fillQueue(now, false);
 
                 assertEquals(1, sut.getQueue().size());
                 assertEquals(buildTimeframeInterval(now.toLocalDate(), 0, 11, 0, 0, 13, 0, 0, schedule.getRequest(), TimeframeIntervalState.QUEUED), sut.getQueue().get(0));
@@ -213,7 +213,7 @@ public class TimeframeIntervalHandlerTest extends TestBase {
                 var schedule = new Schedule(true, timeframe, request);
                 sut.setSchedules(Collections.singletonList(schedule));
 
-                sut.fillQueue(now);
+                sut.fillQueue(now, false);
 
                 assertEquals(1, sut.getQueue().size());
                 assertEquals(buildTimeframeInterval(now.toLocalDate(), 1, 8, 0, 0, 10, 30, 0, schedule.getRequest(), TimeframeIntervalState.QUEUED), sut.getQueue().get(0));
@@ -242,7 +242,7 @@ public class TimeframeIntervalHandlerTest extends TestBase {
                 var schedule = new Schedule(true, timeframe, request);
                 sut.setSchedules(Collections.singletonList(schedule));
 
-                sut.fillQueue(now);
+                sut.fillQueue(now, false);
 
                 assertEquals(1, sut.getQueue().size());
                 assertEquals(buildTimeframeInterval(now.toLocalDate(), 0, 11, 0, 0, 13, 0, 0, schedule.getRequest(), TimeframeIntervalState.QUEUED), sut.getQueue().get(0));

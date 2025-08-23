@@ -144,7 +144,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         if(timeframeIntervalHandler != null) {
             timeframeIntervalHandler.setSchedules(schedules);
             timeframeIntervalHandler.clearQueue();
-            timeframeIntervalHandler.fillQueue(LocalDateTime.now());
+            timeframeIntervalHandler.fillQueue(LocalDateTime.now(), false);
         }
     }
 
