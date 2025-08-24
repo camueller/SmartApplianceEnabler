@@ -1,16 +1,16 @@
 <div [class]="trafficLightClass">
   <div *ngIf="!showLoadingIndicator">
-    <div [class]="bulbClass" [class.TrafficLightComponent__stopLight]="true" *ngIf="isRed(); else stopLightOffClickable"></div>
-    <ng-template #stopLightOffClickable>
-      <div [class]="bulbClass" *ngIf="isRedClickable(); else stopLightOff"
-           (click)="onRedClick()"
-           matTooltip="{{'StatusComponent.tooltipStopLight' | translate}}"
-           [matTooltipDisabled]="'matTooltipDisabled' | env"
-      ></div>
-    </ng-template>
-    <ng-template #stopLightOff>
-      <div [class]="bulbClass" *ngIf="!isRed()"></div>
-    </ng-template>
+    <div [class]="bulbClass" [class.TrafficLightComponent__stopLight]="true" *ngIf="isRed() && !isRedBlink()"></div>
+    <div [class]="bulbClass" [class.TrafficLightComponent__stopLight]="true"
+         [class.TrafficLightComponent__stopLight-blink]="isRedBlink()"
+         *ngIf="isRedBlink()"
+    ></div>
+    <div [class]="bulbClass" *ngIf="!isRed() && !isRedBlink() && isRedClickable()"
+         (click)="onRedClick()"
+         matTooltip="{{'StatusComponent.tooltipStopLight' | translate}}"
+         [matTooltipDisabled]="'matTooltipDisabled' | env"
+    ></div>
+    <div [class]="bulbClass" *ngIf="!isRed() && !isRedBlink() && !isRedClickable()"></div>
 
     <div [class]="bulbClass" [class.TrafficLightComponent__slowLight]="true" *ngIf="isYellow() && !isYellowBlink()"></div>
     <div [class]="bulbClass" [class.TrafficLightComponent__slowLight]="true"

@@ -474,7 +474,7 @@
   "StatusComponent.remainingMaxEnergy": "Energy remaining max:",
   "StatusComponent.energyPlanned": "Energy planned: ",
   "StatusComponent.energyCharged": "Energy charged: ",
-  "StatusComponent.energyChargePower": "Current charge power: ",
+  "StatusComponent.energyChargePower": "Power consumption: ",
   "StatusComponent.energyLatestEnd": "Latest end: ",
   "StatusComponent.chargeMode": "Charge mode",
   "StatusComponent.chargeMode.FAST": "Fast",
@@ -502,7 +502,7 @@
   "StatusComponent.buttonCancel": "Cancel",
   "StatusComponent.explanation": "Notes",
   "StatusComponent.explanationNoLight": "The appliance is not switched on because no demand exists.",
-  "StatusComponent.explanationStopLight": "The appliance is not switched on although a demand exists because the earliest switch on time has not yet been reached.",
+  "StatusComponent.explanationStopLight": "The appliance is not switched on although a demand exists (with blinking light only for excess energy) because the earliest switch on time has not yet been reached.",
   "StatusComponent.explanationSlowLight": "The appliance can be switched on at any time (again) because demand exists (with blinking light only for excess energy) and the earliest switch on time has been reached.",
   "StatusComponent.explanationGoLight": "The appliance is switched on. A blinking light indicates usage of excess energy.",
 

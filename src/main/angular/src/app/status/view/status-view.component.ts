@@ -35,6 +35,10 @@ export class StatusViewComponent implements OnInit {
     return this.trafficLightStateHandler.isRed();
   }
 
+  isTrafficLightRedBlink(): boolean {
+    return this.trafficLightStateHandler.isRedBlink();
+  }
+
   isTrafficLightYellow(): boolean {
     return this.trafficLightStateHandler.isYellow();
   }

@@ -114,6 +114,10 @@ export class StatusComponent implements OnInit, OnDestroy {
         return applianceStatus.planningRequested && applianceStatus.earliestStart > 0 && !applianceStatus.on;
       },
 
+      isRedBlink(): boolean {
+        return applianceStatus.planningRequested && applianceStatus.earliestStart > 0 && !applianceStatus.on && !!applianceStatus.optionalEnergy;
+      },
+
       isYellow(): boolean {
         return applianceStatus.earliestStart === 0 && !applianceStatus.on
           && (!applianceStatus.optionalEnergy || !!applianceStatus.plannedEnergyAmount);
@@ -235,6 +239,10 @@ export class StatusComponent implements OnInit, OnDestroy {
     return {
       isRed(): boolean {
         return red;
+      },
+
+      isRedBlink(): boolean {
+        return false;
       },
 
       isYellow(): boolean {

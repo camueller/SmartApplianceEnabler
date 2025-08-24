@@ -45,6 +45,10 @@ export class TrafficLightComponent implements OnChanges, OnInit {
     return this.stateHandler.isRed();
   }
 
+  isRedBlink(): boolean {
+    return this.stateHandler.isRedBlink();
+  }
+
   isRedClickable(): boolean {
     return this.clickHandler ? this.clickHandler.isRedClickable() : false;
   }
