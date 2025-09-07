@@ -40,7 +40,6 @@ import java.util.concurrent.Executors;
 public class MqttClient {
 
     private static transient Logger logger = LoggerFactory.getLogger(MqttClient.class);
-    private static String topicPrefix = "sae";
     private static MqttBroker mqttBroker = new MqttBroker();
     private String loggerId;
     private String applianceId;
@@ -120,12 +119,12 @@ public class MqttClient {
         return options;
     }
 
-    public String getTopicPrefix() {
-        return topicPrefix;
+    public String getRootTopic() {
+        return mqttBroker.getResolvedRootTopic();
     }
 
     public static String getApplianceTopic(String applianceId, String subLevels) {
-        return topicPrefix + "/" + applianceId + "/" + subLevels;
+        return mqttBroker.getResolvedRootTopic() + "/" + applianceId + "/" + subLevels;
     }
 
     public static String getApplianceTopicForSet(String applianceId, String subLevels) {
@@ -133,11 +132,11 @@ public class MqttClient {
     }
 
     public static String getEventTopic(String applianceId, MqttEventName event) {
-        return topicPrefix + "/" + applianceId + "/" + MqttEventName.TOPIC + "/" + event.getName();
+        return mqttBroker.getResolvedRootTopic() + "/" + applianceId + "/" + MqttEventName.TOPIC + "/" + event.getName();
     }
 
     public static String getEventTopic(MqttEventName event) {
-        return topicPrefix + "/" + MqttEventName.TOPIC + "/" + event.getName();
+        return mqttBroker.getResolvedRootTopic() + "/" + MqttEventName.TOPIC + "/" + event.getName();
     }
 
     private static org.eclipse.paho.client.mqttv3.MqttClient createClient(String clientId, String brokerUri, String loggerId) {

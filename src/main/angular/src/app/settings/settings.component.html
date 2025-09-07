@@ -45,6 +45,12 @@
         <input matInput type="password" formControlName="mqttPassword"
                required="{{isRequired('mqttPassword')}}">
       </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{'SettingsComponent.mqttRootTopic' | translate}}</mat-label>
+        <input matInput type="text" formControlName="mqttRootTopic"
+               placeholder="{{settingsDefaults.mqttRootTopic}}"
+               required="{{isRequired('mqttRootTopic')}}">
+      </mat-form-field>
     </div>
   </section>
 

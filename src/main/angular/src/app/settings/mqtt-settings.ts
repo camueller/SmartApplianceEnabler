@@ -21,6 +21,7 @@ export class MqttSettings {
   port: number;
   username?: string;
   password?: string;
+  rootTopic?: string;
   brokerAvailable?: boolean;
 
   public constructor(init?: Partial<MqttSettings>) {

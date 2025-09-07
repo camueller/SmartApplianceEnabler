@@ -99,12 +99,12 @@ public class SaeController {
         if(mqttClient == null && ApplianceManager.getInstance().isInitializationCompleted()) {
             mqttClient = new MqttClient("", getClass());
 
-            String meterTopic = mqttClient.getTopicPrefix() + "/+/" + Meter.TOPIC;
+            String meterTopic = mqttClient.getRootTopic() + "/+/" + Meter.TOPIC;
             mqttClient.subscribe(meterTopic, false, (topic, message) -> {
                 this.meterMessages.put(topic, (MeterMessage) message);
             });
 
-            String controlTopic = mqttClient.getTopicPrefix() + "/+/" + Control.TOPIC;
+            String controlTopic = mqttClient.getRootTopic() + "/+/" + Control.TOPIC;
             mqttClient.subscribe(controlTopic, false, (topic, message) -> {
                 this.controlMessages.put(topic, (ControlMessage) message);
             });
@@ -813,6 +813,7 @@ public class SaeController {
             mqttSettings.setPort(mqttBrokerPort);
             mqttSettings.setUsername(mqttBrokerUsername);
             mqttSettings.setPassword(mqttBrokerPassword);
+            mqttSettings.setRootTopic(mqttBroker.getRootTopic());
             settings.setMqttSettings(mqttSettings);
             mqttSettings.setBrokerAvailable(MqttClient.isMqttBrokerAvailable(mqttBrokerHost, mqttBrokerPort, mqttBrokerUsername, mqttBrokerPassword));
 
@@ -861,6 +862,7 @@ public class SaeController {
                 mqttBroker.setPort(mqttSettings.getPort());
                 mqttBroker.setUsername(mqttSettings.getUsername());
                 mqttBroker.setPassword(mqttSettings.getPassword());
+                mqttBroker.setRootTopic(mqttSettings.getRootTopic());
             }
 
             List<ModbusTcp> modbusTCPs = null;

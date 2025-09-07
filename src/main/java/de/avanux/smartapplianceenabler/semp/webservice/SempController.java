@@ -67,12 +67,12 @@ public class SempController {
         if(mqttClient == null && ApplianceManager.getInstance().isInitializationCompleted()) {
             mqttClient = new MqttClient("", getClass());
 
-            String meterTopic = mqttClient.getTopicPrefix() + "/+/" + Meter.TOPIC;
+            String meterTopic = mqttClient.getRootTopic() + "/+/" + Meter.TOPIC;
             mqttClient.subscribe(meterTopic, false, (topic, message) -> {
                 this.meterMessages.put(topic, (MeterMessage) message);
             });
 
-            String controlTopic = mqttClient.getTopicPrefix() + "/+/" + Control.TOPIC;
+            String controlTopic = mqttClient.getRootTopic() + "/+/" + Control.TOPIC;
             mqttClient.subscribe(controlTopic, false, (topic, message) -> {
                 this.controlMessages.put(topic, (ControlMessage) message);
             });
