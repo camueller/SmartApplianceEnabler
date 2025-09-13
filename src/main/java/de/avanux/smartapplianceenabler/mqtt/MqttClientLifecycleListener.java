@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Müller <axel.mueller@avanux.de>
+ * Copyright (C) 2025 Axel Müller <axel.mueller@avanux.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-export class MqttSettings {
-  host: string;
-  port: number;
-  username?: string;
-  password?: string;
-  rootTopic?: string;
-  brokerAvailable?: boolean;
+package de.avanux.smartapplianceenabler.mqtt;
 
-  public constructor(init?: Partial<MqttSettings>) {
-    Object.assign(this, init);
-  }
+public interface MqttClientLifecycleListener {
+    /**
+     * Called if a new MQTT client instance should be created because the connection details for MQTT broker have changed.
+     */
+    void newInstanceHasToBeCreated();
 }

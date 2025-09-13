@@ -66,17 +66,26 @@ public class SempController {
     public void scheduleFixedRateTask() {
         if(mqttClient == null && ApplianceManager.getInstance().isInitializationCompleted()) {
             mqttClient = new MqttClient("", getClass());
-
-            String meterTopic = mqttClient.getTopicPrefix() + "/+/" + Meter.TOPIC;
-            mqttClient.subscribe(meterTopic, false, (topic, message) -> {
-                this.meterMessages.put(topic, (MeterMessage) message);
+            mqttClient.addMqttClientLifecycleListener(() -> {
+                logger.info("Invalidating MQTT client");
+                this.mqttClient.disconnect();
+                this.mqttClient = new MqttClient("", getClass());
+                initializeMqttClient(this.mqttClient);
             });
-
-            String controlTopic = mqttClient.getTopicPrefix() + "/+/" + Control.TOPIC;
-            mqttClient.subscribe(controlTopic, false, (topic, message) -> {
-                this.controlMessages.put(topic, (ControlMessage) message);
-            });
+            initializeMqttClient(mqttClient);
         }
+    }
+
+    private void initializeMqttClient(MqttClient mqttClient) {
+        String meterTopic = mqttClient.getRootTopic() + "/+/" + Meter.TOPIC;
+        mqttClient.subscribe(meterTopic, false, (topic, message) -> {
+            this.meterMessages.put(topic, (MeterMessage) message);
+        });
+
+        String controlTopic = mqttClient.getRootTopic() + "/+/" + Control.TOPIC;
+        mqttClient.subscribe(controlTopic, false, (topic, message) -> {
+            this.controlMessages.put(topic, (ControlMessage) message);
+        });
     }
 
     @RequestMapping(value = BASE_URL, method = RequestMethod.GET, produces = "application/xml")

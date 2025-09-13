@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 public class MqttBroker {
     public transient static final String DEFAULT_HOST = "127.0.0.1";
     public transient static final String DEFAULT_NODERED_DASHBOARD_URL = "http://localhost:1880/ui";
+    public transient static final String DEFAULT_ROOT_TOPIC = "sae";
     @XmlAttribute
     private String host;
     public transient static final int DEFAULT_PORT = 1883;
@@ -35,6 +36,8 @@ public class MqttBroker {
     private String username;
     @XmlAttribute
     private String password;
+    @XmlAttribute
+    private String rootTopic;
 
     public String getHost() {
         return host;
@@ -76,11 +79,31 @@ public class MqttBroker {
         this.password = password;
     }
 
+    public String getRootTopic() {
+        return rootTopic;
+    }
+
+    public String getResolvedRootTopic() {
+        return rootTopic != null ? rootTopic : DEFAULT_ROOT_TOPIC;
+    }
+
+    public void setRootTopic(String rootTopic) {
+        this.rootTopic = rootTopic;
+    }
+
     @Override
     public String toString() {
+        var string = new StringBuilder();
         if(getUsername() != null) {
-            return getUsername()+ "@" + getResolvedHost() + ":" + getResolvedPort();
+            string.append(getUsername());;
+            string.append("@");;
         }
-        return getResolvedHost() + ":" + getResolvedPort();
+        string.append(getResolvedHost());
+        string.append(":");
+        string.append(getResolvedPort());
+        string.append("[");
+        string.append(getResolvedRootTopic());
+        string.append("]");
+        return string.toString();
     }
 }

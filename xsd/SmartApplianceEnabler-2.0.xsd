@@ -600,6 +600,7 @@
         <xs:attribute name="port" type="xs:int" />
         <xs:attribute name="username" type="xs:string"/>
         <xs:attribute name="password" type="xs:string"/>
+        <xs:attribute name="rootTopic" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="ModbusTCPType">

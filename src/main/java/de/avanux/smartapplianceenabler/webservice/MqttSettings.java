@@ -23,6 +23,7 @@ public class MqttSettings {
     Integer port;
     String username;
     String password;
+    String rootTopic;
     Boolean brokerAvailable;
 
     public String getHost() {
@@ -57,6 +58,14 @@ public class MqttSettings {
         this.password = password;
     }
 
+    public String getRootTopic() {
+        return rootTopic;
+    }
+
+    public void setRootTopic(String rootTopic) {
+        this.rootTopic = rootTopic;
+    }
+
     public Boolean getBrokerAvailable() {
         return brokerAvailable;
     }
@@ -73,6 +82,7 @@ public class MqttSettings {
                 ", brokerUsername=" + username +
                 ", brokerPasswort=" + (password != null ? "length(" + password.length() + ")" : "null" ) +
                 ", brokerAvailable=" + brokerAvailable +
+                ", rootTopic=" + rootTopic +
                 '}';
     }
 }

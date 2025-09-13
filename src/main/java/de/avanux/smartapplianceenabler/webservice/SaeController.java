@@ -34,10 +34,7 @@ import de.avanux.smartapplianceenabler.meter.MasterElectricityMeter;
 import de.avanux.smartapplianceenabler.meter.Meter;
 import de.avanux.smartapplianceenabler.meter.MeterDefaults;
 import de.avanux.smartapplianceenabler.modbus.ModbusTcp;
-import de.avanux.smartapplianceenabler.mqtt.ControlMessage;
-import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
-import de.avanux.smartapplianceenabler.mqtt.MqttBroker;
-import de.avanux.smartapplianceenabler.mqtt.MqttClient;
+import de.avanux.smartapplianceenabler.mqtt.*;
 import de.avanux.smartapplianceenabler.notification.Notification;
 import de.avanux.smartapplianceenabler.schedule.*;
 import de.avanux.smartapplianceenabler.semp.webservice.*;
@@ -98,17 +95,26 @@ public class SaeController {
     public void scheduleFixedRateTask() {
         if(mqttClient == null && ApplianceManager.getInstance().isInitializationCompleted()) {
             mqttClient = new MqttClient("", getClass());
-
-            String meterTopic = mqttClient.getTopicPrefix() + "/+/" + Meter.TOPIC;
-            mqttClient.subscribe(meterTopic, false, (topic, message) -> {
-                this.meterMessages.put(topic, (MeterMessage) message);
+            mqttClient.addMqttClientLifecycleListener(() -> {
+                logger.info("Invalidating MQTT client");
+                this.mqttClient.disconnect();
+                this.mqttClient = new MqttClient("", getClass());
+                initializeMqttClient(this.mqttClient);
             });
-
-            String controlTopic = mqttClient.getTopicPrefix() + "/+/" + Control.TOPIC;
-            mqttClient.subscribe(controlTopic, false, (topic, message) -> {
-                this.controlMessages.put(topic, (ControlMessage) message);
-            });
+            initializeMqttClient(mqttClient);
         }
+    }
+
+    private void initializeMqttClient(MqttClient mqttClient) {
+        String meterTopic = mqttClient.getRootTopic() + "/+/" + Meter.TOPIC;
+        mqttClient.subscribe(meterTopic, false, (topic, message) -> {
+            this.meterMessages.put(topic, (MeterMessage) message);
+        });
+
+        String controlTopic = mqttClient.getRootTopic() + "/+/" + Control.TOPIC;
+        mqttClient.subscribe(controlTopic, false, (topic, message) -> {
+            this.controlMessages.put(topic, (ControlMessage) message);
+        });
     }
 
     /**
@@ -813,6 +819,7 @@ public class SaeController {
             mqttSettings.setPort(mqttBrokerPort);
             mqttSettings.setUsername(mqttBrokerUsername);
             mqttSettings.setPassword(mqttBrokerPassword);
+            mqttSettings.setRootTopic(mqttBroker.getRootTopic());
             settings.setMqttSettings(mqttSettings);
             mqttSettings.setBrokerAvailable(MqttClient.isMqttBrokerAvailable(mqttBrokerHost, mqttBrokerPort, mqttBrokerUsername, mqttBrokerPassword));
 
@@ -861,6 +868,8 @@ public class SaeController {
                 mqttBroker.setPort(mqttSettings.getPort());
                 mqttBroker.setUsername(mqttSettings.getUsername());
                 mqttBroker.setPassword(mqttSettings.getPassword());
+                mqttBroker.setRootTopic(mqttSettings.getRootTopic());
+                MqttClient.setMqttBroker(mqttBroker);
             }
 
             List<ModbusTcp> modbusTCPs = null;
@@ -881,7 +890,6 @@ public class SaeController {
                 connectivity = new Connectivity();
                 connectivity.setMqttBroker(mqttBroker);
                 connectivity.setModbusTCPs(modbusTCPs);
-                MqttClient.removeMqttBrokerInstanceForAvailabilityTest();
             }
 
             List<Configuration> configurations = new ArrayList<>();

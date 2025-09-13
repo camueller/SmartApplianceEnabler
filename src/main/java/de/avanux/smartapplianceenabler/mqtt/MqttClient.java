@@ -33,14 +33,15 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MqttClient {
 
     private static transient Logger logger = LoggerFactory.getLogger(MqttClient.class);
-    private static String topicPrefix = "sae";
     private static MqttBroker mqttBroker = new MqttBroker();
     private String loggerId;
     private String applianceId;
@@ -52,6 +53,8 @@ public class MqttClient {
     private Gson gson;
     private static ExecutorService executor;
     private boolean shutdownInProgress = false;
+    private static Set<MqttClientLifecycleListener> mqttClientLifecycleListeners = new HashSet<>();
+
 
     public MqttClient(String applianceId, Class clazz) {
         this.applianceId = applianceId;
@@ -79,7 +82,7 @@ public class MqttClient {
         }
 
         var brokerUri = buildBrokerUri(mqttBroker.getResolvedHost(), mqttBroker.getResolvedPort());
-        logger.info("Using MQTT broker " + brokerUri);
+        logger.info("Using MQTT broker " + mqttBroker.toString());
         client = createClient(clientIdBuilder.toString(), brokerUri, loggerId);
     }
 
@@ -88,7 +91,10 @@ public class MqttClient {
     }
 
     public static void setMqttBroker(MqttBroker mqttBroker) {
+        logger.info("Setting MQTT broker to " + mqttBroker);
         MqttClient.mqttBroker = mqttBroker;
+        instance = null; // force new instance using new broker details
+        MqttClient.mqttClientLifecycleListeners.forEach(MqttClientLifecycleListener::newInstanceHasToBeCreated);
     }
 
     private static String buildBrokerUri(String host, Integer port) {
@@ -107,6 +113,14 @@ public class MqttClient {
         }
     }
 
+    public void addMqttClientLifecycleListener(MqttClientLifecycleListener listener) {
+        MqttClient.mqttClientLifecycleListeners.add(listener);
+    }
+
+    public void removeMqttClientLifecycleListener(MqttClientLifecycleListener listener) {
+        MqttClient.mqttClientLifecycleListeners.remove(listener);
+    }
+
     private static MqttConnectOptions getOptions(String username, String password) {
         MqttConnectOptions options = new MqttConnectOptions();
         if(username != null) {
@@ -120,12 +134,12 @@ public class MqttClient {
         return options;
     }
 
-    public String getTopicPrefix() {
-        return topicPrefix;
+    public String getRootTopic() {
+        return mqttBroker.getResolvedRootTopic();
     }
 
     public static String getApplianceTopic(String applianceId, String subLevels) {
-        return topicPrefix + "/" + applianceId + "/" + subLevels;
+        return mqttBroker.getResolvedRootTopic() + "/" + applianceId + "/" + subLevels;
     }
 
     public static String getApplianceTopicForSet(String applianceId, String subLevels) {
@@ -133,11 +147,11 @@ public class MqttClient {
     }
 
     public static String getEventTopic(String applianceId, MqttEventName event) {
-        return topicPrefix + "/" + applianceId + "/" + MqttEventName.TOPIC + "/" + event.getName();
+        return mqttBroker.getResolvedRootTopic() + "/" + applianceId + "/" + MqttEventName.TOPIC + "/" + event.getName();
     }
 
     public static String getEventTopic(MqttEventName event) {
-        return topicPrefix + "/" + MqttEventName.TOPIC + "/" + event.getName();
+        return mqttBroker.getResolvedRootTopic() + "/" + MqttEventName.TOPIC + "/" + event.getName();
     }
 
     private static org.eclipse.paho.client.mqttv3.MqttClient createClient(String clientId, String brokerUri, String loggerId) {
@@ -221,6 +235,7 @@ public class MqttClient {
         var loggerId = MqttClient.class.getSimpleName();
         try {
             if(instance == null) {
+                logger.debug("{}: Creating new MQTT client instance", loggerId);
                 instance = createClient(MqttClient.class.getSimpleName(), brokerUri, loggerId);
             }
             if(! instance.isConnected()) {
@@ -234,10 +249,6 @@ public class MqttClient {
             logger.error("{}: Error testing connection to MQTT broker", loggerId, e);
         }
         return false;
-    }
-
-    public static void removeMqttBrokerInstanceForAvailabilityTest() {
-        instance = null;
     }
 
     public void publish(String topic, MqttMessage message, boolean retained) {

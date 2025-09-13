@@ -7,6 +7,7 @@ export interface SettingsModel {
   nodeRedDashboardUrl: FormControl<string>;
   mqttUsername: FormControl<string>;
   mqttPassword: FormControl<string>;
+  mqttRootTopic: FormControl<string>;
   holidaysEnabled: FormControl<boolean>;
   holidaysUrl: FormControl<string>;
   modbusSettings: FormArray<FormGroup<SettingsModbusModel>>;

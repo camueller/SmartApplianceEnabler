@@ -95,6 +95,7 @@ export class SettingsComponent  implements OnInit {
       nodeRedDashboardUrl: new FormControl(this.settings.nodeRedDashboardUrl, Validators.pattern(InputValidatorPatterns.URL)),
       mqttUsername: new FormControl(this.settings.mqttSettings?.username),
       mqttPassword: new FormControl(this.settings.mqttSettings?.password),
+      mqttRootTopic: new FormControl(this.settings.mqttSettings?.rootTopic),
       holidaysEnabled: new FormControl(this.settings.holidaysEnabled),
       holidaysUrl: new FormControl(this.settings.holidaysUrl, Validators.pattern(InputValidatorPatterns.URL)),
       modbusSettings: buildFormArrayWithEmptyFormGroups(this.settings?.modbusSettings),
@@ -154,8 +155,9 @@ export class SettingsComponent  implements OnInit {
     const mqttPort = this.form.controls.mqttPort.value;
     const mqttUsername = this.form.controls.mqttUsername.value;
     const mqttPassword = this.form.controls.mqttPassword.value;
+    const mqttRootTopic = this.form.controls.mqttRootTopic.value;
     if (mqttHost) {
-      this.settings.mqttSettings = {host: mqttHost, port: mqttPort, username: mqttUsername, password: mqttPassword};
+      this.settings.mqttSettings = {host: mqttHost, port: mqttPort, username: mqttUsername, password: mqttPassword, rootTopic: mqttRootTopic.length ? mqttRootTopic : undefined};
     }
     this.settings.nodeRedDashboardUrl = this.form.controls.nodeRedDashboardUrl.value;
     this.settings.holidaysEnabled = this.form.controls.holidaysEnabled.value;

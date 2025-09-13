@@ -521,6 +521,7 @@
   "SettingsComponent.mqttPort": "Port",
   "SettingsComponent.mqttUsername": "Username",
   "SettingsComponent.mqttPassword": "Password",
+  "SettingsComponent.mqttRootTopic": "Root Topic",
   "SettingsComponent.nodeRed": "Node-RED",
   "SettingsComponent.nodeRedDashboardUrl": "Dashboard URL",
   "SettingsComponent.holidays": "Holidays",
