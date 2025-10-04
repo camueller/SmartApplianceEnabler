@@ -61,12 +61,12 @@ public class OptionalEnergySocRequest extends SocRequest {
 
     @Override
     public String toString() {
-        return toString(LocalDateTime.now());
+        return toString(LocalDateTime.now(), true);
     }
 
     @Override
-    public String toString(LocalDateTime now) {
-        String text = super.toString(now);
+    public String toString(LocalDateTime now, boolean includeTimeframeInterval) {
+        String text = super.toString(now, includeTimeframeInterval);
         text += "/";
         text += "Optional Energy";
         return text;
