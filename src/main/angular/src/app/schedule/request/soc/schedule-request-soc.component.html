@@ -2,16 +2,20 @@
   <mat-form-field>
     <mat-label>{{'ScheduleRequestSocComponent.evId' | translate}}</mat-label>
     <mat-select formControlName="evId" required="{{isRequired('evId')}}">
-      <mat-option *ngFor="let electricVehicle of electricVehicles" [value]="electricVehicle.id">
-        {{electricVehicle.name}}
-      </mat-option>
+      @for (electricVehicle of electricVehicles; track electricVehicle) {
+        <mat-option [value]="electricVehicle.id">
+          {{electricVehicle.name}}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <mat-form-field class="ScheduleRequestSocComponent__soc">
     <mat-label>{{'ScheduleRequestSocComponent.soc' | translate}}</mat-label>
     <input matInput type="text" formControlName="soc"
-           required="{{isRequired('soc')}}">
-    <mat-error *ngIf="errors.soc">{{errors.soc}}</mat-error>
+      required="{{isRequired('soc')}}">
+    @if (errors.soc) {
+      <mat-error>{{errors.soc}}</mat-error>
+    }
   </mat-form-field>
   <mat-checkbox formControlName="enabledExternally"
   >{{'ScheduleRequestRuntimeComponent.enabled' | translate}}</mat-checkbox>

@@ -1,29 +1,31 @@
 <!--
-  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
-  ~
-  ~ This program is free software; you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation; either version 2 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more appliance.
-  ~
-  ~ You should have received a copy of the GNU General Public License along
-  ~ with this program; if not, write to the Free Software Foundation, Inc.,
-  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-  -->
+~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+~
+~ This program is free software; you can redistribute it and/or modify
+~ it under the terms of the GNU General Public License as published by
+~ the Free Software Foundation; either version 2 of the License, or
+~ (at your option) any later version.
+~
+~ This program is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+~ GNU General Public License for more appliance.
+~
+~ You should have received a copy of the GNU General Public License along
+~ with this program; if not, write to the Free Software Foundation, Inc.,
+~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
 
 <form class="ApplianceComponent mat-typography" [formGroup]="form" (ngSubmit)="submitForm()">
   <mat-form-field class="ApplianceComponent__id">
     <mat-label>{{'ApplianceComponent.id' | translate}}</mat-label>
     <input matInput type="text" placeholder="F-00000000-000000000000-00" formControlName="id"
-           matTooltip="{{'ApplianceComponent.id.tooltip' | translate}}"
-           [matTooltipDisabled]="'matTooltipDisabled' | env"
-           required="{{isRequired('id')}}">
-    <mat-error *ngIf="errors.id">{{errors.id}}</mat-error>
+      matTooltip="{{'ApplianceComponent.id.tooltip' | translate}}"
+      [matTooltipDisabled]="'matTooltipDisabled' | env"
+      required="{{isRequired('id')}}">
+    @if (errors.id) {
+      <mat-error>{{errors.id}}</mat-error>
+    }
   </mat-form-field>
   <app-help [helpfile]="'Appliance'"></app-help>
   <section>
@@ -32,28 +34,36 @@
       <mat-form-field class="vendor">
         <mat-label>{{'ApplianceComponent.vendor' | translate}}</mat-label>
         <input matInput type="text" formControlName="vendor"
-               required="{{isRequired('vendor')}}">
-        <mat-error *ngIf="errors.vendor">{{errors.vendor}}</mat-error>
+          required="{{isRequired('vendor')}}">
+        @if (errors.vendor) {
+          <mat-error>{{errors.vendor}}</mat-error>
+        }
       </mat-form-field>
       <mat-form-field class="name">
         <mat-label>{{'ApplianceComponent.name' | translate}}</mat-label>
         <input matInput type="text" formControlName="name"
-               required="{{isRequired('name')}}">
-        <mat-error *ngIf="errors.name">{{errors.name}}</mat-error>
+          required="{{isRequired('name')}}">
+        @if (errors.name) {
+          <mat-error>{{errors.name}}</mat-error>
+        }
       </mat-form-field>
       <mat-form-field>
         <mat-label>{{'ApplianceComponent.type' | translate}}</mat-label>
         <mat-select formControlName="type" required="{{isRequired('type')}}">
-          <mat-option *ngFor="let applianceTyp of applianceTypes" [value]="applianceTyp.value">
-            {{applianceTyp.viewValue}}
-          </mat-option>
+          @for (applianceTyp of applianceTypes; track applianceTyp) {
+            <mat-option [value]="applianceTyp.value">
+              {{applianceTyp.viewValue}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
       <mat-form-field class="serial">
         <mat-label>{{'ApplianceComponent.serial' | translate}}</mat-label>
         <input matInput type="text" formControlName="serial"
-               required="{{isRequired('serial')}}">
-        <mat-error *ngIf="errors.serial">{{errors.serial}}</mat-error>
+          required="{{isRequired('serial')}}">
+        @if (errors.serial) {
+          <mat-error>{{errors.serial}}</mat-error>
+        }
       </mat-form-field>
     </div>
   </section>
@@ -64,58 +74,72 @@
       <mat-form-field class="minPowerConsumption">
         <mat-label>{{'ApplianceComponent.minPowerConsumption' | translate}}</mat-label>
         <input matInput type="text" formControlName="minPowerConsumption"
-               matTooltip="{{'ApplianceComponent.minPowerConsumption.tooltip' | translate}}"
-               [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{isRequired('minPowerConsumption')}}">
-        <mat-error *ngIf="errors.minPowerConsumption">{{errors.minPowerConsumption}}</mat-error>
+          matTooltip="{{'ApplianceComponent.minPowerConsumption.tooltip' | translate}}"
+          [matTooltipDisabled]="'matTooltipDisabled' | env"
+          required="{{isRequired('minPowerConsumption')}}">
+        @if (errors.minPowerConsumption) {
+          <mat-error>{{errors.minPowerConsumption}}</mat-error>
+        }
       </mat-form-field>
       <mat-form-field class="maxPowerConsumption">
         <mat-label>{{'ApplianceComponent.maxPowerConsumption' | translate}}</mat-label>
         <input matInput type="text" formControlName="maxPowerConsumption"
-               matTooltip="{{'ApplianceComponent.maxPowerConsumption.tooltip' | translate}}"
-               [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{isRequired('maxPowerConsumption')}}">
-        <mat-error *ngIf="errors.maxPowerConsumption">{{errors.maxPowerConsumption}}</mat-error>
+          matTooltip="{{'ApplianceComponent.maxPowerConsumption.tooltip' | translate}}"
+          [matTooltipDisabled]="'matTooltipDisabled' | env"
+          required="{{isRequired('maxPowerConsumption')}}">
+        @if (errors.maxPowerConsumption) {
+          <mat-error>{{errors.maxPowerConsumption}}</mat-error>
+        }
       </mat-form-field>
       <mat-checkbox formControlName="interruptionsAllowed"
-                    matTooltip="{{'ApplianceComponent.interruptionsAllowed.tooltip' | translate}}"
-                    [matTooltipDisabled]="'matTooltipDisabled' | env"
+        matTooltip="{{'ApplianceComponent.interruptionsAllowed.tooltip' | translate}}"
+        [matTooltipDisabled]="'matTooltipDisabled' | env"
       >{{'ApplianceComponent.interruptionsAllowed' | translate}}</mat-checkbox>
     </div>
-    <div class="sae__fields" *ngIf="isInterruptionAllowed()">
-      <mat-form-field class="ApplianceComponent__minOnTime">
-        <mat-label>{{'ApplianceComponent.minOnTime' | translate}}</mat-label>
-        <input matInput type="text" formControlName="minOnTime"
-               matTooltip="{{'ApplianceComponent.minOnTime.tooltip' | translate}}"
-               [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{isRequired('minOnTime')}}">
-        <mat-error *ngIf="errors.minOnTime">{{errors.minOnTime}}</mat-error>
-      </mat-form-field>
-      <mat-form-field class="maxOnTime">
-        <mat-label>{{'ApplianceComponent.maxOnTime' | translate}}</mat-label>
-        <input matInput type="text" formControlName="maxOnTime"
-               matTooltip="{{'ApplianceComponent.maxOnTime.tooltip' | translate}}"
-               [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{isRequired('maxOnTime')}}">
-        <mat-error *ngIf="errors.maxOnTime">{{errors.maxOnTime}}</mat-error>
-      </mat-form-field>
-      <mat-form-field class="minOffTime">
-        <mat-label>{{'ApplianceComponent.minOffTime' | translate}}</mat-label>
-        <input matInput type="text" formControlName="minOffTime"
-               matTooltip="{{'ApplianceComponent.minOffTime.tooltip' | translate}}"
-               [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{isRequired('minOffTime')}}">
-        <mat-error *ngIf="errors.minOffTime">{{errors.minOffTime}}</mat-error>
-      </mat-form-field>
-      <mat-form-field class="maxOffTime">
-        <mat-label>{{'ApplianceComponent.maxOffTime' | translate}}</mat-label>
-        <input matInput type="text" formControlName="maxOffTime"
-               matTooltip="{{'ApplianceComponent.maxOffTime.tooltip' | translate}}"
-               [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{isRequired('maxOffTime')}}">
-        <mat-error *ngIf="errors.maxOffTime">{{errors.maxOffTime}}</mat-error>
-      </mat-form-field>
-    </div>
+    @if (isInterruptionAllowed()) {
+      <div class="sae__fields">
+        <mat-form-field class="ApplianceComponent__minOnTime">
+          <mat-label>{{'ApplianceComponent.minOnTime' | translate}}</mat-label>
+          <input matInput type="text" formControlName="minOnTime"
+            matTooltip="{{'ApplianceComponent.minOnTime.tooltip' | translate}}"
+            [matTooltipDisabled]="'matTooltipDisabled' | env"
+            required="{{isRequired('minOnTime')}}">
+          @if (errors.minOnTime) {
+            <mat-error>{{errors.minOnTime}}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field class="maxOnTime">
+          <mat-label>{{'ApplianceComponent.maxOnTime' | translate}}</mat-label>
+          <input matInput type="text" formControlName="maxOnTime"
+            matTooltip="{{'ApplianceComponent.maxOnTime.tooltip' | translate}}"
+            [matTooltipDisabled]="'matTooltipDisabled' | env"
+            required="{{isRequired('maxOnTime')}}">
+          @if (errors.maxOnTime) {
+            <mat-error>{{errors.maxOnTime}}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field class="minOffTime">
+          <mat-label>{{'ApplianceComponent.minOffTime' | translate}}</mat-label>
+          <input matInput type="text" formControlName="minOffTime"
+            matTooltip="{{'ApplianceComponent.minOffTime.tooltip' | translate}}"
+            [matTooltipDisabled]="'matTooltipDisabled' | env"
+            required="{{isRequired('minOffTime')}}">
+          @if (errors.minOffTime) {
+            <mat-error>{{errors.minOffTime}}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field class="maxOffTime">
+          <mat-label>{{'ApplianceComponent.maxOffTime' | translate}}</mat-label>
+          <input matInput type="text" formControlName="maxOffTime"
+            matTooltip="{{'ApplianceComponent.maxOffTime.tooltip' | translate}}"
+            [matTooltipDisabled]="'matTooltipDisabled' | env"
+            required="{{isRequired('maxOffTime')}}">
+          @if (errors.maxOffTime) {
+            <mat-error>{{errors.maxOffTime}}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    }
   </section>
   <section>
     <h2>{{'ApplianceComponent.notification.heading' | translate}}</h2>
@@ -123,15 +147,17 @@
       <mat-form-field class="ApplianceComponent__notificationSenderId">
         <mat-label>{{'ApplianceComponent.notification.senderId' | translate}}</mat-label>
         <input matInput type="text" formControlName="notificationSenderId"
-               placeholder="{{form.controls.id?.value}}"
-               required="{{isRequired('notificationSenderId')}}">
-        <mat-error *ngIf="errors.notificationSenderId">{{errors.notificationSenderId}}</mat-error>
+          placeholder="{{form.controls.id?.value}}"
+          required="{{isRequired('notificationSenderId')}}">
+        @if (errors.notificationSenderId) {
+          <mat-error>{{errors.notificationSenderId}}</mat-error>
+        }
       </mat-form-field>
     </div>
   </section>
   <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
   <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
-    {{'button.save' | translate}}</button>
+  {{'button.save' | translate}}</button>
   <button mat-raised-button type="button" (click)="deleteAppliance()">
-    {{'button.delete' | translate}}</button>
+  {{'button.delete' | translate}}</button>
 </form>

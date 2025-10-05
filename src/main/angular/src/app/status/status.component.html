@@ -1,123 +1,138 @@
 <div class="StatusComponent mat-typography">
-  <messagebox [level]="MessageBoxLevel.ERROR" *ngIf="!mqttBrokerAvailable"
-  >{{'StatusComponent.message.mqttBrokerNotAvailable' | translate}}</messagebox>
-  <div *ngIf="mqttBrokerAvailable">
-    <h1 class="StatusComponent__title">
-      {{'StatusComponent.title' | translate}}<app-help [helpfile]="'Status'" [cssClass]="'text-top'"></app-help>
-      <a class="StatusComponent__nodered-export-button"
-         (click)="openDialog()"
-         matTooltip="{{'StatusComponent.dashboard.export' | translate}}"
-         [matTooltipDisabled]="'matTooltipDisabled' | env"
-      ><mat-icon>redo</mat-icon></a>
-      <a class="StatusComponent__nodered-export-button"
-         [href]="nodeRedDashboardUrl | safeurl"
-         target="_blank"
-         matTooltip="{{'StatusComponent.dashboard.open' | translate}}"
-         [matTooltipDisabled]="'matTooltipDisabled' | env"
-      ><mat-icon>open_in_new</mat-icon></a>
-    </h1>
-    <messagebox [level]="MessageBoxLevel.INFO" *ngIf="!hasControllableAppliances"
-    >{{'StatusComponent.message.noControllableAppliances' | translate}}</messagebox>
-    <div class="StatusComponent__appliances" *ngIf="hasControllableAppliances">
-      <div class="StatusComponent__appliance" *ngFor="let applianceStatus of applianceStatuses">
-        <app-traffic-light [key]="applianceStatus"
-                           [stateHandler]="getTrafficLightStateHandler(applianceStatus)"
-                           [clickHandler]="getTrafficLightClickHandler(applianceStatus)"
-                           #trafficLights
-        >
-        </app-traffic-light>
-        <div class="StatusComponent__appliance-details">
-          <div class="StatusComponent__appliance-type">{{getTranslatedType(applianceStatus.type)}}</div>
-          <div *ngIf="isEvCharger(applianceStatus); else notEvCharger">
-            <app-status-evcharger-edit *ngIf="isEditMode(applianceStatus); else greenNotClickedCharger"
-                                       [status]="applianceStatus"
-                                       [electricVehicles]="electricVehicles.get(applianceStatus.id)"
-                                       [dows]="dows"
-                                       (beforeFormSubmit)="onBeforeFormSubmit()"
-                                       (formSubmitted)="onFormSubmitted($event)"
-                                       (formCancelled)="onFormCancel()"
-            >
-            </app-status-evcharger-edit>
-            <ng-template #greenNotClickedCharger>
-              <app-status-charger-view
-                [electricVehicles]="electricVehicles.get(applianceStatus.id)"
-                [status]="applianceStatus"
-                [dows]="dows"
-              >
-              </app-status-charger-view>
-            </ng-template>
+  @if (!mqttBrokerAvailable) {
+    <messagebox [level]="MessageBoxLevel.ERROR"
+    >{{'StatusComponent.message.mqttBrokerNotAvailable' | translate}}</messagebox>
+  }
+  @if (mqttBrokerAvailable) {
+    <div>
+      <h1 class="StatusComponent__title">
+        {{'StatusComponent.title' | translate}}<app-help [helpfile]="'Status'" [cssClass]="'text-top'"></app-help>
+        <a class="StatusComponent__nodered-export-button"
+          (click)="openDialog()"
+          matTooltip="{{'StatusComponent.dashboard.export' | translate}}"
+          [matTooltipDisabled]="'matTooltipDisabled' | env"
+          ><mat-icon>redo</mat-icon></a>
+          <a class="StatusComponent__nodered-export-button"
+            [href]="nodeRedDashboardUrl | safeurl"
+            target="_blank"
+            matTooltip="{{'StatusComponent.dashboard.open' | translate}}"
+            [matTooltipDisabled]="'matTooltipDisabled' | env"
+            ><mat-icon>open_in_new</mat-icon></a>
+          </h1>
+          @if (!hasControllableAppliances) {
+            <messagebox [level]="MessageBoxLevel.INFO"
+            >{{'StatusComponent.message.noControllableAppliances' | translate}}</messagebox>
+          }
+          @if (hasControllableAppliances) {
+            <div class="StatusComponent__appliances">
+              @for (applianceStatus of applianceStatuses; track applianceStatus) {
+                <div class="StatusComponent__appliance">
+                  <app-traffic-light [key]="applianceStatus"
+                    [stateHandler]="getTrafficLightStateHandler(applianceStatus)"
+                    [clickHandler]="getTrafficLightClickHandler(applianceStatus)"
+                    #trafficLights
+                    >
+                  </app-traffic-light>
+                  <div class="StatusComponent__appliance-details">
+                    <div class="StatusComponent__appliance-type">{{getTranslatedType(applianceStatus.type)}}</div>
+                    @if (isEvCharger(applianceStatus)) {
+                      <div>
+                        @if (isEditMode(applianceStatus)) {
+                          <app-status-evcharger-edit
+                            [status]="applianceStatus"
+                            [electricVehicles]="electricVehicles.get(applianceStatus.id)"
+                            [dows]="dows"
+                            (beforeFormSubmit)="onBeforeFormSubmit()"
+                            (formSubmitted)="onFormSubmitted($event)"
+                            (formCancelled)="onFormCancel()"
+                            >
+                          </app-status-evcharger-edit>
+                        } @else {
+                          <app-status-charger-view
+                            [electricVehicles]="electricVehicles.get(applianceStatus.id)"
+                            [status]="applianceStatus"
+                            [dows]="dows"
+                            >
+                          </app-status-charger-view>
+                        }
+                      </div>
+                    } @else {
+                      @if (isEditMode(applianceStatus)) {
+                        <app-status-edit
+                          [applianceId]="applianceStatus.id"
+                          (beforeFormSubmit)="onBeforeFormSubmit()"
+                          (formSubmitted)="onFormSubmitted($event)"
+                          (formCancelled)="onFormCancel()"
+                          >
+                        </app-status-edit>
+                      } @else {
+                        <app-status-view
+                          [status]="applianceStatus"
+                          [trafficLightStateHandler]="getTrafficLightStateHandler(applianceStatus)"
+                          >
+                        </app-status-view>
+                      }
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+          <h2 class="StatusComponent__explanation_headline">{{'StatusComponent.explanation' | translate}}</h2>
+          <div class="StatusComponent__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
+          @if (hasEvChargerInEditMode()) {
+            <div class="StatusComponent__explanation_chargemode">
+              <h4 class="StatusComponent__explanation_headline">{{'StatusComponent.chargeMode' | translate}}</h4>
+              <table>
+                <tr class="StatusComponent__explanation_chargemode_row">
+                  <td class="StatusComponent__explanation_chargemode_label">{{'StatusComponent.chargeMode.FAST' | translate}}</td>
+                  <td>{{'StatusComponent.chargeMode.FAST.description' | translate}}</td>
+                </tr>
+                <tr class="StatusComponent__explanation_chargemode_row">
+                  <td class="StatusComponent__explanation_chargemode_label">{{'StatusComponent.chargeMode.TIMED' | translate}}</td>
+                  <td>{{'StatusComponent.chargeMode.TIMED.description' | translate}}</td>
+                </tr>
+                <tr class="StatusComponent__explanation_chargemode_row">
+                  <td class="StatusComponent__explanation_chargemode_label">{{'StatusComponent.chargeMode.OPTIMIZED' | translate}}</td>
+                  <td>{{'StatusComponent.chargeMode.OPTIMIZED.description' | translate}}</td>
+                </tr>
+                <tr class="StatusComponent__explanation_chargemode_row">
+                  <td class="StatusComponent__explanation_chargemode_label">{{'StatusComponent.chargeMode.EXCESS_ENERGY' | translate}}</td>
+                  <td>{{'StatusComponent.chargeMode.EXCESS_ENERGY.description' | translate}}</td>
+                </tr>
+              </table>
+            </div>
+          }
+          <div class="StatusComponent__traffic-light-explanations">
+            <div class="StatusComponent__traffic-light-explanation">
+              <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, false, false)"
+                sizeSmall="true">
+              </app-traffic-light>
+              <div class="StatusComponent__traffic-light-explanation-text"
+              >{{'StatusComponent.explanationNoLight' | translate}}</div>
+            </div>
+            <div class="StatusComponent__traffic-light-explanation">
+              <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(true, false, false)"
+                sizeSmall="true">
+              </app-traffic-light>
+              <div class="StatusComponent__traffic-light-explanation-text"
+              >{{'StatusComponent.explanationStopLight' | translate}}</div>
+            </div>
+            <div class="StatusComponent__traffic-light-explanation">
+              <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, true, false)"
+                sizeSmall="true">
+              </app-traffic-light>
+              <div class="StatusComponent__traffic-light-explanation-text"
+              >{{'StatusComponent.explanationSlowLight' | translate}}</div>
+            </div>
+            <div class="StatusComponent__traffic-light-explanation">
+              <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, false, true)"
+                sizeSmall="true">
+              </app-traffic-light>
+              <div class="StatusComponent__traffic-light-explanation-text"
+              >{{'StatusComponent.explanationGoLight' | translate}}</div>
+            </div>
           </div>
-          <ng-template #notEvCharger>
-            <app-status-edit *ngIf="isEditMode(applianceStatus); else greenNotClicked"
-                             [applianceId]="applianceStatus.id"
-                             (beforeFormSubmit)="onBeforeFormSubmit()"
-                             (formSubmitted)="onFormSubmitted($event)"
-                             (formCancelled)="onFormCancel()"
-            >
-            </app-status-edit>
-            <ng-template #greenNotClicked>
-              <app-status-view
-                [status]="applianceStatus"
-                [trafficLightStateHandler]="getTrafficLightStateHandler(applianceStatus)"
-              >
-              </app-status-view>
-            </ng-template>
-          </ng-template>
         </div>
-      </div>
+      }
     </div>
-    <h2 class="StatusComponent__explanation_headline">{{'StatusComponent.explanation' | translate}}</h2>
-    <div class="StatusComponent__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
-    <div class="StatusComponent__explanation_chargemode" *ngIf="hasEvChargerInEditMode()">
-      <h4 class="StatusComponent__explanation_headline">{{'StatusComponent.chargeMode' | translate}}</h4>
-      <table>
-        <tr class="StatusComponent__explanation_chargemode_row">
-          <td class="StatusComponent__explanation_chargemode_label">{{'StatusComponent.chargeMode.FAST' | translate}}</td>
-          <td>{{'StatusComponent.chargeMode.FAST.description' | translate}}</td>
-        </tr>
-        <tr class="StatusComponent__explanation_chargemode_row">
-          <td class="StatusComponent__explanation_chargemode_label">{{'StatusComponent.chargeMode.TIMED' | translate}}</td>
-          <td>{{'StatusComponent.chargeMode.TIMED.description' | translate}}</td>
-        </tr>
-        <tr class="StatusComponent__explanation_chargemode_row">
-          <td class="StatusComponent__explanation_chargemode_label">{{'StatusComponent.chargeMode.OPTIMIZED' | translate}}</td>
-          <td>{{'StatusComponent.chargeMode.OPTIMIZED.description' | translate}}</td>
-        </tr>
-        <tr class="StatusComponent__explanation_chargemode_row">
-          <td class="StatusComponent__explanation_chargemode_label">{{'StatusComponent.chargeMode.EXCESS_ENERGY' | translate}}</td>
-          <td>{{'StatusComponent.chargeMode.EXCESS_ENERGY.description' | translate}}</td>
-        </tr>
-      </table>
-    </div>
-    <div class="StatusComponent__traffic-light-explanations">
-      <div class="StatusComponent__traffic-light-explanation">
-        <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, false, false)"
-                           sizeSmall="true">
-        </app-traffic-light>
-        <div class="StatusComponent__traffic-light-explanation-text"
-        >{{'StatusComponent.explanationNoLight' | translate}}</div>
-      </div>
-      <div class="StatusComponent__traffic-light-explanation">
-        <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(true, false, false)"
-                           sizeSmall="true">
-        </app-traffic-light>
-        <div class="StatusComponent__traffic-light-explanation-text"
-        >{{'StatusComponent.explanationStopLight' | translate}}</div>
-      </div>
-      <div class="StatusComponent__traffic-light-explanation">
-        <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, true, false)"
-                           sizeSmall="true">
-        </app-traffic-light>
-        <div class="StatusComponent__traffic-light-explanation-text"
-        >{{'StatusComponent.explanationSlowLight' | translate}}</div>
-      </div>
-      <div class="StatusComponent__traffic-light-explanation">
-        <app-traffic-light [stateHandler]="getTrafficLightStateHandlerForExplanation(false, false, true)"
-                           sizeSmall="true">
-        </app-traffic-light>
-        <div class="StatusComponent__traffic-light-explanation-text"
-        >{{'StatusComponent.explanationGoLight' | translate}}</div>
-      </div>
-    </div>
-  </div>
-</div>

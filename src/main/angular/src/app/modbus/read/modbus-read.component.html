@@ -4,68 +4,96 @@
       <mat-form-field class="sae__modbus-address">
         <mat-label>{{'ModbusReadComponent.address' | translate}}</mat-label>
         <input matInput type="text" formControlName="address"
-               required="{{isRequired('address')}}">
-        <mat-error *ngIf="errors.address">{{errors.address}}</mat-error>
+          required="{{isRequired('address')}}">
+        @if (errors.address) {
+          <mat-error>{{errors.address}}</mat-error>
+        }
       </mat-form-field>
       <mat-form-field class="sae__modbus-register-type">
         <mat-label>{{'ModbusReadComponent.type' | translate}}</mat-label>
         <mat-select formControlName="type" required="{{isRequired('type')}}">
-          <mat-option *ngFor="let registerType of registerTypes" [value]="registerType">
-            {{getTranslatedRegisterType(registerType)}}
-          </mat-option>
+          @for (registerType of registerTypes; track registerType) {
+            <mat-option [value]="registerType">
+              {{getTranslatedRegisterType(registerType)}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="ModbusReadComponent__value-type" *ngIf="isValueTypeDisplayed">
-        <mat-label>{{'ModbusReadComponent.valueType' | translate}}</mat-label>
-        <mat-select formControlName="valueType" required="{{isRequired('valueType')}}">
-          <mat-option *ngFor="let valueType of valueTypes" [value]="valueType">
-            {{getTranslatedValueType(valueType)}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field class="ModbusReadComponent__words" *ngIf="isWordsDisplayed">
-        <mat-label>{{'ModbusReadComponent.words' | translate}}</mat-label>
-        <input matInput type="text" formControlName="words"
-               placeholder="{{wordsPlaceholder}}"
-               required="{{isRequired('words')}}">
-        <mat-error *ngIf="errors.words">{{errors.words}}</mat-error>
-      </mat-form-field>
-      <mat-form-field class="ModbusReadComponent__byteOrder" *ngIf="isByteOrderDisplayed">
-        <mat-label>{{'ModbusReadComponent.byteOrder' | translate}}</mat-label>
-        <mat-select formControlName="byteOrder" required="{{isRequired('byteOrder')}}">
-          <mat-option *ngFor="let byteOrder of byteOrders" [value]="byteOrder">
-            {{getTranslatedByteOrder(byteOrder)}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field class="sae__factorToValue" *ngIf="isFactorToValueDisplayed">
-        <mat-label>{{'ModbusReadComponent.factorToValue' | translate}}</mat-label>
-        <input matInput type="text" formControlName="factorToValue"
-               placeholder="1"
-               required="{{isRequired('factorToValue')}}">
-        <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
-      </mat-form-field>
+      @if (isValueTypeDisplayed) {
+        <mat-form-field class="ModbusReadComponent__value-type">
+          <mat-label>{{'ModbusReadComponent.valueType' | translate}}</mat-label>
+          <mat-select formControlName="valueType" required="{{isRequired('valueType')}}">
+            @for (valueType of valueTypes; track valueType) {
+              <mat-option [value]="valueType">
+                {{getTranslatedValueType(valueType)}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+      @if (isWordsDisplayed) {
+        <mat-form-field class="ModbusReadComponent__words">
+          <mat-label>{{'ModbusReadComponent.words' | translate}}</mat-label>
+          <input matInput type="text" formControlName="words"
+            placeholder="{{wordsPlaceholder}}"
+            required="{{isRequired('words')}}">
+          @if (errors.words) {
+            <mat-error>{{errors.words}}</mat-error>
+          }
+        </mat-form-field>
+      }
+      @if (isByteOrderDisplayed) {
+        <mat-form-field class="ModbusReadComponent__byteOrder">
+          <mat-label>{{'ModbusReadComponent.byteOrder' | translate}}</mat-label>
+          <mat-select formControlName="byteOrder" required="{{isRequired('byteOrder')}}">
+            @for (byteOrder of byteOrders; track byteOrder) {
+              <mat-option [value]="byteOrder">
+                {{getTranslatedByteOrder(byteOrder)}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+      @if (isFactorToValueDisplayed) {
+        <mat-form-field class="sae__factorToValue">
+          <mat-label>{{'ModbusReadComponent.factorToValue' | translate}}</mat-label>
+          <input matInput type="text" formControlName="factorToValue"
+            placeholder="1"
+            required="{{isRequired('factorToValue')}}">
+          @if (errors.factorToValue) {
+            <mat-error>{{errors.factorToValue}}</mat-error>
+          }
+        </mat-form-field>
+      }
     </div>
-    <button mat-raised-button type="button" (click)="removeModbusRead()" *ngIf="isRemoveModbusPossible">
+    @if (isRemoveModbusPossible) {
+      <button mat-raised-button type="button" (click)="removeModbusRead()">
       {{'ModbusReadComponent.button.remove' | translate}}</button>
+    }
   </div>
   <div formArrayName="modbusReadValues">
-    <div class="sae__fields-with-button" *ngFor="let readValue of modbusRead.readValues; index as i">
-      <div class="sae__fields">
-        <app-modbus-read-value
-          [modbusReadValue]="readValue"
-          [form]="getModbusReadValueFormGroup(i)"
-          [valueNames]="valueNames"
-          [translationPrefix]="translationPrefix"
-          [translationKeys]="translationKeys"
-          (nameChanged)="onNameChanged(i, $event)"
-          #modbusReadValues
-        ></app-modbus-read-value>
+    @for (readValue of modbusRead.readValues; track readValue; let i = $index) {
+      <div class="sae__fields-with-button">
+        <div class="sae__fields">
+          <app-modbus-read-value
+            [modbusReadValue]="readValue"
+            [form]="getModbusReadValueFormGroup(i)"
+            [valueNames]="valueNames"
+            [translationPrefix]="translationPrefix"
+            [translationKeys]="translationKeys"
+            (nameChanged)="onNameChanged(i, $event)"
+            #modbusReadValues
+          ></app-modbus-read-value>
+        </div>
+        @if (isRemoveValuePossible) {
+          <button mat-raised-button type="button" (click)="removeValue(i)">
+          {{'ModbusReadComponent.button.removeValue' | translate}}</button>
+        }
       </div>
-      <button mat-raised-button type="button" (click)="removeValue(i)" *ngIf="isRemoveValuePossible">
-        {{'ModbusReadComponent.button.removeValue' | translate}}</button>
-    </div>
+    }
   </div>
 </div>
-<button mat-raised-button type="button" class="ModbusReadComponent__addValue" (click)="addValue()" *ngIf="isAddValuePossible">
+@if (isAddValuePossible) {
+  <button mat-raised-button type="button" class="ModbusReadComponent__addValue" (click)="addValue()">
   {{'ModbusReadComponent.button.addValue' | translate}}</button>
+}

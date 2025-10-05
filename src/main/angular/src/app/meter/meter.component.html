@@ -1,67 +1,83 @@
 <!--
-  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
-  ~
-  ~ This program is free software; you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation; either version 2 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more appliance.
-  ~
-  ~ You should have received a copy of the GNU General Public License along
-  ~ with this program; if not, write to the Free Software Foundation, Inc.,
-  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-  -->
+~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+~
+~ This program is free software; you can redistribute it and/or modify
+~ it under the terms of the GNU General Public License as published by
+~ the Free Software Foundation; either version 2 of the License, or
+~ (at your option) any later version.
+~
+~ This program is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+~ GNU General Public License for more appliance.
+~
+~ You should have received a copy of the GNU General Public License along
+~ with this program; if not, write to the Free Software Foundation, Inc.,
+~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
 <form class="MeterComponent mat-typography" [formGroup]="form" (ngSubmit)="submitForm()">
   <div class="sae__fields">
     <div class="field">
       <mat-form-field>
         <mat-label>{{'MeterComponent.type' | translate}}</mat-label>
         <mat-select formControlName="meterType" required="{{isRequired('meterType')}}" (ngModelChange)="typeChanged($event)">
-          <mat-option *ngFor="let meterType of meterTypes" [value]="meterType.value">
-            {{meterType.viewValue}}
-          </mat-option>
+          @for (meterType of meterTypes; track meterType) {
+            <mat-option [value]="meterType.value">
+              {{meterType.viewValue}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
     </div>
     <app-help [helpfile]="'Meter'"></app-help>
-    <mat-checkbox *ngIf="!isSlaveElectricityMeter" class="MeterComponent__masterMeter" formControlName="isMasterMeter"
-                  (click)="toggleIsMasterMeter()"
-    >{{'MeterComponent.isMasterMeter' | translate}}</mat-checkbox>
+    @if (!isSlaveElectricityMeter) {
+      <mat-checkbox class="MeterComponent__masterMeter" formControlName="isMasterMeter"
+        (click)="toggleIsMasterMeter()"
+      >{{'MeterComponent.isMasterMeter' | translate}}</mat-checkbox>
+    }
   </div>
-  <app-meter-s0 *ngIf="isS0ElectricityMeter"
-                [s0ElectricityMeter]="meter.s0ElectricityMeter"
-                [meterDefaults]="meterDefaults"
-  ></app-meter-s0>
-  <app-meter-modbus *ngIf="isModbusElectricityMeter"
-                    [modbusElectricityMeter]="meter.modbusElectricityMeter"
-                    [meterDefaults]="meterDefaults"
-                    [settingsDefaults]="settingsDefaults"
-                    [modbusSettings]="settings.modbusSettings"
-                    [applianceId]="applianceId"
-  ></app-meter-modbus>
-  <app-meter-mqtt *ngIf="isMqttElectricityMeter"
-                  [mqttElectricityMeter]="meter.mqttElectricityMeter"
-  ></app-meter-mqtt>
-  <app-meter-http *ngIf="isHttpElectricityMeter"
-                  [httpElectricityMeter]="meter.httpElectricityMeter"
-                  [meterDefaults]="meterDefaults"
-  ></app-meter-http>
-  <app-meter-master *ngIf="meter.isMasterMeter"
-                    [form]="form"
-                    [masterMeter]="meter.masterElectricityMeter"
-  ></app-meter-master>
-  <app-meter-slave *ngIf="isSlaveElectricityMeter"
-                   [form]="form"
-                   [masterElectricityMeterApplianceIdWithApplianceName]="meterDefaults.masterElectricityMeterApplianceIdWithApplianceName"
-                   [slaveMeter]="meter.slaveElectricityMeter"
-  ></app-meter-slave>
+  @if (isS0ElectricityMeter) {
+    <app-meter-s0
+      [s0ElectricityMeter]="meter.s0ElectricityMeter"
+      [meterDefaults]="meterDefaults"
+    ></app-meter-s0>
+  }
+  @if (isModbusElectricityMeter) {
+    <app-meter-modbus
+      [modbusElectricityMeter]="meter.modbusElectricityMeter"
+      [meterDefaults]="meterDefaults"
+      [settingsDefaults]="settingsDefaults"
+      [modbusSettings]="settings.modbusSettings"
+      [applianceId]="applianceId"
+    ></app-meter-modbus>
+  }
+  @if (isMqttElectricityMeter) {
+    <app-meter-mqtt
+      [mqttElectricityMeter]="meter.mqttElectricityMeter"
+    ></app-meter-mqtt>
+  }
+  @if (isHttpElectricityMeter) {
+    <app-meter-http
+      [httpElectricityMeter]="meter.httpElectricityMeter"
+      [meterDefaults]="meterDefaults"
+    ></app-meter-http>
+  }
+  @if (meter.isMasterMeter) {
+    <app-meter-master
+      [form]="form"
+      [masterMeter]="meter.masterElectricityMeter"
+    ></app-meter-master>
+  }
+  @if (isSlaveElectricityMeter) {
+    <app-meter-slave
+      [form]="form"
+      [masterElectricityMeterApplianceIdWithApplianceName]="meterDefaults.masterElectricityMeterApplianceIdWithApplianceName"
+      [slaveMeter]="meter.slaveElectricityMeter"
+    ></app-meter-slave>
+  }
   <app-notification [types]="notficationTypes"
-                    [notifications]="meter.notifications"
-                    [configured]="isNotifcationEnabled"
+    [notifications]="meter.notifications"
+    [configured]="isNotifcationEnabled"
   ></app-notification>
 
   <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>

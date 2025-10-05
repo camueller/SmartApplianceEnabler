@@ -41,7 +41,7 @@ export function debugElementByCss(fixture: ComponentFixture<any>, selector: stri
 export function createComponentAndConfigure<T>(component: Type<T>): ComponentFixture<T> {
   const fixture = TestBed.createComponent(component);
 
-  const translate = TestBed.get(TranslateService);
+  const translate = TestBed.inject(TranslateService);
   translate.use('de');
 
   return fixture;

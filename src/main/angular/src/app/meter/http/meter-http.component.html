@@ -1,18 +1,24 @@
 <div class="MeterHttpComponent">
   <div class="sae__fields">
-    <mat-form-field class="pollInterval" *ngIf="displayPollInterval">
-      <mat-label>{{'MeterHttpComponent.pollInterval' | translate}}</mat-label>
-      <input matInput type="text" formControlName="pollInterval"
-             placeholder="{{meterDefaults.httpElectricityMeterDefaults.pollInterval}}"
-             required="{{isRequired('pollInterval')}}">
-      <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
-    </mat-form-field>
+    @if (displayPollInterval) {
+      <mat-form-field class="pollInterval">
+        <mat-label>{{'MeterHttpComponent.pollInterval' | translate}}</mat-label>
+        <input matInput type="text" formControlName="pollInterval"
+          placeholder="{{meterDefaults.httpElectricityMeterDefaults.pollInterval}}"
+          required="{{isRequired('pollInterval')}}">
+        @if (errors.pollInterval) {
+          <mat-error>{{errors.pollInterval}}</mat-error>
+        }
+      </mat-form-field>
+    }
     <mat-form-field>
       <mat-label>{{'MeterHttpComponent.contentProtocol' | translate}}</mat-label>
       <mat-select formControlName="contentProtocol" required="{{isRequired('contentProtocol')}}">
-        <mat-option *ngFor="let contentProtocol of contentProtocols" [value]="contentProtocol">
-          {{contentProtocol}}
-        </mat-option>
+        @for (contentProtocol of contentProtocols; track contentProtocol) {
+          <mat-option [value]="contentProtocol">
+            {{contentProtocol}}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
   </div>
@@ -21,13 +27,13 @@
     [httpConfiguration]="httpElectricityMeter.httpConfiguration"
   ></app-http-configuration>
   <app-http-read [form]="form"
-                 [httpRead]="httpElectricityMeter.httpReads[0]"
-                 [maxValues]="maxValues"
-                 [disableRemove]="true"
-                 [valueNames]="valueNames"
-                 [contentProtocol]="contentProtocol"
-                 [translationPrefix]="'MeterHttpComponent.'"
-                 [translationKeys]="valueNameTextKeys"
-                 (nameChanged)="onNameChanged($event)"
+    [httpRead]="httpElectricityMeter.httpReads[0]"
+    [maxValues]="maxValues"
+    [disableRemove]="true"
+    [valueNames]="valueNames"
+    [contentProtocol]="contentProtocol"
+    [translationPrefix]="'MeterHttpComponent.'"
+    [translationKeys]="valueNameTextKeys"
+    (nameChanged)="onNameChanged($event)"
   ></app-http-read>
 </div>

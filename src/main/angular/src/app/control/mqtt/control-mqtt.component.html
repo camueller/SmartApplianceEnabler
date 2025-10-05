@@ -4,32 +4,42 @@
     <mat-form-field class="sae__mqttTopic">
       <mat-label>{{'ControlMqttComponent.topic' | translate}}</mat-label>
       <input matInput type="text" formControlName="topic"
-             required="{{isRequired('topic')}}">
-      <mat-error *ngIf="errors.topic">{{errors.topic}}</mat-error>
+        required="{{isRequired('topic')}}">
+      @if (errors.topic) {
+        <mat-error>{{errors.topic}}</mat-error>
+      }
     </mat-form-field>
     <mat-form-field class="ControlMqttComponent__onPayload">
       <mat-label>{{'ControlMqttComponent.onPayload' | translate}}</mat-label>
       <input matInput type="text" formControlName="onPayload"
-             required="{{isRequired('onPayload')}}">
-      <mat-error *ngIf="errors.onPayload">{{errors.onPayload}}</mat-error>
+        required="{{isRequired('onPayload')}}">
+      @if (errors.onPayload) {
+        <mat-error>{{errors.onPayload}}</mat-error>
+      }
     </mat-form-field>
     <mat-form-field class="ControlMqttComponent__offPayload">
       <mat-label>{{'ControlMqttComponent.offPayload' | translate}}</mat-label>
       <input matInput type="text" formControlName="offPayload"
-             required="{{isRequired('offPayload')}}">
-      <mat-error *ngIf="errors.offPayload">{{errors.offPayload}}</mat-error>
+        required="{{isRequired('offPayload')}}">
+      @if (errors.offPayload) {
+        <mat-error>{{errors.offPayload}}</mat-error>
+      }
     </mat-form-field>
     <mat-form-field class="sae__mqttTopic">
       <mat-label>{{'ControlMqttComponent.statusTopic' | translate}}</mat-label>
       <input matInput type="text" formControlName="statusTopic"
-             required="{{isRequired('statusTopic')}}">
-      <mat-error *ngIf="errors.statusTopic">{{errors.statusTopic}}</mat-error>
+        required="{{isRequired('statusTopic')}}">
+      @if (errors.statusTopic) {
+        <mat-error>{{errors.statusTopic}}</mat-error>
+      }
     </mat-form-field>
     <mat-form-field class="sae__regex">
       <mat-label>{{'ControlMqttComponent.statusExtractionRegex' | translate}}</mat-label>
       <input matInput type="text" formControlName="statusExtractionRegex"
-             required="{{isRequired('statusExtractionRegex')}}">
-      <mat-error *ngIf="errors.statusExtractionRegex">{{errors.statusExtractionRegex}}</mat-error>
+        required="{{isRequired('statusExtractionRegex')}}">
+      @if (errors.statusExtractionRegex) {
+        <mat-error>{{errors.statusExtractionRegex}}</mat-error>
+      }
     </mat-form-field>
   </div>
 </div>

@@ -1,36 +1,50 @@
 <div class="StatusEvchargerViewComponent">
   <div class="StatusComponent__appliance-name">{{getEvName(status.evIdCharging)}}</div>
-  <div class="StatusComponent__appliance-status" *ngIf="stateKey">
-    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.state' | translate}}:</span>
-    <span class="StatusComponent__appliance-status-value"> {{stateKey | translate}}</span>
-    <span class="StatusComponent__appliance-status-value" *ngIf="status.stateLastChangedTimestamp"
-    > ({{'StatusEvchargerViewComponent.since' | translate}} {{toHHmmFromTimestamp(status.stateLastChangedTimestamp)}})</span>
-  </div>
-  <div *ngIf="status.evIdCharging">
-    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.soc' | translate}}:</span>
-    <span class="StatusComponent__appliance-status-value"
-          matTooltip="{{socInitialTooltip}}"
-          [matTooltipDisabled]="'matTooltipDisabled' | env"
-    >{{status.socInitial}}{{'StatusComponent.socUnit' | translate}}</span>
-    <span class="StatusComponent__appliance-status-label StatusEvchargerViewComponent__soc-separator">&gt;&gt;&gt;</span>
-    <span class="StatusComponent__appliance-status-value StatusEvchargerViewComponent__soc-current">{{status.soc}}{{'StatusComponent.socUnit' | translate}}</span>
-    <span class="StatusComponent__appliance-status-label StatusEvchargerViewComponent__soc-separator">&gt;&gt;&gt;</span>
-    <span class="StatusComponent__appliance-status-value">{{status.socTarget}}{{'StatusComponent.socUnit' | translate}}</span>
-  </div>
-  <div class="StatusComponent__appliance-status" *ngIf="status.currentChargePower != null">
-    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyChargePower' | translate}}</span>
-    <span class="StatusComponent__appliance-status-value">{{getCurrentChargePower(status)}} kW</span>
-  </div>
-  <div class="StatusComponent__appliance-status" *ngIf="status.chargedEnergyAmount != null">
-    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyCharged' | translate}}</span>
-    <span class="StatusComponent__appliance-status-value">{{toKWh(status.chargedEnergyAmount)}} kWh</span>
-  </div>
-  <div class="StatusComponent__appliance-status" *ngIf="status.plannedEnergyAmount != null && status.plannedEnergyAmount > 0">
-    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyPlanned' | translate}}</span>
-    <span class="StatusComponent__appliance-status-value">{{toKWh(status.plannedEnergyAmount)}} kWh</span>
-  </div>
-  <div class="StatusComponent__appliance-status" *ngIf="status.latestEnd != null">
-    <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyLatestEnd' | translate}}</span>
-    <span class="StatusComponent__appliance-status-value">{{toWeekdayStringFromDelta(status.latestEnd)}} {{toHHmmFromDelta(status.latestEnd)}}</span>
-  </div>
+  @if (stateKey) {
+    <div class="StatusComponent__appliance-status">
+      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.state' | translate}}:</span>
+      <span class="StatusComponent__appliance-status-value"> {{stateKey | translate}}</span>
+      @if (status.stateLastChangedTimestamp) {
+        <span class="StatusComponent__appliance-status-value"
+        > ({{'StatusEvchargerViewComponent.since' | translate}} {{toHHmmFromTimestamp(status.stateLastChangedTimestamp)}})</span>
+      }
+    </div>
+  }
+  @if (status.evIdCharging) {
+    <div>
+      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.soc' | translate}}:</span>
+      <span class="StatusComponent__appliance-status-value"
+        matTooltip="{{socInitialTooltip}}"
+        [matTooltipDisabled]="'matTooltipDisabled' | env"
+      >{{status.socInitial}}{{'StatusComponent.socUnit' | translate}}</span>
+      <span class="StatusComponent__appliance-status-label StatusEvchargerViewComponent__soc-separator">&gt;&gt;&gt;</span>
+      <span class="StatusComponent__appliance-status-value StatusEvchargerViewComponent__soc-current">{{status.soc}}{{'StatusComponent.socUnit' | translate}}</span>
+      <span class="StatusComponent__appliance-status-label StatusEvchargerViewComponent__soc-separator">&gt;&gt;&gt;</span>
+      <span class="StatusComponent__appliance-status-value">{{status.socTarget}}{{'StatusComponent.socUnit' | translate}}</span>
+    </div>
+  }
+  @if (status.currentChargePower != null) {
+    <div class="StatusComponent__appliance-status">
+      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyChargePower' | translate}}</span>
+      <span class="StatusComponent__appliance-status-value">{{getCurrentChargePower(status)}} kW</span>
+    </div>
+  }
+  @if (status.chargedEnergyAmount != null) {
+    <div class="StatusComponent__appliance-status">
+      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyCharged' | translate}}</span>
+      <span class="StatusComponent__appliance-status-value">{{toKWh(status.chargedEnergyAmount)}} kWh</span>
+    </div>
+  }
+  @if (status.plannedEnergyAmount != null && status.plannedEnergyAmount > 0) {
+    <div class="StatusComponent__appliance-status">
+      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyPlanned' | translate}}</span>
+      <span class="StatusComponent__appliance-status-value">{{toKWh(status.plannedEnergyAmount)}} kWh</span>
+    </div>
+  }
+  @if (status.latestEnd != null) {
+    <div class="StatusComponent__appliance-status">
+      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyLatestEnd' | translate}}</span>
+      <span class="StatusComponent__appliance-status-value">{{toWeekdayStringFromDelta(status.latestEnd)}} {{toHHmmFromDelta(status.latestEnd)}}</span>
+    </div>
+  }
 </div>

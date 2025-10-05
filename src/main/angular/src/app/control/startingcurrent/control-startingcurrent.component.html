@@ -2,41 +2,49 @@
   <h2 class="sae__heading-extra-top-margin">{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}
     <app-help [helpfile]="'StartingCurrentDetection'"></app-help></h2>
     <div class="sae__fields">
-    <mat-form-field class="ControlStartingcurrentComponent__powerThreshold">
-      <mat-label>{{'ControlStartingcurrentComponent.powerThreshold' | translate}}</mat-label>
-      <input matInput type="text" formControlName="powerThreshold"
-             placeholder="{{controlDefaults.startingCurrentSwitchDefaults.powerThreshold}}"
-             matTooltip="{{'ControlStartingcurrentComponent.powerThreshold.tooltip' | translate}}"
-             [matTooltipDisabled]="'matTooltipDisabled' | env"
-             required="{{isRequired('powerThreshold')}}">
-      <mat-error *ngIf="errors.powerThreshold">{{errors.powerThreshold}}</mat-error>
-    </mat-form-field>
-    <mat-form-field class="ControlStartingcurrentComponent__startingCurrentDetectionDuration">
-      <mat-label>{{'ControlStartingcurrentComponent.startingCurrentDetectionDuration' | translate}}</mat-label>
-      <input matInput type="text" formControlName="startingCurrentDetectionDuration"
-             placeholder="{{controlDefaults.startingCurrentSwitchDefaults.startingCurrentDetectionDuration}}"
-             matTooltip="{{'ControlStartingcurrentComponent.startingCurrentDetectionDuration.tooltip' | translate}}"
-             [matTooltipDisabled]="'matTooltipDisabled' | env"
-             required="{{isRequired('startingCurrentDetectionDuration')}}">
-      <mat-error *ngIf="errors.startingCurrentDetectionDuration">{{errors.startingCurrentDetectionDuration}}</mat-error>
-    </mat-form-field>
-    <mat-form-field class="ControlStartingcurrentComponent__finishedCurrentDetectionDuration">
-      <mat-label>{{'ControlStartingcurrentComponent.finishedCurrentDetectionDuration' | translate}}</mat-label>
-      <input matInput type="text" formControlName="finishedCurrentDetectionDuration"
-             placeholder="{{controlDefaults.startingCurrentSwitchDefaults.finishedCurrentDetectionDuration}}"
-             matTooltip="{{'ControlStartingcurrentComponent.finishedCurrentDetectionDuration.tooltip' | translate}}"
-             [matTooltipDisabled]="'matTooltipDisabled' | env"
-             required="{{isRequired('finishedCurrentDetectionDuration')}}">
-      <mat-error *ngIf="errors.finishedCurrentDetectionDuration">{{errors.finishedCurrentDetectionDuration}}</mat-error>
-    </mat-form-field>
-    <mat-form-field class="ControlStartingcurrentComponent__minRunningTime">
-      <mat-label>{{'ControlStartingcurrentComponent.minRunningTime' | translate}}</mat-label>
-      <input matInput type="text" formControlName="minRunningTime"
-             placeholder="{{controlDefaults.startingCurrentSwitchDefaults.minRunningTime}}"
-             matTooltip="{{'ControlStartingcurrentComponent.minRunningTime.tooltip' | translate}}"
-             [matTooltipDisabled]="'matTooltipDisabled' | env"
-             required="{{isRequired('minRunningTime')}}">
-      <mat-error *ngIf="errors.minRunningTime">{{errors.minRunningTime}}</mat-error>
-    </mat-form-field>
+      <mat-form-field class="ControlStartingcurrentComponent__powerThreshold">
+        <mat-label>{{'ControlStartingcurrentComponent.powerThreshold' | translate}}</mat-label>
+        <input matInput type="text" formControlName="powerThreshold"
+          placeholder="{{controlDefaults.startingCurrentSwitchDefaults.powerThreshold}}"
+          matTooltip="{{'ControlStartingcurrentComponent.powerThreshold.tooltip' | translate}}"
+          [matTooltipDisabled]="'matTooltipDisabled' | env"
+          required="{{isRequired('powerThreshold')}}">
+        @if (errors.powerThreshold) {
+          <mat-error>{{errors.powerThreshold}}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="ControlStartingcurrentComponent__startingCurrentDetectionDuration">
+        <mat-label>{{'ControlStartingcurrentComponent.startingCurrentDetectionDuration' | translate}}</mat-label>
+        <input matInput type="text" formControlName="startingCurrentDetectionDuration"
+          placeholder="{{controlDefaults.startingCurrentSwitchDefaults.startingCurrentDetectionDuration}}"
+          matTooltip="{{'ControlStartingcurrentComponent.startingCurrentDetectionDuration.tooltip' | translate}}"
+          [matTooltipDisabled]="'matTooltipDisabled' | env"
+          required="{{isRequired('startingCurrentDetectionDuration')}}">
+        @if (errors.startingCurrentDetectionDuration) {
+          <mat-error>{{errors.startingCurrentDetectionDuration}}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="ControlStartingcurrentComponent__finishedCurrentDetectionDuration">
+        <mat-label>{{'ControlStartingcurrentComponent.finishedCurrentDetectionDuration' | translate}}</mat-label>
+        <input matInput type="text" formControlName="finishedCurrentDetectionDuration"
+          placeholder="{{controlDefaults.startingCurrentSwitchDefaults.finishedCurrentDetectionDuration}}"
+          matTooltip="{{'ControlStartingcurrentComponent.finishedCurrentDetectionDuration.tooltip' | translate}}"
+          [matTooltipDisabled]="'matTooltipDisabled' | env"
+          required="{{isRequired('finishedCurrentDetectionDuration')}}">
+        @if (errors.finishedCurrentDetectionDuration) {
+          <mat-error>{{errors.finishedCurrentDetectionDuration}}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="ControlStartingcurrentComponent__minRunningTime">
+        <mat-label>{{'ControlStartingcurrentComponent.minRunningTime' | translate}}</mat-label>
+        <input matInput type="text" formControlName="minRunningTime"
+          placeholder="{{controlDefaults.startingCurrentSwitchDefaults.minRunningTime}}"
+          matTooltip="{{'ControlStartingcurrentComponent.minRunningTime.tooltip' | translate}}"
+          [matTooltipDisabled]="'matTooltipDisabled' | env"
+          required="{{isRequired('minRunningTime')}}">
+        @if (errors.minRunningTime) {
+          <mat-error>{{errors.minRunningTime}}</mat-error>
+        }
+      </mat-form-field>
+    </div>
   </div>
-</div>

@@ -1,109 +1,136 @@
 <!--
-  ~ Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
-  ~
-  ~ This program is free software; you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation; either version 2 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more appliance.
-  ~
-  ~ You should have received a copy of the GNU General Public License along
-  ~ with this program; if not, write to the Free Software Foundation, Inc.,
-  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-  -->
+~ Copyright (C) 2019 Axel Müller <axel.mueller@avanux.de>
+~
+~ This program is free software; you can redistribute it and/or modify
+~ it under the terms of the GNU General Public License as published by
+~ the Free Software Foundation; either version 2 of the License, or
+~ (at your option) any later version.
+~
+~ This program is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+~ GNU General Public License for more appliance.
+~
+~ You should have received a copy of the GNU General Public License along
+~ with this program; if not, write to the Free Software Foundation, Inc.,
+~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
 
-<div class="ControlComponent mat-typography" *ngIf="control" xmlns="http://www.w3.org/1999/html">
-  <form [formGroup]="form" (ngSubmit)="submitForm()">
-    <app-control-evcharger *ngIf="isEvCharger; else notEvCharger"
-                           [evCharger]="control.evCharger"
-                           [controlDefaults]="controlDefaults"
-                           [meterDefaults]="meterDefaults"
-                           [applianceId]="applianceId"
-                           [settings]="settings"
-                           [settingsDefaults]="settingsDefaults"
-                           [templates]="evChargerTemplates"
-    >
-    </app-control-evcharger>
-    <ng-template #notEvCharger>
-      <div class="sae__fields">
-        <div class="field">
-          <mat-form-field class="ControlComponent__controlType">
-            <mat-label>{{'ControlComponent.type' | translate}}</mat-label>
-            <mat-select formControlName="controlType" required="{{isRequired('controlType')}}" (ngModelChange)="typeChanged($event)">
-              <mat-option *ngFor="let controlType of controlTypes" [value]="controlType.value">
-                {{controlType.viewValue}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+@if (control) {
+  <div class="ControlComponent mat-typography" xmlns="http://www.w3.org/1999/html">
+    <form [formGroup]="form" (ngSubmit)="submitForm()">
+      @if (isEvCharger) {
+        <app-control-evcharger
+          [evCharger]="control.evCharger"
+          [controlDefaults]="controlDefaults"
+          [meterDefaults]="meterDefaults"
+          [applianceId]="applianceId"
+          [settings]="settings"
+          [settingsDefaults]="settingsDefaults"
+          [templates]="evChargerTemplates"
+          >
+        </app-control-evcharger>
+      } @else {
+        <div class="sae__fields">
+          <div class="field">
+            <mat-form-field class="ControlComponent__controlType">
+              <mat-label>{{'ControlComponent.type' | translate}}</mat-label>
+              <mat-select formControlName="controlType" required="{{isRequired('controlType')}}" (ngModelChange)="typeChanged($event)">
+                @for (controlType of controlTypes; track controlType) {
+                  <mat-option [value]="controlType.value">
+                    {{controlType.viewValue}}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <app-help [helpfile]="'Control'"></app-help>
+          @if (canHaveDecoratingControl) {
+            <mat-checkbox class="ControlComponent__startingCurrentSwitchUsed" formControlName="startingCurrentSwitchUsed"
+              (click)="toggleStartingCurrentDetection()"
+            >{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</mat-checkbox>
+          }
+          @if (canHaveDecoratingControl) {
+            <mat-checkbox class="ControlComponent__switchOptionUsed" formControlName="switchOptionUsed"
+              (click)="toggleSwitchOption()"
+            >{{'ControlSwitchOptionComponent.switchOption' | translate}}</mat-checkbox>
+          }
         </div>
-        <app-help [helpfile]="'Control'"></app-help>
-        <mat-checkbox class="ControlComponent__startingCurrentSwitchUsed" formControlName="startingCurrentSwitchUsed"
-                      (click)="toggleStartingCurrentDetection()" *ngIf="canHaveDecoratingControl"
-        >{{'ControlStartingcurrentComponent.startingCurrentDetection' | translate}}</mat-checkbox>
-        <mat-checkbox class="ControlComponent__switchOptionUsed" formControlName="switchOptionUsed"
-                      (click)="toggleSwitchOption()" *ngIf="canHaveDecoratingControl"
-        >{{'ControlSwitchOptionComponent.switchOption' | translate}}</mat-checkbox>
-      </div>
-      <app-control-meterreporting *ngIf="isMeterReportingSwitch"
-                                  [meterReportingSwitch]="control.meterReportingSwitch"
-                                  [controlDefaults]="controlDefaults"
-      ></app-control-meterreporting>
-      <app-control-switch *ngIf="isSwitch"
-                          [switch_]="control.switch_"
-                          [controlDefaults]="controlDefaults"
-      ></app-control-switch>
-      <app-control-modbus *ngIf="isModbusSwitch"
-                          [modbusSwitch]="control.modbusSwitch"
-                          [controlDefaults]="controlDefaults"
-                          [modbusSettings]="settings.modbusSettings"
-                          [settingsDefaults]="settingsDefaults"
-      ></app-control-modbus>
-      <app-control-mqtt *ngIf="isMqttSwitch"
-                        [mqttSwitch]="control.mqttSwitch"
-      ></app-control-mqtt>
-      <app-control-http *ngIf="isHttpSwitch"
-                        [form]="form"
-                        [httpSwitch]="control.httpSwitch"
-                        [controlDefaults]="controlDefaults"
-      ></app-control-http>
-      <app-control-level *ngIf="isLevelSwitch"
-                         [levelSwitch]="control.levelSwitch"
-                         [controlDefaults]="controlDefaults"
-                         [modbusSettings]="settings.modbusSettings"
-                         [modbusConfigured]="!!settings.modbusSettings?.length"
-      ></app-control-level>
-      <app-control-pwm *ngIf="isPwmSwitch"
-                       [pwmSwitch]="control.pwmSwitch"
-      ></app-control-pwm>
-      <app-control-startingcurrent *ngIf="control.startingCurrentSwitchUsed"
-                                   [form]="form"
-                                   [startingCurrentSwitch]="control.startingCurrentSwitch"
-                                   [controlDefaults]="controlDefaults"
-      ></app-control-startingcurrent>
-      <app-control-switchoption *ngIf="control.switchOptionUsed"
-                                [form]="form"
-                                [switchOption]="control.switchOption"
-      ></app-control-switchoption>
-    </ng-template>
-    <app-notification [types]="notficationTypes"
-                      [notifications]="control.notifications"
-                      [configured]="isNotifcationEnabled"
-    ></app-notification>
-    <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
-    <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
+        @if (isMeterReportingSwitch) {
+          <app-control-meterreporting
+            [meterReportingSwitch]="control.meterReportingSwitch"
+            [controlDefaults]="controlDefaults"
+          ></app-control-meterreporting>
+        }
+        @if (isSwitch) {
+          <app-control-switch
+            [switch_]="control.switch_"
+            [controlDefaults]="controlDefaults"
+          ></app-control-switch>
+        }
+        @if (isModbusSwitch) {
+          <app-control-modbus
+            [modbusSwitch]="control.modbusSwitch"
+            [controlDefaults]="controlDefaults"
+            [modbusSettings]="settings.modbusSettings"
+            [settingsDefaults]="settingsDefaults"
+          ></app-control-modbus>
+        }
+        @if (isMqttSwitch) {
+          <app-control-mqtt
+            [mqttSwitch]="control.mqttSwitch"
+          ></app-control-mqtt>
+        }
+        @if (isHttpSwitch) {
+          <app-control-http
+            [form]="form"
+            [httpSwitch]="control.httpSwitch"
+            [controlDefaults]="controlDefaults"
+          ></app-control-http>
+        }
+        @if (isLevelSwitch) {
+          <app-control-level
+            [levelSwitch]="control.levelSwitch"
+            [controlDefaults]="controlDefaults"
+            [modbusSettings]="settings.modbusSettings"
+            [modbusConfigured]="!!settings.modbusSettings?.length"
+          ></app-control-level>
+        }
+        @if (isPwmSwitch) {
+          <app-control-pwm
+            [pwmSwitch]="control.pwmSwitch"
+          ></app-control-pwm>
+        }
+        @if (control.startingCurrentSwitchUsed) {
+          <app-control-startingcurrent
+            [form]="form"
+            [startingCurrentSwitch]="control.startingCurrentSwitch"
+            [controlDefaults]="controlDefaults"
+          ></app-control-startingcurrent>
+        }
+        @if (control.switchOptionUsed) {
+          <app-control-switchoption
+            [form]="form"
+            [switchOption]="control.switchOption"
+          ></app-control-switchoption>
+        }
+      }
+      <app-notification [types]="notficationTypes"
+        [notifications]="control.notifications"
+        [configured]="isNotifcationEnabled"
+      ></app-notification>
+      <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
+      <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
       {{'button.save' | translate}}</button>
-    <button mat-raised-button type="button" [disabled]="!isDeleteEnabled()" (click)="delete()">
+      <button mat-raised-button type="button" [disabled]="!isDeleteEnabled()" (click)="delete()">
       {{'button.delete' | translate}}</button>
-  </form>
-  <!--
-  <pre>{{control | json}}</pre>
-  <pre>{{form.value | json}}</pre>
-  <pre>{{control.evCharger | json}}</pre>
-  <pre>pristine={{form.pristine}}</pre>
-  <pre>invalid={{form.invalid}}</pre>
-  -->
-</div>
+    </form>
+    <!--
+    <pre>{{control | json}}</pre>
+    <pre>{{form.value | json}}</pre>
+    <pre>{{control.evCharger | json}}</pre>
+    <pre>pristine={{form.pristine}}</pre>
+    <pre>invalid={{form.invalid}}</pre>
+    -->
+  </div>
+}

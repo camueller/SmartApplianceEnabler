@@ -6,34 +6,40 @@
     #httpConfigurationComponent
   ></app-http-configuration>
   <div formArrayName="httpWrites">
-    <app-http-write *ngFor="let httpWriteFormGroup of httpSwitch.httpWrites; index as i; last as l"
-                    [formGroupName]="i"
-                    [form]="getHttpWriteFormGroup(i)"
-                    [httpWrite]="httpSwitch.httpWrites[i]"
-                    [maxValues]="maxValues"
-                    [valueNames]="valueNames"
-                    [translationPrefix]="'ControlHttpComponent.'"
-                    [translationKeys]="valueNameTextKeys"
-                    (remove)="onHttpWriteRemove(i)"
-                    #httpWriteComponents
-    ></app-http-write>
-    <button mat-raised-button type="button" class="ControlHttpComponent__addHttpWrite"
-            (click)="addHttpWrite()" *ngIf="isAddHttpWritePossible"
-    >{{'ControlHttpComponent.button.addHttpWrite' | translate}}</button>
+    @for (httpWriteFormGroup of httpSwitch.httpWrites; track httpWriteFormGroup; let i = $index; let l = $last) {
+      <app-http-write
+        [formGroupName]="i"
+        [form]="getHttpWriteFormGroup(i)"
+        [httpWrite]="httpSwitch.httpWrites[i]"
+        [maxValues]="maxValues"
+        [valueNames]="valueNames"
+        [translationPrefix]="'ControlHttpComponent.'"
+        [translationKeys]="valueNameTextKeys"
+        (remove)="onHttpWriteRemove(i)"
+        #httpWriteComponents
+      ></app-http-write>
+    }
+    @if (isAddHttpWritePossible) {
+      <button mat-raised-button type="button" class="ControlHttpComponent__addHttpWrite"
+        (click)="addHttpWrite()"
+      >{{'ControlHttpComponent.button.addHttpWrite' | translate}}</button>
+    }
   </div>
 </div>
 <div class="sae__fields">
   <mat-checkbox class="ControlHttpComponent__readControlState" formControlName="readControlState"
   >{{'ControlHttpComponent.readControlState' | translate}}</mat-checkbox>
 </div>
-<app-http-read *ngIf="readControlState"
-               [form]="getHttpReadFormGroup()"
-               [httpRead]="httpSwitch.httpRead"
-               [disableRemove]="true"
-               [disableFactorToValue]="true"
-               [maxValues]="1"
-               [valueNames]="readValueNames"
-               [translationPrefix]="'ControlHttpComponent.read.'"
-               [translationKeys]="readValueNameTextKeys"
-               #httpReadComponent
-></app-http-read>
+@if (readControlState) {
+  <app-http-read
+    [form]="getHttpReadFormGroup()"
+    [httpRead]="httpSwitch.httpRead"
+    [disableRemove]="true"
+    [disableFactorToValue]="true"
+    [maxValues]="1"
+    [valueNames]="readValueNames"
+    [translationPrefix]="'ControlHttpComponent.read.'"
+    [translationKeys]="readValueNameTextKeys"
+    #httpReadComponent
+  ></app-http-read>
+}

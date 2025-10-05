@@ -2,9 +2,11 @@
   <mat-form-field class="sae__contentProtocol">
     <mat-label>{{'ControlEvchargerHttpComponent.contentProtocol' | translate}}</mat-label>
     <mat-select formControlName="contentProtocol" required="{{isRequired('contentProtocol')}}">
-      <mat-option *ngFor="let contentProtocol of contentProtocols" [value]="contentProtocol">
-        {{contentProtocol}}
-      </mat-option>
+      @for (contentProtocol of contentProtocols; track contentProtocol) {
+        <mat-option [value]="contentProtocol">
+          {{contentProtocol}}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <app-http-configuration
@@ -13,44 +15,52 @@
   ></app-http-configuration>
 </div>
 <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerHttpComponent.heading.httpRead' | translate}}</h2>
-<div class="ControlEvchargerHttpComponent__missingNames" *ngIf="readValueNamesNotConfigured?.length > 0">
-  <messagebox [level]="MessageBoxLevel.ERROR"
-  >{{'ControlEvchargerComponent.message.missingRead' | translate}}: {{readValueNamesNotConfigured}}</messagebox>
-</div>
+@if (readValueNamesNotConfigured?.length > 0) {
+  <div class="ControlEvchargerHttpComponent__missingNames">
+    <messagebox [level]="MessageBoxLevel.ERROR"
+    >{{'ControlEvchargerComponent.message.missingRead' | translate}}: {{readValueNamesNotConfigured}}</messagebox>
+  </div>
+}
 <span formArrayName="httpReads">
-  <app-http-read *ngFor="let httpRead of evHttpControl.httpReads; index as i; last as l"
-                 [formGroupName]="i"
-                 [form]="getHttpReadFormGroup(i)"
-                 [httpRead]="httpRead"
-                 [contentProtocol]="contentProtocol"
-                 [disableFactorToValue]="true"
-                 [valueNames]="readValueNames"
-                 [translationPrefix]="'ControlEvchargerComponent.'"
-                 [translationKeys]="readValueNameTextKeys"
-                 (remove)="onHttpReadRemove(i)"
-                 (nameChanged)="onValueNameChanged(i, $event)"
-                 #httpReadComponents
-  ></app-http-read>
+  @for (httpRead of evHttpControl.httpReads; track httpRead; let i = $index; let l = $last) {
+    <app-http-read
+      [formGroupName]="i"
+      [form]="getHttpReadFormGroup(i)"
+      [httpRead]="httpRead"
+      [contentProtocol]="contentProtocol"
+      [disableFactorToValue]="true"
+      [valueNames]="readValueNames"
+      [translationPrefix]="'ControlEvchargerComponent.'"
+      [translationKeys]="readValueNameTextKeys"
+      (remove)="onHttpReadRemove(i)"
+      (nameChanged)="onValueNameChanged(i, $event)"
+      #httpReadComponents
+    ></app-http-read>
+  }
 </span>
 <button mat-raised-button type="button" class="ControlEvchargerHttpComponent__addHttpRead" (click)="addHttpRead()">
-  {{'ControlEvchargerHttpComponent.button.addHttpRead' | translate}}</button>
+{{'ControlEvchargerHttpComponent.button.addHttpRead' | translate}}</button>
 <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerHttpComponent.heading.httpWrite' | translate}}</h2>
-<div class="ControlEvchargerModbusComponent__missingNames" *ngIf="writeValueNamesNotConfigured?.length > 0">
-  <messagebox [level]="MessageBoxLevel.ERROR"
-  >{{'ControlEvchargerComponent.message.missingWrite' | translate}}: {{writeValueNamesNotConfigured}}</messagebox>
-</div>
+@if (writeValueNamesNotConfigured?.length > 0) {
+  <div class="ControlEvchargerModbusComponent__missingNames">
+    <messagebox [level]="MessageBoxLevel.ERROR"
+    >{{'ControlEvchargerComponent.message.missingWrite' | translate}}: {{writeValueNamesNotConfigured}}</messagebox>
+  </div>
+}
 <span formArrayName="httpWrites">
-  <app-http-write *ngFor="let httpWrite of evHttpControl.httpWrites; index as i; last as l"
-                  [formGroupName]="i"
-                  [form]="getHttpWriteFormGroup(i)"
-                  [httpWrite]="httpWrite"
-                  [valueNames]="writeValueNames"
-                  [translationPrefix]="'ControlEvchargerComponent.'"
-                  [translationKeys]="writeValueNameTextKeys"
-                  (remove)="onHttpWriteRemove(i)"
-                  (nameChanged)="onValueNameChanged(i, $event)"
-                  #httpWriteComponents
-  ></app-http-write>
+  @for (httpWrite of evHttpControl.httpWrites; track httpWrite; let i = $index; let l = $last) {
+    <app-http-write
+      [formGroupName]="i"
+      [form]="getHttpWriteFormGroup(i)"
+      [httpWrite]="httpWrite"
+      [valueNames]="writeValueNames"
+      [translationPrefix]="'ControlEvchargerComponent.'"
+      [translationKeys]="writeValueNameTextKeys"
+      (remove)="onHttpWriteRemove(i)"
+      (nameChanged)="onValueNameChanged(i, $event)"
+      #httpWriteComponents
+    ></app-http-write>
+  }
 </span>
 <button mat-raised-button type="button" class="ControlEvchargerHttpComponent__addHttpWrite" (click)="addHttpWrite()">
-  {{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>
+{{'ControlEvchargerHttpComponent.button.addHttpWrite' | translate}}</button>

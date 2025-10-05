@@ -2,22 +2,28 @@
   <mat-form-field class="sae__modbus-name">
     <mat-label>{{'SettingsComponent.modbusTcpId' | translate}}</mat-label>
     <input matInput type="text" formControlName="modbusTcpId"
-           required="{{isRequired('modbusTcpId')}}">
-    <mat-error *ngIf="errors.modbusTcpId">{{errors.modbusTcpId}}</mat-error>
+      required="{{isRequired('modbusTcpId')}}">
+    @if (errors.modbusTcpId) {
+      <mat-error>{{errors.modbusTcpId}}</mat-error>
+    }
   </mat-form-field>
   <mat-form-field class="sae__hostname">
     <mat-label>{{'SettingsComponent.modbusTcpHost' | translate}}</mat-label>
     <input matInput type="text" formControlName="modbusTcpHost"
-           placeholder="{{settingsDefaults.modbusTcpHost}}"
-           required="{{isRequired('modbusTcpHost')}}">
-    <mat-error *ngIf="errors.modbusTcpHost">{{errors.modbusTcpHost}}</mat-error>
+      placeholder="{{settingsDefaults.modbusTcpHost}}"
+      required="{{isRequired('modbusTcpHost')}}">
+    @if (errors.modbusTcpHost) {
+      <mat-error>{{errors.modbusTcpHost}}</mat-error>
+    }
   </mat-form-field>
   <mat-form-field class="sae__port">
     <mat-label>{{'SettingsComponent.modbusTcpPort' | translate}}</mat-label>
     <input matInput type="text" formControlName="modbusTcpPort"
-           placeholder="{{settingsDefaults.modbusTcpPort}}"
-           required="{{isRequired('modbusTcpPort')}}">
-    <mat-error *ngIf="errors.modbusTcpPort">{{errors.modbusTcpPort}}</mat-error>
+      placeholder="{{settingsDefaults.modbusTcpPort}}"
+      required="{{isRequired('modbusTcpPort')}}">
+    @if (errors.modbusTcpPort) {
+      <mat-error>{{errors.modbusTcpPort}}</mat-error>
+    }
   </mat-form-field>
   <button mat-raised-button (click)="removeModbus()">{{'button.delete' | translate}}</button>
 </div>

@@ -1,20 +1,20 @@
 <!--
-  ~ Copyright (C) 2022 Axel Müller <axel.mueller@avanux.de>
-  ~
-  ~ This program is free software; you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation; either version 2 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License along
-  ~ with this program; if not, write to the Free Software Foundation, Inc.,
-  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-  -->
+~ Copyright (C) 2022 Axel Müller <axel.mueller@avanux.de>
+~
+~ This program is free software; you can redistribute it and/or modify
+~ it under the terms of the GNU General Public License as published by
+~ the Free Software Foundation; either version 2 of the License, or
+~ (at your option) any later version.
+~
+~ This program is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+~ GNU General Public License for more details.
+~
+~ You should have received a copy of the GNU General Public License along
+~ with this program; if not, write to the Free Software Foundation, Inc.,
+~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
 
 <div class="ControlLevelComponent">
   <div class="sae__fields">
@@ -22,91 +22,115 @@
       <mat-form-field class="ControlLevelComponent__controlType">
         <mat-label>{{'ControlLevelComponent.type' | translate}}</mat-label>
         <mat-select formControlName="realControlType" required="{{isRequired('realControlType')}}" (ngModelChange)="realControlTypeChanged($event)">
-          <mat-option *ngFor="let controlType of controlTypes" [value]="controlType.value">
-            {{controlType.viewValue}}
-          </mat-option>
+          @for (controlType of controlTypes; track controlType) {
+            <mat-option [value]="controlType.value">
+              {{controlType.viewValue}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
     </div>
   </div>
-  <div formArrayName="controls" *ngIf="isRealControlTypeSwitch">
-    <app-control-switch *ngFor="let control of levelSwitch.controls; index as i; last as l"
-                        [formGroup]="getControlFormGroup(i)"
-                        [switch_]="control"
-                        [controlDefaults]="controlDefaults"
-                        #controlSwitchComponents
-    >
-      <div class="sae__fields-with-button">
-        <h2>{{'ControlLevelComponent.control.heading' | translate}} {{control.id}}</h2>
-        <button mat-raised-button type="button" class="ControlLevelComponent__removeControl" (click)="removeControl(i)">
-          {{'ControlLevelComponent.button.removeControl' | translate}}</button>
-      </div>
-    </app-control-switch>
-  </div>
-  <div formArrayName="controls" *ngIf="isRealControlTypeHttp">
-      <app-control-http *ngFor="let control of levelSwitch.controls; index as i; last as l"
-                        [formGroup]="getControlFormGroup(i)"
-                        [httpSwitch]="control"
-                        [controlDefaults]="controlDefaults"
-                        #controlHttpComponents
-      >
-        <div class="sae__fields-with-button">
-          <h2>{{'ControlLevelComponent.control.heading' | translate}} {{control.id}}</h2>
-          <button mat-raised-button type="button" class="ControlLevelComponent__removeControl" (click)="removeControl(i)">
+  @if (isRealControlTypeSwitch) {
+    <div formArrayName="controls">
+      @for (control of levelSwitch.controls; track control; let i = $index; let l = $last) {
+        <app-control-switch
+          [formGroup]="getControlFormGroup(i)"
+          [switch_]="control"
+          [controlDefaults]="controlDefaults"
+          #controlSwitchComponents
+          >
+          <div class="sae__fields-with-button">
+            <h2>{{'ControlLevelComponent.control.heading' | translate}} {{control.id}}</h2>
+            <button mat-raised-button type="button" class="ControlLevelComponent__removeControl" (click)="removeControl(i)">
             {{'ControlLevelComponent.button.removeControl' | translate}}</button>
-        </div>
-      </app-control-http>
-  </div>
-  <div formArrayName="controls" *ngIf="isRealControlTypeModbus">
-    <app-control-modbus *ngFor="let control of levelSwitch.controls; index as i; last as l"
-                      [formGroup]="getControlFormGroup(i)"
-                      [modbusSwitch]="control"
-                      [modbusSettings]="modbusSettings"
-                      [controlDefaults]="controlDefaults"
-                      #controlModbusComponents
-    >
-      <div class="sae__fields-with-button">
-        <h2>{{'ControlLevelComponent.control.heading' | translate}} {{control.id}}</h2>
-        <button mat-raised-button type="button" class="ControlLevelComponent__removeControl" (click)="removeControl(i)">
-          {{'ControlLevelComponent.button.removeControl' | translate}}</button>
-      </div>
-    </app-control-modbus>
-  </div>
-  <div formArrayName="controls" *ngIf="isRealControlTypeMqtt">
-    <app-control-mqtt *ngFor="let control of levelSwitch.controls; index as i; last as l"
-                        [formGroup]="getControlFormGroup(i)"
-                        [mqttSwitch]="control"
-                        #controlMqttComponents
-    >
-      <div class="sae__fields-with-button">
-        <h2>{{'ControlLevelComponent.control.heading' | translate}} {{control.id}}</h2>
-        <button mat-raised-button type="button" class="ControlLevelComponent__removeControl" (click)="removeControl(i)">
-          {{'ControlLevelComponent.button.removeControl' | translate}}</button>
-      </div>
-    </app-control-mqtt>
-  </div>
+          </div>
+        </app-control-switch>
+      }
+    </div>
+  }
+  @if (isRealControlTypeHttp) {
+    <div formArrayName="controls">
+      @for (control of levelSwitch.controls; track control; let i = $index; let l = $last) {
+        <app-control-http
+          [formGroup]="getControlFormGroup(i)"
+          [httpSwitch]="control"
+          [controlDefaults]="controlDefaults"
+          #controlHttpComponents
+          >
+          <div class="sae__fields-with-button">
+            <h2>{{'ControlLevelComponent.control.heading' | translate}} {{control.id}}</h2>
+            <button mat-raised-button type="button" class="ControlLevelComponent__removeControl" (click)="removeControl(i)">
+            {{'ControlLevelComponent.button.removeControl' | translate}}</button>
+          </div>
+        </app-control-http>
+      }
+    </div>
+  }
+  @if (isRealControlTypeModbus) {
+    <div formArrayName="controls">
+      @for (control of levelSwitch.controls; track control; let i = $index; let l = $last) {
+        <app-control-modbus
+          [formGroup]="getControlFormGroup(i)"
+          [modbusSwitch]="control"
+          [modbusSettings]="modbusSettings"
+          [controlDefaults]="controlDefaults"
+          #controlModbusComponents
+          >
+          <div class="sae__fields-with-button">
+            <h2>{{'ControlLevelComponent.control.heading' | translate}} {{control.id}}</h2>
+            <button mat-raised-button type="button" class="ControlLevelComponent__removeControl" (click)="removeControl(i)">
+            {{'ControlLevelComponent.button.removeControl' | translate}}</button>
+          </div>
+        </app-control-modbus>
+      }
+    </div>
+  }
+  @if (isRealControlTypeMqtt) {
+    <div formArrayName="controls">
+      @for (control of levelSwitch.controls; track control; let i = $index; let l = $last) {
+        <app-control-mqtt
+          [formGroup]="getControlFormGroup(i)"
+          [mqttSwitch]="control"
+          #controlMqttComponents
+          >
+          <div class="sae__fields-with-button">
+            <h2>{{'ControlLevelComponent.control.heading' | translate}} {{control.id}}</h2>
+            <button mat-raised-button type="button" class="ControlLevelComponent__removeControl" (click)="removeControl(i)">
+            {{'ControlLevelComponent.button.removeControl' | translate}}</button>
+          </div>
+        </app-control-mqtt>
+      }
+    </div>
+  }
 
   <button mat-raised-button type="button" class="ControlLevelComponent__addControl"
-          (click)="addControl()">{{'ControlLevelComponent.button.addControl' | translate}}</button>
+  (click)="addControl()">{{'ControlLevelComponent.button.addControl' | translate}}</button>
 
   <h2>{{'ControlLevelComponent.powerlevels.heading' | translate}}</h2>
-  <div formArrayName="powerLevels" *ngFor="let powerLevel of powerLevelFormArray.controls; let i = index;">
-    <div [formGroupName]="i">
-      <mat-form-field class="power">
-        <mat-label>{{'ControlLevelComponent.powerlevels.power' | translate}}</mat-label>
-        <input matInput type="text" formControlName="power"
-               required="{{isRequired('power')}}">
-        <mat-error *ngIf="errors.maxPowerConsumption">{{errors.maxPowerConsumption}}</mat-error>
-      </mat-form-field>
-      <span formArrayName="switchStatuses" *ngFor="let idref of controlIds; let i = index;">
-        <span [formGroupName]=i>
-          <mat-checkbox formControlName="on"
-          >{{'ControlLevelComponent.control.heading' | translate}} {{idref}}</mat-checkbox>
-        </span>
-      </span>
-      <button mat-raised-button (click)="removePowerLevel(i)">{{'button.delete' | translate}}</button>
+  @for (powerLevel of powerLevelFormArray.controls; track powerLevel; let i = $index) {
+    <div formArrayName="powerLevels">
+      <div [formGroupName]="i">
+        <mat-form-field class="power">
+          <mat-label>{{'ControlLevelComponent.powerlevels.power' | translate}}</mat-label>
+          <input matInput type="text" formControlName="power"
+            required="{{isRequired('power')}}">
+          @if (errors.maxPowerConsumption) {
+            <mat-error>{{errors.maxPowerConsumption}}</mat-error>
+          }
+        </mat-form-field>
+        @for (idref of controlIds; track idref; let i = $index) {
+          <span formArrayName="switchStatuses">
+            <span [formGroupName]=i>
+              <mat-checkbox formControlName="on"
+              >{{'ControlLevelComponent.control.heading' | translate}} {{idref}}</mat-checkbox>
+            </span>
+          </span>
+        }
+        <button mat-raised-button (click)="removePowerLevel(i)">{{'button.delete' | translate}}</button>
+      </div>
     </div>
-  </div>
+  }
   <button mat-raised-button type="button" class="ControlLevelComponent__addPowerLevel"
-          (click)="addPowerLevel()">{{'button.new' | translate}}</button>
+  (click)="addPowerLevel()">{{'button.new' | translate}}</button>
 </div>

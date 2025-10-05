@@ -1,68 +1,82 @@
 <div class="ControlEvchargerModbusComponent sae__fields">
-  <messagebox [level]="MessageBoxLevel.INFO" *ngIf="settings.modbusSettings?.length === 0"
-  >{{'error.modbus_not_configured' | translate}}</messagebox>
+  @if (settings.modbusSettings?.length === 0) {
+    <messagebox [level]="MessageBoxLevel.INFO"
+    >{{'error.modbus_not_configured' | translate}}</messagebox>
+  }
   <div class="ControlEvchargerModbusComponent__content" [style]="displayNoneStyle">
     <div class="sae__fields">
       <mat-form-field class="sae__modbus-name">
         <mat-label>{{'ControlEvchargerModbusComponent.idref' | translate}}</mat-label>
         <mat-select formControlName="idref"
-                    matTooltip="{{'ControlEvchargerModbusComponent.idref.tooltip' | translate}}"
-                    [matTooltipDisabled]="'matTooltipDisabled' | env"
-                    required="{{isRequired('idref')}}">
-          <mat-option *ngFor="let modbusSetting of settings.modbusSettings" [value]="modbusSetting.modbusTcpId">
-            {{modbusSetting.modbusTcpId}}
-          </mat-option>
+          matTooltip="{{'ControlEvchargerModbusComponent.idref.tooltip' | translate}}"
+          [matTooltipDisabled]="'matTooltipDisabled' | env"
+          required="{{isRequired('idref')}}">
+          @for (modbusSetting of settings.modbusSettings; track modbusSetting) {
+            <mat-option [value]="modbusSetting.modbusTcpId">
+              {{modbusSetting.modbusTcpId}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
       <mat-form-field class="sae__modbus-address">
         <mat-label>{{'ControlEvchargerModbusComponent.slaveAddress' | translate}}</mat-label>
         <input matInput type="text" formControlName="slaveAddress"
-               required="{{isRequired('slaveAddress')}}">
-        <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
+          required="{{isRequired('slaveAddress')}}">
+        @if (errors.slaveAddress) {
+          <mat-error>{{errors.slaveAddress}}</mat-error>
+        }
       </mat-form-field>
     </div>
     <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerModbusComponent.heading.modbusRead' | translate}}</h2>
-    <div class="ControlEvchargerModbusComponent__missingNames" *ngIf="readValueNamesNotConfigured?.length > 0">
-      <messagebox [level]="MessageBoxLevel.ERROR"
-      >{{'ControlEvchargerComponent.message.missingRead' | translate}}: {{readValueNamesNotConfigured}}</messagebox>
-    </div>
+    @if (readValueNamesNotConfigured?.length > 0) {
+      <div class="ControlEvchargerModbusComponent__missingNames">
+        <messagebox [level]="MessageBoxLevel.ERROR"
+        >{{'ControlEvchargerComponent.message.missingRead' | translate}}: {{readValueNamesNotConfigured}}</messagebox>
+      </div>
+    }
     <span formArrayName="modbusReads">
-      <app-modbus-read *ngFor="let modbusRead of evModbusControl.modbusReads; index as i; last as l"
-                       [formGroupName]="i"
-                       [form]="getModbusReadFormGroup(i)"
-                       [modbusRead]="modbusRead"
-                       [valueNames]="readValueNames"
-                       [meterDefaults]="meterDefaults"
-                       [translationPrefix]="'ControlEvchargerComponent.'"
-                       [translationKeys]="readValueNameTextKeys"
-                       (remove)="onModbusReadRemove(i)"
-                       (nameChanged)="onValueNameChanged(i, $event)"
-                       #modbusReadComponents
-      ></app-modbus-read>
+      @for (modbusRead of evModbusControl.modbusReads; track modbusRead; let i = $index; let l = $last) {
+        <app-modbus-read
+          [formGroupName]="i"
+          [form]="getModbusReadFormGroup(i)"
+          [modbusRead]="modbusRead"
+          [valueNames]="readValueNames"
+          [meterDefaults]="meterDefaults"
+          [translationPrefix]="'ControlEvchargerComponent.'"
+          [translationKeys]="readValueNameTextKeys"
+          (remove)="onModbusReadRemove(i)"
+          (nameChanged)="onValueNameChanged(i, $event)"
+          #modbusReadComponents
+        ></app-modbus-read>
+      }
     </span>
     <button mat-raised-button type="button" class="ControlEvchargerModbusComponent__addModbusRead" (click)="addModbusRead()">
-      {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
+    {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
 
 
     <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerModbusComponent.heading.modbusWrite' | translate}}</h2>
-    <div class="ControlEvchargerModbusComponent__missingNames" *ngIf="writeValueNamesNotConfigured?.length > 0">
-      <messagebox [level]="MessageBoxLevel.ERROR"
-      >{{'ControlEvchargerComponent.message.missingWrite' | translate}}: {{writeValueNamesNotConfigured}}</messagebox>
-    </div>
+    @if (writeValueNamesNotConfigured?.length > 0) {
+      <div class="ControlEvchargerModbusComponent__missingNames">
+        <messagebox [level]="MessageBoxLevel.ERROR"
+        >{{'ControlEvchargerComponent.message.missingWrite' | translate}}: {{writeValueNamesNotConfigured}}</messagebox>
+      </div>
+    }
     <div formArrayName="modbusWrites">
-      <app-modbus-write *ngFor="let modbusWrite of evModbusControl.modbusWrites; index as i; last as l"
-                        [formGroupName]="i"
-                        [form]="getModbusWriteFormGroup(i)"
-                        [modbusWrite]="modbusWrite"
-                        [valueNames]="writeValueNames"
-                        [translationPrefix]="'ControlEvchargerComponent.'"
-                        [translationKeys]="writeValueNameTextKeys"
-                        (remove)="onModbusWriteRemove(i)"
-                        (nameChanged)="onValueNameChanged(i, $event)"
-                        #modbusWriteComponents
-      ></app-modbus-write>
+      @for (modbusWrite of evModbusControl.modbusWrites; track modbusWrite; let i = $index; let l = $last) {
+        <app-modbus-write
+          [formGroupName]="i"
+          [form]="getModbusWriteFormGroup(i)"
+          [modbusWrite]="modbusWrite"
+          [valueNames]="writeValueNames"
+          [translationPrefix]="'ControlEvchargerComponent.'"
+          [translationKeys]="writeValueNameTextKeys"
+          (remove)="onModbusWriteRemove(i)"
+          (nameChanged)="onValueNameChanged(i, $event)"
+          #modbusWriteComponents
+        ></app-modbus-write>
+      }
       <button mat-raised-button type="button" class="ControlEvchargerModbusComponent__addModbusWrite" (click)="addModbusWrite()">
-        {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
+      {{'ControlEvchargerModbusComponent.button.addModbusRead' | translate}}</button>
     </div>
   </div>
 </div>

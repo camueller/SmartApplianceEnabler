@@ -31,8 +31,8 @@ describe('ApplianceService', () => {
   }));
 
   it('should return an appliance', () => {
-    const service = TestBed.get(ApplianceService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ApplianceService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const expectedAppliance = ApplianceTestdata.create();
     service.getAppliance(expectedAppliance.id).subscribe(res => expect(res).toEqual(expectedAppliance));
     const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${expectedAppliance.id}`);
@@ -41,8 +41,8 @@ describe('ApplianceService', () => {
   });
 
   it(`should return empty Observable if the appliance to be retrieved is not found`, (done: any) => {
-    const service = TestBed.get(ApplianceService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ApplianceService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.getAppliance(applianceId).subscribe(
       (res) => expect(res).toBeFalsy(),
@@ -54,8 +54,8 @@ describe('ApplianceService', () => {
   });
 
   xit('should update an appliance', () => {
-    const service = TestBed.get(ApplianceService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ApplianceService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const appliance = ApplianceTestdata.create();
     const createNewAppliance = false;
     service.updateAppliance(appliance, createNewAppliance).subscribe(res => expect(res).toBeTruthy());
@@ -65,8 +65,8 @@ describe('ApplianceService', () => {
   });
 
   it(`should return empty Observable if the appliance to be updated is not found`, (done: any) => {
-    const service = TestBed.get(ApplianceService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ApplianceService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const appliance = ApplianceTestdata.create();
     const createNewAppliance = false;
     service.updateAppliance(appliance, createNewAppliance).subscribe(
@@ -79,8 +79,8 @@ describe('ApplianceService', () => {
   });
 
   it('should delete an appliance', () => {
-    const service = TestBed.get(ApplianceService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ApplianceService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.deleteAppliance(applianceId).subscribe(res => expect(res).toBeTruthy());
     const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${applianceId}`);
@@ -88,8 +88,8 @@ describe('ApplianceService', () => {
   });
 
   it(`should return empty Observable if the appliance to be deleted is not found`, (done: any) => {
-    const service = TestBed.get(ApplianceService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ApplianceService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.deleteAppliance(applianceId).subscribe(
       (res) => expect(res).toBeFalsy(),

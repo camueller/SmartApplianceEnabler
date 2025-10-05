@@ -1,46 +1,53 @@
 <!--
-  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
-  ~
-  ~ This program is free software; you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation; either version 2 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more appliance.
-  ~
-  ~ You should have received a copy of the GNU General Public License along
-  ~ with this program; if not, write to the Free Software Foundation, Inc.,
-  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-  -->
+~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+~
+~ This program is free software; you can redistribute it and/or modify
+~ it under the terms of the GNU General Public License as published by
+~ the Free Software Foundation; either version 2 of the License, or
+~ (at your option) any later version.
+~
+~ This program is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+~ GNU General Public License for more appliance.
+~
+~ You should have received a copy of the GNU General Public License along
+~ with this program; if not, write to the Free Software Foundation, Inc.,
+~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
 <form class="SchedulesComponent mat-typography" [formGroup]="form" (ngSubmit)="submitForm()">
   <h1>{{'SchedulesComponent.title' | translate }}<app-help [helpfile]="'Schedules'" [cssClass]="'text-top'"></app-help></h1>
-  <div *ngIf="isControlable; else notControllable">
-    <div formArrayName="schedules">
-      <div *ngFor="let scheduleFormGroup of schedulesFormArray.controls;let i = index; last as last" [formGroupName]="i">
-        <app-schedule [schedule]="schedules[i]"
-                      [form]="getScheduleFormGroup(i)"
-                      [electricVehicles]="electricVehicles"
-                      [timeframeTypes]="timeframeTypes"
-                      [validRequestTypes]="validRequestTypes"
-                      (remove)="onScheduleRemove(i)"
-                      #scheduleComponents
-        ></app-schedule>
-        <mat-divider class="SchedulesComponent__scheduleDivider" *ngIf="!last"></mat-divider>
+  @if (isControlable) {
+    <div>
+      <div formArrayName="schedules">
+        @for (scheduleFormGroup of schedulesFormArray.controls; track scheduleFormGroup; let i = $index; let last = $last) {
+          <div [formGroupName]="i">
+            <app-schedule [schedule]="schedules[i]"
+              [form]="getScheduleFormGroup(i)"
+              [electricVehicles]="electricVehicles"
+              [timeframeTypes]="timeframeTypes"
+              [validRequestTypes]="validRequestTypes"
+              (remove)="onScheduleRemove(i)"
+              #scheduleComponents
+            ></app-schedule>
+            @if (!last) {
+              <mat-divider class="SchedulesComponent__scheduleDivider"></mat-divider>
+            }
+          </div>
+        }
       </div>
-    </div>
-    <div class="sae__mandatory_fields_hint" *ngIf="schedulesFormArray.controls.length > 0">
-      {{'dialog.mandatoryfields'|translate}}</div>
-    <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
+      @if (schedulesFormArray.controls.length > 0) {
+        <div class="sae__mandatory_fields_hint">
+        {{'dialog.mandatoryfields'|translate}}</div>
+      }
+      <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
       {{'button.save' | translate}}</button>
-    <button mat-raised-button type="button" (click)="addSchedule()" class="SchedulesComponent__addSchedule"
-            [disabled]="form.invalid">{{'SchedulesComponent.button.addSchedule' | translate}}</button>
-  </div>
-  <ng-template #notControllable>
+      <button mat-raised-button type="button" (click)="addSchedule()" class="SchedulesComponent__addSchedule"
+      [disabled]="form.invalid">{{'SchedulesComponent.button.addSchedule' | translate}}</button>
+    </div>
+  } @else {
     <messagebox [level]="MessageBoxLevel.WARN">{{'SchedulesComponent.message.notControllable' | translate}}</messagebox>
-  </ng-template>
+  }
 </form>
 <!--pre>pristine={{form.pristine}}</pre>
 <pre>invalid={{form.invalid}}</pre>

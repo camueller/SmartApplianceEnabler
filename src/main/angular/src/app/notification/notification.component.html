@@ -9,11 +9,13 @@
       <mat-form-field class="NotificationComponent__types">
         <mat-label>{{'NotificationComponent.types' | translate}}</mat-label>
         <mat-select formControlName="notificationTypes" multiple
-                    placeholder="{{typesPlaceholder | translate}}"
-                    required="{{isRequired('types')}}">
-          <mat-option *ngFor="let typeListItem of typeListItems" [value]="typeListItem.value">
-            {{typeListItem.viewValue}}
-          </mat-option>
+          placeholder="{{typesPlaceholder | translate}}"
+          required="{{isRequired('types')}}">
+          @for (typeListItem of typeListItems; track typeListItem) {
+            <mat-option [value]="typeListItem.value">
+              {{typeListItem.viewValue}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
     </div>

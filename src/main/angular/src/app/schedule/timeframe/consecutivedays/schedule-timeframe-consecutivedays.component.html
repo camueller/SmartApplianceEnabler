@@ -2,37 +2,41 @@
   <mat-form-field class="ScheduleTimeframeConsecutivedaysComponent__startDayOfWeek">
     <mat-label>{{'ScheduleTimeframeConsecutivedaysComponent.startDayOfWeek' | translate}}</mat-label>
     <mat-select formControlName="startDayOfWeek"
-                required="{{isRequired('startDayOfWeek')}}">
-      <mat-option *ngFor="let dayOfWeek of daysOfWeek" [value]="dayOfWeek.id">
-        {{dayOfWeek.name}}
-      </mat-option>
+      required="{{isRequired('startDayOfWeek')}}">
+      @for (dayOfWeek of daysOfWeek; track dayOfWeek) {
+        <mat-option [value]="dayOfWeek.id">
+          {{dayOfWeek.name}}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <app-timepicker label="{{'ScheduleTimeframeConsecutivedaysComponent.startTime' | translate}}"
-                  formControlNameTP="startTime"
-                  [value]="startTime"
-                  [required]="true"
-                  [enabled]="enabled"
-                  [width]="'6rem'"
-                  [errorMessages]="errorMessages"
-                  #startTimeComponent
+    formControlNameTP="startTime"
+    [value]="startTime"
+    [required]="true"
+    [enabled]="enabled"
+    [width]="'6rem'"
+    [errorMessages]="errorMessages"
+    #startTimeComponent
   ></app-timepicker>
   <mat-form-field class="ScheduleTimeframeConsecutivedaysComponent__endDayOfWeek">
     <mat-label>{{'ScheduleTimeframeConsecutivedaysComponent.endDayOfWeek' | translate}}</mat-label>
     <mat-select formControlName="endDayOfWeek"
-                required="{{isRequired('endDayOfWeek')}}">
-      <mat-option *ngFor="let dayOfWeek of daysOfWeek" [value]="dayOfWeek.id">
-        {{dayOfWeek.name}}
-      </mat-option>
+      required="{{isRequired('endDayOfWeek')}}">
+      @for (dayOfWeek of daysOfWeek; track dayOfWeek) {
+        <mat-option [value]="dayOfWeek.id">
+          {{dayOfWeek.name}}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <app-timepicker label="{{'ScheduleTimeframeConsecutivedaysComponent.endTime' | translate}}"
-                  formControlNameTP="endTime"
-                  [value]="endTime"
-                  [required]="true"
-                  [enabled]="enabled"
-                  [width]="'6rem'"
-                  [errorMessages]="errorMessages"
-                  #endTimeComponent
+    formControlNameTP="endTime"
+    [value]="endTime"
+    [required]="true"
+    [enabled]="enabled"
+    [width]="'6rem'"
+    [errorMessages]="errorMessages"
+    #endTimeComponent
   ></app-timepicker>
 </div>

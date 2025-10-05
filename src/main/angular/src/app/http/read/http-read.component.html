@@ -3,32 +3,42 @@
     <mat-form-field class="sae__url">
       <mat-label>{{'HttpReadComponent.url' | translate}}</mat-label>
       <input matInput type="text" formControlName="url"
-             required="{{isRequired('url')}}">
-      <mat-error *ngIf="errors.url">{{errors.url}}</mat-error>
+        required="{{isRequired('url')}}">
+      @if (errors.url) {
+        <mat-error>{{errors.url}}</mat-error>
+      }
     </mat-form-field>
-    <button mat-raised-button type="button" (click)="removeHttpRead()" *ngIf="isRemoveHttpReadPossible">
+    @if (isRemoveHttpReadPossible) {
+      <button mat-raised-button type="button" (click)="removeHttpRead()">
       {{'HttpReadComponent.button.remove' | translate}}</button>
+    }
   </div>
   <div formArrayName="httpReadValues">
-    <div class="sae__fields-with-button" *ngFor="let httpReadValue of httpRead.readValues; index as i">
-      <div class="sae__fields">
-        <app-http-read-value
-          [formGroupName]="i"
-          [form]="getHttpReadValueFormGroup(i)"
-          [httpReadValue]="httpReadValue"
-          [contentProtocol]="contentProtocol"
-          [disableFactorToValue]="disableFactorToValue"
-          [valueNames]="valueNames"
-          [translationPrefix]="translationPrefix"
-          [translationKeys]="translationKeys"
-          (nameChanged)="onNameChanged(i, $event)"
-          #httpReadValues
-        ></app-http-read-value>
+    @for (httpReadValue of httpRead.readValues; track httpReadValue; let i = $index) {
+      <div class="sae__fields-with-button">
+        <div class="sae__fields">
+          <app-http-read-value
+            [formGroupName]="i"
+            [form]="getHttpReadValueFormGroup(i)"
+            [httpReadValue]="httpReadValue"
+            [contentProtocol]="contentProtocol"
+            [disableFactorToValue]="disableFactorToValue"
+            [valueNames]="valueNames"
+            [translationPrefix]="translationPrefix"
+            [translationKeys]="translationKeys"
+            (nameChanged)="onNameChanged(i, $event)"
+            #httpReadValues
+          ></app-http-read-value>
+        </div>
+        @if (isRemoveValuePossible) {
+          <button mat-raised-button type="button" (click)="removeHttpReadValue(i)">
+          {{'HttpReadComponent.button.removeValue' | translate}}</button>
+        }
       </div>
-      <button mat-raised-button type="button" (click)="removeHttpReadValue(i)" *ngIf="isRemoveValuePossible">
-        {{'HttpReadComponent.button.removeValue' | translate}}</button>
-    </div>
+    }
   </div>
 </div>
-<button mat-raised-button type="button" class="HttpReadComponent__addValue" (click)="addValue()" *ngIf="isAddValuePossible">
+@if (isAddValuePossible) {
+  <button mat-raised-button type="button" class="HttpReadComponent__addValue" (click)="addValue()">
   {{'HttpReadComponent.button.addValue' | translate}}</button>
+}

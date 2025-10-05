@@ -1,59 +1,83 @@
 <div class="StatusViewComponent">
   <div class="StatusComponent__appliance-name">{{status.name}}</div>
-  <div *ngIf="status.planningRequested">
-    <div class="StatusComponent__appliance-status">
-      <div *ngIf="isTrafficLightRed()">
-        <span class="StatusComponent__appliance-status-label">{{'StatusComponent.earliestStart' | translate}}</span>
-        <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.earliestStart)}}</span>
+  @if (status.planningRequested) {
+    <div>
+      <div class="StatusComponent__appliance-status">
+        @if (isTrafficLightRed()) {
+          <div>
+            <span class="StatusComponent__appliance-status-label">{{'StatusComponent.earliestStart' | translate}}</span>
+            <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.earliestStart)}}</span>
+          </div>
+        }
+        @if (isTrafficLightYellow()) {
+          <div>
+            @if (status.interruptedSince != null) {
+              <div>
+                <span class="StatusComponent__appliance-status-label">{{'StatusComponent.interruptedSince' | translate}}</span>
+                <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.interruptedSince)}}</span>
+              </div>
+            }
+            @if (!!status?.latestStart && status.latestStart > 0) {
+              <div>
+                <span class="StatusComponent__appliance-status-label">{{'StatusComponent.latestStart' | translate}}</span>
+                <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.latestStart)}}</span>
+              </div>
+            }
+          </div>
+        }
+        @if (isTrafficLightGreen()) {
+          <div>
+            <span class="StatusComponent__appliance-status-label">{{'StatusComponent.runningTimeCompleted' | translate}}</span>
+            <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.runningTime)}}</span>
+          </div>
+        }
       </div>
-      <div *ngIf="isTrafficLightYellow()">
-        <div *ngIf="status.interruptedSince != null">
-          <span class="StatusComponent__appliance-status-label">{{'StatusComponent.interruptedSince' | translate}}</span>
-          <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.interruptedSince)}}</span>
+      @if (status.remainingMinRunningTime == null && status.remainingMaxEnergy == null) {
+        <div>
+          <div class="StatusComponent__appliance-status">
+            <span class="StatusComponent__appliance-status-label">{{getRemainingRunningTimeLabel(status)}}</span>
+            <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMaxRunningTime)}}</span>
+          </div>
         </div>
-        <div *ngIf="!!status?.latestStart && status.latestStart > 0">
-          <span class="StatusComponent__appliance-status-label">{{'StatusComponent.latestStart' | translate}}</span>
-          <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.latestStart)}}</span>
+      }
+      @if (status.remainingMinRunningTime != null) {
+        <div>
+          <div class="StatusComponent__appliance-status">
+            <span class="StatusComponent__appliance-status-label">{{getRemainingMinRunningTimeLabel(status)}}</span>
+            <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMinRunningTime)}}</span>
+          </div>
         </div>
-      </div>
-      <div *ngIf="isTrafficLightGreen()">
-        <span class="StatusComponent__appliance-status-label">{{'StatusComponent.runningTimeCompleted' | translate}}</span>
-        <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.runningTime)}}</span>
-      </div>
+      }
+      @if (status.remainingMinRunningTime != null && status.remainingMaxRunningTime != null) {
+        <div>
+          <div class="StatusComponent__appliance-status">
+            <span class="StatusComponent__appliance-status-label">{{getRemainingMaxRunningTimeLabel(status)}}</span>
+            <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMaxRunningTime)}}</span>
+          </div>
+        </div>
+      }
+      @if (status.variablePowerConsumer && !isTrafficLightRed() && !isTrafficLightRedBlink()) {
+        <div class="StatusComponent__appliance-status">
+          <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyChargePower' | translate}}</span>
+          <span class="StatusComponent__appliance-status-value">{{getCurrentPower(status)}} kW</span>
+        </div>
+      }
+      @if (status.remainingMinEnergy != null) {
+        <div>
+          <div class="StatusComponent__appliance-status">
+            <span class="StatusComponent__appliance-status-label">{{'StatusComponent.remainingMinEnergy' | translate}}</span>
+            <span class="StatusComponent__appliance-status-value">{{toKWh(status.remainingMinEnergy)}} kWh</span>
+          </div>
+        </div>
+      }
+      @if (status.remainingMaxEnergy != null) {
+        <div>
+          <div class="StatusComponent__appliance-status">
+            <span class="StatusComponent__appliance-status-label">{{'StatusComponent.remainingMaxEnergy' | translate}}</span>
+            <span class="StatusComponent__appliance-status-value">{{toKWh(status.remainingMaxEnergy)}} kWh</span>
+          </div>
+        </div>
+      }
     </div>
-    <div *ngIf="status.remainingMinRunningTime == null && status.remainingMaxEnergy == null">
-      <div class="StatusComponent__appliance-status">
-        <span class="StatusComponent__appliance-status-label">{{getRemainingRunningTimeLabel(status)}}</span>
-        <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMaxRunningTime)}}</span>
-      </div>
-    </div>
-    <div *ngIf="status.remainingMinRunningTime != null">
-      <div class="StatusComponent__appliance-status">
-        <span class="StatusComponent__appliance-status-label">{{getRemainingMinRunningTimeLabel(status)}}</span>
-        <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMinRunningTime)}}</span>
-      </div>
-    </div>
-    <div *ngIf="status.remainingMinRunningTime != null && status.remainingMaxRunningTime != null">
-      <div class="StatusComponent__appliance-status">
-        <span class="StatusComponent__appliance-status-label">{{getRemainingMaxRunningTimeLabel(status)}}</span>
-        <span class="StatusComponent__appliance-status-value">{{toHourMinuteWithUnits(status.remainingMaxRunningTime)}}</span>
-      </div>
-    </div>
-    <div class="StatusComponent__appliance-status" *ngIf="status.variablePowerConsumer && !isTrafficLightRed() && !isTrafficLightRedBlink()">
-      <span class="StatusComponent__appliance-status-label">{{'StatusComponent.energyChargePower' | translate}}</span>
-      <span class="StatusComponent__appliance-status-value">{{getCurrentPower(status)}} kW</span>
-    </div>
-    <div *ngIf="status.remainingMinEnergy != null">
-      <div class="StatusComponent__appliance-status">
-        <span class="StatusComponent__appliance-status-label">{{'StatusComponent.remainingMinEnergy' | translate}}</span>
-        <span class="StatusComponent__appliance-status-value">{{toKWh(status.remainingMinEnergy)}} kWh</span>
-      </div>
-    </div>
-    <div *ngIf="status.remainingMaxEnergy != null">
-      <div class="StatusComponent__appliance-status">
-        <span class="StatusComponent__appliance-status-label">{{'StatusComponent.remainingMaxEnergy' | translate}}</span>
-        <span class="StatusComponent__appliance-status-value">{{toKWh(status.remainingMaxEnergy)}} kWh</span>
-      </div>
-    </div>
-  </div>
+  }
 </div>

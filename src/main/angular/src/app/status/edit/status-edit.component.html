@@ -1,19 +1,21 @@
 <form class="StatusEditComponent" [formGroup]="form" (ngSubmit)="submitForm()">
   <div class="StatusComponent__appliance-details-row">
     <app-timepicker label="{{'StatusComponent.plannedRunningTime' | translate}}"
-                    formControlNameTP="runtime"
-                    [value]="suggestedRuntime"
-                    [width]="'8rem'"
-                    [errorMessages]="errorMessages"
-                    #runtimeComponent
+      formControlNameTP="runtime"
+      [value]="suggestedRuntime"
+      [width]="'8rem'"
+      [errorMessages]="errorMessages"
+      #runtimeComponent
     ></app-timepicker>
   </div>
-  <div class="StatusEditComponent__error" *ngIf="hasErrors">
-    <mat-error>{{error}}</mat-error>
-  </div>
+  @if (hasErrors) {
+    <div class="StatusEditComponent__error">
+      <mat-error>{{error}}</mat-error>
+    </div>
+  }
   <div class="StatusComponent__appliance-details-row StatusComponent__appliance-button-row">
     <button mat-raised-button type="button" (click)="cancelForm()">{{'StatusComponent.buttonCancel' | translate}}</button>
     <button mat-raised-button type="submit" color="primary"
-            [disabled]="form.invalid">{{'StatusComponent.buttonStart' | translate}}</button>
+    [disabled]="form.invalid">{{'StatusComponent.buttonStart' | translate}}</button>
   </div>
 </form>

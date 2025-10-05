@@ -2,30 +2,40 @@
   <mat-form-field class="sae__value-name">
     <mat-label>{{'HttpWriteValueComponent.name' | translate}}</mat-label>
     <mat-select formControlName="name" required="{{isRequired('name')}}">
-      <mat-option *ngFor="let valueName of valueNames" [value]="valueName">
-        {{getTranslatedValueName(valueName)}}
-      </mat-option>
+      @for (valueName of valueNames; track valueName) {
+        <mat-option [value]="valueName">
+          {{getTranslatedValueName(valueName)}}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <mat-form-field class="sae__http-method">
     <mat-label>{{'HttpWriteValueComponent.method' | translate}}</mat-label>
     <mat-select formControlName="method" required="{{isRequired('method')}}">
-      <mat-option *ngFor="let method of methods" [value]="method">
-        {{getMethodTranslationKey(method)| translate}}
-      </mat-option>
+      @for (method of methods; track method) {
+        <mat-option [value]="method">
+          {{getMethodTranslationKey(method)| translate}}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <mat-form-field class="HttpWriteValueComponent__value">
     <mat-label>{{'HttpWriteValueComponent.value' | translate}}</mat-label>
     <input matInput type="text" formControlName="value"
-           required="{{isRequired('value')}}">
-    <mat-error *ngIf="errors.value">{{errors.value}}</mat-error>
+      required="{{isRequired('value')}}">
+    @if (errors.value) {
+      <mat-error>{{errors.value}}</mat-error>
+    }
   </mat-form-field>
-  <mat-form-field class="sae__factorToValue" *ngIf="! disableFactorToValue">
-    <mat-label>{{'HttpWriteValueComponent.factorToValue' | translate}}</mat-label>
-    <input matInput type="text" formControlName="factorToValue"
-           placeholder="1"
-           required="{{isRequired('factorToValue')}}">
-    <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
-  </mat-form-field>
+  @if (! disableFactorToValue) {
+    <mat-form-field class="sae__factorToValue">
+      <mat-label>{{'HttpWriteValueComponent.factorToValue' | translate}}</mat-label>
+      <input matInput type="text" formControlName="factorToValue"
+        placeholder="1"
+        required="{{isRequired('factorToValue')}}">
+      @if (errors.factorToValue) {
+        <mat-error>{{errors.factorToValue}}</mat-error>
+      }
+    </mat-form-field>
+  }
 </div>

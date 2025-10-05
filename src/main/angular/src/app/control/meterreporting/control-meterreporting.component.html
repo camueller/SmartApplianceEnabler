@@ -2,17 +2,21 @@
   <mat-form-field>
     <mat-label>{{'ControlMeterreportingComponent.powerThreshold' | translate}}</mat-label>
     <input matInput type="text" formControlName="powerThreshold"
-           placeholder="{{controlDefaults.meterReportingSwitchDefaults.powerThreshold}}"
-           required="{{isRequired('powerThreshold')}}">
-    <mat-error *ngIf="errors.powerThreshold">{{errors.powerThreshold}}</mat-error>
+      placeholder="{{controlDefaults.meterReportingSwitchDefaults.powerThreshold}}"
+      required="{{isRequired('powerThreshold')}}">
+    @if (errors.powerThreshold) {
+      <mat-error>{{errors.powerThreshold}}</mat-error>
+    }
   </mat-form-field>
   <mat-form-field>
     <mat-label>{{'ControlMeterreportingComponent.offDetectionDelay' | translate}}</mat-label>
     <input matInput type="text" formControlName="offDetectionDelay"
-           placeholder="{{controlDefaults.meterReportingSwitchDefaults.offDetectionDelay}}"
-           matTooltip="{{'ControlMeterreportingComponent.offDetectionDelay.tooltip' | translate}}"
-           [matTooltipDisabled]="'matTooltipDisabled' | env"
-           required="{{isRequired('offDetectionDelay')}}">
-    <mat-error *ngIf="errors.offDetectionDelay">{{errors.offDetectionDelay}}</mat-error>
+      placeholder="{{controlDefaults.meterReportingSwitchDefaults.offDetectionDelay}}"
+      matTooltip="{{'ControlMeterreportingComponent.offDetectionDelay.tooltip' | translate}}"
+      [matTooltipDisabled]="'matTooltipDisabled' | env"
+      required="{{isRequired('offDetectionDelay')}}">
+    @if (errors.offDetectionDelay) {
+      <mat-error>{{errors.offDetectionDelay}}</mat-error>
+    }
   </mat-form-field>
 </div>

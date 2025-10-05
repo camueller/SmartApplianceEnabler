@@ -31,8 +31,8 @@ describe('StatusService', () => {
   }));
 
   it('should return the status of more than one appliance', () => {
-    const service = TestBed.get(StatusService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(StatusService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const expectedStatuses = [
       new Status({
         id: 'F-00000001-000000000001-00',

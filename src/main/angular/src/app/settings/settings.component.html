@@ -1,130 +1,140 @@
 <!--
-  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
-  ~
-  ~ This program is free software; you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation; either version 2 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more appliance.
-  ~
-  ~ You should have received a copy of the GNU General Public License along
-  ~ with this program; if not, write to the Free Software Foundation, Inc.,
-  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-  -->
+~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+~
+~ This program is free software; you can redistribute it and/or modify
+~ it under the terms of the GNU General Public License as published by
+~ the Free Software Foundation; either version 2 of the License, or
+~ (at your option) any later version.
+~
+~ This program is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+~ GNU General Public License for more appliance.
+~
+~ You should have received a copy of the GNU General Public License along
+~ with this program; if not, write to the Free Software Foundation, Inc.,
+~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
 <form class="SettingsComponent mat-typography" [formGroup]="form" (ngSubmit)="submitForm()">
 
   <section>
     <h2>{{'SettingsComponent.mqttBroker' | translate}}
       <app-help [helpfile]="'Settings'" [anchor]="'mqttBroker'"></app-help></h2>
-    <div class="sae__fields">
-      <mat-form-field class="sae__hostname">
-        <mat-label>{{'SettingsComponent.mqttHost' | translate}}</mat-label>
-        <input matInput type="text" formControlName="mqttHost"
-               placeholder="{{settingsDefaults.mqttHost}}"
-               required="{{isRequired('mqttHost')}}">
-        <mat-error *ngIf="errors.mqttHost">{{errors.mqttHost}}</mat-error>
-      </mat-form-field>
-      <mat-form-field class="sae__port">
-        <mat-label>{{'SettingsComponent.mqttPort' | translate}}</mat-label>
-        <input matInput type="text" formControlName="mqttPort"
-               placeholder="{{settingsDefaults.mqttPort}}"
-               required="{{isRequired('mqttPort')}}">
-        <mat-error *ngIf="errors.mqttPort">{{errors.mqttPort}}</mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>{{'SettingsComponent.mqttUsername' | translate}}</mat-label>
-        <input matInput type="text" formControlName="mqttUsername"
-               required="{{isRequired('mqttUsername')}}">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>{{'SettingsComponent.mqttPassword' | translate}}</mat-label>
-        <input matInput type="password" formControlName="mqttPassword"
-               required="{{isRequired('mqttPassword')}}">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>{{'SettingsComponent.mqttRootTopic' | translate}}</mat-label>
-        <input matInput type="text" formControlName="mqttRootTopic"
-               placeholder="{{settingsDefaults.mqttRootTopic}}"
-               required="{{isRequired('mqttRootTopic')}}">
-      </mat-form-field>
-    </div>
-  </section>
-
-  <mat-divider></mat-divider>
-
-  <section>
-    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.nodeRed' | translate}}
-      <app-help [helpfile]="'Settings'" [anchor]="'nodered'"></app-help></h2>
-    <div class="sae__fields">
-      <mat-form-field class="sae__url">
-        <mat-label>{{'SettingsComponent.nodeRedDashboardUrl' | translate}}</mat-label>
-        <input matInput type="text" formControlName="nodeRedDashboardUrl"
-               placeholder="{{settingsDefaults.nodeRedDashboardUrl}}"
-               required="{{isRequired('nodeRedDashboardUrl')}}">
-        <mat-error *ngIf="errors.nodeRedDashboardUrl">{{errors.nodeRedDashboardUrl}}</mat-error>
-      </mat-form-field>
-    </div>
-  </section>
-
-  <mat-divider></mat-divider>
-
-  <section>
-    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.holidays' | translate}}
-      <app-help [helpfile]="'Settings'" [anchor]="'holidays'"></app-help></h2>
-    <div class="sae__fields">
-      <mat-checkbox formControlName="holidaysEnabled"
-      >{{'SettingsComponent.holidaysEnabled' | translate}}</mat-checkbox>
-      <mat-form-field class="sae__url">
-        <mat-label>{{'SettingsComponent.holidaysUrl' | translate}}</mat-label>
-        <input matInput type="text" formControlName="holidaysUrl"
-               placeholder="{{settingsDefaults.holidaysUrl}}"
-               required="{{isRequired('holidaysUrl')}}">
-        <mat-error *ngIf="errors.holidaysUrl">{{errors.holidaysUrl}}</mat-error>
-      </mat-form-field>
-    </div>
-  </section>
-
-  <mat-divider></mat-divider>
-
-  <section>
-    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.modbus' | translate}}
-      <app-help [helpfile]="'Settings'" [anchor]="'modbus'"></app-help></h2>
-    <div formArrayName="modbusSettings">
-      <div *ngFor="let modbusSetting of settings.modbusSettings; index as i">
-        <app-settings-modbus
-          [formGroupName]="i"
-          [form]="getModbusSettingFormGroup(i)"
-          [modbusSetting]="modbusSetting"
-          [settingsDefaults]="settingsDefaults"
-          (remove)="onModbusSettingRemove(i)"
-          #modbusSettings
-        ></app-settings-modbus>
+      <div class="sae__fields">
+        <mat-form-field class="sae__hostname">
+          <mat-label>{{'SettingsComponent.mqttHost' | translate}}</mat-label>
+          <input matInput type="text" formControlName="mqttHost"
+            placeholder="{{settingsDefaults.mqttHost}}"
+            required="{{isRequired('mqttHost')}}">
+          @if (errors.mqttHost) {
+            <mat-error>{{errors.mqttHost}}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field class="sae__port">
+          <mat-label>{{'SettingsComponent.mqttPort' | translate}}</mat-label>
+          <input matInput type="text" formControlName="mqttPort"
+            placeholder="{{settingsDefaults.mqttPort}}"
+            required="{{isRequired('mqttPort')}}">
+          @if (errors.mqttPort) {
+            <mat-error>{{errors.mqttPort}}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{'SettingsComponent.mqttUsername' | translate}}</mat-label>
+          <input matInput type="text" formControlName="mqttUsername"
+            required="{{isRequired('mqttUsername')}}">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{'SettingsComponent.mqttPassword' | translate}}</mat-label>
+          <input matInput type="password" formControlName="mqttPassword"
+            required="{{isRequired('mqttPassword')}}">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{'SettingsComponent.mqttRootTopic' | translate}}</mat-label>
+          <input matInput type="text" formControlName="mqttRootTopic"
+            placeholder="{{settingsDefaults.mqttRootTopic}}"
+            required="{{isRequired('mqttRootTopic')}}">
+        </mat-form-field>
       </div>
-      <button mat-raised-button type="button" class="SettingsComponent__addModbusSetting"
+    </section>
+
+    <mat-divider></mat-divider>
+
+    <section>
+      <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.nodeRed' | translate}}
+        <app-help [helpfile]="'Settings'" [anchor]="'nodered'"></app-help></h2>
+        <div class="sae__fields">
+          <mat-form-field class="sae__url">
+            <mat-label>{{'SettingsComponent.nodeRedDashboardUrl' | translate}}</mat-label>
+            <input matInput type="text" formControlName="nodeRedDashboardUrl"
+              placeholder="{{settingsDefaults.nodeRedDashboardUrl}}"
+              required="{{isRequired('nodeRedDashboardUrl')}}">
+            @if (errors.nodeRedDashboardUrl) {
+              <mat-error>{{errors.nodeRedDashboardUrl}}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <section>
+        <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.holidays' | translate}}
+          <app-help [helpfile]="'Settings'" [anchor]="'holidays'"></app-help></h2>
+          <div class="sae__fields">
+            <mat-checkbox formControlName="holidaysEnabled"
+            >{{'SettingsComponent.holidaysEnabled' | translate}}</mat-checkbox>
+            <mat-form-field class="sae__url">
+              <mat-label>{{'SettingsComponent.holidaysUrl' | translate}}</mat-label>
+              <input matInput type="text" formControlName="holidaysUrl"
+                placeholder="{{settingsDefaults.holidaysUrl}}"
+                required="{{isRequired('holidaysUrl')}}">
+              @if (errors.holidaysUrl) {
+                <mat-error>{{errors.holidaysUrl}}</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </section>
+
+        <mat-divider></mat-divider>
+
+        <section>
+          <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.modbus' | translate}}
+            <app-help [helpfile]="'Settings'" [anchor]="'modbus'"></app-help></h2>
+            <div formArrayName="modbusSettings">
+              @for (modbusSetting of settings.modbusSettings; track modbusSetting; let i = $index) {
+                <div>
+                  <app-settings-modbus
+                    [formGroupName]="i"
+                    [form]="getModbusSettingFormGroup(i)"
+                    [modbusSetting]="modbusSetting"
+                    [settingsDefaults]="settingsDefaults"
+                    (remove)="onModbusSettingRemove(i)"
+                    #modbusSettings
+                  ></app-settings-modbus>
+                </div>
+              }
+              <button mat-raised-button type="button" class="SettingsComponent__addModbusSetting"
               (click)="addModbusSetting()">{{'button.new' | translate}}</button>
-    </div>
-  </section>
+            </div>
+          </section>
 
-  <mat-divider></mat-divider>
+          <mat-divider></mat-divider>
 
-  <section>
-    <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.notification.heading' | translate}}
-      <app-help [helpfile]="'Settings'" [anchor]="'notifications'"></app-help></h2>
-    <div class="sae__fields">
-      <app-filenameinput
-        formControlNameInput="notificationCommand"
-        label="{{'SettingsComponent.notification.command' | translate}}"
-        value="{{settings.notificationCommand}}"
-        [requiredFileModes]="notificationScriptFileModes"
-      ></app-filenameinput>
-    </div>
-  </section>
+          <section>
+            <h2 class="sae__heading-extra-top-margin">{{'SettingsComponent.notification.heading' | translate}}
+              <app-help [helpfile]="'Settings'" [anchor]="'notifications'"></app-help></h2>
+              <div class="sae__fields">
+                <app-filenameinput
+                  formControlNameInput="notificationCommand"
+                  label="{{'SettingsComponent.notification.command' | translate}}"
+                  value="{{settings.notificationCommand}}"
+                  [requiredFileModes]="notificationScriptFileModes"
+                ></app-filenameinput>
+              </div>
+            </section>
 
-  <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
-  <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
-    {{'button.save' | translate}}</button>
-</form>
+            <div class="sae__mandatory_fields_hint">{{'dialog.mandatoryfields'|translate}}</div>
+            <button mat-raised-button type="submit" color="primary" [disabled]="form.pristine||form.invalid">
+            {{'button.save' | translate}}</button>
+          </form>

@@ -1,12 +1,16 @@
 <mat-form-field [style]="{width: width}" [class]="cssClasses" [formGroup]="form">
-  <mat-label *ngIf="label">{{label}}</mat-label>
+  @if (label) {
+    <mat-label>{{label}}</mat-label>
+  }
   <input matInput
-         type="text"
-         formControlName="{{formControlNameTP}}"
-         class="clockpicker"
-         [required]="required"
-         matTooltip="{{tooltip}}"
-         [matTooltipDisabled]="'matTooltipDisabled' | env"
-  >
-  <mat-error *ngIf="!noErrorOnField && error">{{error}}</mat-error>
+    type="text"
+    formControlName="{{formControlNameTP}}"
+    class="clockpicker"
+    [required]="required"
+    matTooltip="{{tooltip}}"
+    [matTooltipDisabled]="'matTooltipDisabled' | env"
+    >
+  @if (!noErrorOnField && error) {
+    <mat-error>{{error}}</mat-error>
+  }
 </mat-form-field>

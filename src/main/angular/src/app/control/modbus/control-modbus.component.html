@@ -1,39 +1,49 @@
 <div class="ControlModbusComponent">
   <ng-content></ng-content>
-  <messagebox [level]="MessageBoxLevel.INFO" *ngIf="modbusSettings.length === 0"
-  >{{'error.modbus_not_configured' | translate}}</messagebox>
+  @if (modbusSettings.length === 0) {
+    <messagebox [level]="MessageBoxLevel.INFO"
+    >{{'error.modbus_not_configured' | translate}}</messagebox>
+  }
   <div [style]="displayNoneStyle">
     <div class="ControlModbusComponent sae__fields">
       <mat-form-field>
         <mat-label>{{'MeterModbusComponent.idref' | translate}}</mat-label>
         <mat-select formControlName="idref" required="{{isRequired('idref')}}">
-          <mat-option *ngFor="let modbusSetting of modbusSettings" [value]="modbusSetting.modbusTcpId">
-            {{modbusSetting.modbusTcpId}}
-          </mat-option>
+          @for (modbusSetting of modbusSettings; track modbusSetting) {
+            <mat-option [value]="modbusSetting.modbusTcpId">
+              {{modbusSetting.modbusTcpId}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
       <mat-form-field class="ControlModbusComponent__slaveAddress">
         <mat-label>{{'MeterModbusComponent.slaveAddress' | translate}}</mat-label>
         <input matInput type="text" formControlName="slaveAddress"
-               required="{{isRequired('slaveAddress')}}">
-        <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
+          required="{{isRequired('slaveAddress')}}">
+        @if (errors.slaveAddress) {
+          <mat-error>{{errors.slaveAddress}}</mat-error>
+        }
       </mat-form-field>
     </div>
     <div formArrayName="modbusWrites">
-      <app-modbus-write *ngFor="let modbusWrite of modbusSwitch.modbusWrites; index as i; last as l"
-                        [formGroupName]="i"
-                        [form]="getModbusWriteFormGroup(i)"
-                        [disableFactorToValue]="true"
-                        [modbusWrite]="modbusWrite"
-                        [maxValues]="maxValues"
-                        [valueNames]="valueNames"
-                        [translationPrefix]="'ControlModbusComponent.'"
-                        [translationKeys]="valueNameTextKeys"
-                        (remove)="onModbusWriteRemove(i)"
-                        #modbusWriteComponents
-      ></app-modbus-write>
-      <button mat-raised-button type="button" (click)="addModbusWrite()" class="ControlModbusComponent__addModbusWrite" *ngIf="isAddModbusWritePossible">
+      @for (modbusWrite of modbusSwitch.modbusWrites; track modbusWrite; let i = $index; let l = $last) {
+        <app-modbus-write
+          [formGroupName]="i"
+          [form]="getModbusWriteFormGroup(i)"
+          [disableFactorToValue]="true"
+          [modbusWrite]="modbusWrite"
+          [maxValues]="maxValues"
+          [valueNames]="valueNames"
+          [translationPrefix]="'ControlModbusComponent.'"
+          [translationKeys]="valueNameTextKeys"
+          (remove)="onModbusWriteRemove(i)"
+          #modbusWriteComponents
+        ></app-modbus-write>
+      }
+      @if (isAddModbusWritePossible) {
+        <button mat-raised-button type="button" (click)="addModbusWrite()" class="ControlModbusComponent__addModbusWrite">
         {{'ControlModbusComponent.button.addModbusWrite' | translate}}</button>
+      }
     </div>
   </div>
 </div>

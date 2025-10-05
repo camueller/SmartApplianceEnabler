@@ -1,56 +1,80 @@
 <div [class]="trafficLightClass">
-  <div *ngIf="!showLoadingIndicator">
-    <div [class]="bulbClass" [class.TrafficLightComponent__stopLight]="true" *ngIf="isRed() && !isRedBlink()"></div>
-    <div [class]="bulbClass" [class.TrafficLightComponent__stopLight]="true"
-         [class.TrafficLightComponent__stopLight-blink]="isRedBlink()"
-         *ngIf="isRedBlink()"
-    ></div>
-    <div [class]="bulbClass" *ngIf="!isRed() && !isRedBlink() && isRedClickable()"
-         (click)="onRedClick()"
-         matTooltip="{{'StatusComponent.tooltipStopLight' | translate}}"
-         [matTooltipDisabled]="'matTooltipDisabled' | env"
-    ></div>
-    <div [class]="bulbClass" *ngIf="!isRed() && !isRedBlink() && !isRedClickable()"></div>
-
-    <div [class]="bulbClass" [class.TrafficLightComponent__slowLight]="true" *ngIf="isYellow() && !isYellowBlink()"></div>
-    <div [class]="bulbClass" [class.TrafficLightComponent__slowLight]="true"
-         [class.TrafficLightComponent__slowLight-blink]="isYellowBlink()"
-         *ngIf="isYellowBlink()"
-    ></div>
-    <div [class]="bulbClass" *ngIf="!isYellow() && !isYellowBlink()"></div>
-
-    <div [class]="bulbClass" [class.TrafficLightComponent__goLight]="true" *ngIf="isGreen()"></div>
-    <div *ngIf="isGreenBlink()">
-      <div [class]="bulbClass" [class.TrafficLightComponent__goLight]="true"
-           [class.TrafficLightComponent__goLight-blink]="isGreenBlink()"
-           (click)="onGreenClick()"
-           matTooltip="{{'StatusComponent.tooltipGoLight' | translate}}"
-           [matTooltipDisabled]="'matTooltipDisabled' | env"
-      ></div>
+  @if (!showLoadingIndicator) {
+    <div>
+      @if (isRed() && !isRedBlink()) {
+        <div [class]="bulbClass" [class.TrafficLightComponent__stopLight]="true"></div>
+      }
+      @if (isRedBlink()) {
+        <div [class]="bulbClass" [class.TrafficLightComponent__stopLight]="true"
+          [class.TrafficLightComponent__stopLight-blink]="isRedBlink()"
+        ></div>
+      }
+      @if (!isRed() && !isRedBlink() && isRedClickable()) {
+        <div [class]="bulbClass"
+          (click)="onRedClick()"
+          matTooltip="{{'StatusComponent.tooltipStopLight' | translate}}"
+          [matTooltipDisabled]="'matTooltipDisabled' | env"
+        ></div>
+      }
+      @if (!isRed() && !isRedBlink() && !isRedClickable()) {
+        <div [class]="bulbClass"></div>
+      }
+      @if (isYellow() && !isYellowBlink()) {
+        <div [class]="bulbClass" [class.TrafficLightComponent__slowLight]="true"></div>
+      }
+      @if (isYellowBlink()) {
+        <div [class]="bulbClass" [class.TrafficLightComponent__slowLight]="true"
+          [class.TrafficLightComponent__slowLight-blink]="isYellowBlink()"
+        ></div>
+      }
+      @if (!isYellow() && !isYellowBlink()) {
+        <div [class]="bulbClass"></div>
+      }
+      @if (isGreen()) {
+        <div [class]="bulbClass" [class.TrafficLightComponent__goLight]="true"></div>
+      }
+      @if (isGreenBlink()) {
+        <div>
+          <div [class]="bulbClass" [class.TrafficLightComponent__goLight]="true"
+            [class.TrafficLightComponent__goLight-blink]="isGreenBlink()"
+            (click)="onGreenClick()"
+            matTooltip="{{'StatusComponent.tooltipGoLight' | translate}}"
+            [matTooltipDisabled]="'matTooltipDisabled' | env"
+          ></div>
+        </div>
+      }
+      @if (!(isGreen() || isGreenBlink())) {
+        <div>
+          @if (! isGreenClickable()) {
+            <div [class]="bulbClass"></div>
+          }
+          @if (isGreenClickable()) {
+            <div [class]="bulbClass"
+              (click)="onGreenClick()"
+              matTooltip="{{'StatusComponent.tooltipGoLight' | translate}}"
+              [matTooltipDisabled]="'matTooltipDisabled' | env"
+            ></div>
+          }
+        </div>
+      }
     </div>
-    <div *ngIf="!(isGreen() || isGreenBlink())">
-      <div [class]="bulbClass" *ngIf="! isGreenClickable()"></div>
-      <div [class]="bulbClass" *ngIf="isGreenClickable()"
-           (click)="onGreenClick()"
-           matTooltip="{{'StatusComponent.tooltipGoLight' | translate}}"
-           [matTooltipDisabled]="'matTooltipDisabled' | env"
-      ></div>
+  }
+  @if (showLoadingIndicator) {
+    <div>
+      <div class="TrafficLightComponent__lds-spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
-  </div>
-  <div *ngIf="showLoadingIndicator">
-    <div class="TrafficLightComponent__lds-spinner">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-  </div>
+  }
 </div>

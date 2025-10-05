@@ -32,8 +32,8 @@ describe('MeterService', () => {
   }));
 
   it('should return meter defaults', () => {
-    const service = TestBed.get(MeterService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(MeterService);
+    const httpMock = TestBed.inject(HttpTestingController);
     service.getMeterDefaults().subscribe(res => expect(res).toEqual(MeterTestdata.meterdefaults_type()));
     const req = httpMock.expectOne(`${SaeService.API}/meterdefaults`);
     expect(req.request.method).toEqual('GET');
@@ -41,8 +41,8 @@ describe('MeterService', () => {
   });
 
   it('should return empty Observable if the appliance has no meter', (done: any) => {
-    const service = TestBed.get(MeterService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(MeterService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.getMeter(applianceId).subscribe(
       (res) => expect(res).toEqual(MeterTestdata.none_undefinedtype_type()),
@@ -55,8 +55,8 @@ describe('MeterService', () => {
   });
 
   it('should return the S0ElectricityMeter of an appliance', () => {
-    const service = TestBed.get(MeterService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(MeterService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.getMeter(applianceId).subscribe(res => expect(res).toEqual(MeterTestdata.s0ElectricityMeter_type()));
     const req = httpMock.expectOne(`${SaeService.API}/meter?id=${applianceId}`);
@@ -65,8 +65,8 @@ describe('MeterService', () => {
   });
 
   it('should update a S0ElectricityMeter', () => {
-    const service = TestBed.get(MeterService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(MeterService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.updateMeter(MeterTestdata.s0ElectricityMeter_type(), applianceId).subscribe(res => expect(res).toBeTruthy());
     const req = httpMock.expectOne(`${SaeService.API}/meter?id=${applianceId}`);
@@ -75,8 +75,8 @@ describe('MeterService', () => {
   });
 
   it('should return empty Observable if the meter to be updated is not found', (done: any) => {
-    const service = TestBed.get(MeterService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(MeterService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.updateMeter(MeterTestdata.s0ElectricityMeter_type(), applianceId).subscribe(
       (res) => expect(res).toBeFalsy(),
@@ -89,8 +89,8 @@ describe('MeterService', () => {
   });
 
   it('should delete a S0ElectricityMeter', () => {
-    const service = TestBed.get(MeterService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(MeterService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.updateMeter(MeterTestdata.none_type(), applianceId).subscribe(res => expect(res).toBeTruthy());
     const req = httpMock.expectOne(`${SaeService.API}/meter?id=${applianceId}`);

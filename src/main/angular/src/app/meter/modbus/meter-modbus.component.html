@@ -1,38 +1,48 @@
 <div class="MeterModbusComponent">
-  <messagebox [level]="MessageBoxLevel.INFO" *ngIf="modbusSettings.length === 0"
-  >{{'error.modbus_not_configured' | translate}}</messagebox>
+  @if (modbusSettings.length === 0) {
+    <messagebox [level]="MessageBoxLevel.INFO"
+    >{{'error.modbus_not_configured' | translate}}</messagebox>
+  }
   <div [style]="displayNoneStyle">
     <div class="sae__fields">
       <mat-form-field>
         <mat-label>{{'MeterModbusComponent.idref' | translate}}</mat-label>
         <mat-select formControlName="idref" required="{{isRequired('idref')}}">
-          <mat-option *ngFor="let modbusSetting of modbusSettings" [value]="modbusSetting.modbusTcpId">
-            {{modbusSetting.modbusTcpId}}
-          </mat-option>
+          @for (modbusSetting of modbusSettings; track modbusSetting) {
+            <mat-option [value]="modbusSetting.modbusTcpId">
+              {{modbusSetting.modbusTcpId}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
       <mat-form-field class="MeterModbusComponent__slaveAddress">
         <mat-label>{{'MeterModbusComponent.slaveAddress' | translate}}</mat-label>
         <input matInput type="text" formControlName="slaveAddress"
-               required="{{isRequired('slaveAddress')}}">
-        <mat-error *ngIf="errors.slaveAddress">{{errors.slaveAddress}}</mat-error>
+          required="{{isRequired('slaveAddress')}}">
+        @if (errors.slaveAddress) {
+          <mat-error>{{errors.slaveAddress}}</mat-error>
+        }
       </mat-form-field>
-      <mat-form-field class="MeterModbusComponent__pollInterval" *ngIf="displayPollInterval">
-        <mat-label>{{'MeterModbusComponent.pollInterval' | translate}}</mat-label>
-        <input matInput type="text" formControlName="pollInterval"
-               placeholder="{{meterDefaults.modbusElectricityMeterDefaults.pollInterval}}"
-               required="{{isRequired('pollInterval')}}">
-        <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
-      </mat-form-field>
+      @if (displayPollInterval) {
+        <mat-form-field class="MeterModbusComponent__pollInterval">
+          <mat-label>{{'MeterModbusComponent.pollInterval' | translate}}</mat-label>
+          <input matInput type="text" formControlName="pollInterval"
+            placeholder="{{meterDefaults.modbusElectricityMeterDefaults.pollInterval}}"
+            required="{{isRequired('pollInterval')}}">
+          @if (errors.pollInterval) {
+            <mat-error>{{errors.pollInterval}}</mat-error>
+          }
+        </mat-form-field>
+      }
     </div>
     <app-modbus-read [form]="form"
-                     [modbusRead]="modbusElectricityMeter.modbusReads[0]"
-                     [meterDefaults]="meterDefaults"
-                     [maxValues]="maxValues"
-                     [valueNames]="valueNames"
-                     [translationPrefix]="'MeterModbusComponent.'"
-                     [translationKeys]="valueNameTextKeys"
-                     (nameChanged)="onNameChanged($event)"
+      [modbusRead]="modbusElectricityMeter.modbusReads[0]"
+      [meterDefaults]="meterDefaults"
+      [maxValues]="maxValues"
+      [valueNames]="valueNames"
+      [translationPrefix]="'MeterModbusComponent.'"
+      [translationKeys]="valueNameTextKeys"
+      (nameChanged)="onNameChanged($event)"
     ></app-modbus-read>
   </div>
 </div>

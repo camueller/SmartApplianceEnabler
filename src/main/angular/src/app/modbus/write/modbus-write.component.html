@@ -4,53 +4,69 @@
       <mat-form-field class="sae__modbus-address">
         <mat-label>{{'ModbusReadComponent.address' | translate}}</mat-label>
         <input matInput type="text" formControlName="address"
-               required="{{isRequired('address')}}">
-        <mat-error *ngIf="errors.address">{{errors.address}}</mat-error>
+          required="{{isRequired('address')}}">
+        @if (errors.address) {
+          <mat-error>{{errors.address}}</mat-error>
+        }
       </mat-form-field>
       <mat-form-field class="sae__modbus-register-type">
         <mat-label>{{'ModbusReadComponent.type' | translate}}</mat-label>
         <mat-select formControlName="type" required="{{isRequired('type')}}">
-          <mat-option *ngFor="let registerType of registerTypes" [value]="registerType">
-            {{getTranslatedRegisterType(registerType)}}
-          </mat-option>
+          @for (registerType of registerTypes; track registerType) {
+            <mat-option [value]="registerType">
+              {{getTranslatedRegisterType(registerType)}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="ModbusReadComponent__value-type" *ngIf="isValueTypeDisplayed">
-        <mat-label>{{'ModbusReadComponent.valueType' | translate}}</mat-label>
-        <mat-select formControlName="valueType" required="true">
-          <mat-option *ngFor="let valueType of valueTypes" [value]="valueType">
-            {{getTranslatedValueType(valueType)}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field class="sae__factorToValue" *ngIf="isFactorToValueDisplayed">
-        <mat-label>{{'ModbusReadComponent.factorToValue' | translate}}</mat-label>
-        <input matInput type="text" formControlName="factorToValue" placeholder="1"
-               required="{{isRequired('factorToValue')}}">
-        <mat-error *ngIf="errors.factorToValue">{{errors.factorToValue}}</mat-error>
-      </mat-form-field>
+      @if (isValueTypeDisplayed) {
+        <mat-form-field class="ModbusReadComponent__value-type">
+          <mat-label>{{'ModbusReadComponent.valueType' | translate}}</mat-label>
+          <mat-select formControlName="valueType" required="true">
+            @for (valueType of valueTypes; track valueType) {
+              <mat-option [value]="valueType">
+                {{getTranslatedValueType(valueType)}}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+      @if (isFactorToValueDisplayed) {
+        <mat-form-field class="sae__factorToValue">
+          <mat-label>{{'ModbusReadComponent.factorToValue' | translate}}</mat-label>
+          <input matInput type="text" formControlName="factorToValue" placeholder="1"
+            required="{{isRequired('factorToValue')}}">
+          @if (errors.factorToValue) {
+            <mat-error>{{errors.factorToValue}}</mat-error>
+          }
+        </mat-form-field>
+      }
     </div>
     <button mat-raised-button type="button" (click)="removeModbusWrite()">
-      {{'ModbusWriteComponent.button.remove' | translate}}</button>
+    {{'ModbusWriteComponent.button.remove' | translate}}</button>
   </div>
   <div formArrayName="modbusWriteValues">
-    <div class="sae__fields-with-button" *ngFor="let writeValue of modbusWrite.writeValues; index as i">
-      <div class="sae__field">
-        <app-modbus-write-value
-          [modbusWriteValue]="writeValue"
-          [formGroupName]="i"
-          [form]="getModbusWriteValueFormGroup(i)"
-          [valueNames]="valueNames"
-          [translationPrefix]="translationPrefix"
-          [translationKeys]="translationKeys"
-          (nameChanged)="onNameChanged(i, $event)"
-          #modbusWriteValues
-        ></app-modbus-write-value>
-      </div>
-      <button mat-raised-button type="button" (click)="removeValue(i)">
+    @for (writeValue of modbusWrite.writeValues; track writeValue; let i = $index) {
+      <div class="sae__fields-with-button">
+        <div class="sae__field">
+          <app-modbus-write-value
+            [modbusWriteValue]="writeValue"
+            [formGroupName]="i"
+            [form]="getModbusWriteValueFormGroup(i)"
+            [valueNames]="valueNames"
+            [translationPrefix]="translationPrefix"
+            [translationKeys]="translationKeys"
+            (nameChanged)="onNameChanged(i, $event)"
+            #modbusWriteValues
+          ></app-modbus-write-value>
+        </div>
+        <button mat-raised-button type="button" (click)="removeValue(i)">
         {{'ModbusWriteComponent.button.removeValue' | translate}}</button>
-    </div>
+      </div>
+    }
   </div>
 </div>
-<button mat-raised-button type="button" (click)="addValue()" class="ModbusWriteComponent__addValue" *ngIf="isAddValuePossible">
+@if (isAddValuePossible) {
+  <button mat-raised-button type="button" (click)="addValue()" class="ModbusWriteComponent__addValue">
   {{'ModbusWriteComponent.button.addValue' | translate}}</button>
+}

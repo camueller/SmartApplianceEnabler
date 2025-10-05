@@ -4,8 +4,10 @@
     <mat-form-field class="sae__gpio">
       <mat-label>{{'ControlSwitchComponent.gpio' | translate}}</mat-label>
       <input matInput type="text" formControlName="gpio"
-             required="{{isRequired('gpio')}}">
-      <mat-error *ngIf="errors.gpio">{{errors.gpio}}</mat-error>
+        required="{{isRequired('gpio')}}">
+      @if (errors.gpio) {
+        <mat-error>{{errors.gpio}}</mat-error>
+      }
     </mat-form-field>
     <mat-checkbox formControlName="reverseStates"
     >{{'ControlSwitchComponent.reverseStates' | translate}}</mat-checkbox>

@@ -32,8 +32,8 @@ describe('ScheduleService', () => {
   }));
 
   it('should return an empty array if the appliance has no schedules', (done: any) => {
-    const service = TestBed.get(ScheduleService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ScheduleService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.getSchedules(applianceId).subscribe(
       (res) => expect(res).toEqual([]),
@@ -46,8 +46,8 @@ describe('ScheduleService', () => {
   });
 
   it('should return a day time frame schedule', () => {
-    const service = TestBed.get(ScheduleService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ScheduleService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.getSchedules(applianceId).subscribe(res => expect(res).toEqual([ScheduleTestdata.daytimeframe12345_type()]));
     const req = httpMock.expectOne(`${SaeService.API}/schedules?id=${applianceId}`);
@@ -56,8 +56,8 @@ describe('ScheduleService', () => {
   });
 
   it('should return a consecutive days time frame schedule', () => {
-    const service = TestBed.get(ScheduleService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ScheduleService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.getSchedules(applianceId).subscribe(res => expect(res).toEqual([ScheduleTestdata.consecutiveDaysTimeframe567_type()]));
     const req = httpMock.expectOne(`${SaeService.API}/schedules?id=${applianceId}`);
@@ -66,8 +66,8 @@ describe('ScheduleService', () => {
   });
 
   xit('should update the schedules', () => {
-    const service = TestBed.get(ScheduleService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ScheduleService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.setSchedules(applianceId, [ScheduleTestdata.daytimeframe12345_type()]).subscribe(res => expect(res).toBeTruthy());
     const req = httpMock.expectOne(`${SaeService.API}/schedules?id=${applianceId}`);

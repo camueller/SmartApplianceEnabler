@@ -3,31 +3,37 @@
     <mat-form-field class="sae__url">
       <mat-label>{{'HttpWriteComponent.url' | translate}}</mat-label>
       <input matInput type="text" formControlName="url"
-             required="{{isRequired('url')}}">
-      <mat-error *ngIf="errors.url">{{errors.url}}</mat-error>
+        required="{{isRequired('url')}}">
+      @if (errors.url) {
+        <mat-error>{{errors.url}}</mat-error>
+      }
     </mat-form-field>
     <button mat-raised-button type="button" class="removeHttpWrite" (click)="removeHttpWrite()">
-      {{'HttpWriteComponent.button.remove' | translate}}</button>
+    {{'HttpWriteComponent.button.remove' | translate}}</button>
   </div>
   <div formArrayName="httpWriteValues">
-    <div class="sae__fields-with-button" *ngFor="let httpWriteValue of httpWrite.writeValues; index as i">
-      <div class="sae__fields">
-        <app-http-write-value
-          [formGroupName]="i"
-          [form]="getHttpWriteValueFormGroup(i)"
-          [httpWriteValue]="httpWriteValue"
-          [disableFactorToValue]="disableFactorToValue"
-          [valueNames]="valueNames"
-          [translationPrefix]="translationPrefix"
-          [translationKeys]="translationKeys"
-          (nameChanged)="onNameChanged(i, $event)"
-          #httpWriteValues
-        ></app-http-write-value>
-      </div>
-      <button mat-raised-button type="button" class="removeHttpWriteValue" (click)="removeValue(i)">
+    @for (httpWriteValue of httpWrite.writeValues; track httpWriteValue; let i = $index) {
+      <div class="sae__fields-with-button">
+        <div class="sae__fields">
+          <app-http-write-value
+            [formGroupName]="i"
+            [form]="getHttpWriteValueFormGroup(i)"
+            [httpWriteValue]="httpWriteValue"
+            [disableFactorToValue]="disableFactorToValue"
+            [valueNames]="valueNames"
+            [translationPrefix]="translationPrefix"
+            [translationKeys]="translationKeys"
+            (nameChanged)="onNameChanged(i, $event)"
+            #httpWriteValues
+          ></app-http-write-value>
+        </div>
+        <button mat-raised-button type="button" class="removeHttpWriteValue" (click)="removeValue(i)">
         {{'HttpWriteComponent.button.removeValue' | translate}}</button>
-    </div>
+      </div>
+    }
   </div>
 </div>
-<button mat-raised-button type="button" class="HttpWriteComponent__addValue" (click)="addValue()" *ngIf="isAddValuePossible"
->{{'HttpWriteComponent.button.addValue' | translate}}</button>
+@if (isAddValuePossible) {
+  <button mat-raised-button type="button" class="HttpWriteComponent__addValue" (click)="addValue()"
+  >{{'HttpWriteComponent.button.addValue' | translate}}</button>
+}

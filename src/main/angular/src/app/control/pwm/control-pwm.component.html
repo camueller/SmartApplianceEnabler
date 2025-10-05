@@ -1,20 +1,20 @@
 <!--
-  ~ Copyright (C) 2022 Axel Müller <axel.mueller@avanux.de>
-  ~
-  ~ This program is free software; you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation; either version 2 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License along
-  ~ with this program; if not, write to the Free Software Foundation, Inc.,
-  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-  -->
+~ Copyright (C) 2022 Axel Müller <axel.mueller@avanux.de>
+~
+~ This program is free software; you can redistribute it and/or modify
+~ it under the terms of the GNU General Public License as published by
+~ the Free Software Foundation; either version 2 of the License, or
+~ (at your option) any later version.
+~
+~ This program is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+~ GNU General Public License for more details.
+~
+~ You should have received a copy of the GNU General Public License along
+~ with this program; if not, write to the Free Software Foundation, Inc.,
+~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
 
 <div class="ControlPwmComponent">
   <div class="sae__fields">
@@ -22,30 +22,38 @@
       <mat-form-field class="sae__gpio">
         <mat-label>{{'ControlPwmComponent.gpio' | translate}}</mat-label>
         <input matInput type="text" formControlName="gpio"
-               required="{{isRequired('gpio')}}">
-        <mat-error *ngIf="errors.gpio">{{errors.gpio}}</mat-error>
+          required="{{isRequired('gpio')}}">
+        @if (errors.gpio) {
+          <mat-error>{{errors.gpio}}</mat-error>
+        }
       </mat-form-field>
       <mat-form-field class="ControlPwmComponent__pwmFrequency">
         <mat-label>{{'ControlPwmComponent.pwmFrequency' | translate}}</mat-label>
         <input matInput type="text" formControlName="pwmFrequency"
-               required="{{isRequired('pwmFrequency')}}">
-        <mat-error *ngIf="errors.pwmFrequency">{{errors.pwmFrequency}}</mat-error>
+          required="{{isRequired('pwmFrequency')}}">
+        @if (errors.pwmFrequency) {
+          <mat-error>{{errors.pwmFrequency}}</mat-error>
+        }
       </mat-form-field>
       <mat-form-field class="ControlPwmComponent__minDutyCycle">
         <mat-label>{{'ControlPwmComponent.minDutyCycle' | translate}}</mat-label>
         <input matInput type="text" formControlName="minDutyCycle"
-               matTooltip="{{'ControlPwmComponent.minDutyCycle.tooltip' | translate}}"
-               [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{isRequired('minDutyCycle')}}">
-        <mat-error *ngIf="errors.minDutyCycle">{{errors.minDutyCycle}}</mat-error>
+          matTooltip="{{'ControlPwmComponent.minDutyCycle.tooltip' | translate}}"
+          [matTooltipDisabled]="'matTooltipDisabled' | env"
+          required="{{isRequired('minDutyCycle')}}">
+        @if (errors.minDutyCycle) {
+          <mat-error>{{errors.minDutyCycle}}</mat-error>
+        }
       </mat-form-field>
       <mat-form-field class="ControlPwmComponent__maxDutyCycle">
         <mat-label>{{'ControlPwmComponent.maxDutyCycle' | translate}}</mat-label>
         <input matInput type="text" formControlName="maxDutyCycle"
-               matTooltip="{{'ControlPwmComponent.maxDutyCycle.tooltip' | translate}}"
-               [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{isRequired('maxDutyCycle')}}">
-        <mat-error *ngIf="errors.maxDutyCycle">{{errors.maxDutyCycle}}</mat-error>
+          matTooltip="{{'ControlPwmComponent.maxDutyCycle.tooltip' | translate}}"
+          [matTooltipDisabled]="'matTooltipDisabled' | env"
+          required="{{isRequired('maxDutyCycle')}}">
+        @if (errors.maxDutyCycle) {
+          <mat-error>{{errors.maxDutyCycle}}</mat-error>
+        }
       </mat-form-field>
     </div>
   </div>

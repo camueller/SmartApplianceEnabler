@@ -31,8 +31,8 @@ describe('SettingsService', () => {
   }));
 
   it('should return settings defaults', () => {
-    const service = TestBed.get(SettingsService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(SettingsService);
+    const httpMock = TestBed.inject(HttpTestingController);
     service.getSettingsDefaults().subscribe(res => expect(res).toEqual(SettingsTestdata.settingsdefaults_type()));
     const req = httpMock.expectOne(`${SaeService.API}/settingsdefaults`);
     expect(req.request.method).toEqual('GET');
@@ -40,8 +40,8 @@ describe('SettingsService', () => {
   });
 
   it('should return the empty settings', () => {
-    const service = TestBed.get(SettingsService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(SettingsService);
+    const httpMock = TestBed.inject(HttpTestingController);
     service.getSettings().subscribe(res => expect(res).toEqual(jasmine.objectContaining(SettingsTestdata.none_type())));
     const req = httpMock.expectOne(`${SaeService.API}/settings`);
     expect(req.request.method).toEqual('GET');
@@ -49,8 +49,8 @@ describe('SettingsService', () => {
   });
 
   it('should return all settings', () => {
-    const service = TestBed.get(SettingsService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(SettingsService);
+    const httpMock = TestBed.inject(HttpTestingController);
     service.getSettings().subscribe(res => expect(res).toEqual(jasmine.objectContaining(SettingsTestdata.all_type())));
     const req = httpMock.expectOne(`${SaeService.API}/settings`);
     expect(req.request.method).toEqual('GET');

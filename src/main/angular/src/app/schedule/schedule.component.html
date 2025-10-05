@@ -1,20 +1,20 @@
 <!--
-  ~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
-  ~
-  ~ This program is free software; you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation; either version 2 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more appliance.
-  ~
-  ~ You should have received a copy of the GNU General Public License along
-  ~ with this program; if not, write to the Free Software Foundation, Inc.,
-  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-  -->
+~ Copyright (C) 2017 Axel Müller <axel.mueller@avanux.de>
+~
+~ This program is free software; you can redistribute it and/or modify
+~ it under the terms of the GNU General Public License as published by
+~ the Free Software Foundation; either version 2 of the License, or
+~ (at your option) any later version.
+~
+~ This program is distributed in the hope that it will be useful,
+~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+~ GNU General Public License for more appliance.
+~
+~ You should have received a copy of the GNU General Public License along
+~ with this program; if not, write to the Free Software Foundation, Inc.,
+~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
 <div class="ScheduleComponent" [formGroup]="form">
   <div class="sae__fields">
     <div class="ScheduleComponent__schedule">{{'ScheduleComponent.schedule' | translate}}</div>
@@ -24,43 +24,57 @@
       <mat-form-field>
         <mat-label>{{'ScheduleComponent.timeframeType' | translate}}</mat-label>
         <mat-select formControlName="timeframeType" required="{{isRequired('timeframeType')}}">
-          <mat-option *ngFor="let timeframeType of timeframeTypes" [value]="timeframeType.key">
-            {{timeframeType.value}}
-          </mat-option>
+          @for (timeframeType of timeframeTypes; track timeframeType) {
+            <mat-option [value]="timeframeType.key">
+              {{timeframeType.value}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
       <mat-form-field>
         <mat-label>{{'ScheduleComponent.requestType' | translate}}</mat-label>
         <mat-select formControlName="requestType" required="{{isRequired('requestType')}}">
-          <mat-option *ngFor="let requestType of validRequestTypes" [value]="requestType.key">
-            {{requestType.value}}
-          </mat-option>
+          @for (requestType of validRequestTypes; track requestType) {
+            <mat-option [value]="requestType.key">
+              {{requestType.value}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
     </div>
     <button mat-raised-button type="button" (click)="removeSchedule()">{{'button.delete' | translate}}</button>
   </div>
   <div>
-    <app-schedule-timeframe-day *ngIf="isDayTimeframe()"
-                                [dayTimeFrame]="schedule.timeframe"
-                                [enabled]="isEnabled()"
-    ></app-schedule-timeframe-day>
-    <app-schedule-timeframe-consecutivedays *ngIf="isConsecutiveDaysTimeframe()"
-                                            [consecutiveDaysTimeframe]="schedule.timeframe"
-                                            [enabled]="isEnabled()"
-    ></app-schedule-timeframe-consecutivedays>
-    <app-schedule-request-runtime *ngIf="isRuntimeRequest()"
-                                  [runtimeRequest]="schedule.request"
-                                  [enabled]="isEnabled()"
-    ></app-schedule-request-runtime>
-    <app-schedule-request-energy *ngIf="isEnergyRequest()"
-                                 [energyRequest]="schedule.request"
-                                 [enabled]="isEnabled()"
-    ></app-schedule-request-energy>
-    <app-schedule-request-soc *ngIf="isSocRequest()"
-                              [socRequest]="schedule.request"
-                              [electricVehicles]="electricVehicles"
-                              [enabled]="isEnabled()"
-    ></app-schedule-request-soc>
+    @if (isDayTimeframe()) {
+      <app-schedule-timeframe-day
+        [dayTimeFrame]="schedule.timeframe"
+        [enabled]="isEnabled()"
+      ></app-schedule-timeframe-day>
+    }
+    @if (isConsecutiveDaysTimeframe()) {
+      <app-schedule-timeframe-consecutivedays
+        [consecutiveDaysTimeframe]="schedule.timeframe"
+        [enabled]="isEnabled()"
+      ></app-schedule-timeframe-consecutivedays>
+    }
+    @if (isRuntimeRequest()) {
+      <app-schedule-request-runtime
+        [runtimeRequest]="schedule.request"
+        [enabled]="isEnabled()"
+      ></app-schedule-request-runtime>
+    }
+    @if (isEnergyRequest()) {
+      <app-schedule-request-energy
+        [energyRequest]="schedule.request"
+        [enabled]="isEnabled()"
+      ></app-schedule-request-energy>
+    }
+    @if (isSocRequest()) {
+      <app-schedule-request-soc
+        [socRequest]="schedule.request"
+        [electricVehicles]="electricVehicles"
+        [enabled]="isEnabled()"
+      ></app-schedule-request-soc>
+    }
   </div>
 </div>

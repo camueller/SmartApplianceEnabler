@@ -4,115 +4,141 @@
     <mat-form-field class="ControlEvchargerComponent__template">
       <mat-label>{{'ControlEvchargerComponent.template' | translate}}</mat-label>
       <mat-select formControlName="template" required="{{!isConfigured}}"
-                  (selectionChange)="useTemplate()"
-                  placeholder="{{'ControlEvchargerComponent.template.placeholder' | translate }}">
-        <mat-option *ngFor="let templateName of templateNames" [value]="templateName">
-          {{templateName}}
-        </mat-option>
+        (selectionChange)="useTemplate()"
+        placeholder="{{'ControlEvchargerComponent.template.placeholder' | translate }}">
+        @for (templateName of templateNames; track templateName) {
+          <mat-option [value]="templateName">
+            {{templateName}}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
     <mat-form-field class="ControlEvchargerComponent__protocol">
       <mat-label>{{'ControlEvchargerComponent.protocol' | translate}}</mat-label>
       <mat-select formControlName="protocol" required="true"
-                  placeholder="{{'ControlEvchargerComponent.protocol.placeholder' | translate }}">
-        <mat-option *ngFor="let protocol of protocols" [value]="protocol.value">
-          {{protocol.viewValue}}
-        </mat-option>
+        placeholder="{{'ControlEvchargerComponent.protocol.placeholder' | translate }}">
+        @for (protocol of protocols; track protocol) {
+          <mat-option [value]="protocol.value">
+            {{protocol.viewValue}}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
   </div>
-  <div *ngIf="isConfigured">
-    <div class="sae__fields">
-      <mat-form-field class="sae__voltage">
-        <mat-label>{{'ControlEvchargerComponent.voltage' | translate}}</mat-label>
-        <input matInput type="text" formControlName="voltage"
-               placeholder="{{controlDefaults.evChargerDefaults.voltage}}"
-               required="{{isRequired('voltage')}}">
-        <mat-error *ngIf="errors.voltage">{{errors.voltage}}</mat-error>
-      </mat-form-field>
-      <mat-form-field class="sae__phases">
-        <mat-label>{{'ControlEvchargerComponent.phases' | translate}}</mat-label>
-        <input matInput type="text" formControlName="phases"
-               placeholder="{{controlDefaults.evChargerDefaults.phases}}"
-               required="{{isRequired('phases')}}">
-        <mat-error *ngIf="errors.phases">{{errors.phases}}</mat-error>
-      </mat-form-field>
-      <mat-form-field class="sae__pollInterval">
-        <mat-label>{{'ControlEvchargerComponent.pollInterval' | translate}}</mat-label>
-        <input matInput type="text" formControlName="pollInterval"
-               placeholder="{{controlDefaults.evChargerDefaults.pollInterval}}"
-               required="{{isRequired('pollInterval')}}">
-        <mat-error *ngIf="errors.pollInterval">{{errors.pollInterval}}</mat-error>
-      </mat-form-field>
-      <mat-form-field class="ControlEvchargerComponent__startChargingStateDetectionDelay">
-        <mat-label>{{'ControlEvchargerComponent.startChargingStateDetectionDelay' | translate}}</mat-label>
-        <input matInput type="text" formControlName="startChargingStateDetectionDelay"
-               placeholder="{{controlDefaults.evChargerDefaults.startChargingStateDetectionDelay}}"
-               matTooltip="{{'ControlEvchargerComponent.startChargingStateDetectionDelay.tooltip' | translate}}"
-               [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{isRequired('startChargingStateDetectionDelay')}}">
-        <mat-error *ngIf="errors.startChargingStateDetectionDelay">{{errors.startChargingStateDetectionDelay}}</mat-error>
-      </mat-form-field>
-      <mat-form-field class="ControlEvchargerComponent__chargePowerRepetition">
-        <mat-label>{{'ControlEvchargerComponent.chargePowerRepetition' | translate}}</mat-label>
-        <input matInput type="text" formControlName="chargePowerRepetition"
-               matTooltip="{{'ControlEvchargerComponent.chargePowerRepetition.tooltip' | translate}}"
-               [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{isRequired('chargePowerRepetition')}}">
-        <mat-error *ngIf="errors.chargePowerRepetition">{{errors.chargePowerRepetition}}</mat-error>
-      </mat-form-field>
-      <mat-checkbox formControlName="forceInitialCharging"
-                    matTooltip="{{'ControlEvchargerComponent.forceInitialCharging.tooltip' | translate}}"
-                    [matTooltipDisabled]="'matTooltipDisabled' | env"
-      >{{'ControlEvchargerComponent.forceInitialCharging' | translate}}</mat-checkbox>
+  @if (isConfigured) {
+    <div>
+      <div class="sae__fields">
+        <mat-form-field class="sae__voltage">
+          <mat-label>{{'ControlEvchargerComponent.voltage' | translate}}</mat-label>
+          <input matInput type="text" formControlName="voltage"
+            placeholder="{{controlDefaults.evChargerDefaults.voltage}}"
+            required="{{isRequired('voltage')}}">
+          @if (errors.voltage) {
+            <mat-error>{{errors.voltage}}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field class="sae__phases">
+          <mat-label>{{'ControlEvchargerComponent.phases' | translate}}</mat-label>
+          <input matInput type="text" formControlName="phases"
+            placeholder="{{controlDefaults.evChargerDefaults.phases}}"
+            required="{{isRequired('phases')}}">
+          @if (errors.phases) {
+            <mat-error>{{errors.phases}}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field class="sae__pollInterval">
+          <mat-label>{{'ControlEvchargerComponent.pollInterval' | translate}}</mat-label>
+          <input matInput type="text" formControlName="pollInterval"
+            placeholder="{{controlDefaults.evChargerDefaults.pollInterval}}"
+            required="{{isRequired('pollInterval')}}">
+          @if (errors.pollInterval) {
+            <mat-error>{{errors.pollInterval}}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field class="ControlEvchargerComponent__startChargingStateDetectionDelay">
+          <mat-label>{{'ControlEvchargerComponent.startChargingStateDetectionDelay' | translate}}</mat-label>
+          <input matInput type="text" formControlName="startChargingStateDetectionDelay"
+            placeholder="{{controlDefaults.evChargerDefaults.startChargingStateDetectionDelay}}"
+            matTooltip="{{'ControlEvchargerComponent.startChargingStateDetectionDelay.tooltip' | translate}}"
+            [matTooltipDisabled]="'matTooltipDisabled' | env"
+            required="{{isRequired('startChargingStateDetectionDelay')}}">
+          @if (errors.startChargingStateDetectionDelay) {
+            <mat-error>{{errors.startChargingStateDetectionDelay}}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field class="ControlEvchargerComponent__chargePowerRepetition">
+          <mat-label>{{'ControlEvchargerComponent.chargePowerRepetition' | translate}}</mat-label>
+          <input matInput type="text" formControlName="chargePowerRepetition"
+            matTooltip="{{'ControlEvchargerComponent.chargePowerRepetition.tooltip' | translate}}"
+            [matTooltipDisabled]="'matTooltipDisabled' | env"
+            required="{{isRequired('chargePowerRepetition')}}">
+          @if (errors.chargePowerRepetition) {
+            <mat-error>{{errors.chargePowerRepetition}}</mat-error>
+          }
+        </mat-form-field>
+        <mat-checkbox formControlName="forceInitialCharging"
+          matTooltip="{{'ControlEvchargerComponent.forceInitialCharging.tooltip' | translate}}"
+          [matTooltipDisabled]="'matTooltipDisabled' | env"
+        >{{'ControlEvchargerComponent.forceInitialCharging' | translate}}</mat-checkbox>
+      </div>
+      <div class="sae__fields">
+        <mat-form-field class="ControlEvchargerComponent__latlon">
+          <mat-label>{{'ControlEvchargerComponent.latitude' | translate}}</mat-label>
+          <input matInput type="text" formControlName="latitude"
+            matTooltip="{{'ControlEvchargerComponent.latitude.tooltip' | translate}}"
+            [matTooltipDisabled]="'matTooltipDisabled' | env"
+            required="{{isRequired('latitude')}}">
+          @if (errors.latitude) {
+            <mat-error>{{errors.latitude}}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field class="ControlEvchargerComponent__latlon">
+          <mat-label>{{'ControlEvchargerComponent.longitude' | translate}}</mat-label>
+          <input matInput type="text" formControlName="longitude"
+            matTooltip="{{'ControlEvchargerComponent.longitude.tooltip' | translate}}"
+            [matTooltipDisabled]="'matTooltipDisabled' | env"
+            required="{{isRequired('longitude')}}">
+          @if (errors.longitude) {
+            <mat-error>{{errors.longitude}}</mat-error>
+          }
+        </mat-form-field>
+      </div>
     </div>
-    <div class="sae__fields">
-      <mat-form-field class="ControlEvchargerComponent__latlon">
-        <mat-label>{{'ControlEvchargerComponent.latitude' | translate}}</mat-label>
-        <input matInput type="text" formControlName="latitude"
-               matTooltip="{{'ControlEvchargerComponent.latitude.tooltip' | translate}}"
-               [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{isRequired('latitude')}}">
-        <mat-error *ngIf="errors.latitude">{{errors.latitude}}</mat-error>
-      </mat-form-field>
-      <mat-form-field class="ControlEvchargerComponent__latlon">
-        <mat-label>{{'ControlEvchargerComponent.longitude' | translate}}</mat-label>
-        <input matInput type="text" formControlName="longitude"
-               matTooltip="{{'ControlEvchargerComponent.longitude.tooltip' | translate}}"
-               [matTooltipDisabled]="'matTooltipDisabled' | env"
-               required="{{isRequired('longitude')}}">
-        <mat-error *ngIf="errors.longitude">{{errors.longitude}}</mat-error>
-      </mat-form-field>
-    </div>
-  </div>
+  }
 </div>
 <div class="sae-block">
-  <app-control-evcharger-modbus *ngIf="isProtocolModbus"
-                                [evModbusControl]="evCharger.modbusControl"
-                                [settings]="settings"
-                                [settingsDefaults]="settingsDefaults"
-                                [meterDefaults]="meterDefaults"
-                                [controlDefaults]="controlDefaults"
-                                [translationKeys]="valueNames"
-  ></app-control-evcharger-modbus>
-  <app-control-evcharger-http *ngIf="isProtocolHttp"
-                              [evHttpControl]="evCharger.httpControl"
-                              [translationKeys]="valueNames"
-  ></app-control-evcharger-http>
+  @if (isProtocolModbus) {
+    <app-control-evcharger-modbus
+      [evModbusControl]="evCharger.modbusControl"
+      [settings]="settings"
+      [settingsDefaults]="settingsDefaults"
+      [meterDefaults]="meterDefaults"
+      [controlDefaults]="controlDefaults"
+      [translationKeys]="valueNames"
+    ></app-control-evcharger-modbus>
+  }
+  @if (isProtocolHttp) {
+    <app-control-evcharger-http
+      [evHttpControl]="evCharger.httpControl"
+      [translationKeys]="valueNames"
+    ></app-control-evcharger-http>
+  }
   <h2 class="sae__heading-extra-top-margin">{{'ControlEvchargerComponent.headingEv' | translate}}<app-help [helpfile]="'EVCharger'" [anchor]="'ev'"></app-help></h2>
   <div class="ControlEvchargerComponent__electricVehicles" formArrayName="electricVehicles">
-    <div *ngFor="let electricVehicle of evCharger.vehicles; index as i; last as l" class="ControlEvchargerComponent__electricVehicle">
-      <mat-divider class="ControlEvchargerComponent__electricVehicleDivider"></mat-divider>
-      <app-electric-vehicle
-        [formGroupName]="i"
-        [form]="getElectricVehicleFormGroup(i)"
-        [electricVehicle]="electricVehicle"
-        [controlDefaults]="controlDefaults"
-        (remove)="onElectricVehicleRemove(i)"
-        #electricVehicles
-      ></app-electric-vehicle>
-    </div>
+    @for (electricVehicle of evCharger.vehicles; track electricVehicle; let i = $index; let l = $last) {
+      <div class="ControlEvchargerComponent__electricVehicle">
+        <mat-divider class="ControlEvchargerComponent__electricVehicleDivider"></mat-divider>
+        <app-electric-vehicle
+          [formGroupName]="i"
+          [form]="getElectricVehicleFormGroup(i)"
+          [electricVehicle]="electricVehicle"
+          [controlDefaults]="controlDefaults"
+          (remove)="onElectricVehicleRemove(i)"
+          #electricVehicles
+        ></app-electric-vehicle>
+      </div>
+    }
     <button mat-raised-button type="button" class="ControlEvchargerComponent__addElectricVehicle" (click)="addElectricVehicle()">
-      {{'ControlEvchargerComponent.button.addElectricVehicle' | translate}}</button>
+    {{'ControlEvchargerComponent.button.addElectricVehicle' | translate}}</button>
   </div>
 </div>

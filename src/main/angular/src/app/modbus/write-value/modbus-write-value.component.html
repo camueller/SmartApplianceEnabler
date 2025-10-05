@@ -2,14 +2,16 @@
   <mat-form-field class="sae__value-name">
     <mat-label>{{'ModbusWriteValueComponent.name' | translate}}</mat-label>
     <mat-select formControlName="name" required="{{isRequired('name')}}">
-      <mat-option *ngFor="let valueName of valueNames" [value]="valueName">
-        {{getTranslatedValueName(valueName)}}
-      </mat-option>
+      @for (valueName of valueNames; track valueName) {
+        <mat-option [value]="valueName">
+          {{getTranslatedValueName(valueName)}}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <mat-form-field class="ModbusWriteValueComponent__value">
     <mat-label>{{'ModbusWriteValueComponent.value' | translate}}</mat-label>
     <input matInput type="text" formControlName="value"
-           required="{{isRequired('value')}}">
+      required="{{isRequired('value')}}">
   </mat-form-field>
 </div>

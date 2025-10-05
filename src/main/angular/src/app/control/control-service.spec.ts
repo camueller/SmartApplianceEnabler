@@ -32,8 +32,8 @@ describe('ControlService', () => {
   }));
 
   it('should return control defaults', () => {
-    const service = TestBed.get(ControlService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ControlService);
+    const httpMock = TestBed.inject(HttpTestingController);
     service.getControlDefaults().subscribe(res => expect(res).toEqual(ControlTestdata.controldefaults_type()));
     const req = httpMock.expectOne(`${SaeService.API}/controldefaults`);
     expect(req.request.method).toEqual('GET');
@@ -41,8 +41,8 @@ describe('ControlService', () => {
   });
 
   it('should return empty Observable if the appliance has no control', (done: any) => {
-    const service = TestBed.get(ControlService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ControlService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.getControl(applianceId).subscribe(
       (res) => expect(res).toEqual(ControlTestdata.none_undefinedtype_type()),
@@ -55,8 +55,8 @@ describe('ControlService', () => {
   });
 
   it('should return the switch of an appliance', () => {
-    const service = TestBed.get(ControlService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ControlService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.getControl(applianceId).subscribe(res => expect(res).toEqual(ControlTestdata.switch_type()));
     const req = httpMock.expectOne(`${SaeService.API}/control?id=${applianceId}`);
@@ -65,8 +65,8 @@ describe('ControlService', () => {
   });
 
   it('should return the starting current switch of an appliance', () => {
-    const service = TestBed.get(ControlService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ControlService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.getControl(applianceId).subscribe(res => expect(res).toEqual(ControlTestdata.switch_StartingCurrent_type()));
     const req = httpMock.expectOne(`${SaeService.API}/control?id=${applianceId}`);
@@ -75,8 +75,8 @@ describe('ControlService', () => {
   });
 
   it('should update a control', () => {
-    const service = TestBed.get(ControlService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ControlService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.updateControl(ControlTestdata.switch_type(), applianceId).subscribe(res => expect(res).toBeTruthy());
     const req = httpMock.expectOne(`${SaeService.API}/control?id=${applianceId}`);
@@ -85,8 +85,8 @@ describe('ControlService', () => {
   });
 
   it('should return empty Observable if the control to be updated is not found', (done: any) => {
-    const service = TestBed.get(ControlService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ControlService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.updateControl(ControlTestdata.switch_type(), applianceId).subscribe(
       (res) => expect(res).toBeFalsy(),
@@ -99,8 +99,8 @@ describe('ControlService', () => {
   });
 
   it('should delete a control', () => {
-    const service = TestBed.get(ControlService);
-    const httpMock = TestBed.get(HttpTestingController);
+    const service = TestBed.inject(ControlService);
+    const httpMock = TestBed.inject(HttpTestingController);
     const applianceId = ApplianceTestdata.getApplianceId();
     service.updateControl(ControlTestdata.none_type(), applianceId).subscribe(res => expect(res).toBeTruthy());
     const req = httpMock.expectOne(`${SaeService.API}/control?id=${applianceId}`);

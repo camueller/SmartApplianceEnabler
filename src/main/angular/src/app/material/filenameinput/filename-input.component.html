@@ -1,11 +1,17 @@
 <mat-form-field class="sae__url" [formGroup]="form">
-  <mat-label *ngIf="label">{{label}}</mat-label>
+  @if (label) {
+    <mat-label>{{label}}</mat-label>
+  }
   <input matInput type="text"
-         formControlName="{{formControlNameInput}}"
-         [required]="required"
-  >
-  <mat-error *ngIf="errorMessage">{{errorMessage}}</mat-error>
+    formControlName="{{formControlNameInput}}"
+    [required]="required"
+    >
+  @if (errorMessage) {
+    <mat-error>{{errorMessage}}</mat-error>
+  }
 </mat-form-field>
-<mat-icon *ngIf="isDisplayValidationIcon"
-          class="FilenameInputComponent__icon"
-          [class]="validationIconClass">{{validationIcon}}</mat-icon>
+@if (isDisplayValidationIcon) {
+  <mat-icon
+    class="FilenameInputComponent__icon"
+  [class]="validationIconClass">{{validationIcon}}</mat-icon>
+}
