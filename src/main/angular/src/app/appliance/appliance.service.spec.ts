@@ -58,7 +58,7 @@ describe('ApplianceService', () => {
     const httpMock = TestBed.inject(HttpTestingController);
     const appliance = ApplianceTestdata.create();
     const createNewAppliance = false;
-    service.updateAppliance(appliance, createNewAppliance).subscribe(res => expect(res).toBeTruthy());
+    service.updateAppliance(appliance.id, appliance, createNewAppliance).subscribe(res => expect(res).toBeTruthy());
     const req = httpMock.expectOne(`${SaeService.API}/appliance?id=${appliance.id}&create=${createNewAppliance}`);
     expect(req.request.method).toEqual('PUT');
     expect(req.request.body).toEqual(JSON.stringify(appliance));
@@ -69,7 +69,7 @@ describe('ApplianceService', () => {
     const httpMock = TestBed.inject(HttpTestingController);
     const appliance = ApplianceTestdata.create();
     const createNewAppliance = false;
-    service.updateAppliance(appliance, createNewAppliance).subscribe(
+    service.updateAppliance('fake id', appliance, createNewAppliance).subscribe(
       (res) => expect(res).toBeFalsy(),
       () => {},
       () => { done(); });
