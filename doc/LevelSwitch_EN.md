@@ -3,7 +3,7 @@ A level switch enables consumers with **variable power consumption** to be contr
 
 In the [Appliance Settings](Appliance_EN.md) a value for the *Min. Power consumption* can be entered. In addition, an [Excess Energy Schedule](Schedules_EN.md) must be configured.
 
-The figure below shows the configuration of a level switch for a [heating rod whose power consumption is between 0.5 kW and 3.5 kW in steps of 0.5 kW](https://www.killus-technik.de/de/heizungszubehoer/electric-heating rods/photovoltaic-vario-heater-0-5-3-5-kw.html) can be controlled:
+The figure below shows the configuration of a level switch for a [heating rod whose power consumption is between 0.5 kW and 3.5 kW in steps of 0.5 kW](https://www.killus-technik.de/de/heizungszubehoer/electric-heatingrods/photovoltaic-vario-heater-0-5-3-5-kw.html) can be controlled:
 
 ![LevelSwitch](../pics/fe/LevelSwitch_EN.png)
 
