@@ -32,7 +32,7 @@ The name (e.g. `SMI12345XV3`) is only used for the display in the *Smart Applian
 ### Type
 The `type` is also a central feature of a appliance.
 
-In order to be able to configure a appliance as a wallbox, `EV charger` must be set here.
+In order to be able to configure a appliance as a wallbox, `Electric Vehicle` must be set here.
 
 ![Wallbox](../pics/fe/ApplianceEV_EN.png)
 
