@@ -32,7 +32,7 @@ Der Wert für Bezeichnung (z.B. `SMI12345XV3`) wird lediglich für die Anzeige i
 ### Typ
 Der `Typ` ist ebenfalls ein zentrales Merkmal eines Gerätes.
 
-Um ein Gerät als Wallbox konfigurieren zu können, muss hier `Elektroauto` eingestellt werden.
+Um ein Gerät als Wallbox konfigurieren zu können, muss hier `Wallbox` eingestellt werden.
 
 ![Wallbox](../pics/fe/ApplianceEV_DE.png)
 
