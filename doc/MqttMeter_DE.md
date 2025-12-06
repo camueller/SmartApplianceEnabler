@@ -4,7 +4,7 @@ Damit MQTT-Nachrichten als Datenquelle verwendet werden können, sollte eine akt
 
 Für einen MQTT-Zähler muss dessen `Topic` angegeben werden sowie der `Parameter`, welcher `Zählerstand` oder `Leistung` sein kann in Abhängikeit von den in der MQTT-Nachricht vorhandenen Werten.
 
-Wenn die MQTT-Nachticht im **JSON-Format** geliefert wird, sollte das als `Format` eingestellt werden. Damit lässt sich durch die Angabe des `Pfad für Extraktion` der Zahlenwert sehr leicht [aus der MQTT-Nachricht extrahieren](ValueExtraction_DE.md). Wird der optionale `Pfad für die Zeit-Extraktion` angegeben, wird die aus der MQTT-Nachricht extrahierte Zeit anstelle der aktuellen Zeit für die weitere Verarbeitung verwendet.
+Wenn die MQTT-Nachricht im **JSON-Format** geliefert wird, sollte das als `Format` eingestellt werden. Damit lässt sich durch die Angabe des `Pfad für Extraktion` der Zahlenwert sehr leicht [aus der MQTT-Nachricht extrahieren](ValueExtraction_DE.md). Wird der optionale `Pfad für die Zeit-Extraktion` angegeben, wird die aus der MQTT-Nachricht extrahierte Zeit anstelle der aktuellen Zeit für die weitere Verarbeitung verwendet.
 
 Alternativ (oder auch nachgelagert zur JSON-Interpretation) kann ein [regulärer Ausdruck zum Extrahieren](ValueExtraction_DE.md) angegeben werden, falls der Zahlenwert aus einem Text (XML, ...) extrahiert werden muss. Dies gilt auch, wenn die MQTT-Nachricht scheinbar nur die Zahl enthält, diese aber auch einen Zeilenumbruch (CR/LF) beinhaltet.
 

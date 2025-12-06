@@ -3,7 +3,7 @@ Ein Stufenschalter ermöglicht die Steuerung von Verbrauchern mit **variabler Le
 
 In den [Einstellungen für das Gerät](Appliance_DE.md) muss ein Wert für die *Min. Leistungsaufnahme* eingegeben werden. Ausserdem muss ein [Zeitplan für Überschussenergie](Schedules_DE.md) konfiguriert sein.
 
-Die nachfolgende Abbildung zeigt die Konfiguration einens Stufenschalters für einen [Heizstab, dessen Leistungsaufnahme zwischen 0,5 kW und 3,5 kW in Schritten von 0,5 kW](https://www.killus-technik.de/de/heizungszubehoer/elektro-heizstaebe/photovoltaik-vario-heizer-0-5-3-5-kw.html) gesteuert werden kann:
+Die nachfolgende Abbildung zeigt die Konfiguration einens Stufenschalters für einen [Heizstab, dessen Leistungsaufnahme zwischen 0,5 kW und 3,5 kW in Schritten von 0,5 kW](https://www.killus-technik.de/de/power-to-heat/photovoltaik-heizelemente/photovoltaik-vario-heizer-0-5-3-5-kw-mit-regler-begrenzer-2399.html) gesteuert werden kann:
 
 ![LevelSwitch](../pics/fe/LevelSwitch_DE.png)
 
