@@ -26,11 +26,7 @@ if [ "$INSTALL_MBUSD" = true ] ; then
   PACKAGES="$PACKAGES git cmake"
 fi
 if [ "$INSTALL_WEBMIN" = true ] ; then
-  PACKAGES="$PACKAGES libnet-ssleay-perl libio-pty-perl libauthen-pam-perl perl-openssl-abi-3"
-fi
-if [ -n "$WIFI_SSID" ] ; then
-  IP_ADDRESS=`ip addr | grep wlan0 | grep inet | awk '{print $2}' | awk -F '/' '{print $1}'`
-  echo "IP_ADDRESS=$IP_ADDRESS" >> $LOG
+  PACKAGES="$PACKAGES perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl shared-mime-info apt-show-versions python3"
 fi
 
 echo "$PREFIX Waiting before updating the software catalog ..." >> $LOG
@@ -139,7 +135,13 @@ rm -v $PARENT_SCRIPT >> $LOG
 mv -v $PARENT_SCRIPT_BACKUP $PARENT_SCRIPT  >> $LOG
 rm -v  $CONFIG_FILE >> $LOG
 
+sync
+
 echo "$PREFIX $0 finished" >> $LOG
-echo 0 > $POWER_LED
-sleep 3600
-echo 255 > $POWER_LED
+while true
+do
+  echo 255 > $SIGNAL_LED
+  sleep 1
+  echo 0 > $SIGNAL_LED
+  sleep 1
+done

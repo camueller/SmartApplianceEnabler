@@ -36,14 +36,6 @@ echo "$INSTALL_DIR/$SCRIPT2" >> $PARENT_SCRIPT
 echo "exit 0" >> $PARENT_SCRIPT
 chmod +x $PARENT_SCRIPT
 
-if [ -n "$WIFI_SSID" ] ; then
-  echo "$PREFIX Setting up wi-fi ..." >> $LOG
-  cp /etc/wpa_supplicant/wpa_supplicant.conf /boot
-  echo "country=$WIFI_COUNTRY" >> /boot/wpa_supplicant.conf
-  echo "network={" >> /boot/wpa_supplicant.conf
-  echo "  ssid=\"$WIFI_SSID\"" >> /boot/wpa_supplicant.conf
-  echo "  psk=\"$WIFI_PSK\"" >> /boot/wpa_supplicant.conf
-  echo "}" >> /boot/wpa_supplicant.conf
-fi
+sync
 
 echo "$PREFIX $0 finished" >> $LOG

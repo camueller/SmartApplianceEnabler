@@ -61,16 +61,14 @@ Für die Installation muss ein USB-Stick mit folgenden Dateien (und nur diesen!)
 
 **Die Dateinamen dürfen nicht verändert werden (Gross-Kleinschreibung, Dateiendungen). Darauf ist insbesondere unter Windows zu achten, wenn dieses so eingestellt ist, dass die Dateiendungen nicht angezeigt werden!**  
 
-## Durchführung der Installation
+## Installation
 Der Raspberry Pi muss **von der Stromversorgung getrennt** sein, während die **SD-Karte** mit dem Image in den Schacht für die SD-Karte eingeführt wird.
 
-Falls kein WLAN konfiguriert wurde (indem für `WIFI_SSID` in der Datei `install.config` ein Wert angegeben wurde), muss der Raspberry Pi für die Installation mit einem **Netzwerkkabel** verbunden werden.
+Der Raspberry Pi muß für die Installation mit einem **Netzwerkkabel** verbunden werden! Die Konfiguration des WLANs ist nicht Gegenstand dieser Installation und muss zu einem späteren Zeitpunkt manuell erfolgen, falls gewünscht.
 
-Jetzt muss der Raspberry Pi **mit der Stromversorgung verbunden** werden. Dabei sollte die rote LED dauerhaft leuchten (zeigt den "eingeschaltet"-Zustand an), während die grüne LED Zugriffe auf die SD-Karte signalisiert. Nach ca. 1 Minute sollte der **Boot-Vorgang** beendet sein, d.h. die grüne LED sollte für mindestens 10 Sekunden nicht mehr leuchten.
+Jetzt muss der Raspberry Pi **mit der Stromversorgung verbunden** werden. Nach spätestens 2 Minuten sollte der **Boot-Vorgang** beendet sein.
 
-Als Nächstes muss der **USB-Stick** in den Raspberry Pi gesteckt werden (egal, welche USB-Buchse). Sobald der Raspberry Pi (dank des modifizierten Images) den USB-Stick erkennt, wird er die **erste Phase der Installation** ausführen. Diese dauert nur einige Sekunden, wobei des Ende durch das **Erlöschen der roten LED** signalisiert wird. 
-
-Jetzt muss der **USB-Stick entfernt** werden. Dadurch wird der Raspberry Pi (dank des modifizierten Images) **automatisch neu gestartet**, die rote LED geht wieder an und die **zweite Phase der Installation** beginnt. Dabei wird die Software des Raspberry Pi auf den aktuellen Stand gebracht und der *Smart Appliance Enabler* sowie weitere, erforderliche Software installiert. In Abhängikeit vom Raspberry Pi Modell, der Geschwindkeit der SD-Karte und der Internetanbindung kann diese Phase einige Zeit dauern (auf meinem Raspberry Pi 4 Model B dauert es 22 Minuten). Wenn die Installation beendet ist, wird die **rote LED für eine Stunde ausgeschaltet**.
+Als Nächstes muss der vorbereitete **USB-Stick** in den Raspberry Pi gesteckt werden (egal, welche USB-Buchse). Sobald der Raspberry Pi (dank des modifizierten Images) den USB-Stick erkennt, wird er die **erste Phase der Installation** ausführen. Nach **10 Sekunden** muß der **USB-Stick entfernt** werden, um einen Neustart auszulösen, damit die **zweite Phase der Installation** beginnen kann. Dabei wird die Software des Raspberry Pi auf den aktuellen Stand gebracht und der *Smart Appliance Enabler* sowie weitere, erforderliche Software installiert. In Abhängikeit vom Raspberry Pi Modell, der Geschwindkeit der SD-Karte und der Internetanbindung kann diese Phase einige Zeit dauern (auf meinem Raspberry Pi 4 Model B dauert es 22 Minuten). Wenn die Installation beendet ist, wird das durch das **Blinken einer LED im 1-Sekunden-Takt** signalisiert.
 
 Der *Smart Appliance Enabler* läuft jetzt und es kann mit der [Konfiguration](Configuration_DE.md) fortgefahren werden werden.
 
