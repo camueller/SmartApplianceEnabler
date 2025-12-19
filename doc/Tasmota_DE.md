@@ -7,11 +7,16 @@ Dazu muss die Tasmota-Firmware allerdings in den Flash-Speicher des Mikrokontrol
 
 ## Flashen
 Zum eigentlichen Flashen benötigt man ein Programm wie [ESPEasy](https://www.heise.de/ct/artikel/ESPEasy-installieren-4076214.html) oder das darauf aufbauende [Tasmotizer](https://github.com/tasmota/tasmotizer).
+Ersteres läßt sich unter Linux leicht installieren:
+
+```bash
+sudo apt install esptool
+```
 
 Vor dem Flashen löscht man zunächst die alte Firmware:
 
 ```bash
-$ esptool.py --port /dev/ttyUSB0 erase_flash
+$ esptool --port /dev/ttyUSB0 erase_flash
 esptool.py v2.7
 Serial port /dev/ttyUSB0
 Connecting....
@@ -31,7 +36,7 @@ Hard resetting via RTS pin...
 Danach kann man die Tastmota-Firmaware flashen:
 
 ```bash
-$ esptool.py --port /dev/ttyUSB0 write_flash -fs 1MB -fm dout 0x00000 sonoff-DE.bin
+$ esptool --port /dev/ttyUSB0 write_flash -fs 1MB -fm dout 0x00000 sonoff-DE.bin
 esptool.py v2.7
 Serial port /dev/ttyUSB0
 Connecting....

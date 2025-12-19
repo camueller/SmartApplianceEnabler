@@ -7,10 +7,15 @@ To do this, however, the Tasmota firmware must be written ("flashed") to the fla
 
 ## Flash
 For the actual flashing you need a program like [ESPEasy](https://www.heise.de/ct/artikel/ESPEasy-installieren-4076214.html) or the [Tasmotizer](https://github.com/) that is based on it. tasmota/tasmotizer).
+The former can be easily installed under Linux:
+
+```bash
+sudo apt install esptool
+```
 
 Before flashing, first delete the old firmware:
 ```console
-pi@raspberrypi:~ $ esptool.py --port /dev/ttyUSB0 erase_flash
+pi@raspberrypi:~ $ esptool --port /dev/ttyUSB0 erase_flash
 esptool.py v2.7
 Serial port /dev/ttyUSB0
 Connecting....
@@ -29,7 +34,7 @@ Hard resetting via RTS pin...
 
 After that you can flash the Tastmota firmware:
 ```console
-pi@raspberrypi:~ $ esptool.py --port /dev/ttyUSB0 write_flash -fs 1MB -fm dout 0x00000 sonoff-DE.bin
+pi@raspberrypi:~ $ esptool --port /dev/ttyUSB0 write_flash -fs 1MB -fm dout 0x00000 sonoff-DE.bin
 esptool.py v2.7
 Serial port /dev/ttyUSB0
 Connecting....

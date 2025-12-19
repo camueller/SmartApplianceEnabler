@@ -3,7 +3,7 @@ Der *Gosund SP111* ist ein formschöner und kompakter Steckdosenadapter, der via
 
 Die Nutzung mit dem *Smart Appliance Enabler* ist nur möglich, wenn der Adapter mit der [Tasmota-Firmware geflasht und im *Smart Appliance Enabler* entsprechend konfiguriert wird](doc/Tasmota_DE.md).
 
-**Zu beachten ist, dass nach dem Flashen der Gosund SP111 vom FT232RL-Adapter getrennt und in eine 240V-Steckdose gesteckt wird. Erst danach kann das WLAN konfiguriert werden, mit dem sich der Gosund SP111 verbinden soll.**
+**Zu beachten ist, dass zum Flashen der Gosund SP111 der GPIO0 bzw. IO0 mit GND verbunden werden muss!**
 
 Es gibt verschiedene Versionen des Gosund SP111:
 
@@ -17,19 +17,6 @@ Auf der Platine sind sämtliche Kontakte direkt nebeneinander:
 Für die Version 1.1 existiert derzeit keine Konfiguration in Tasmota, die direkt verwendet werden kann. Stattdessen muss ein [Template importiert](https://github.com/arendst/Tasmota/wiki/Templates#importing-templates) werden, das zu dieser Version passt:
 ```
 {"NAME":"Gosund SP111 V1.1","GPIO":[57,255,56,255,132,134,0,0,131,17,0,21,0],"FLAG":0,"BASE":45}
-```
-Bei Adaptern der Version 1.1 ist mir aufgefallen, dass Messwerte offensichtlich falsch sind - in meinem Fall wurde als Spannung 278V angezeigt. Auf der Tasmota-Homepage ist das [Kalibrieren des Adapters](https://tasmota.github.io/docs/#/Power-Monitoring-Calibration) beschrieben.
-
-Als Referenz für die Leistung habe ich meinen 30W-Lötkolben genommen. Zur Kontrolle hatte ich diesen auch an einen Modbus-Stomzähler angeschlossen, über den ich ebenfalls die Leistung abfragen konnte: 30.9W.
-
-Den Referenzwert für die Spannung konnte ich mit meinem Multimeter direkt messen: 233.5V.
-
-Das Kalibrieren der Werte erfolgt über die Konsole:
-```
-14:53:33 CMD: PowerSet 30.0
-14:53:33 RSL: RESULT = {"PowerSetCal":10525}
-14:54:37 CMD: VoltageSet 233.5
-14:54:37 RSL: RESULT = {"VoltageSetCal":1636}
 ```
 
 ## Version 1.0
