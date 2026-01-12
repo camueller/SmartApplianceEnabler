@@ -520,7 +520,6 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             }
         }
         if(newState == EVChargerState.CHARGING) {
-            setStartChargingRequested(false);
             if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED) {
                 this.on(now, false, true);
             }
@@ -534,6 +533,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
                 this.on(now, false, true);
             }
             this.evHandler.onChargingCompleted();
+            this.appliance.getTimeframeIntervalHandler().clearQueue();
         }
         if(newState == EVChargerState.VEHICLE_NOT_CONNECTED) {
             if(isOn()) {
@@ -557,6 +557,12 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
                 && (newState == EVChargerState.VEHICLE_CONNECTED || newState == EVChargerState.CHARGING)) {
             this.evHandler.terminateSocScriptExecution();
             this.evHandler.triggerSocScriptExecution();
+        }
+
+        if(newState == EVChargerState.CHARGING) {
+            setStartChargingRequested(false);
+        } else {
+            setStopChargingRequested(false);
         }
     }
 
@@ -773,9 +779,10 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         if(activatedInterval != null && activatedInterval.getState() == TimeframeIntervalState.ACTIVE) {
             updateSoc(now);
         }
-        if(deactivatedInterval != null && deactivatedInterval.getRequest().isFinished(now)) {
-            setState(now, EVChargerState.CHARGING_COMPLETED);
-        }
+//        var hasOptionalEnergyTimeframe = appliance.getTimeframeIntervalHandler().hasOptionalEnergyTimeframe(now);
+//        if(deactivatedInterval != null && deactivatedInterval.getRequest().isFinished(now) && !hasOptionalEnergyTimeframe) {
+//            setState(now, EVChargerState.CHARGING_COMPLETED);
+//        }
     }
 
     public void setEnergyDemand(LocalDateTime now, Integer evId, Integer socCurrent, Integer socTarget, LocalDateTime chargeStart, LocalDateTime chargeEnd) {
