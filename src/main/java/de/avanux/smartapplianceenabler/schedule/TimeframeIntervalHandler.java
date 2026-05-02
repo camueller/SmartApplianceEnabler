@@ -295,7 +295,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
             logQueue(now);
         }
 
-        if(deactivatableTimeframeInterval.isPresent() || activatableTimeframeInterval.isPresent()) {
+        if((deactivatableTimeframeInterval.isPresent() && deactivatableTimeframeInterval.get().getState() == TimeframeIntervalState.ACTIVE) || activatableTimeframeInterval.isPresent()) {
             for(TimeframeIntervalChangedListener listener : timeframeIntervalChangedListeners) {
                 logger.debug("{}: Notifying {} {} {}", applianceId, TimeframeIntervalChangedListener.class.getSimpleName(),
                         listener.getClass().getSimpleName(), listener);
