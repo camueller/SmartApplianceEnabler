@@ -104,7 +104,7 @@ public class TimeframeIntervalHandlerTest extends TestBase {
             event.batteryCapacity = 36000;
             event.defaultSocOptionalEnergy = 80;
             mqttClient.publishMessage(fullEventTopic(applianceId, MqttEventName.EVChargerStateChanged), event, false);
-            assertQueueEntry(0, now, timeframeInterval.getInterval().getStart().minusSeconds(1), new OptionalEnergySocRequest(100, 1, null, false));
+            assertQueueEntry(0, now, timeframeInterval.getInterval().getStart().minusSeconds(1), new OptionalEnergySocRequest(100, 1, null, true));
             assertQueueEntry(1, timeframeInterval.getInterval().getStart(), timeframeInterval.getInterval().getEnd(), request);
             assertEquals(event.batteryCapacity, ((SocRequest) sut.getQueue().get(1).getRequest()).getBatteryCapacity());
             verify(request).updateForced();

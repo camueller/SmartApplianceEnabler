@@ -51,7 +51,6 @@ public class ElectricVehicleChargerTest {
     private TimeframeInterval timeframeInterval;
 
     public ElectricVehicleChargerTest() {
-        SocRequest request = new SocRequest(50, 1);
         timeframeInterval = new TimeframeInterval(null, request);
 
         ev = new ElectricVehicle();
@@ -81,15 +80,15 @@ public class ElectricVehicleChargerTest {
     }
 
     private void configureMocks(boolean vehicleNotConnected, boolean vehicleConnected, boolean charging) {
-        configureMocks(vehicleNotConnected, vehicleConnected, charging, 5000);
+        configureMocks(vehicleNotConnected, vehicleConnected, charging, false);
     }
 
-    private void configureMocks(boolean vehicleNotConnected, boolean vehicleConnected, boolean charging, int max) {
+    private void configureMocks(boolean vehicleNotConnected, boolean vehicleConnected, boolean charging, boolean finished) {
         when(evChargerControl.isVehicleNotConnected()).thenReturn(vehicleNotConnected);
         when(evChargerControl.isVehicleConnected()).thenReturn(vehicleConnected);
         when(evChargerControl.isCharging()).thenReturn(charging);
 
-        when(request.getMax(any())).thenReturn(max);
+        when(request.isFinished(any())).thenReturn(finished);
         List<TimeframeInterval> intervals = new ArrayList<>();
         intervals.add(new TimeframeInterval(mock(Interval.class), request));
         when(timeframeIntervalHandler.findTimeframeIntervalsUntilFirstGap()).thenReturn(intervals);
@@ -197,7 +196,7 @@ public class ElectricVehicleChargerTest {
         updateState();
         assertEquals(EVChargerState.CHARGING, evCharger.getState());
         log("Timeframe interval expired");
-        configureMocks(false, true, false);
+        configureMocks(false, true, false, true);
         updateState();
         evCharger.activeIntervalChanged(now, applianceId, timeframeInterval, null, false);
         assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
@@ -239,7 +238,7 @@ public class ElectricVehicleChargerTest {
         updateState();
         assertEquals(EVChargerState.CHARGING, evCharger.getState());
         log("Timeframe interval expired");
-        configureMocks(false, true, false);
+        configureMocks(false, true, false, true);
         updateState();
         evCharger.activeIntervalChanged(now, applianceId, timeframeInterval, null, false);
         assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
@@ -283,7 +282,7 @@ public class ElectricVehicleChargerTest {
         updateState();
         assertEquals(EVChargerState.CHARGING, evCharger.getState());
         log("Active timeframe interval request empty");
-        configureMocks(false, true, false, 50);
+        configureMocks(false, true, false, true);
         updateState();
         assertEquals(EVChargerState.VEHICLE_CONNECTED, evCharger.getState());
         log("Disconnect vehicle");
@@ -318,7 +317,8 @@ public class ElectricVehicleChargerTest {
         updateState();
         assertEquals(EVChargerState.CHARGING, evCharger.getState());
         log("Request empty");
-        configureMocks(false, true, false, 50);
+        configureMocks(false, true, false, true);
+        // COPILOT: warum liefert isFinished false, obwohl der mock true liefern müsste?
         evCharger.setStopChargingRequested(true);
         updateState();
         assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());
@@ -340,7 +340,7 @@ public class ElectricVehicleChargerTest {
         updateState();
         assertEquals(EVChargerState.CHARGING, evCharger.getState());
         log("Timeframe interval expired");
-        configureMocks(false, true, false);
+        configureMocks(false, true, false, true);
         updateState();
         evCharger.activeIntervalChanged(now, applianceId, timeframeInterval, null, false);
         assertEquals(EVChargerState.CHARGING_COMPLETED, evCharger.getState());

@@ -193,7 +193,7 @@ public class SocRequest extends AbstractEnergyRequest implements Request {
 
     @Override
     public boolean isFinished(LocalDateTime now) {
-        return energy == null || energy <= 0;
+        return energy != null && energy <= 0;
     }
 
     @Override
