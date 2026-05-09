@@ -17,12 +17,12 @@ pi@raspi:~ $ uname -a
 Linux raspi3 4.19.75-v7+ #1270 SMP Tue Sep 24 18:45:11 BST 2019 armv7l GNU/Linux
 ```
 
-### Raspbian
-From the [Raspberry Pi OS](https://www.raspberrypi.org/software) images, the **Lite version** is sufficient, so you can use a *4GB SD card*.
+### Raspberry Pi OS
+Among the [Raspberry Pi OS](https://www.raspberrypi.org/software) images, the **Lite version** is sufficient, allowing you to use a *4GB SD card*.
 
-_**For Smart Appliancer Enabler up to and including version 1.4:**_ Raspbian Stretch must be used (Raspbian Buster or newer is not suitable!!!). Download: https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/
+_**For Smart Appliancer Enabler versions up to and including 1.4, the following applies:**_ You must use Raspberry Pi OS **Stretch** (Raspberry Pi OS **Buster** or newer is not suitable!!!). Download: https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/
 
-_**For Smart Appliancer Enabler version 1.5 or higher:**_ At least Raspbian Buster is required.
+_**For Smart Appliancer Enabler versions 1.5 and later, the following applies:**_ At least Raspberry Pi OS **Buster** is required. However, Raspberry Pi OS **Trixie** should currently be avoided, as it does not include the `pigpiod` package, which is necessary for accessing the GPIO pins. Furthermore, it does not contain a tested Java version (OpenJDK 11/17).
 
 The [Raspberry Pi Imager](https://www.raspberrypi.org/software) is suitable for writing the image to an SD card. Alternatively, you can use the following command to write the image to an SD card under Linux:
 ```console
@@ -40,22 +40,30 @@ If the Raspberry does not boot from the SD card, it may well be casued by the SD
 ### SSH client
 The interaction with the Raspberry Pi takes place via SSH (Secure Shell), which is a window comparable to the Windows command prompt. While an SSH client is part of the standard equipment on Linux, it has to be installed separately on Windows. Instructions for this can be found in the article [SSH using Windows](https://www.raspberrypi.org/documentation/remote-access/ssh/windows.md).
 
-### SSH access
-On newer images, SSH is disabled by default for security reasons. There are various ways of activating (see https://linuxundich.de/raspberry-pi/ssh-auf-dem-raspberry-pi-aktivieren-jetzt-unter-raspian-needed or
-https://kofler.info/geaenderte-ssh-server-konferenz-von-raspbian), although I prefer the method described below (this command only works under Linux):
+### SSH Access
+On newer images, SSH is disabled by default for security reasons. Furthermore, there is no longer a default user; instead, you must create one yourself.
 
-1. Mount SD card boot partition
-```console
-axel@tpw520:~$ sudo mount /dev/mmcblk0p1 /mnt
-```
+To resolve both issues, I use the following commands (this method works only on Linux):
+
+1. Mount the boot partition of the SD card:
+   ```bash
+   $ sudo mount /dev/mmcblk0p1 /mnt
+   ```
 2. Create an empty file named `ssh`:
-```console
-axel@tpw520:~$ sudo touch /mnt/ssh
-```
-3. Unmount the mounted SD card partition
-```console
-axel@tpw520:~$ sudo umount /mnt
-```
+   ```bash
+   $ sudo touch /mnt/ssh
+   ```
+
+3. Create a file named `userconf` with the following content (this creates the user `pi` with the password `raspberry`—which, of course, should be changed):
+   ```bash
+   $ echo "pi:$(echo raspberry | openssl passwd -6 -stdin)" | sudo tee /mnt/userconf
+   ```
+
+4. Unmount the mounted partition of the SD card:
+   ```bash
+   $ sudo umount /mnt
+   ```
+
 After the Raspberry Pi has been booted with the SD card modified in this way, access with SSH should be possible. Don't forget to connect the Raspberry Pi to the router with an Ethernet cable!
 Of course, for access you need the IP address or the host name that was assigned to the Raspberry Pi by the router (in my example this is `raspi`)
 ```console
@@ -286,11 +294,11 @@ pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/
 pi@raspberrypi ~ $ sudo chmod 755 /opt/sae/smartapplianceenabler
 
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/lib/systemd/system/smartapplianceenabler.service -P /lib/systemd/system
-pi@raspberrypi ~ $ sudo chown root.root /lib/systemd/system/smartapplianceenabler.service
+pi@raspberrypi ~ $ sudo chown root:root /lib/systemd/system/smartapplianceenabler.service
 pi@raspberrypi ~ $ sudo chmod 755 /lib/systemd/system/smartapplianceenabler.service
 
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/default/smartapplianceenabler -P /etc/default
-pi@raspberrypi ~ $ sudo chown root.root /etc/default/smartapplianceenabler
+pi@raspberrypi ~ $ sudo chown root:root /etc/default/smartapplianceenabler
 pi@raspberrypi ~ $ sudo chmod 644 /etc/default/smartapplianceenabler
 
 pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/logback-spring.xml -P /opt/sae

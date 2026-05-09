@@ -29,12 +29,12 @@ $ docker run \
     nodered/node-red
 ```
 
-### Raspbian
+### Raspberry Pi OS
 Von den [Raspberry Pi OS](https://www.raspberrypi.org/software) Images ist die **Lite-Version** ausreichend, sodass man eine *4GB-SD-Karte* verwenden kann.
 
-_**Für Smart Appliancer Enabler bis einschliesslich Version 1.4 gilt:**_ Es muss Rasbian Stretch verwendet werden (Raspbian Buster oder neuer ist nicht geeignet!!!). Download: https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/
+_**Für Smart Appliancer Enabler bis einschliesslich Version 1.4 gilt:**_ Es muss Raspberry Pi OS **Stretch** verwendet werden (Raspberry Pi OS **Buster** oder neuer ist nicht geeignet!!!). Download: https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/
 
-_**Für Smart Appliancer Enabler ab Version 1.5 gilt:**_ Es ist mindestens Raspbian Buster erforderlich.
+_**Für Smart Appliancer Enabler ab Version 1.5 gilt:**_ Es ist mindestens Raspberry Pi OS **Buster** erforderlich. Allerdings sollte aktuell nicht Raspberry Pi OS **Trixie** verwendet werden, da es nicht das Package pigpiod enthält, was für den Zugriff auf die GPIO-Pins benötigt wird. Außerdem enthält es keine getestete Java-Version (OpenJDK 11/17).
 
 Zum Schreiben des Images auf eine SD-Karte eignet sich der [Raspberry Pi Imager](https://www.raspberrypi.org/software). Alternativ kann man mit dem nachfolgenden Befehl unter Linux das Image auf eine SD-Karte schreiben:
 ```bash
@@ -53,8 +53,9 @@ Sollte der Raspberry mit der SD-Karte nicht starten, kann es durchaus an der SD-
 Die Interaktion mit dem Raspberry Pi erfolt über SSH (Secure Shell), das ist ein Fenster vergleichbar der Windows-Eingabeaufforderung. Während bei Linux ein SSH-Client zur Standardausrüstung gehört muss dieser unter Windows separat installiert werden. Eine Anleitung dafür findet sich im Artikel [SSH using Windows](https://www.raspberrypi.org/documentation/remote-access/ssh/windows.md).
 
 ### SSH-Zugriff
-Auf neueren Images ist SSH aus Sicherheitsgründen standardmäßig deaktiviert. Zum Aktivieren gibt es verschiedene Möglichkeiten (siehe https://linuxundich.de/raspberry-pi/ssh-auf-dem-raspberry-pi-aktivieren-jetzt-unter-raspian-noetig oder
-https://kofler.info/geaenderte-ssh-server-konfiguration-von-raspbian), wobei ich den nachfolgend beschriebenen Weg bevorzuge (geht mit diesen Befehlen so nur unter Linux):
+Auf neueren Images ist SSH aus Sicherheitsgründen standardmäßig deaktiviert. Außerdem gibt es keinen Standardbenutzer mehr, sondern man muss diesen selbst anlegen.
+
+Um beide Probleme zu lösen, nutze ich folgende Befehle (geht so nur unter Linux):
 
 1. Mounten der Boot-Partition der SD-Karte
    ```bash
@@ -64,10 +65,17 @@ https://kofler.info/geaenderte-ssh-server-konfiguration-von-raspbian), wobei ich
    ```bash
    $ sudo touch /mnt/ssh
    ```
-3. Unmounten der gemounteten Partition der SD-Karte
+   
+3. Erzeugen einer Datei mit dem Namen `userconf` mit folgendem Inhalt (hier wird der Benutzer `pi` mit demPasswort `raspberry` angelegt, was natürlich geändert werden sollte): 
+   ```bash
+   $ echo "pi:$(echo raspberry | openssl passwd -6 -stdin)" | sudo tee /mnt/userconf
+   ```
+ 
+4. Unmounten der gemounteten Partition der SD-Karte
    ```bash
    $ sudo umount /mnt
    ```
+
 Nachdem der Raspberry Pi mit der so modifizierten SD-Karte gebootet wurde, sollte der Zugriff mit SSH möglich sein. Dabei nicht vergessen, den Raspberry Pi über ein Ethernet-Kabel mit dem Router zu verbinden!
 Für den zugriff benötigt man natürllich die IP-Adresse oder den Hostnamen, der dem Raspberry Pi vom Router zugewiesen wurde (in meinem Beispiel ist das `raspi`)
 
@@ -331,11 +339,11 @@ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/sm
 $ sudo chmod 755 /opt/sae/smartapplianceenabler
 
 $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/lib/systemd/system/smartapplianceenabler.service -P /lib/systemd/system
-$ sudo chown root.root /lib/systemd/system/smartapplianceenabler.service
+$ sudo chown root:root /lib/systemd/system/smartapplianceenabler.service
 $ sudo chmod 755 /lib/systemd/system/smartapplianceenabler.service
 
 $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/default/smartapplianceenabler -P /etc/default
-$ sudo chown root.root /etc/default/smartapplianceenabler
+$ sudo chown root:root /etc/default/smartapplianceenabler
 $ sudo chmod 644 /etc/default/smartapplianceenabler
 
 $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/logback-spring.xml -P /opt/sae
