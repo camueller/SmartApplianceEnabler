@@ -55,7 +55,7 @@ JAVA_OPTS="${JAVA_OPTS} -Djava.awt.headless=true"
 JAVA_OPTS="${JAVA_OPTS} -Xmx256m"
 
 # Set language/country from which Java derives default locale
-JAVA_OPTS="${JAVA_OPTS} -Duser.language=de -Duser.country=DE"
+JAVA_OPTS="${JAVA_OPTS} -Duser.language=de -Duser.country=DE -Duser.timezone=Europe/Berlin"
 
 # Configure pigpioj to use pigpiod daemon in order to avoid forcing the Smart Appliance Enabler to run as root
 JAVA_OPTS="${JAVA_OPTS} -DPIGPIOD_HOST=localhost"
