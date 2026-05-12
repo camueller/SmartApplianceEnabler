@@ -18,20 +18,18 @@
 
 package de.avanux.smartapplianceenabler.gpio;
 
-import uk.pigpioj.PigpioConstants;
+import com.pi4j.io.gpio.digital.PullResistance;
 
 public enum PinPullResistance {
-    OFF(PigpioConstants.PI_PUD_OFF),
-    PULL_DOWN(PigpioConstants.PI_PUD_DOWN),
-    PULL_UP(PigpioConstants.PI_PUD_UP);
+    OFF,
+    PULL_DOWN,
+    PULL_UP;
 
-    public int numVal;
-
-    PinPullResistance(int numVal) {
-        this.numVal = numVal;
-    }
-
-    public int getNumVal() {
-        return numVal;
+    public PullResistance toPi4jPullResistance() {
+        switch (this) {
+            case PULL_UP:   return PullResistance.PULL_UP;
+            case PULL_DOWN: return PullResistance.PULL_DOWN;
+            default:        return PullResistance.OFF;
+        }
     }
 }

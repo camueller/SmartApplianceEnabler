@@ -19,7 +19,6 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.gpio.GpioControllable;
-import de.avanux.smartapplianceenabler.gpio.PinMode;
 import java.time.LocalDateTime;
 
 import de.avanux.smartapplianceenabler.mqtt.*;
@@ -98,9 +97,9 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     @Override
     public void start(LocalDateTime now, Timer timer) {
         logger.debug("{}: Starting {} for GPIO {}", getApplianceId(), getClass().getSimpleName(), getPin());
-        if(isPigpioInterfaceAvailable()) {
+        if(isGpioAvailable()) {
             try {
-                setMode(PinMode.OUTPUT);
+                initializeOutput();
                 on(now,false);
                 logger.debug("{}: {} uses {} reverseStates={}", getApplianceId(), getClass().getSimpleName(),
                         getPin(), reverseStates);
@@ -152,9 +151,11 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
 
     public boolean on(LocalDateTime now, boolean switchOn) {
         logger.info("{}: Switching {} GPIO {}", getApplianceId(), (switchOn ? "on" : "off"), getPin());
-        var pigpioInterface = getPigpioInterface();
-        if (pigpioInterface != null) {
-            pigpioInterface.write(getPin(), adjustState(switchOn));
+        var digitalOutput = getDigitalOutput();
+        if (digitalOutput != null) {
+            digitalOutput.state(adjustState(switchOn)
+                    ? com.pi4j.io.gpio.digital.DigitalState.HIGH
+                    : com.pi4j.io.gpio.digital.DigitalState.LOW);
         } else {
             logGpioAccessDisabled(logger);
         }
@@ -166,9 +167,9 @@ public class Switch extends GpioControllable implements Control, ApplianceIdCons
     }
 
     public boolean isOn() {
-        var pigpioInterface = getPigpioInterface();
-        if (pigpioInterface != null) {
-            return adjustState(pigpioInterface.read(getPin()) == 1);
+        var digitalOutput = getDigitalOutput();
+        if (digitalOutput != null) {
+            return adjustState(digitalOutput.state() == com.pi4j.io.gpio.digital.DigitalState.HIGH);
         }
         logGpioAccessDisabled(logger);
         return false;

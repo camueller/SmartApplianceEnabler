@@ -22,7 +22,6 @@ import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
 import de.avanux.smartapplianceenabler.gpio.GpioControllable;
-import de.avanux.smartapplianceenabler.gpio.PinMode;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
 import de.avanux.smartapplianceenabler.mqtt.MqttMessage;
 import de.avanux.smartapplianceenabler.mqtt.VariablePowerConsumerMessage;
@@ -54,7 +53,6 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     private double maxDutyCycle;
     @XmlElement(name = "Notifications")
     private Notifications notifications;
-    private transient int range;
     private transient Integer minPowerConsumption;
     private transient Integer maxPowerConsumption;
     private transient NotificationHandler notificationHandler;
@@ -64,12 +62,11 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     public PwmSwitch() {
     }
 
-    public PwmSwitch(String id, int pwmFrequency, double minDutyCycle, double maxDutyCycle, int range) {
+    public PwmSwitch(String id, int pwmFrequency, double minDutyCycle, double maxDutyCycle) {
         this.id = id;
         this.pwmFrequency = pwmFrequency;
         this.minDutyCycle = minDutyCycle;
         this.maxDutyCycle = maxDutyCycle;
-        this.range = range;
     }
 
     @Override
@@ -123,15 +120,12 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     @Override
     public void start(LocalDateTime now, Timer timer) {
         logger.debug("{}: Starting for GPIO {}", getApplianceId(), getPin());
-        if(isPigpioInterfaceAvailable()) {
+        if(isGpioAvailable()) {
             try {
-                setMode(PinMode.OUTPUT);
-                getPigpioInterface().setPWMFrequency(getPin(), pwmFrequency);
-                range = getPigpioInterface().getPWMRealRange(getPin());
-                getPigpioInterface().setPWMRange(getPin(), range);
+                initializePwm(pwmFrequency);
                 on(now, false, null);
-                logger.debug("{}: using GPIO {} with pwmFrequency={} minDutyCycle={} maxDutyCycle={} range={}",
-                        getApplianceId(), getPin(), pwmFrequency, minDutyCycle, maxDutyCycle, range);
+                logger.debug("{}: using GPIO {} with pwmFrequency={} minDutyCycle={} maxDutyCycle={}",
+                        getApplianceId(), getPin(), pwmFrequency, minDutyCycle, maxDutyCycle);
             } catch (Exception e) {
                 logger.error("{}: Error starting {} for GPIO {}", getApplianceId(), getClass().getSimpleName(), getPin(), e);
             }
@@ -185,7 +179,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
 
     public void setPower(LocalDateTime now, int power) {
         logger.info("{}: Setting power to {}W", getApplianceId(), power);
-        setDutyCycle(now, calculateDutyCycle(power));
+        setDutyCyclePercent(now, calculateDutyCyclePercent(power));
         publishControlMessage(now, power);
         if(this.notificationHandler != null) {
             this.notificationHandler.sendNotification(isOn() ? NotificationType.CONTROL_ON : NotificationType.CONTROL_OFF);
@@ -193,33 +187,45 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     }
 
     private int getPower() {
-        return Double.valueOf((getDutyCycle() * maxPowerConsumption) /  (((this.maxDutyCycle - this.minDutyCycle) / 100) * (double) range)).intValue();
+        double dutyCycle = getDutyCyclePercent();
+        double range = this.maxDutyCycle - this.minDutyCycle;
+        if (range == 0) return 0;
+        return (int) (dutyCycle * maxPowerConsumption / range);
     }
 
-    protected int calculateDutyCycle(int power) {
-        return Double.valueOf((((double) power / (double) this.maxPowerConsumption) * (this.maxDutyCycle - this.minDutyCycle) / 100.0) * range).intValue();
+    protected double calculateDutyCyclePercent(int power) {
+        return ((double) power / (double) this.maxPowerConsumption) * (this.maxDutyCycle - this.minDutyCycle);
     }
 
-    private void setDutyCycle(LocalDateTime now, int dutyCycle) {
-        logger.info("{}: Setting GPIO {} duty cycle to {}", getApplianceId(), getPin(), dutyCycle);
-        var pigpioInterface = getPigpioInterface();
-        if (pigpioInterface != null) {
-            pigpioInterface.setPWMDutyCycle(getPin(), dutyCycle);
+    private void setDutyCyclePercent(LocalDateTime now, double dutyCyclePercent) {
+        logger.info("{}: Setting GPIO {} duty cycle to {}%", getApplianceId(), getPin(), dutyCyclePercent);
+        var pwm = getPwm();
+        if (pwm != null) {
+            try {
+                if (dutyCyclePercent <= 0) {
+                    pwm.off();
+                } else {
+                    pwm.on((float) dutyCyclePercent);
+                }
+            } catch (Exception e) {
+                logger.error("{}: Error setting PWM duty cycle", getApplianceId(), e);
+            }
         } else {
             logGpioAccessDisabled(logger);
         }
     }
 
-    private int getDutyCycle() {
-        if(isPigpioInterfaceAvailable()) {
-            return getPigpioInterface().getPWMDutyCycle(getPin());
+    private double getDutyCyclePercent() {
+        var pwm = getPwm();
+        if (pwm != null) {
+            return pwm.dutyCycle();
         }
         return 0;
     }
 
     public void on(LocalDateTime now, boolean switchOn, Integer power) {
         if(!switchOn || power == 0) {
-            setDutyCycle(now, 0);
+            setDutyCyclePercent(now, 0);
         } else {
             setPower(now, power != null ? power : this.minPowerConsumption);
         }

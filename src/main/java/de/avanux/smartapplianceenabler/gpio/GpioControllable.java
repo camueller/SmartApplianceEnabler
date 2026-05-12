@@ -17,21 +17,21 @@
  */
 package de.avanux.smartapplianceenabler.gpio;
 
+import com.pi4j.context.Context;
+import com.pi4j.io.gpio.digital.*;
+import com.pi4j.io.pwm.Pwm;
+import com.pi4j.io.pwm.PwmConfig;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.pigpioj.PigpioCallback;
-import uk.pigpioj.PigpioInterface;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
-import java.io.IOException;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 @XmlTransient
@@ -41,7 +41,10 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
     // FIXME rename to pin
     @XmlAttribute
     private Integer gpio;
-    private transient PigpioInterface pigpioInterface;
+    private transient Context pi4jContext;
+    private transient DigitalInput digitalInput;
+    private transient DigitalOutput digitalOutput;
+    private transient Pwm pwm;
     private transient String applianceId;
 
     @Override
@@ -49,47 +52,66 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
         return Collections.singleton(this);
     }
 
-    protected PigpioInterface getPigpioInterface() {
-        return pigpioInterface;
+    public void setPi4jContext(Context context) {
+        this.pi4jContext = context;
     }
 
-    public void setPigpioInterface(PigpioInterface piGpio) {
-        this.pigpioInterface = piGpio;
-    }
-
-    protected boolean isPigpioInterfaceAvailable() {
-        return this.pigpioInterface != null;
+    protected boolean isGpioAvailable() {
+        return this.pi4jContext != null;
     }
 
     protected Integer getPin() {
        return gpio;
     }
 
-    protected void setMode(PinMode mode) throws IOException {
-        int rc = pigpioInterface.setMode(getPin(), mode.getNumVal());
-        if (rc < 0) {
-            throw new IOException("pigpioInterface.setMode returned " + rc);
-        }
+    protected void initializeOutput() {
+        digitalOutput = pi4jContext.create(DigitalOutput.newConfigBuilder(pi4jContext)
+                .id("output-" + gpio)
+                .address(gpio)
+                .shutdown(DigitalState.LOW)
+                .initial(DigitalState.LOW)
+                .provider("gpiod-digital-output")
+                .build());
     }
 
-    protected void setPinPullResistance(PinPullResistance pinPullResistance) throws IOException {
-        int rc = pigpioInterface.setPullUpDown(getPin(), pinPullResistance.getNumVal());
-        if (rc < 0) {
-            throw new IOException("pigpioInterface.setPinPullResistance returned " + rc);
-        }
+    protected void initializeInput(PinPullResistance pinPullResistance) {
+        digitalInput = pi4jContext.create(DigitalInput.newConfigBuilder(pi4jContext)
+                .id("input-" + gpio)
+                .address(gpio)
+                .pull(pinPullResistance.toPi4jPullResistance())
+                .provider("gpiod-digital-input")
+                .build());
     }
 
-    protected void enableListener(PigpioCallback listener, PinEdge edge) throws IOException {
-        int rc = pigpioInterface.enableListener(getPin(), edge.getNumVal(), listener);
-        if (rc < 0) {
-            throw new IOException("pigpioInterface.enableListener returned " + rc);
-        }
+    protected void initializePwm(int frequency) {
+        pwm = pi4jContext.create(Pwm.newConfigBuilder(pi4jContext)
+                .id("pwm-" + gpio)
+                .address(gpio)
+                .frequency(frequency)
+                .dutyCycle(0f)
+                .provider("linuxfs-pwm")
+                .build());
     }
 
-    protected void disableListener() throws IOException {
-        int rc = pigpioInterface.disableListener(getPin());
-        if (rc < 0) {
-            throw new IOException("pigpioInterface.disableListener returned " + rc);
+    protected DigitalInput getDigitalInput() {
+        return digitalInput;
+    }
+
+    protected DigitalOutput getDigitalOutput() {
+        return digitalOutput;
+    }
+
+    protected Pwm getPwm() {
+        return pwm;
+    }
+
+    protected void shutdownInput() {
+        if (digitalInput != null) {
+            try {
+                digitalInput.shutdown(pi4jContext);
+            } catch (Exception e) {
+                logger.error("{}: Error shutting down digital input on GPIO {}", applianceId, gpio, e);
+            }
         }
     }
 

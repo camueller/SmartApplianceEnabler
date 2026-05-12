@@ -268,15 +268,15 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         control.init();
 
         if(getGpioControllables().size() > 0) {
-            var pigpioInterface = GpioAccessProvider.getPigpioInterface();
-            if(pigpioInterface != null) {
+            var pi4jContext = GpioAccessProvider.getPi4jContext();
+            if(pi4jContext != null) {
                 for(GpioControllable gpioControllable : getGpioControllables()) {
                     logger.info("{}: Configuring GPIO for {}", id, gpioControllable.getClass().getSimpleName());
-                    gpioControllable.setPigpioInterface(pigpioInterface);
+                    gpioControllable.setPi4jContext(pi4jContext);
                 }
             }
             else {
-                logger.error("pigpioInterface not available.");
+                logger.error("Pi4J context not available.");
             }
         }
 
