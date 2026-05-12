@@ -21,6 +21,8 @@ import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.*;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.pwm.PwmConfig;
+import com.pi4j.io.pwm.PwmType;
+import com.pi4j.plugin.linuxfs.provider.pwm.LinuxFsPwmProviderImpl;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
@@ -87,6 +89,7 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
         pwm = pi4jContext.create(Pwm.newConfigBuilder(pi4jContext)
                 .id("pwm-" + gpio)
                 .address(gpio)
+                .pwmType(PwmType.HARDWARE)
                 .frequency(frequency)
                 .dutyCycle(0f)
                 .provider("linuxfs-pwm")
