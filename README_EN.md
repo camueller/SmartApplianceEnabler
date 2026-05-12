@@ -129,7 +129,7 @@ The *Smart Appliance Enabler* would not exist without the following tools and fr
 * [GitHub](https://github.com/) for its platform for project repositories
 * [IntelliJ](https://www.jetbrains.com/de-de/idea/) for the best IDE (especially with Linux) and free license for open source projects
 * [Jenkins](https://www.jenkins.io/) for a build/test automation server
-* [pigpioj](https://github.com/mattjlewis/pigpioj) for a library providing access to Raspberry Pi GPIO
+* [Pi4J](https://www.pi4j.com/) for a library providing access to Raspberry Pi GPIO
 * [Spring Boot](https://spring.io/projects/spring-boot) for Spring-based applications with embedded web container
 * [Testcafe](https://devexpress.github.io/testcafe/) for easy testing of web applications
 * [WebStorm](https://www.jetbrains.com/de-de/webstorm/) for the best IDE (especially with Linux) and free license for open source projects
