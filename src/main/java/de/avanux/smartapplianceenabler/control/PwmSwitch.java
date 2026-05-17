@@ -48,9 +48,9 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     @XmlAttribute
     private int pwmFrequency;
     @XmlAttribute
-    private double minDutyCycle;
+    private Double minDutyCycle;
     @XmlAttribute
-    private double maxDutyCycle;
+    private Double maxDutyCycle;
     @XmlElement(name = "Notifications")
     private Notifications notifications;
     private transient Integer minPowerConsumption;
@@ -62,7 +62,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     public PwmSwitch() {
     }
 
-    public PwmSwitch(String id, int pwmFrequency, double minDutyCycle, double maxDutyCycle) {
+    public PwmSwitch(String id, int pwmFrequency, Double minDutyCycle, Double maxDutyCycle) {
         this.id = id;
         this.pwmFrequency = pwmFrequency;
         this.minDutyCycle = minDutyCycle;
@@ -89,6 +89,14 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
 
     public void setMaxPower(int maxPower) {
         this.maxPowerConsumption = maxPower;
+    }
+
+    private double resolveMinDutyCycle() {
+        return this.maxDutyCycle != null ? this.minDutyCycle : 0;
+    }
+
+    private double resolveMaxDutyCycle() {
+        return this.maxDutyCycle != null ? this.maxDutyCycle : 100;
     }
 
     @Override
@@ -124,8 +132,9 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
             try {
                 initializePwm(pwmFrequency);
                 on(now, false, null);
-                logger.debug("{}: using GPIO {} with pwmFrequency={} minDutyCycle={} maxDutyCycle={}",
-                        getApplianceId(), getPin(), pwmFrequency, minDutyCycle, maxDutyCycle);
+                logger.debug("{}: using GPIO {} with pwmFrequency={} minDutyCycle={}({} ms) maxDutyCycle={}({} ms)",
+                        getApplianceId(), getPin(), pwmFrequency, resolveMinDutyCycle(),
+                        toImpulsWidthMilliseconds(resolveMinDutyCycle()), resolveMaxDutyCycle(), toImpulsWidthMilliseconds(resolveMaxDutyCycle()));
             } catch (Exception e) {
                 logger.error("{}: Error starting {} for GPIO {}", getApplianceId(), getClass().getSimpleName(), getPin(), e);
             }
@@ -188,17 +197,22 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
 
     private int getPower() {
         double dutyCycle = getDutyCyclePercent();
-        double range = this.maxDutyCycle - this.minDutyCycle;
+        double range = resolveMaxDutyCycle() - resolveMinDutyCycle();
         if (range == 0) return 0;
         return (int) (dutyCycle * maxPowerConsumption / range);
     }
 
     protected double calculateDutyCyclePercent(int power) {
-        return ((double) power / (double) this.maxPowerConsumption) * (this.maxDutyCycle - this.minDutyCycle);
+        var minPowerConsumptionOrZero = this.minPowerConsumption != null ? this.minPowerConsumption : 0;
+        var powerRatio = Integer.valueOf(power - minPowerConsumptionOrZero).doubleValue() / Integer.valueOf(this.maxPowerConsumption - minPowerConsumptionOrZero).doubleValue();
+        var dutyCyclePercent = (resolveMaxDutyCycle() - resolveMinDutyCycle()) * powerRatio + resolveMinDutyCycle();
+        logger.debug("{}: Calculated duty cycle={}% from power ratio={}", getApplianceId(), dutyCyclePercent, powerRatio);
+        return dutyCyclePercent;
     }
 
     private void setDutyCyclePercent(LocalDateTime now, double dutyCyclePercent) {
-        logger.info("{}: Setting GPIO {} duty cycle to {}%", getApplianceId(), getPin(), dutyCyclePercent);
+        logger.info("{}: Setting GPIO {} duty cycle to {}% ({} ms)", getApplianceId(), getPin(), dutyCyclePercent,
+                toImpulsWidthMilliseconds(dutyCyclePercent));
         var pwm = getPwm();
         if (pwm != null) {
             try {
@@ -221,6 +235,10 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
             return pwm.dutyCycle();
         }
         return 0;
+    }
+
+    private int toImpulsWidthMilliseconds(double dutyCycle) {
+        return Double.valueOf(1.0d / this.pwmFrequency * 1000 * (dutyCycle / 100)).intValue();
     }
 
     public void on(LocalDateTime now, boolean switchOn, Integer power) {
