@@ -229,7 +229,7 @@
   "ControlLevelComponent.powerlevels.heading": "Power levels",
   "ControlLevelComponent.powerlevels.power": "Power [W]",
 
-  "ControlPwmComponent.gpio": "GPIO",
+  "ControlPwmComponent.gpio": "Channel",
   "ControlPwmComponent.pwmFrequency": "PWM frequency [Hz]",
   "ControlPwmComponent.minDutyCycle": "Min. duty cycle [%]",
   "ControlPwmComponent.minDutyCycle.tooltip": "Minimal duty cycle (ration of pulse duration to total period) expressing minimal power consumption.",

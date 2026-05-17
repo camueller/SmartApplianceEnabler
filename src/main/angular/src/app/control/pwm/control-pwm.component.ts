@@ -90,7 +90,7 @@ export class ControlPwmComponent implements OnChanges, OnInit {
     this.form.addControl('minDutyCycle', new FormControl(this.pwmSwitch?.minDutyCycle,
       Validators.pattern(InputValidatorPatterns.FLOAT)));
     this.form.addControl('maxDutyCycle', new FormControl(this.pwmSwitch.maxDutyCycle,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.FLOAT)]));
+      Validators.pattern(InputValidatorPatterns.FLOAT)));
   }
 
   updateModelFromForm(): PwmSwitch | undefined {

@@ -7,7 +7,7 @@ dtoverlay=pwm,pin=18
 ```
 Die Änderung wird erst nach einem Neustart des Raspberry Pi wirksam!
 
-Für den GPIO 18 wird der Channel 2 verwendet, welcher im *Smart Appliance Enabler* in der Konfiguration des Schalters als "GPIO-Anschluss" angegeben werden muss, d.h. anders als man denken würde wird hier nicht der Wert 18 (die GPIO-Nummer) sondern der Wert 2 (der PWM-Channel) angegeben!
+Für den GPIO 18 wird der Kanal 2 verwendet, welcher im *Smart Appliance Enabler* in der Konfiguration des Schalters angegeben werden muss, d.h. anders als man denken würde wird hier nicht die GPIO-Nummer, sondern der Kanal angegeben!
 
 In den [Einstellungen für das Gerät](Appliance_DE.md) muss ein Wert für die *Min. Leistungsaufnahme* eingegeben werden. Ausserdem muss ein [Zeitplan für Überschussenergie](Schedules_DE.md) konfiguriert sein.
 
