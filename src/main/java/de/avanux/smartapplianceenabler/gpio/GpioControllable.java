@@ -84,11 +84,11 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
                 .build());
     }
 
-    protected void initializePwm(int chip, int frequency) {
+    protected void initializePwm(int chip, int channel, int frequency) {
         pwm = pi4jContext.create(Pwm.newConfigBuilder(pi4jContext)
                 .id("pwm-" + gpio)
                 .chip(chip)
-                .channel(gpio)
+                .channel(channel)
                 .pwmType(PwmType.HARDWARE)
                 .frequency(frequency)
                 .dutyCycle(0)

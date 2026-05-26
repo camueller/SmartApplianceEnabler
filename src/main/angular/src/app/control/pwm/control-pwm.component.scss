@@ -17,7 +17,7 @@
  */
 
 .ControlPwmComponent {
-  &__pwmFrequency {
+  &__pwmFrequency, &__pwmChip, &__pwmChannel {
     width: 10rem;
   }
 

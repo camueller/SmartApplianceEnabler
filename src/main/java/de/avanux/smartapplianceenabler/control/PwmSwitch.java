@@ -50,6 +50,8 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     @XmlAttribute
     private int pwmChip = 0;
     @XmlAttribute
+    private int pwmChannel = -1;
+    @XmlAttribute
     private Double minDutyCycle;
     @XmlAttribute
     private Double maxDutyCycle;
@@ -132,10 +134,10 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
         logger.debug("{}: Starting for GPIO {}", getApplianceId(), getPin());
         if(isGpioAvailable()) {
             try {
-                initializePwm(pwmChip, pwmFrequency);
+                initializePwm(pwmChip, pwmChannel >= 0 ? pwmChannel : getPin(), pwmFrequency);
                 on(now, false, null);
-                logger.debug("{}: using GPIO {} with pwmFrequency={} minDutyCycle={}({} ms) maxDutyCycle={}({} ms)",
-                        getApplianceId(), getPin(), pwmFrequency, resolveMinDutyCycle(),
+                logger.debug("{}: GPIO={} pwmChip={} pwmChannel={} pwmFrequency={} minDutyCycle={}({} ms) maxDutyCycle={}({} ms)",
+                        getApplianceId(), getPin(), pwmChip, pwmChannel, pwmFrequency, resolveMinDutyCycle(),
                         toImpulsWidthMilliseconds(resolveMinDutyCycle()), resolveMaxDutyCycle(), toImpulsWidthMilliseconds(resolveMaxDutyCycle()));
             } catch (Exception e) {
                 logger.error("{}: Error starting {} for GPIO {}", getApplianceId(), getClass().getSimpleName(), getPin(), e);

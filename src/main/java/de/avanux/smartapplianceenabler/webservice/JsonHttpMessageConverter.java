@@ -22,6 +22,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 import com.jayway.jsonpath.DocumentContext;
 import de.avanux.smartapplianceenabler.control.Control;
 import de.avanux.smartapplianceenabler.control.ev.EVChargerControl;
@@ -68,18 +73,19 @@ public class JsonHttpMessageConverter implements HttpMessageConverter {
                 .registerTypeAdapter(EVChargerControl.class, new EVChargerControlTypeAdapter())
                 .registerTypeAdapter(Request.class, new RequestTypeAdapter())
                 .registerTypeAdapter(Timeframe.class, new TimeframeTypeAdapter())
+                .registerTypeAdapterFactory(numericStringCoercingFactory())
                 .setPrettyPrinting()
                 .create();
     }
 
     @Override
     public boolean canRead(Class aClass, MediaType mediaType) {
-        return mediaType == null || MediaType.ALL.equalsTypeAndSubtype(mediaType) || supportedMediaTypes.contains(mediaType);
+        return mediaType == null || supportedMediaTypes.stream().anyMatch(mt -> mt.isCompatibleWith(mediaType));
     }
 
     @Override
     public boolean canWrite(Class aClass, MediaType mediaType) {
-        return mediaType == null || MediaType.ALL.equalsTypeAndSubtype(mediaType) || supportedMediaTypes.contains(mediaType);
+        return mediaType == null || supportedMediaTypes.stream().anyMatch(mt -> mt.isCompatibleWith(mediaType));
     }
 
     @Override
@@ -107,5 +113,48 @@ public class JsonHttpMessageConverter implements HttpMessageConverter {
         this.gson.toJson(element, writer);
 
         httpOutputMessage.getBody().write(writer.toString().getBytes(DEFAULT_CHARSET));
+    }
+
+    /**
+     * Returns a TypeAdapterFactory that coerces JSON strings to numeric types.
+     * Angular text inputs always produce strings, but Java fields may be int/long/float/double.
+     */
+    private TypeAdapterFactory numericStringCoercingFactory() {
+        return new TypeAdapterFactory() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> com.google.gson.TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+                Class<T> raw = (Class<T>) type.getRawType();
+                if (raw != int.class && raw != Integer.class
+                        && raw != long.class && raw != Long.class
+                        && raw != float.class && raw != Float.class
+                        && raw != double.class && raw != Double.class) {
+                    return null;
+                }
+                com.google.gson.TypeAdapter<T> delegate = gson.getDelegateAdapter(this, type);
+                return new com.google.gson.TypeAdapter<T>() {
+                    @Override
+                    public void write(JsonWriter out, T value) throws IOException {
+                        delegate.write(out, value);
+                    }
+                    @Override
+                    public T read(JsonReader in) throws IOException {
+                        if (in.peek() == JsonToken.STRING) {
+                            String s = in.nextString();
+                            if (s == null || s.isEmpty()) return null;
+                            if (raw == int.class || raw == Integer.class)
+                                return (T) Integer.valueOf((int) Double.parseDouble(s));
+                            if (raw == long.class || raw == Long.class)
+                                return (T) Long.valueOf((long) Double.parseDouble(s));
+                            if (raw == float.class || raw == Float.class)
+                                return (T) Float.valueOf(s);
+                            if (raw == double.class || raw == Double.class)
+                                return (T) Double.valueOf(s);
+                        }
+                        return delegate.read(in);
+                    }
+                };
+            }
+        };
     }
 }

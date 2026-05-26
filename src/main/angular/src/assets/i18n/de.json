@@ -229,7 +229,9 @@
   "ControlLevelComponent.powerlevels.heading": "Leistungsstufen",
   "ControlLevelComponent.powerlevels.power": "Leistungsaufnahme [W]",
 
-  "ControlPwmComponent.gpio": "Kanal",
+  "ControlPwmComponent.gpio": "GPIO-Anschluss",
+  "ControlPwmComponent.pwmChip": "PWM-Chip",
+  "ControlPwmComponent.pwmChannel": "PWM-Kanal",
   "ControlPwmComponent.pwmFrequency": "PWM-Frequenz [Hz]",
   "ControlPwmComponent.minDutyCycle": "Min. Tastgrad [%]",
   "ControlPwmComponent.minDutyCycle.tooltip": "Minimaler Tastgrad (Verhältnis von Impulsdauer zur Periodendauer) als Ausdruck der minimalen Leistungsaufnahme.",
