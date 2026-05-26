@@ -20,9 +20,8 @@ package de.avanux.smartapplianceenabler.control;
 
 import de.avanux.smartapplianceenabler.TestBase;
 import de.avanux.smartapplianceenabler.http.*;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -37,7 +36,6 @@ public class HttpSwitchTest extends TestBase {
     private HttpSwitch httpSwitch;
     private CloseableHttpResponse responseMock = Mockito.mock(CloseableHttpResponse.class);
     private HttpTransactionExecutor executorMock = Mockito.mock(HttpTransactionExecutor.class);
-    private StatusLine statusLineMock = Mockito.mock(StatusLine.class);
 
     public HttpSwitchTest() {
         this.httpSwitch = new HttpSwitch();
@@ -45,8 +43,7 @@ public class HttpSwitchTest extends TestBase {
         // this.httpSwitch.init();
         this.httpSwitch.setHttpTransactionExecutor(this.executorMock);
 
-        Mockito.when(responseMock.getStatusLine()).thenReturn(statusLineMock);
-        Mockito.when(statusLineMock.getStatusCode()).thenReturn(HttpStatus.SC_OK);
+        Mockito.when(responseMock.getCode()).thenReturn(HttpStatus.SC_OK);
     }
 
     @Test

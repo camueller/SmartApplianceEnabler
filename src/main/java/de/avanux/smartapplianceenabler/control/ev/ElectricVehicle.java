@@ -20,7 +20,7 @@ package de.avanux.smartapplianceenabler.control.ev;
 
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ElectricVehicle implements ApplianceIdConsumer {

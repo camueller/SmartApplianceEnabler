@@ -60,7 +60,6 @@ public class JsonHttpMessageConverter implements HttpMessageConverter {
 
     public JsonHttpMessageConverter() {
         this.supportedMediaTypes.add(MediaType.APPLICATION_JSON);
-        this.supportedMediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
         this.supportedMediaTypes.add(new MediaType("application", "*+json", DEFAULT_CHARSET));
 
         this.gson = new GsonBuilder()
@@ -75,12 +74,12 @@ public class JsonHttpMessageConverter implements HttpMessageConverter {
 
     @Override
     public boolean canRead(Class aClass, MediaType mediaType) {
-        return supportedMediaTypes.contains(mediaType);
+        return mediaType == null || MediaType.ALL.equalsTypeAndSubtype(mediaType) || supportedMediaTypes.contains(mediaType);
     }
 
     @Override
     public boolean canWrite(Class aClass, MediaType mediaType) {
-        return supportedMediaTypes.contains(mediaType);
+        return mediaType == null || MediaType.ALL.equalsTypeAndSubtype(mediaType) || supportedMediaTypes.contains(mediaType);
     }
 
     @Override
@@ -98,6 +97,7 @@ public class JsonHttpMessageConverter implements HttpMessageConverter {
     @Override
     public void write(Object object, MediaType mediaType, HttpOutputMessage httpOutputMessage) throws IOException, HttpMessageNotWritableException {
         logger.trace("Serializing " + object.getClass() + " to JSON");
+        httpOutputMessage.getHeaders().setContentType(MediaType.APPLICATION_JSON);
         Writer writer = new StringWriter();
 
         JsonElement element = this.gson.toJsonTree(object);
@@ -106,6 +106,6 @@ public class JsonHttpMessageConverter implements HttpMessageConverter {
         }
         this.gson.toJson(element, writer);
 
-        httpOutputMessage.getBody().write(writer.toString().getBytes());
+        httpOutputMessage.getBody().write(writer.toString().getBytes(DEFAULT_CHARSET));
     }
 }

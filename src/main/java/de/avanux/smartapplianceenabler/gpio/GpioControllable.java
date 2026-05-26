@@ -22,17 +22,16 @@ import com.pi4j.io.gpio.digital.*;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.pwm.PwmConfig;
 import com.pi4j.io.pwm.PwmType;
-import com.pi4j.plugin.linuxfs.provider.pwm.LinuxFsPwmProviderImpl;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlTransient;
 import java.util.Collections;
 import java.util.Set;
 
@@ -72,7 +71,7 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
                 .address(gpio)
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.LOW)
-                .provider("gpiod-digital-output")
+                .provider("ffm-digital-output")
                 .build());
     }
 
@@ -81,18 +80,19 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
                 .id("input-" + gpio)
                 .address(gpio)
                 .pull(pinPullResistance.toPi4jPullResistance())
-                .provider("gpiod-digital-input")
+                .provider("ffm-digital-input")
                 .build());
     }
 
-    protected void initializePwm(int frequency) {
+    protected void initializePwm(int chip, int frequency) {
         pwm = pi4jContext.create(Pwm.newConfigBuilder(pi4jContext)
                 .id("pwm-" + gpio)
-                .address(gpio)
+                .chip(chip)
+                .channel(gpio)
                 .pwmType(PwmType.HARDWARE)
                 .frequency(frequency)
-                .dutyCycle(0f)
-                .provider("linuxfs-pwm")
+                .dutyCycle(0)
+                .provider("ffm-pwm")
                 .build());
     }
 
@@ -111,7 +111,7 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
     protected void shutdownInput() {
         if (digitalInput != null) {
             try {
-                digitalInput.shutdown(pi4jContext);
+                digitalInput.close();
             } catch (Exception e) {
                 logger.error("{}: Error shutting down digital input on GPIO {}", applianceId, gpio, e);
             }

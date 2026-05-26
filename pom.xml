@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.2.RELEASE</version>
+		<version>3.5.3</version>
 	</parent>
 
 	<dependencyManagement>
@@ -55,13 +55,12 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
-			<version>2.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.fourthline.cling.local</groupId>
@@ -74,9 +73,8 @@
 			<version>3.17.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<!-- <version>4.2</version> -->
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.paho</groupId>
@@ -86,17 +84,12 @@
 		<dependency>
 			<groupId>com.pi4j</groupId>
 			<artifactId>pi4j-core</artifactId>
-			<version>2.6.0</version>
+			<version>4.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.pi4j</groupId>
-			<artifactId>pi4j-plugin-gpiod</artifactId>
-			<version>2.6.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.pi4j</groupId>
-			<artifactId>pi4j-plugin-linuxfs</artifactId>
-			<version>2.6.0</version>
+			<artifactId>pi4j-plugin-ffm</artifactId>
+			<version>4.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.ghgande</groupId>
@@ -126,12 +119,12 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-junit-jupiter</artifactId>
-			<version>4.6.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
 	<properties>
+		<java.version>25</java.version>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 	</properties>
@@ -169,19 +162,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <release>25</release>
                 </configuration>
             </plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<dependencies>
-					<dependency>
-						<groupId>org.junit.platform</groupId>
-						<artifactId>junit-platform-surefire-provider</artifactId>
-						<version>1.3.2</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
@@ -196,14 +181,14 @@
 							<execution>
 								<phase>generate-sources</phase>
 								<configuration>
-									<tasks>
+									<target>
 										<copy todir="${project.basedir}/src/main/angular/src/assets/icons">
 											<fileset dir="${project.basedir}/pics">
 												<include name="logo**.png"/>
 											</fileset>
 
 										</copy>
-									</tasks>
+									</target>
 								</configuration>
 								<goals>
 									<goal>run</goal>

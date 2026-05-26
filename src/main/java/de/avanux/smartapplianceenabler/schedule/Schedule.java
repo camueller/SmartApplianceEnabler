@@ -17,7 +17,7 @@
  */
 package de.avanux.smartapplianceenabler.schedule;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)

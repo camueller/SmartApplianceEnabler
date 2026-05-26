@@ -18,5 +18,5 @@
 @XmlSchema(namespace = ApplianceManager.SCHEMA_LOCATION, elementFormDefault = XmlNsForm.QUALIFIED) 
 package de.avanux.smartapplianceenabler.appliance;
  
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

@@ -18,11 +18,11 @@
 
 package de.avanux.smartapplianceenabler.http;
 
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.ContentType;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HttpConfiguration {

@@ -33,10 +33,10 @@ import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
 import java.time.LocalDateTime;
 import java.util.Timer;
 
@@ -47,6 +47,8 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
     private String id;
     @XmlAttribute
     private int pwmFrequency;
+    @XmlAttribute
+    private int pwmChip = 0;
     @XmlAttribute
     private Double minDutyCycle;
     @XmlAttribute
@@ -130,7 +132,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
         logger.debug("{}: Starting for GPIO {}", getApplianceId(), getPin());
         if(isGpioAvailable()) {
             try {
-                initializePwm(pwmFrequency);
+                initializePwm(pwmChip, pwmFrequency);
                 on(now, false, null);
                 logger.debug("{}: using GPIO {} with pwmFrequency={} minDutyCycle={}({} ms) maxDutyCycle={}({} ms)",
                         getApplianceId(), getPin(), pwmFrequency, resolveMinDutyCycle(),
@@ -219,7 +221,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
                 if (dutyCyclePercent <= 0) {
                     pwm.off();
                 } else {
-                    pwm.on((float) dutyCyclePercent);
+                    pwm.on((int) dutyCyclePercent);
                 }
             } catch (Exception e) {
                 logger.error("{}: Error setting PWM duty cycle", getApplianceId(), e);

@@ -24,7 +24,7 @@ import de.avanux.smartapplianceenabler.mqtt.MqttEventName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 @XmlTransient
 abstract public class AbstractEnergyRequest extends AbstractRequest {
