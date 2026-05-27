@@ -7,13 +7,19 @@ dtoverlay=pwm,pin=18
 ```
 Die Änderung wird erst nach einem Neustart des Raspberry Pi wirksam!
 
-Für den GPIO 18 wird der Kanal 2 verwendet, welcher im *Smart Appliance Enabler* in der Konfiguration des Schalters angegeben werden muss, d.h. anders als man denken würde wird hier nicht die GPIO-Nummer, sondern der Kanal angegeben!
+Für die Konfiguration eines PWM-Schalters im *Smart Appliance Enabler* muss außer dem GPIO-Anschluss auch der PWM-Chip und der PWM-Kanal angegeben werden. Diese hängen von der verwendeten Hardware ab. Die Zuordnung des GPIO 18 zu PWM-Chips und -Kanälen kann man mit folgendem Befehl anzeigen:
 
-In den [Einstellungen für das Gerät](Appliance_DE.md) muss ein Wert für die *Min. Leistungsaufnahme* eingegeben werden. Ausserdem muss ein [Zeitplan für Überschussenergie](Schedules_DE.md) konfiguriert sein.
+```bash
+$ pinctrl get 18
+18: a3    pd | lo // GPIO18 = PWM0_CHAN2
+```
+Auf einem Raspberry Pi 5 ist GPIO 18 dem PWM-Chip 0 und dem PWM-Kanal 2 zugeordnet.
 
-Außer dem GPIO-Anschluss muss mindesten noch die PWM-Frequenz angegeben werden, die bestimmt, wie oft pro Sekunde das PWM-Signal übertragen wird. Der Umkehrwert der PWM-Frequenz ist die maximal Zeitdauer eines PWM-Signals, d.h. bei einer PWM-Frequenz von 50Hz beträgt die maximale Zeitdauer eines PWM-Signals 1/50s = 20ms.
+Außer GPIO-Anschluss, PWM-Chip und PWM-Kanal muss mindesten noch die PWM-Frequenz angegeben werden, die bestimmt, wie oft pro Sekunde das PWM-Signal übertragen wird. Der Umkehrwert der PWM-Frequenz ist die maximal Zeitdauer eines PWM-Signals, d.h. bei einer PWM-Frequenz von 50Hz beträgt die maximale Zeitdauer eines PWM-Signals 1/50s = 20ms.
 
 ![PWM Switch](../pics/fe/PwmSwitch_DE.png)
+
+In den [Einstellungen für das Gerät](Appliance_DE.md) muss ein Wert für die *Min. Leistungsaufnahme* eingegeben werden. Ausserdem muss ein [Zeitplan für Überschussenergie](Schedules_DE.md) konfiguriert sein.
 
 Der *Smart Appliance Enabler* berechnet aus der gewünschten Leistungsaufnahme und den im *Smart Appliance Enabler* konfigurierten Werten für *Min. Leistungsaufnahme*, *Max. Leistungsaufnahme*, *min. Tastgrad* und *max. Tastgrad* den Tastgrad des PWM-Signals, welcher dann über den angegebenen GPIO-Anschluss ausgegeben wird. Je höher die gewünschte Leistungsaufnahme, desto höher der Tastgrad. Wird ein Tastgrad von 0 berechnet, wird der GPIO-Ausgang auf LOW gesetzt.
 
