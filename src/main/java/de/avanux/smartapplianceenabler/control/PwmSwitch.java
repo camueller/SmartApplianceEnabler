@@ -247,7 +247,7 @@ public class PwmSwitch extends GpioControllable implements VariablePowerConsumer
 
     public void on(LocalDateTime now, boolean switchOn, Integer power) {
         if(!switchOn || power == 0) {
-            setDutyCyclePercent(now, 0);
+            setDutyCyclePercent(now, resolveMinDutyCycle());
         } else {
             setPower(now, power != null ? power : this.minPowerConsumption);
         }
