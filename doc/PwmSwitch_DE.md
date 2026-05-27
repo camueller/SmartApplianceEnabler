@@ -34,17 +34,22 @@ Die gewünschte Leistungsaufnahme wird vom *Smart Appliance Enabler* so überset
 Modellbau-Servos werden über PWM-Signale gesteuert, wobei die Position des Servos-Arms durch den Tastgrad des PWM-Signals bestimmt wird. Üblicherweise beträgt die PWM-Frequenz 50Hz. Der linke Anschlag hat einen Tastgrad von ca. 3% (1ms Pulsdauer), die Mittelstellung einen Tastgrad von ca. 7,25% (1,5ms Pulsdauer) und der rechte Anschlag einen Tastgrad von ca. 11,5% (2ms Pulsdauer).
 
 ## Log
-Wird ein Gerät (hier `F-00000001-000000000001-00`) mit konfiguriertem PWM-Schalter gesteuert, kann man die Steuerbefehle im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
+Wird ein Gerät (hier `F-00000001-000000000003-00`) mit konfiguriertem PWM-Schalter gesteuert, kann man die Steuerbefehle im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
 
 ```bash
-$ grep "c.PwmSwitch" /tmp/rolling-2026-05-17.log | grep F-00000001-000000000001-00
-2026-05-17 17:07:05,179 DEBUG [Thread-3] d.a.s.c.PwmSwitch [PwmSwitch.java:130] F-00000001-000000000001-00: Starting for GPIO 2
-2026-05-17 17:07:05,255 INFO [Thread-3] d.a.s.c.PwmSwitch [PwmSwitch.java:214] F-00000001-000000000001-00: Setting GPIO 2 duty cycle to 0.0% (0 ms)
-2026-05-17 17:07:05,256 DEBUG [Thread-3] d.a.s.c.PwmSwitch [PwmSwitch.java:135] F-00000001-000000000001-00: using GPIO 2 with pwmFrequency=50 minDutyCycle=3.0(0 ms) maxDutyCycle=11.5(2 ms)
+$ grep "c.PwmSwitch" /tmp/rolling-2026-05-27.log | grep F-00000001-000000000003-00
+2026-05-27 14:38:15,290 DEBUG [Thread-3] d.a.s.c.PwmSwitch [PwmSwitch.java:121] F-00000001-000000000003-00: configured: minPowerConsumption=2000 maxPowerConsumption=10000
+2026-05-27 14:38:15,786 DEBUG [Thread-3] d.a.s.c.PwmSwitch [PwmSwitch.java:134] F-00000001-000000000003-00: Starting for GPIO 18
+2026-05-27 14:38:15,797 INFO [Thread-3] d.a.s.c.PwmSwitch [PwmSwitch.java:218] F-00000001-000000000003-00: Setting GPIO 18 duty cycle to 0.0% (0 ms)
+2026-05-27 14:38:15,797 DEBUG [Thread-3] d.a.s.c.PwmSwitch [PwmSwitch.java:139] F-00000001-000000000003-00: GPIO=18 pwmChip=0 pwmChannel=2 pwmFrequency=50 minDutyCycle=3.0(0 ms) maxDutyCycle=11.5(2 ms)
 [...]
-2026-05-17 17:09:39,459 INFO [MQTT Call: F-00000001-000000000001-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:190] F-00000001-000000000003-00: Setting power to 6000W
-2026-05-17 17:09:39,459 DEBUG [MQTT Call: F-00000001-000000000001-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:209] F-00000001-000000000003-00: Calculated duty cycle=7.25% from power ratio=0.5
-2026-05-17 17:09:39,459 INFO [MQTT Call: F-00000001-000000000001-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:214] F-00000001-000000000003-00: Setting GPIO 2 duty cycle to 7.25% (1 ms)
+2026-05-27 15:01:28,233 INFO [MQTT Call: F-00000001-000000000003-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:194] F-00000001-000000000003-00: Setting power to 2000W
+2026-05-27 15:01:28,233 DEBUG [MQTT Call: F-00000001-000000000003-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:213] F-00000001-000000000003-00: Calculated duty cycle=3.0% from power ratio=0.0
+2026-05-27 15:01:28,233 INFO [MQTT Call: F-00000001-000000000003-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:218] F-00000001-000000000003-00: Setting GPIO 18 duty cycle to 3.0% (0 ms)
+[...]
+026-05-27 14:41:38,656 INFO [MQTT Call: F-00000001-000000000003-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:194] F-00000001-000000000003-00: Setting power to 10000W
+2026-05-27 14:41:38,656 DEBUG [MQTT Call: F-00000001-000000000003-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:213] F-00000001-000000000003-00: Calculated duty cycle=11.5% from power ratio=1.0
+2026-05-27 14:41:38,657 INFO [MQTT Call: F-00000001-000000000003-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:218] F-00000001-000000000003-00: Setting GPIO 18 duty cycle to 11.5% (2 ms)
 ```
 
 *Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` den Text `c.PwmSwitch` ein und drückt Refresh.
