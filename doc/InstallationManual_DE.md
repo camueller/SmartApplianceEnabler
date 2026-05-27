@@ -32,8 +32,6 @@ $ docker run \
 ### Raspberry Pi OS
 Von den [Raspberry Pi OS](https://www.raspberrypi.org/software) Images ist die **Lite-Version** ausreichend, sodass man eine *4GB-SD-Karte* verwenden kann.
 
-_**Für Smart Appliancer Enabler bis einschliesslich Version 1.4 gilt:**_ Es muss Raspberry Pi OS **Stretch** verwendet werden (Raspberry Pi OS **Buster** oder neuer ist nicht geeignet!!!). Download: https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/
-
 _**Für Smart Appliancer Enabler bis Version 2.5.0 gilt:**_ Es ist mindestens Raspberry Pi OS **Buster** erforderlich. Allerdings sollte aktuell nicht Raspberry Pi OS **Trixie** verwendet werden, da es nicht das Package pigpiod enthält, was für den Zugriff auf die GPIO-Pins benötigt wird. Außerdem enthält es keine getestete Java-Version (OpenJDK 11/17).
 
 _**Für Smart Appliancer Enabler > Version 2.5.0 gilt:**_ Es ist mindestens Raspberry Pi OS **Trixie** erforderlich.
