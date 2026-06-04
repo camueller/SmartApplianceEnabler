@@ -52,11 +52,6 @@ cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime 2>&1 >> $LOG
 echo "$PREFIX Install required packages ..." >> $LOG
 apt install $PACKAGES -y 2>&1 >> $LOG
 
-echo "$PREFIX Setting up pigpiod ..." >> $LOG
-sed -i "s/ExecStart=\/usr\/bin\/pigpiod -l/ExecStart=\/usr\/bin\/pigpiod/g" /lib/systemd/system/pigpiod.service 2>&1 >> $LOG
-systemctl start pigpiod 2>&1 >> $LOG
-systemctl enable pigpiod 2>&1 >> $LOG
-
 echo "$PREFIX Setting up mosquitto ..." >> $LOG
 sed -i "s/persistence true/persistence false/g" /etc/mosquitto/mosquitto.conf 2>&1 >> $LOG
 echo "listener 1883" > /etc/mosquitto/conf.d/smartapplianceenabler.conf
@@ -87,8 +82,10 @@ fi
 wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/logback-spring.xml -P $SAE_HOME 2>>$LOG
 chmod 644 $SAE_HOME/logback-spring.xml 2>&1 >> $LOG
 
-SAE_VERSION=`curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/camueller/SmartApplianceEnabler/releases | jq -c '.[] | select( .prerelease == false) | .tag_name' | head -n 1 | tr -d '"'`
-wget "https://github.com/camueller/SmartApplianceEnabler/releases/download/"$SAE_VERSION"/SmartApplianceEnabler-"$SAE_VERSION".war" -P $SAE_HOME 2>>$LOG
+#SAE_VERSION=`curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/camueller/SmartApplianceEnabler/releases | jq -c '.[] | select( .prerelease == false) | .tag_name' | head -n 1 | tr -d '"'`
+#wget "https://github.com/camueller/SmartApplianceEnabler/releases/download/"$SAE_VERSION"/SmartApplianceEnabler-"$SAE_VERSION".war" -P $SAE_HOME 2>>$LOG
+/usr/bin/pipx install gdown 2>&1 >> $LOG
+/root/.local/bin/gdown "1ZenBkO9GULBpnIZzw-DNnUZX0V-u6y4a" -O $SAE_HOME/SmartApplianceEnabler-2.5.3.war 2>&1 >> $LOG
 
 chown -R sae:sae $SAE_HOME 2>&1 >> $LOG
 
@@ -117,11 +114,11 @@ fi
 if [ "$INSTALL_MBUSD" = true ] ; then
   echo "$PREFIX Installing mbusd ..." >> $LOG
   cd /tmp >> $LOG
-  git clone https://github.com/camueller/mbusd.git 2>&1 >> $LOG
+  git clone https://github.com/3cky/mbusd.git 2>&1 >> $LOG
   cd mbusd >> $LOG
   mkdir build >> $LOG
   cd build >> $LOG
-  cmake -DCMAKE_INSTALL_PREFIX=/usr .. 2>&1 >> $LOG
+  cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSTEMD_SERVICES_INSTALL_DIR=/lib/systemd/system .. 2>&1 >> $LOG
   make >> $LOG
   make install 2>&1 >> $LOG
   systemctl daemon-reload >> $LOG
