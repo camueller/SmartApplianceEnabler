@@ -66,7 +66,7 @@ Um beide Probleme zu lösen, nutze ich folgende Befehle (geht so nur unter Linux
    $ sudo touch /mnt/ssh
    ```
    
-3. Erzeugen einer Datei mit dem Namen `userconf` mit folgendem Inhalt (hier wird der Benutzer `pi` mit demPasswort `raspberry` angelegt, was natürlich geändert werden sollte): 
+3. Erzeugen einer Datei mit dem Namen `userconf` mit folgendem Inhalt (hier wird der Benutzer `pi` mit dem Passwort `raspberry` angelegt, was natürlich geändert werden sollte): 
    ```bash
    $ echo "pi:$(echo raspberry | openssl passwd -6 -stdin)" | sudo tee /mnt/userconf
    ```
