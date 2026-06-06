@@ -45,6 +45,7 @@ import java.util.*;
 public class SempController {
 
     private static final String BASE_URL = "/semp";
+    private static final String BASE_URL_SLASH = "/semp/";
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     public static final String SCHEMA_LOCATION = "http://www.sma.de/communication/schema/SEMP/v1";
     private Logger logger = LoggerFactory.getLogger(SempController.class);
@@ -88,7 +89,7 @@ public class SempController {
         });
     }
 
-    @RequestMapping(value = BASE_URL, method = RequestMethod.GET, produces = "application/xml")
+    @RequestMapping(value = {BASE_URL, BASE_URL_SLASH}, method = RequestMethod.GET, produces = "application/xml")
     public String device2EM(HttpServletResponse response) {
         try {
             LocalDateTime now = LocalDateTime.now();
@@ -290,7 +291,7 @@ public class SempController {
         }
     }
 
-    @RequestMapping(value = BASE_URL, method = RequestMethod.POST, consumes = "application/xml")
+    @RequestMapping(value = {BASE_URL, BASE_URL_SLASH}, method = RequestMethod.POST, consumes = "application/xml")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void em2Device(@RequestBody EM2Device em2Device) {
         try {
