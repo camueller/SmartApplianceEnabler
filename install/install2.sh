@@ -69,28 +69,28 @@ cp /home/pi/.profile $SAE_HOME 2>&1 >> $LOG
 cp /home/pi/.bashrc $SAE_HOME 2>&1 >> $LOG
 
 echo "$PREFIX Installing SAE ..." >> $LOG
-wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/smartapplianceenabler -P $SAE_HOME 2>>$LOG
+wget https://github.com/camueller/SmartApplianceEnabler/raw/$BRANCH/run/smartapplianceenabler -P $SAE_HOME 2>>$LOG
 chmod 755 $SAE_HOME/smartapplianceenabler 2>&1 >> $LOG
 
-wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/default/smartapplianceenabler -P /etc/default 2>>$LOG
+wget https://github.com/camueller/SmartApplianceEnabler/raw/$BRANCH/run/etc/default/smartapplianceenabler -P /etc/default 2>>$LOG
 chown root.root /etc/default/smartapplianceenabler 2>&1 >> $LOG
 chmod 644 /etc/default/smartapplianceenabler 2>&1 >> $LOG
 if [ -n "$IP_ADDRESS" ] ; then
   sed -i "s/#JAVA_OPTS=...JAVA_OPTS. -Dserver.address=.*$/JAVA_OPTS=\"\${JAVA_OPTS} -Dserver.address=$IP_ADDRESS\"/g" /etc/default/smartapplianceenabler
 fi
 
-wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/logback-spring.xml -P $SAE_HOME 2>>$LOG
+wget https://github.com/camueller/SmartApplianceEnabler/raw/$BRANCH/run/logback-spring.xml -P $SAE_HOME 2>>$LOG
 chmod 644 $SAE_HOME/logback-spring.xml 2>&1 >> $LOG
 
 #SAE_VERSION=`curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/camueller/SmartApplianceEnabler/releases | jq -c '.[] | select( .prerelease == false) | .tag_name' | head -n 1 | tr -d '"'`
 #wget "https://github.com/camueller/SmartApplianceEnabler/releases/download/"$SAE_VERSION"/SmartApplianceEnabler-"$SAE_VERSION".war" -P $SAE_HOME 2>>$LOG
 /usr/bin/pipx install gdown 2>&1 >> $LOG
-/root/.local/bin/gdown "1ZenBkO9GULBpnIZzw-DNnUZX0V-u6y4a" -O $SAE_HOME/SmartApplianceEnabler-2.5.3.war 2>&1 >> $LOG
+/root/.local/bin/gdown "1i-JJY1GC8VHeyqwKPUQJaCimQCzVRbeV" -O $SAE_HOME/SmartApplianceEnabler-2.5.3.war 2>&1 >> $LOG
 
 chown -R sae:sae $SAE_HOME 2>&1 >> $LOG
 
 echo "$PREFIX Configure systemd ..." >> $LOG
-wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/lib/systemd/system/smartapplianceenabler.service -P /lib/systemd/system 2>>$LOG
+wget https://github.com/camueller/SmartApplianceEnabler/raw/$BRANCH/run/lib/systemd/system/smartapplianceenabler.service -P /lib/systemd/system 2>>$LOG
 chown root.root /lib/systemd/system/smartapplianceenabler.service 2>&1 >> $LOG
 chmod 755 /lib/systemd/system/smartapplianceenabler.service 2>&1 >> $LOG
 
