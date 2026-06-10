@@ -32,9 +32,9 @@ $ docker run \
 ### Raspberry Pi OS
 Von den [Raspberry Pi OS](https://www.raspberrypi.org/software) Images ist die **Lite-Version** ausreichend, sodass man eine *4GB-SD-Karte* verwenden kann.
 
-_**Für Smart Appliancer Enabler bis Version 2.5.0 gilt:**_ Es ist mindestens Raspberry Pi OS **Buster** erforderlich. Allerdings sollte aktuell nicht Raspberry Pi OS **Trixie** verwendet werden, da es nicht das Package pigpiod enthält, was für den Zugriff auf die GPIO-Pins benötigt wird. Außerdem enthält es keine getestete Java-Version (OpenJDK 11/17).
+_**Für Smart Appliancer Enabler bis Version 2.5.x gilt:**_ Es ist mindestens Raspberry Pi OS **Buster** erforderlich. Allerdings sollte aktuell nicht Raspberry Pi OS **Trixie** verwendet werden, da es nicht das Package pigpiod enthält, was für den Zugriff auf die GPIO-Pins benötigt wird.
 
-_**Für Smart Appliancer Enabler > Version 2.5.0 gilt:**_ Es ist mindestens Raspberry Pi OS **Trixie** erforderlich.
+_**Für Smart Appliancer Enabler > Version 2.5.x gilt:**_ Es ist mindestens Raspberry Pi OS **Trixie** erforderlich.
 
 Zum Schreiben des Images auf eine SD-Karte eignet sich der [Raspberry Pi Imager](https://www.raspberrypi.org/software). Alternativ kann man mit dem nachfolgenden Befehl unter Linux das Image auf eine SD-Karte schreiben:
 ```bash
@@ -374,7 +374,7 @@ $ sudo systemctl stop smartapplianceenabler.service
 ```
 
 #### Status
-Mit folgendem Befehl lässt sich üprüfen, ob der *Smart Appliance Enabler* läuft:
+Mit folgendem Befehl lässt sich überprüfen, ob der *Smart Appliance Enabler* läuft:
 
 ```bash
 $ sudo systemctl status smartapplianceenabler.service
@@ -385,7 +385,7 @@ $ sudo systemctl status smartapplianceenabler.service
  Main PID: 24026 (sudo)
     Tasks: 48 (limit: 2063)
    CGroup: /system.slice/smartapplianceenabler.service
-           ├─24026 sudo -u sae /usr/bin/java -Djava.awt.headless=true -Xmx256m -Duser.language=de -Duser.country=DE -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=
+           ├─24026 sudo -u sae /usr/bin/java -Djava.awt.headless=true -Xmx512m -Duser.language=de -Duser.country=DE -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=
            └─24028 /usr/bin/java -Djava.awt.headless=true -Xmx256m -Duser.language=de -Duser.country=DE -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=/opt/sae -ja
 ```
 
