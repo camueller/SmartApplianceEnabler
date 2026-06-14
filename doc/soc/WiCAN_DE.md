@@ -1,42 +1,60 @@
-# WiCAN ODB2 Adapter
+# WiCAN PRO OBD2 Adapter
 
-![meatPi](../../pics/meatPi.png)
+![WiCANPRO](../../pics/wicanpro.png)
 
-Der [WiCAN ODB2 Adapter von MeatPi](https://www.meatpi.com/products/wican) **verbindet den CAN-Bus des Fahrzeugs mit dem WLAN und ermöglicht die Kommunikation per MQTT**.
+Der [WiCAN PRO OBD2 Adapter von MeatPi](https://www.meatpi.com/products/wican-pro) **verbindet den CAN-Bus des Fahrzeugs mit dem WLAN und ermöglicht die Kommunikation per MQTT**. Dadurch muss man nicht eine Fahrzeughersteller-API oder kostenpflichtigen Dienst nutzen, um den SOC zu ermitteln. Nebenbei kann der Adapter auch dazu verwendet werden, den SOC während der Fahrt via Bluetooth für Apps wie "A Better Router Planner" für die Ladeplanung verfügbar zu machen.
+
+Zur Verwendung des WinCAN PRO mit dem *Smart Appliance Enabler* habe ich ein [Youtube-Video](https://www.youtube.com/watch?v=VgXChG5o-E8) gmeacht.
 
 ## Funktionsweise
-Der Adapter bleibt **permanent eingesteckt im Fahrzeug**.
+Der Adapter bleibt **permanent eingesteckt** im Fahrzeug. Damit die Fahrzeug-Batterie nicht dauerhaft belastet wird, schaltet der **Sleep Mode** den WiCAN PRO wenige Minuten nach dem Abschalten des Fahrzeugs ab. Beim Einschalten des Fahrzeugs wacht auch der WiCAN PRO wieder auf. Die Abschaltung des WiCAN PRO ist vor allem deswegen sinnvoll, weil sich der CAN-Bus bei ausgeschaltetem Fahrzeug ebenfalls nach kurzer Zeit abschaltet und deshalb keine Daten mehr für den WiCAN PRO bereitstellen kann.
 
-Wenn das Fahrzeug sich dem Haus nähert, verbindet sich der **WiCAN mit dem WLAN** und sendet eine MQTT-Nachticht, dass er **online** ist. Darauf wartet das [wican-status.sh](https://github.com/camueller/SmartApplianceEnabler/raw/master/run/soc/wican/wican-status.sh)-Script und **fordert den SOC an** mittels einer MQTT-Nachricht. Auf die Antwort wartet das [wican-soc.sh](https://github.com/camueller/SmartApplianceEnabler/raw/master/run/soc/wican/wican-soc.sh)-Script, welches den **SOC extrahiert und zusammen mit einem Timestamp als MQTT-Nachricht (mit Retained-Flag) publiziert**.
+Wenn das Fahrzeug sich dem Haus nähert, verbindet sich der WiCAN PRO mit dem Haus-WLAN. Der Automate-Mode sorgt dafür, dass die im Fahrzeugprofil konfigurierten Werte periodisch vom CAN-Bus abgefagt werden und an die konfigurierten Ziele - bei mir ist das ein MQTT-Topic - übermittelt werden. Nach dem Abschalten und Abschliessen des Fahrzeugs bleibt der CAN-Bus noch einige Zeit aktiv. Wie lange, hängt vom Fahrzeug und sogar von der Software-Version ab. Nach einem Software-Update bei meinem Fahrzeug ist dieser Wert von ca. 5 Minuten auf 15 Minuten gestiegen. Wenn der CAN-BUs inaktiv wird, fällt die Bordspannung unter den Schwellwert für den Sleep-Mode des WiCAN PRO. Bei meinem Fahrzeug fällt sie von ca. 15V auf ca. 12V. Wenn die Spannung für die konfugurierte Zeit unterhalb des Schwellwertes bleibt, schaltet sich der WiCAN PRO ab.
 
-Sobald das **Fahrzeug mit der Wallbox verbunden** wird, wird vom *Smart Appliance Enabler* das [SOC-Script für WiCAN ODB2-Adapter](https://github.com/camueller/SmartApplianceEnabler/raw/master/run/soc/wican/soc.sh) ausgeführt, welches vom MQTT-Server die MQTT-Nachricht mit SOC und Timestamp erhält.
+Sobald das Fahrzeug irgendwann wieder eingeschaltet wird, wacht der WiCAN PRO aus dem Sleep-Mode auf und durch den Automate-Mode werden wieder periodisch die konfigurierten Werte an die konfigurierten Ziele übertragen. Wenn man den Bereich des WLANs des Hauses verlassen hat, werden logischerweise keine Werte mehr an die konfigurierten Ziele übertragen werden. Sobald man sich wieder dem Haus nähert beginnt der hier beschriebene Auflauf erneut.
 
-Ca. 3 Minuten nach dem Abschalten des Fahrzeugs **schaltet sich auch der WiCAN ODB2-Adapter aus**, um die Fahrzeug-Batterie nicht zu belasten.
+## Konfiguration des WiCAN PRO OBD2-Adapter
 
-## Konfiguration des WiCAN ODB2-Adapter
+Wichtige Einstellungen der Konfiguration des WiCAN PRO OBD2-Adapter sind:
 
-Wichtige Einstellungen der Konfiguration des WiCAN ODB2-Adapter sind:
+### Tab: Settings
+#### AP Config
+- Mode: AP+Station oder BLE+Station
+- AP Password: Passwort für den Zugriff auf des WLANs des WiCAN PRO, wenn dieser nicht mit dem WLAN des Hauses verbunden ist 
 
-### AP Config
-- Mode: AP+Station
-
-### Station Config
+#### Network Configuration
 - SSID: SSID des WLANs vom Haus
 - Password: Passwort des WLANs vom Haus
+- Security: Security des WLANs vom Haus 
 
-### CAN
-- Protocol: elm327
+#### CAN
+- Protocol: AutoPID
 - MQTT: Enable
 
-### BLE
-- BLE Status: Disable
-
-### Sleep Mode
-- Sleep: Enable
-
-### MQTT
-- MQTT URL: IP-Adresse des MQTT-Servers
+#### MQTT
+- MQTT URL: Hostname oder IP-Adresse des MQTT-Servers
 - MQTT Port: Port des MQTT-Servers
+- TX-Topic: wird automatisch vorgegeben
+- RX-Topic: wird automatisch vorgegeben
+- Status-Topic: z.B. wie TX-Topic, aber "tx" ersetzen durch "status"
+
+### Tab:Automate
+#### User Destinations: 
+MQTT-Topic: z.B. wie TX-Topic, aber "tx" ersetzen durch "automate"
+
+#### Automate Parameters
+Vehicle Specific
+
+#### Vehicle Specific PIDs
+Vehicle Specific PIDs: Enable
+Vehicle Model: Profil für das Fahrzeug auswählen
+
+### Tab:Power Saving
+#### Sleep Mode
+- Sleep: Enable
+- Sleep Voltage: Dieser Wert hängt vom Fahrzeug und Zustand der 12V-Batterie ab und muss ggf. angepasst werden, falls der WiCAN PRO nicht in den Sleep Mode geht.
+- Sleep After: z.B. 5 min
+- Perdiodic wake up: Disable
 
 ## Installation für Smart Appliance Enabler
 
@@ -45,86 +63,13 @@ Zunächst müssen die MQTT-Clients installiert werden, damit den Shell-Scripts d
 ```bash
 sudo apt install mosquitto-clients
 ```
-Die  Installation
 
-- des Scripts für das Monitoring des WiCAN-Status
-- des Scripts zum Abruf des SOC
-- SOC-Script für WiCAN ODB2-Adapter
-
-erfolgt mit folgenden Befehlen:
+Die  Installation des Scripts zum Abruf des SOC erfolgt mit folgenden Befehlen:
 
 ```bash
 $ mkdir /opt/sae/soc
-$ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/soc/wican/wican-status.sh -P /opt/sae/soc
-$ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/soc/wican/wican-soc.sh -P /opt/sae/soc
 $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/soc/wican/soc.sh -P /opt/sae/soc
 $ chmod +x /opt/sae/soc/*.sh
-```
-
-**Die Scripts `wican-status.sh` und `wican-soc.sh` müssen für das jeweilige Fahrzeug angepasst werden**: In `wican-status.sh` muss die CAN-Nachricht zu Anfordern des SOC eingetragen werden.  In `wican-soc.sh` muss aus der Antwort der SOC extrahiert werden. Ohne Anpassungen funktionieren beide Script aktuell für den Nissan Leaf ZE1. Die CAN-Nachrichten für ein bestimmtes Fahrzeug lassen sich meist in einschlägigen Internet-Foren finden oder auch mittels **Apps wie "Car Scanner"**, welche vom WiCAN-OBD2-Adapter unterstützt wird.
-
-Zum Starten der ersten beiden Scripts werden Systemd-Services verwendet: 
-```bash
-$ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/lib/systemd/system/wican-status.service -P /lib/systemd/system
-$ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/lib/systemd/system/wican-soc.service -P /lib/systemd/system
-$ sudo systemctl daemon-reload
-```
-
-Die nachfolgende Befehle sind nur für `wican-status` beschrieben. Für `wican-soc` gelten sie analog.
-
-Zum Start genügt:
-
-```bash
-$ sudo service wican-status start
-```
-
-Der Status lässt sich wie folgt anzeigen:
-
-```bash
-$ sudo service wican-status status
-● wican-status.service - WiCan status monitor
-     Loaded: loaded (/etc/systemd/system/wican-status.service; enabled; vendor preset: enabled)
-     Active: active (running) since Sun 2024-02-25 14:36:10 CET; 1h 40min ago
-   Main PID: 27260 (wican-status.sh)
-      Tasks: 2 (limit: 4915)
-        CPU: 431ms
-     CGroup: /system.slice/wican-status.service
-             ├─27260 /bin/bash /opt/sae/soc/wican-status.sh
-             └─27261 mosquitto_sub -h 192.168.1.1 -t wican/5432048f421d/status -C 1
-
-Feb 25 14:36:10 raspi2 systemd[1]: Started WiCan status monitor.
-Feb 25 14:36:10 raspi2 wican-status.sh[27260]: Waiting for message ...
-```
-
-Zum Beenden genügt:
-
-```bash
-$ sudo service wican-status stop
-```
-
-Damit die Services auch nach einem Reboot gestartet werden, müssen sie entsprechend aktiviert werden:
-```bash
-$ sudo systemctl enable wican-soc
-Created symlink /etc/systemd/system/multi-user.target.wants/wican-soc.service → /etc/systemd/system/wican-soc.service.
-$ sudo systemctl enable wican-status
-Created symlink /etc/systemd/system/multi-user.target.wants/wican-status.service → /etc/systemd/system/wican-status.service.
-```
-
-Die Konsole-Ausgaben der Scripts sind durch den Befehl `journalctl` verfügbar:
-```bash
-sudo journalctl _SYSTEMD_UNIT=wican-soc.service
--- Journal begins at Fri 2023-09-08 09:07:38 CEST, ends at Sun 2024-03-17 08:08:08 CET. --
-Feb 25 14:39:03 raspi2 wican-soc.sh[27329]: Waiting for messages ...
-Feb 25 17:18:45 raspi2 wican-soc.sh[27329]: Message received:
-Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6802,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[16,53,97,1,255,255,252,24]}]}
-Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6919,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[33,2,175,255,255,252,79,255]}]}
-Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6929,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[34,255,244,72,6,138,48,212]}]}
-Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6939,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[35,148,76,56,207,3,145,0]}]}
-Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6942,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[36,1,112,0,36,0,0,11]}]}
-Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6958,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[37,179,232,0,15,180,27,128]}]}
-Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6962,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[38,0,5,255,255,252,79,255]}]}
-Feb 25 17:18:45 raspi2 wican-soc.sh[28304]: {"bus":"0","type":"rx","ts":6978,"frame":[{"id":1979,"dlc":8,"rtr":false,"extd":false,"data":[39,255,252,170,1,174,255,255]}]}
-Feb 25 17:18:45 raspi2 wican-soc.sh[27329]: Waiting for messages ...
 ```
 
 ## Konfiguration des Smart Appliance Enabler
