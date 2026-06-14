@@ -157,7 +157,7 @@ export class SettingsComponent  implements OnInit {
     const mqttPassword = this.form.controls.mqttPassword.value;
     const mqttRootTopic = this.form.controls.mqttRootTopic.value;
     if (mqttHost) {
-      this.settings.mqttSettings = {host: mqttHost, port: mqttPort, username: mqttUsername, password: mqttPassword, rootTopic: mqttRootTopic.length ? mqttRootTopic : undefined};
+      this.settings.mqttSettings = {host: mqttHost, port: mqttPort, username: mqttUsername, password: mqttPassword, rootTopic: mqttRootTopic && mqttRootTopic.length ? mqttRootTopic : undefined};
     }
     this.settings.nodeRedDashboardUrl = this.form.controls.nodeRedDashboardUrl.value;
     this.settings.holidaysEnabled = this.form.controls.holidaysEnabled.value;
