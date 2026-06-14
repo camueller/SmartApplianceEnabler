@@ -51,8 +51,8 @@ JAVA_BIN=/usr/bin/java
 # Headless mode should always be activated
 JAVA_OPTS="${JAVA_OPTS} -Djava.awt.headless=true"
 
-# Maximum heap size should be 512MB for Smart Appliance Enabler
-JAVA_OPTS="${JAVA_OPTS} -Xmx512m"
+# Maximum heap size should be 256MB for Smart Appliance Enabler
+JAVA_OPTS="${JAVA_OPTS} -Xmx256m"
 
 # Set language/country from which Java derives default locale
 JAVA_OPTS="${JAVA_OPTS} -Duser.language=de -Duser.country=DE"

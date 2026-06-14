@@ -104,7 +104,7 @@ public class SempDiscovery implements Runnable {
                     int port = Integer.parseInt(sempStreamServerPort);
                     configuration = new StreamServerConfigurationImpl(port);
                 }
-                return new SimpleStreamServerImpl(configuration);
+                return new org.fourthline.cling.transport.impl.apache.StreamServerImpl(configuration);
             }
         };
     }
