@@ -12,14 +12,14 @@ In der Dokumentation zum *Smart Appliance Enabler* finden sich überall Shell-Be
 * blau: Ausgabe bzw. Antwort auf den eingegebenen Befehl
 
 Die genannten Elemente finden sich alle in dem nachfolgenden Beispiel:
-```bash
+```console
 pi@raspi:~ $ uname -a
 Linux raspi3 4.19.75-v7+ #1270 SMP Tue Sep 24 18:45:11 BST 2019 armv7l GNU/Linux
 ```
 
 Befehle mit mehreren Optionen und Parametern werden zum besseren Verständnis mehrzeilig dargestellt, wobei der Backslash `\ ` das letzte Zeichen jeder Zeile ist und damit die jeweils nächste Zeile "verbindet". Ein solcher Befehl kann so wie er ist kopiert und ausgeführt werden. Ein Beispiel:
 
-```bash
+```console
 $ docker run \
     -it \
     --rm \
@@ -37,7 +37,7 @@ _**Für Smart Appliancer Enabler bis Version 2.5.x gilt:**_ Es ist mindestens Ra
 _**Für Smart Appliancer Enabler > Version 2.5.x gilt:**_ Es ist mindestens Raspberry Pi OS **Trixie** erforderlich.
 
 Zum Schreiben des Images auf eine SD-Karte eignet sich der [Raspberry Pi Imager](https://www.raspberrypi.org/software). Alternativ kann man mit dem nachfolgenden Befehl unter Linux das Image auf eine SD-Karte schreiben:
-```bash
+```console
 $ sudo dd bs=4M if=2019-09-26-raspbian-buster-lite.img of=/dev/mmcblk0 status=progress oflag=sync
 [sudo] password for axel: 
 2248146944 bytes (2.2 GB, 2.1 GiB) copied, 280 s, 8.0 MB/s 
@@ -58,11 +58,11 @@ Auf neueren Images ist SSH aus Sicherheitsgründen standardmäßig deaktiviert. 
 Um beide Probleme zu lösen, nutze ich folgende Befehle (geht so nur unter Linux):
 
 1. Mounten der Boot-Partition der SD-Karte
-   ```bash
+   ```console
    $ sudo mount /dev/mmcblk0p1 /mnt
    ```
 2. Erzeugen einer leeren Datei mit dem Namen `ssh`:
-   ```bash
+   ```console
    $ sudo touch /mnt/ssh
    ```
    
@@ -72,14 +72,14 @@ Um beide Probleme zu lösen, nutze ich folgende Befehle (geht so nur unter Linux
    ```
  
 4. Unmounten der gemounteten Partition der SD-Karte
-   ```bash
+   ```console
    $ sudo umount /mnt
    ```
 
 Nachdem der Raspberry Pi mit der so modifizierten SD-Karte gebootet wurde, sollte der Zugriff mit SSH möglich sein. Dabei nicht vergessen, den Raspberry Pi über ein Ethernet-Kabel mit dem Router zu verbinden!
 Für den zugriff benötigt man natürllich die IP-Adresse oder den Hostnamen, der dem Raspberry Pi vom Router zugewiesen wurde (in meinem Beispiel ist das `raspi`)
 
-```bash
+```console
 $ ssh pi@raspi
 pi@raspi's password: 
 Linux raspberrypi 4.19.75-v7+ #1270 SMP Tue Sep 24 18:45:11 BST 2019 armv7l
@@ -100,7 +100,7 @@ pi@raspberrypi:~ $
 ### <a name="root-filesystem-vergroesern"></a> Root-Filesystem vergrößern
 Die Raspbian-Images werden in der Regel für SD-Karten mit einer Größe von 2 GB erstellt. Wenn die verwendete SD-Karte größer ist, bleibt der darüber hinausgehene Speicherplatz unbenutzt. Raspbian enthält jedoch das Utility `raspi-config`, mit dem man ganz einfach das Root-Filesystem so vergrößern kann, dass die gesamte SD-Karte genutzt wird (hier wurde eine 16 GB SD-Karte verwendet):
 
-```bash
+```console
 $ sudo raspi-config --expand-rootfs
 
 Welcome to fdisk (util-linux 2.33.1).
@@ -149,7 +149,7 @@ Please reboot
 
 ### Pakete aktualisieren
 Nach der Installation von Raspbian empfiehlt es sich, die Paket-Informationen zu aktualisieren:
-```bash
+```console
 $ sudo apt update
 Hit:1 http://raspbian.raspberrypi.org/raspbian buster InRelease
 Hit:2 http://archive.raspberrypi.org/debian buster InRelease
@@ -160,7 +160,7 @@ Reading state information... Done
 ```
 
 Danach sollte man die installierten Pakete aktualisieren:
-```bash
+```console
 $ sudo apt upgrade
 Reading package lists... Done
 Building dependency tree       
@@ -191,7 +191,7 @@ Unabhängig von dem Hostnamen, über den der Raspberry Pi im lokalen Netzwerk er
 
 Zum Ändern des Hostnames kann das Tool `raspi-config` verwendet werden, indem der Menüpunkt _System Options_ und dann der Menüpunkt _Hostname_ gewählt wird:
 
-```bash
+```console
 $ sudo raspi-config
 ```
 
@@ -200,7 +200,7 @@ Wenn der Hostname so geändert wird, propagiert der Raspberry Pi seinen Namen au
 ### Zeitzone einstellen
 Damit Zeitangaben zum Schalten der Geräte richtig interpretiert werden, sollte die Zeitzone des Raspberry auf die lokale Zeit gesetzt sein (nicht UTC!). Das kann mit folgendende Befehlen erreicht werden:
 
-```bash
+```console
 $ sudo /bin/bash -c "echo 'Europe/Berlin' > /etc/timezone"
 $ sudo cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ```
@@ -214,7 +214,7 @@ $ sudo apt install openjdk-25-jre-headless
 
 Die erfolgreiche Installation läßt sich mit folgendem Befehl überprüfen:
 
-```bash
+```console
 $ java -version
 openjdk version "25.0.3" 2026-04-21
 OpenJDK Runtime Environment (build 25.0.3+9-2-deb13u1-Debian)
@@ -227,7 +227,7 @@ Der *Smart Appliance Enabler* benötigt einen MQTT-Broker, wobei ein bereits vor
 ### Installation und Konfiguration
 [Eclipse Mosquitto](https://mosquitto.org/) lässt sich direkt aus Raspbian-Repository installieren:
 
-```bash
+```console
 $ sudo apt install mosquitto
 ```
 
@@ -246,13 +246,13 @@ allow_anonymous true
 
 Zum Starten eignet sich folgender Befehl:
 
-```bash
+```console
 $ sudo systemctl start mosquitto
 ```
 
 Um den MQTT-Broker beim Systemstart automatisch zu starten (via Systemd), muss folgender Befehl ausgeführt werden:
 
-```bash
+```console
 $ sudo systemctl enable mosquitto
 Synchronizing state of mosquitto.service with SysV service script with /lib/systemd/systemd-sysv-install.
 Executing: /lib/systemd/systemd-sysv-install enable mosquitto
@@ -261,13 +261,13 @@ Executing: /lib/systemd/systemd-sysv-install enable mosquitto
 ### Installation und Konfiguration mit Docker
 Für [Eclipse Mosquitto](https://mosquitto.org/) existiert ein Docker-Image:
 
-```bash
+```console
 $ docker pull eclipse-mosquitto
 ```
 
 Zum Starten ohne Authentifizierung eignet sich folgender Befehl:
 
-```bash
+```console
 $ docker run \
     -it \
     --rm \
@@ -287,7 +287,7 @@ Die optionale [Installaton von Node-RED](NodeRED_DE.md) ermöglicht die Nutzung 
 Zunächst werden User und Gruppe angelegt, die beim Starten des *Smart Appliance Enabler* verwendet werden und denen bestimmte Dateien/Verzeichnisse gehören.
 Danach werden Start-Script und zugehörige Konfigurationsdateien heruntergeladen und gleich die Berechtigungen für diese Dateien gesetzt.
 
-```bash
+```console
 $ sudo useradd -d /opt/sae -m -s /bin/bash sae
 $ sudo usermod -a -G sudo sae
 $ sudo passwd sae
@@ -319,20 +319,20 @@ Siehe auch:
 
 Damit der *Smart Appliance Enabler* beim Systemstart ebenfalls gestartet wird (via Systemd), muss folgender Befehl ausgeführt werden:
 
-```bash
+```console
 $ sudo systemctl enable smartapplianceenabler
 Created symlink /etc/systemd/system/multi-user.target.wants/smartapplianceenabler.service → /lib/systemd/system/smartapplianceenabler.service.
 ```
 
 Nach diesen Änderungen muss der Systemd die Service-Konfigurationen neu einlesen:
 
-```bash
+```console
 $ sudo systemctl daemon-reload
 ```
 
 Die erfolgreiche Registrierung des Dienstes *smartapplianceenabler* kann wie folgt überprüft werden:
 
-```bash
+```console
 $ systemctl list-units | grep smartapplianceenabler
 smartapplianceenabler.service                                                                loaded failed failed    Smart Appliance Enabler
 ```
@@ -342,7 +342,7 @@ Falls die zweite Zeile nicht angezeigt wird, sollte der Raspberry Pi neu gestart
 #### Programm-Download
 Der eigentliche Programmcode befindet sich in der Datei `SmartApplianceEnabler-X.Y.Z.war`, die ebenfalls heruntergeladen werden muss. *X.Y.Z* steht dabei für die aktuelle Versionsnummer (z.B. 2.1.0), die [hinter dem Download-Button](https://github.com/camueller/SmartApplianceEnabler#smart-appliance-enabler) angezeigt wird. 
 
-```bash
+```console
 $ VERSION=2.1.0
 $ sudo wget https://github.com/camueller/SmartApplianceEnabler/releases/download/${VERSION}/SmartApplianceEnabler-${VERSION}.war -P /opt/sae
 $ sudo chown -R sae:sae /opt/sae
@@ -350,7 +350,7 @@ $ sudo chown -R sae:sae /opt/sae
 
 Nach dem Download sollte geprüft werden, dass die heruntergeladene Programm-Datei mindestens 20 MB gross ist - andernfalls wurde möglicherweise eine inkorrekte URL verwendet:
 
-```bash
+```console
 $ ls -al /opt/sae/*.war
 -rw-r--r-- 1 sae sae 23040544 Oct 20 08:49 /opt/sae/SmartApplianceEnabler-1.4.15.war
 ```
@@ -358,7 +358,7 @@ $ ls -al /opt/sae/*.war
 #### Start
 Jetzt sollte man den *Smart Appliance Enabler* starten können:
 
-```bash
+```console
 $ sudo systemctl start smartapplianceenabler
 ```
 
@@ -369,14 +369,14 @@ Wenn der *Smart Appliance Enabler* läuft, muss als Nächstes die [Konfiguration
 #### Stop
 Das Stoppen des  *Smart Appliance Enabler* erfolgt so:
 
-```bash
+```console
 $ sudo systemctl stop smartapplianceenabler.service
 ```
 
 #### Status
 Mit folgendem Befehl lässt sich überprüfen, ob der *Smart Appliance Enabler* läuft:
 
-```bash
+```console
 $ sudo systemctl status smartapplianceenabler.service
 ● smartapplianceenabler.service - Smart Appliance Enabler
    Loaded: loaded (/lib/systemd/system/smartapplianceenabler.service; enabled; vendor preset: enabled)
@@ -392,7 +392,7 @@ $ sudo systemctl status smartapplianceenabler.service
 ### Update
 Zum Update einer vorhandenen Version muss zunächst das alte Programm gelöscht werden:
 
-```bash
+```console
 $ rm /opt/sae/*.war
 ```
 
@@ -400,7 +400,7 @@ Jetzt kann die gewünschte Version des Programms heruntergeladen und wie im Erst
 
 In den allermeisten Fällen kann die neue Version des *Smart Appliance Enabler* die Konfigurationsdateien der alten Version auf die neue Version migrieren. Falls sich beim Starten der neuen Version des *Smart Appliance Enabler* im Log Fehlermeldungen finden, welche eindeutig auf Probleme mit der Konfigurationsdatei hindeuten, sollten die Dateien so umbenannt werden, dass sie nicht verwendet werden aber ggf. wieder reaktiviert werden können:
 
-```bash
+```console
 $ mv /opt/sae/Appliances.xml /opt/sae/Appliances.xml.old
 $ mv /opt/sae/Device2EM.xml /opt/sae/Device2EM.xml.old
 ```
@@ -410,7 +410,7 @@ Danach muss die Konfiguration wie im Kapitel [Konfiguration](Configuration_DE.md
 ### <a name="notifications"></a> Benachrichtigungen
 Für den optionalen Versand von Benachrichtigungen via Instant-Messanger wie [Telegram](http://www.telegram.org), muss das entsprechende Shell-Script heruntergeladen und ausführbar gemacht werden:
 
-```bash
+```console
 $ wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/notifyWithTelegram.sh -P /opt/sae
 $ chmod +x /opt/sae/notifyWithTelegram.sh
 ```

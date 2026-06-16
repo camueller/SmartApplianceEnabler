@@ -46,21 +46,21 @@ On newer images, SSH is disabled by default for security reasons. Furthermore, t
 To resolve both issues, I use the following commands (this method works only on Linux):
 
 1. Mount the boot partition of the SD card:
-   ```bash
+   ```console
    $ sudo mount /dev/mmcblk0p1 /mnt
    ```
 2. Create an empty file named `ssh`:
-   ```bash
+   ```console
    $ sudo touch /mnt/ssh
    ```
 
 3. Create a file named `userconf` with the following content (this creates the user `pi` with the password `raspberry`—which, of course, should be changed):
-   ```bash
+   ```console
    $ echo "pi:$(echo raspberry | openssl passwd -6 -stdin)" | sudo tee /mnt/userconf
    ```
 
 4. Unmount the mounted partition of the SD card:
-   ```bash
+   ```console
    $ sudo umount /mnt
    ```
 

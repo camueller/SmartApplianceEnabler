@@ -83,7 +83,7 @@ export class SettingsModbusComponent implements OnChanges, OnInit {
     const modbusTcpHost = this.form.controls.modbusTcpHost.value;
     const modbusTcpPort = this.form.controls.modbusTcpPort.value;
 
-    if (!(modbusTcpId || modbusTcpHost || modbusTcpPort)) {
+    if (!(modbusTcpId)) {
       return undefined;
     }
 

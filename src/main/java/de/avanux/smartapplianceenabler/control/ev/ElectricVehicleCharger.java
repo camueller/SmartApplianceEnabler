@@ -429,7 +429,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             return EVChargerState.CHARGING_COMPLETED;
         }
         else if(vehicleConnected) {
-            if(allTimeframeIntervalRequestsAreFinished) {
+            if(wasInStateVehicleConnected && allTimeframeIntervalRequestsAreFinished) {
                 return EVChargerState.CHARGING_COMPLETED;
             }
             return EVChargerState.VEHICLE_CONNECTED;

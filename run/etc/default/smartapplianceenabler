@@ -55,7 +55,7 @@ JAVA_OPTS="${JAVA_OPTS} -Djava.awt.headless=true"
 JAVA_OPTS="${JAVA_OPTS} -Xmx256m"
 
 # Set language/country from which Java derives default locale
-JAVA_OPTS="${JAVA_OPTS} -Duser.language=de -Duser.country=DE"
+JAVA_OPTS="${JAVA_OPTS} -Duser.language=de -Duser.country=DE -Duser.timezone=Europe/Berlin"
 
 # Required for Pi4J FFM plugin (uses Java Foreign Function & Memory API for GPIO access without native libraries)
 JAVA_OPTS="${JAVA_OPTS} --enable-native-access=ALL-UNNAMED"

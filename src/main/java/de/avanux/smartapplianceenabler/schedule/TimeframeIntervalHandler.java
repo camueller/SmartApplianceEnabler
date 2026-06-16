@@ -695,8 +695,8 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
 
     public Integer suggestRuntime() {
         LocalDateTime now = LocalDateTime.now();
-        if(queue.size() > 0) {
-            TimeframeInterval timeframeInterval = queue.get(0);
+        if(!queue.isEmpty()) {
+            TimeframeInterval timeframeInterval = queue.getFirst();
             return timeframeInterval.getRequest().getMax(now);
         }
         return null;
@@ -709,11 +709,18 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         TimeframeInterval timeframeInterval = getFirstTimeframeInterval();
         if(timeframeInterval != null) {
             if(timeframeInterval.getRequest() instanceof RuntimeRequest) {
-                timeframeInterval.getInterval().setStart(now);
-                timeframeInterval.getInterval().setEnd(requiredIntervalEnd);
-                RuntimeRequest request = (RuntimeRequest) timeframeInterval.getRequest();
-                request.setEnabled(true);
-                request.setMax(runtime);
+                RuntimeRequest request;
+                if(timeframeInterval.getInterval().getStart().toLocalDate().equals(now.toLocalDate())) {
+                    timeframeInterval.getInterval().setStart(now);
+                    timeframeInterval.getInterval().setEnd(requiredIntervalEnd);
+                    request = (RuntimeRequest) timeframeInterval.getRequest();
+                    request.setEnabled(true);
+                    request.setMax(runtime);
+                } else {
+                    request = new RuntimeRequest(null, runtime);
+                    timeframeInterval = new TimeframeInterval(new Interval(now, requiredIntervalEnd), request);
+                    addTimeframeInterval(now, timeframeInterval, true, true);
+                }
                 request.setAcceptControlRecommendations(acceptControlRecommendations);
             }
         }

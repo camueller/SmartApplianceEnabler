@@ -359,9 +359,12 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
     }
 
     public void atMidnight() {
-        logger.debug("{}: Running midnight procdure ...", id);
+        logger.debug("{}: Running midnight procedure ...", id);
         if(meter != null && isEnergyMeteredDaily()) {
             meter.resetEnergyMeter();
+        }
+        if(hasConsecutiveDaysTimeframe()) {
+            timeframeIntervalHandler.fillQueue(LocalDateTime.now(), false);
         }
     }
 
@@ -382,11 +385,23 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         }
     }
 
+    public boolean hasConsecutiveDaysTimeframe() {
+        if(schedules != null) {
+            for (Schedule schedule : schedules) {
+                Timeframe timeframe = schedule.getTimeframe();
+                if(timeframe instanceof ConsecutiveDaysTimeframe) {
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean hasTimeframeForHolidays() {
         if(schedules != null) {
             for (Schedule schedule : schedules) {
                 Timeframe timeframe = schedule.getTimeframe();
-                if(timeframe instanceof  DayTimeframe) {
+                if(timeframe instanceof DayTimeframe) {
                     List<Integer> daysOfWeekValues = ((DayTimeframe) timeframe).getDaysOfWeekValues();
                     if(daysOfWeekValues != null && daysOfWeekValues.contains(DayTimeframe.DOW_HOLIDAYS)) {
                         return true;
