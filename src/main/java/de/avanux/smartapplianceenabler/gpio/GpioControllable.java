@@ -18,20 +18,21 @@
 package de.avanux.smartapplianceenabler.gpio;
 
 import com.pi4j.context.Context;
-import com.pi4j.io.gpio.digital.*;
+import com.pi4j.io.gpio.digital.DigitalInput;
+import com.pi4j.io.gpio.digital.DigitalOutput;
+import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.pwm.Pwm;
-import com.pi4j.io.pwm.PwmConfig;
 import com.pi4j.io.pwm.PwmType;
 import de.avanux.smartapplianceenabler.appliance.ApplianceIdConsumer;
 import de.avanux.smartapplianceenabler.configuration.ConfigurationException;
 import de.avanux.smartapplianceenabler.configuration.Validateable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlTransient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -44,6 +45,12 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
     private Integer gpio;
     private transient Context pi4jContext;
     private transient DigitalInput digitalInput;
+    /**
+     * Reference to the cached shared input. When non-null, this indicates that
+     * GpioControllable should NOT call digitalInput.close() during shutdown since
+     * the instance is shared and managed by GpioAccessProvider's cache.
+     */
+    private transient GpioAccessProvider.SharedDigitalInput sharedInput;
     private transient DigitalOutput digitalOutput;
     private transient Pwm pwm;
     private transient String applianceId;
@@ -76,12 +83,16 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
     }
 
     protected void initializeInput(PinPullResistance pinPullResistance) {
-        digitalInput = pi4jContext.create(DigitalInput.newConfigBuilder(pi4jContext)
-                .id("input-" + gpio)
-                .address(gpio)
-                .pull(pinPullResistance.toPi4jPullResistance())
-                .provider("ffm-digital-input")
-                .build());
+        // Use cached shared input to prevent Pi4J ComponentRegistry accumulation.
+        // Each pi4jContext.create(DigitalInput...) registers a new instance that is never unregistered,
+        // causing unbounded heap growth over repeated start/stop cycles.
+        this.sharedInput = GpioAccessProvider.provideSharedDigitalInput(gpio);
+        if (sharedInput != null) {
+            this.digitalInput = sharedInput.getDelegate();
+            logger.debug("{}: Using shared DigitalInput for GPIO {}", applianceId, gpio);
+        } else {
+            logGpioAccessDisabled(logger);
+        }
     }
 
     protected void initializePwm(int chip, int channel, int frequency) {
@@ -109,12 +120,23 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
     }
 
     protected void shutdownInput() {
-        if (digitalInput != null) {
+        if (sharedInput != null) {
+            // Use shared input refcount - close only releases when last user decrements
+            try {
+                sharedInput.close();
+            } catch (Exception e) {
+                logger.error("{}: Error releasing shared digital input on GPIO {}", applianceId, gpio, e);
+            }
+            this.sharedInput = null;
+            this.digitalInput = null;
+        } else if (digitalInput != null) {
+            // Legacy path - close directly on non-cached instances
             try {
                 digitalInput.close();
             } catch (Exception e) {
                 logger.error("{}: Error shutting down digital input on GPIO {}", applianceId, gpio, e);
             }
+            this.digitalInput = null;
         }
     }
 
