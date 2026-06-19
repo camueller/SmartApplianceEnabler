@@ -85,7 +85,7 @@ chmod 644 $SAE_HOME/logback-spring.xml 2>&1 >> $LOG
 #SAE_VERSION=`curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/camueller/SmartApplianceEnabler/releases | jq -c '.[] | select( .prerelease == false) | .tag_name' | head -n 1 | tr -d '"'`
 #wget "https://github.com/camueller/SmartApplianceEnabler/releases/download/"$SAE_VERSION"/SmartApplianceEnabler-"$SAE_VERSION".war" -P $SAE_HOME 2>>$LOG
 /usr/bin/pipx install gdown 2>&1 >> $LOG
-/root/.local/bin/gdown "1i-JJY1GC8VHeyqwKPUQJaCimQCzVRbeV" -O $SAE_HOME/SmartApplianceEnabler-2.5.3.war 2>&1 >> $LOG
+/root/.local/bin/gdown "1Wf3ZCamF3yxHT9_ClTkwgzKI2_g8eebS" -O $SAE_HOME/SmartApplianceEnabler-2.5.3.war 2>&1 >> $LOG
 
 chown -R sae:sae $SAE_HOME 2>&1 >> $LOG
 
