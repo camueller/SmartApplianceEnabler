@@ -28,19 +28,23 @@ public class IntegerValueTransformer extends ValueTransformerBase implements Val
     private Logger logger = LoggerFactory.getLogger(FloatValueTransformer.class);
     private Integer value = null;
     private RegisterValueType registerValueType;
+    private Double factorToValue = 1.0;
 
-    public IntegerValueTransformer(RegisterValueType valueType) {
+    public IntegerValueTransformer(RegisterValueType valueType, Double factorToValue) {
         this.registerValueType = valueType;
+        if(factorToValue != null) {
+            this.factorToValue = factorToValue;
+        }
     }
 
     public void setByteValues(Integer[] byteValues) {
         if(byteValues != null) {
             if (byteValues.length == 1) {
-                value = byteValues[0];
+                value = (int) (byteValues[0] * factorToValue);
                 logger.debug("{}: transformed value={}", applianceId, value);
             }
             else if (byteValues.length == 2) {
-                value = byteValues[0] << 16 | byteValues[1];
+                value = (int) ((byteValues[0] << 16 | byteValues[1]) * factorToValue);
                 logger.debug("{}: transformed value={}", applianceId, value);
             }
             else {

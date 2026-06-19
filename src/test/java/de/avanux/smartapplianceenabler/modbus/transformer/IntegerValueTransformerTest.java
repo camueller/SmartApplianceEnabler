@@ -32,7 +32,7 @@ public class IntegerValueTransformerTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        sut = new IntegerValueTransformer(RegisterValueType.Integer);
+        sut = new IntegerValueTransformer(RegisterValueType.Integer, 1.0);
     }
 
     @Nested
@@ -51,7 +51,7 @@ public class IntegerValueTransformerTest {
     class GetBytes {
         @Test
         public void getBytes_16bit() {
-            sut = new IntegerValueTransformer(RegisterValueType.Integer);
+            sut = new IntegerValueTransformer(RegisterValueType.Integer, 1.0);
             sut.setValue(38);
             Integer byteValues[] = { 0, 38 }; // 2 words: 0026
             assertArrayEquals(byteValues, sut.getByteValues());
@@ -59,7 +59,7 @@ public class IntegerValueTransformerTest {
 
         @Test
         public void getBytes_32bit() {
-            sut = new IntegerValueTransformer(RegisterValueType.Integer32);
+            sut = new IntegerValueTransformer(RegisterValueType.Integer32, 1.0);
             sut.setValue(38);
             Integer byteValues[] = { 0, 0, 0, 38 }; // 2 words: 0000 0026
             assertArrayEquals(byteValues, sut.getByteValues());

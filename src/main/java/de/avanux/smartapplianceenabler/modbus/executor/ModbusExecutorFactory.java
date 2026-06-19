@@ -139,7 +139,7 @@ public class ModbusExecutorFactory {
                 break;
             case Integer:
             case Integer32:
-                transformer = new IntegerValueTransformer(registerValueType);
+                transformer = new IntegerValueTransformer(registerValueType, factorToValue);
                 break;
             case String:
                 transformer = new StringValueTransformer();
