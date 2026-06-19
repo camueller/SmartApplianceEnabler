@@ -716,6 +716,7 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                     request = (RuntimeRequest) timeframeInterval.getRequest();
                     request.setEnabled(true);
                     request.setMax(runtime);
+                    request.resetRuntime();
                 } else {
                     request = new RuntimeRequest(null, runtime);
                     timeframeInterval = new TimeframeInterval(new Interval(now, requiredIntervalEnd), request);
