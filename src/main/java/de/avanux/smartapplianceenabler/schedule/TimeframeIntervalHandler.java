@@ -176,6 +176,10 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         return new ArrayList<>(queue);
     }
 
+    public boolean isQueueEmpty() {
+        return queue.isEmpty();
+    }
+
     public void clearQueue() {
         logger.debug("{}: Clearing queue", applianceId);
         var intervals = new ArrayList<TimeframeInterval>(queue);

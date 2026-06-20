@@ -363,7 +363,7 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         if(meter != null && isEnergyMeteredDaily()) {
             meter.resetEnergyMeter();
         }
-        if(hasConsecutiveDaysTimeframe()) {
+        if(schedules != null && timeframeIntervalHandler.isQueueEmpty()) {
             timeframeIntervalHandler.fillQueue(LocalDateTime.now(), false);
         }
     }
@@ -383,18 +383,6 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
                 }
             }
         }
-    }
-
-    public boolean hasConsecutiveDaysTimeframe() {
-        if(schedules != null) {
-            for (Schedule schedule : schedules) {
-                Timeframe timeframe = schedule.getTimeframe();
-                if(timeframe instanceof ConsecutiveDaysTimeframe) {
-                        return true;
-                }
-            }
-        }
-        return false;
     }
 
     public boolean hasTimeframeForHolidays() {
