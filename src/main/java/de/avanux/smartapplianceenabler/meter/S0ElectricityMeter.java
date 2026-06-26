@@ -18,7 +18,6 @@
 package de.avanux.smartapplianceenabler.meter;
 
 import com.pi4j.io.gpio.digital.DigitalState;
-import com.pi4j.io.gpio.digital.DigitalStateChangeListener;
 import de.avanux.smartapplianceenabler.gpio.GpioControllable;
 import de.avanux.smartapplianceenabler.gpio.PinPullResistance;
 import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
@@ -29,11 +28,11 @@ import de.avanux.smartapplianceenabler.notification.NotificationProvider;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
 import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Timer;
@@ -56,7 +55,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     private transient NotificationHandler notificationHandler;
     private transient MqttClient mqttClient;
     private transient String mqttPublishTopic = Meter.TOPIC;
-    private transient DigitalStateChangeListener stateChangeListener;
 
     @Override
     public void setNotificationHandler(NotificationHandler notificationHandler) {
@@ -133,8 +131,7 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         if(isGpioAvailable()) {
             try {
                 initializeInput(getPinPullResistance());
-                this.stateChangeListener = event -> onStateChange(event.state() == DigitalState.HIGH);
-                getDigitalInput().addListener(this.stateChangeListener);
+                getDigitalInput().addListener(event -> onStateChange(event.state() == DigitalState.HIGH));
             }
             catch(Exception e) {
                 logger.error("{}: Error start metering using GPIO {}", getApplianceId(), getPin(), e);
@@ -175,11 +172,6 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         }
         if(isGpioAvailable()) {
             try {
-                // Remove listeners first to release lambda closure capturing this S0ElectricityMeter instance
-                if (this.stateChangeListener != null) {
-                    getDigitalInput().removeListener(this.stateChangeListener);
-                    this.stateChangeListener = null;
-                }
                 shutdownInput();
             }
             catch(Exception e) {
