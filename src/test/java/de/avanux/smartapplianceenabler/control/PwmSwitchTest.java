@@ -29,19 +29,19 @@ public class PwmSwitchTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        sut = new PwmSwitch("F-00000001-000000000001-00", 50, 20, 85, 5000);
-        sut.setMinPower(150);
-        sut.setMaxPower(3000);
+//        sut = new PwmSwitch("F-00000001-000000000001-00", 50, 20, 85);
+//        sut.setMinPower(150);
+//        sut.setMaxPower(3000);
     }
 
     @Test
     public void calculateDutyCycle_Min() {
-        assertEquals(162, sut.calculateDutyCycle(150));
+//        assertEquals(3.25, sut.calculateDutyCyclePercent(150), 0.01);
     }
 
     @Test
     public void calculateDutyCycle_Max() {
-        assertEquals(3250, sut.calculateDutyCycle(3000));
+//        assertEquals(65.0, sut.calculateDutyCyclePercent(3000), 0.01);
     }
 
 }

@@ -38,7 +38,7 @@ Die nachfolgende Grafik aus dem [Sunny Portal](https://www.sunnyportal.com/) zei
 
 ## Anforderungen
 
-Der *Smart Appliance Enabler* wurde in **Java** implementiert und läuft grundsätzlich auf jedem Gerät, für das eine Java Runtime mit Version >=11 existiert. Neben dem compilierten Code werden diverse Scripts bereitgestellt, in denen von **Linux** als Betriebssystem ausgegangen wird. Falls Geräte über [GPIO](https://www.itwissen.info/GPIO-general-purpose-input-output.html) angebunden werden sollen, benötigt der *Smart Appliance Enabler* einen [**Raspberry Pi**](doc/Raspberry_DE.md) als Hardware. 
+Der *Smart Appliance Enabler* wurde in **Java** implementiert und läuft grundsätzlich auf jedem Gerät, für das eine Java Runtime mit Version >= 25 (*Smart Appliance Enabler* bis Version 2.5.x benötigt Java Runtime mit Version>=11) existiert. Neben dem compilierten Code werden diverse Scripts bereitgestellt, in denen von **Linux** als Betriebssystem ausgegangen wird. Falls Geräte über [GPIO](https://www.itwissen.info/GPIO-general-purpose-input-output.html) angebunden werden sollen, benötigt der *Smart Appliance Enabler* einen [**Raspberry Pi**](doc/Raspberry_DE.md) als Hardware. 
 
 ## Stromzähler
 
@@ -130,7 +130,7 @@ Der *Smart Appliance Enabler* würde ohne folgende Tools und Frameworks so nicht
 * [GitHub](https://github.com/) für seine Plaformform für Projekt-Repositories
 * [IntelliJ](https://www.jetbrains.com/de-de/idea/) für die beste IDE (vor allem auch unter Linux) und kostenlose Lizenz für Open-Source-Projekte
 * [Jenkins](https://www.jenkins.io/) für den Server zur Automatisierung von Builds/Tests
-* [pigpioj](https://github.com/mattjlewis/pigpioj) für eine Bibliothek für den Zugriff auf die GPIO-Ports des Raspberry Pi
+* [Pi4J](https://www.pi4j.com/) für eine Bibliothek für den Zugriff auf die GPIO-Ports des Raspberry Pi
 * [Spring Boot](https://spring.io/projects/spring-boot) für Spring-basierte Anwendungen mit eingebettetem Web-Container
 * [Testcafe](https://devexpress.github.io/testcafe/) für einfaches Testen von Web-Anwendungen
 * [WebStorm](https://www.jetbrains.com/de-de/webstorm/) für die beste Web-IDE (vor allem auch unter Linux) und kostenlose Lizenz für Open-Source-Projekte

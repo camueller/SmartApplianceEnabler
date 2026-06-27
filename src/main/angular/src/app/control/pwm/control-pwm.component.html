@@ -27,6 +27,22 @@
           <mat-error>{{errors.gpio}}</mat-error>
         }
       </mat-form-field>
+      <mat-form-field class="ControlPwmComponent__pwmChip">
+        <mat-label>{{'ControlPwmComponent.pwmChip' | translate}}</mat-label>
+        <input matInput type="text" formControlName="pwmChip"
+               required="{{isRequired('pwmChip')}}">
+        @if (errors.pwmChip) {
+          <mat-error>{{errors.pwmChip}}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field class="ControlPwmComponent__pwmChannel">
+        <mat-label>{{'ControlPwmComponent.pwmChannel' | translate}}</mat-label>
+        <input matInput type="text" formControlName="pwmChannel"
+               required="{{isRequired('pwmChannel')}}">
+        @if (errors.pwmChannel) {
+          <mat-error>{{errors.pwmChannel}}</mat-error>
+        }
+      </mat-form-field>
       <mat-form-field class="ControlPwmComponent__pwmFrequency">
         <mat-label>{{'ControlPwmComponent.pwmFrequency' | translate}}</mat-label>
         <input matInput type="text" formControlName="pwmFrequency"

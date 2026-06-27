@@ -69,6 +69,8 @@ export class ControlPwmComponent implements OnChanges, OnInit {
   ngOnInit() {
     this.errorMessages = new ErrorMessages('ControlPwmComponent.error.', [
       new ErrorMessage('gpio', ValidatorType.pattern),
+      new ErrorMessage('pwmChip', ValidatorType.pattern),
+      new ErrorMessage('pwmChannel', ValidatorType.pattern),
       new ErrorMessage('pwmFrequency', ValidatorType.pattern),
       new ErrorMessage('minDutyCycle', ValidatorType.pattern),
       new ErrorMessage('maxDutyCycle', ValidatorType.pattern),
@@ -85,16 +87,22 @@ export class ControlPwmComponent implements OnChanges, OnInit {
   expandParentForm() {
     this.form.addControl('gpio', new FormControl(this.pwmSwitch?.gpio,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
+    this.form.addControl('pwmChip', new FormControl(this.pwmSwitch?.pwmChip,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
+    this.form.addControl('pwmChannel', new FormControl(this.pwmSwitch?.pwmChannel,
+      [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
     this.form.addControl('pwmFrequency', new FormControl(this.pwmSwitch?.pwmFrequency,
       [Validators.required, Validators.pattern(InputValidatorPatterns.INTEGER)]));
     this.form.addControl('minDutyCycle', new FormControl(this.pwmSwitch?.minDutyCycle,
       Validators.pattern(InputValidatorPatterns.FLOAT)));
     this.form.addControl('maxDutyCycle', new FormControl(this.pwmSwitch.maxDutyCycle,
-      [Validators.required, Validators.pattern(InputValidatorPatterns.FLOAT)]));
+      Validators.pattern(InputValidatorPatterns.FLOAT)));
   }
 
   updateModelFromForm(): PwmSwitch | undefined {
     const gpio = this.form.controls.gpio.value;
+    const pwmChip = this.form.controls.pwmChip.value;
+    const pwmChannel = this.form.controls.pwmChannel.value;
     const pwmFrequency = this.form.controls.pwmFrequency.value;
     const minDutyCycle = this.form.controls.minDutyCycle.value;
     const maxDutyCycle = this.form.controls.maxDutyCycle.value;
@@ -104,6 +112,8 @@ export class ControlPwmComponent implements OnChanges, OnInit {
     }
 
     this.pwmSwitch.gpio = gpio;
+    this.pwmSwitch.pwmChip = pwmChip;
+    this.pwmSwitch.pwmChannel = pwmChannel;
     this.pwmSwitch.pwmFrequency = pwmFrequency;
     this.pwmSwitch.minDutyCycle = minDutyCycle;
     this.pwmSwitch.maxDutyCycle = maxDutyCycle;

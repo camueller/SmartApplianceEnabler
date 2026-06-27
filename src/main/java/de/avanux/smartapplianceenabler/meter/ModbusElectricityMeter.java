@@ -35,8 +35,8 @@ import de.avanux.smartapplianceenabler.util.ParentWithChild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;

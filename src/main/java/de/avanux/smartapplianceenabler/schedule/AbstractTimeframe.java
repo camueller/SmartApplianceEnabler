@@ -20,7 +20,7 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import org.apache.commons.lang3.SerializationUtils;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 @XmlTransient
 abstract public class AbstractTimeframe {

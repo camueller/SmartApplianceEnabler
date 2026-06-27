@@ -19,9 +19,9 @@ package de.avanux.smartapplianceenabler.schedule;
 
 import org.apache.commons.lang3.StringUtils;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -32,9 +32,9 @@ $ docker run \
 ### Raspberry Pi OS
 Von den [Raspberry Pi OS](https://www.raspberrypi.org/software) Images ist die **Lite-Version** ausreichend, sodass man eine *4GB-SD-Karte* verwenden kann.
 
-_**Für Smart Appliancer Enabler bis einschliesslich Version 1.4 gilt:**_ Es muss Raspberry Pi OS **Stretch** verwendet werden (Raspberry Pi OS **Buster** oder neuer ist nicht geeignet!!!). Download: https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/
+_**Für Smart Appliancer Enabler bis Version 2.5.x gilt:**_ Es ist mindestens Raspberry Pi OS **Buster** erforderlich. Allerdings sollte aktuell nicht Raspberry Pi OS **Trixie** verwendet werden, da es nicht das Package pigpiod enthält, was für den Zugriff auf die GPIO-Pins benötigt wird.
 
-_**Für Smart Appliancer Enabler ab Version 1.5 gilt:**_ Es ist mindestens Raspberry Pi OS **Buster** erforderlich. Allerdings sollte aktuell nicht Raspberry Pi OS **Trixie** verwendet werden, da es nicht das Package pigpiod enthält, was für den Zugriff auf die GPIO-Pins benötigt wird. Außerdem enthält es keine getestete Java-Version (OpenJDK 11/17).
+_**Für Smart Appliancer Enabler > Version 2.5.x gilt:**_ Es ist mindestens Raspberry Pi OS **Trixie** erforderlich.
 
 Zum Schreiben des Images auf eine SD-Karte eignet sich der [Raspberry Pi Imager](https://www.raspberrypi.org/software). Alternativ kann man mit dem nachfolgenden Befehl unter Linux das Image auf eine SD-Karte schreiben:
 ```console
@@ -66,8 +66,8 @@ Um beide Probleme zu lösen, nutze ich folgende Befehle (geht so nur unter Linux
    $ sudo touch /mnt/ssh
    ```
    
-3. Erzeugen einer Datei mit dem Namen `userconf` mit folgendem Inhalt (hier wird der Benutzer `pi` mit demPasswort `raspberry` angelegt, was natürlich geändert werden sollte): 
-   ```console
+3. Erzeugen einer Datei mit dem Namen `userconf` mit folgendem Inhalt (hier wird der Benutzer `pi` mit dem Passwort `raspberry` angelegt, was natürlich geändert werden sollte): 
+   ```bash
    $ echo "pi:$(echo raspberry | openssl passwd -6 -stdin)" | sudo tee /mnt/userconf
    ```
  
@@ -208,60 +208,17 @@ $ sudo cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ## Java installieren
 Zur Installation von Java ist folgender Befehl erforderlich:
 
-```console
-$ sudo apt install openjdk-11-jre-headless
+```bash
+$ sudo apt install openjdk-25-jre-headless
 ```
 
 Die erfolgreiche Installation läßt sich mit folgendem Befehl überprüfen:
 
 ```console
 $ java -version
-openjdk version "11.0.5" 2019-10-15
-OpenJDK Runtime Environment (build 11.0.5+10-post-Raspbian-1deb10u1)
-OpenJDK Server VM (build 11.0.5+10-post-Raspbian-1deb10u1, mixed mode)
-```
-
-#### Hinweis zum Raspberry Pi Zero
-**Die nachfolgenden Hinweise stammen von Usern, die den *Smart Appliance Enabler* auf einem Raspberry Pi Zero betreiben. Diese Platform ist offiziell nicht unterstützt, also bitte keinen Support bei Problemen erwarten.**
-
-OpenJDK 11 ist mit ARMv6 und ARMv7 leider nicht kompatibel. Dafür besteht die Möglichkeit über "Zulu Build for OpenJDK" von Azul eine Alternative zu installieren.
-Dafür zuerst ein Verzeichnis erstellen und anschließend die Architektur (Soft Float (armsf) oder Hard Float (armhf)) des OS bestimmen:
-
-```console
-$ sudo mkdir /opt/jdk
-$ cd /opt/jdk
-$ dpkg --print-architecture
-```
-
-Auf der [Downloadseite](https://www.azul.com/downloads/zulu-community/?version=java-11-lts&package=jdk) von Azul den Downloadlink der aktuellen Version für die passende Architektur (armsf oder armhf) kopieren. Danach downloaden, entpacken, aufräumen und verlinken:
-
-```console
-$ sudo wget https://cdn.azul.com/zulu-embedded/bin/zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf.tar.gz
-$ sudo tar -xzvf zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf.tar.gz
-$ sudo rm *.tar.gz
-$ sudo update-alternatives --install /usr/bin/java java /opt/jdk/zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf/bin/java 1
-$ sudo update-alternatives --install /usr/bin/javac javac /opt/jdk/zulu11.41.75-ca-jdk11.0.8-linux_aarch32hf/bin/javac 1
-```
-Da die Raspberry Pi 1-Modelle bzw. die Pi-Zero weniger Rechenleistung bereitstellen, dauert der Start des SAE im Allgmeinen etwas länger. Aus diesem Grund müssen die Timeout-Zeiten noch angepasst werden müssen, um einen Abbruch beim Programmstart zu verhindern. Dafür mit einem Editor in `/opt/sae/smartapplianceenabler` den `sleep 1` durch `sleep 3` ersetzen und in /lib/systemd/system/smartapplianceenabler.service `TimeoutStartSec=90s` auf `TimeoutStartSec=180s` ändern.
-
-## pigpiod installieren
-Falls der *Smart Appliance Enabler* auf die GPIO-Anschlüsse des Raspberry Pi zugreifen soll, muss die Bibliothek [pigpiod](http://abyz.me.uk/rpi/pigpio/) installiert sein. Das lässt sich mit folgendem Befehlen erreichen:
-
-```console
-$ sudo apt install pigpiod
-```
-
-Der `pigpiod` ist standardmässig so installiert, dass er nur lokale Zugriffe akzeptiert. Obwohl der *Smart Appliance Enabler* tatsächlich via `localhost` zugreift, ist der Zugriff auf den `pigpiod` nicht möglich, wenn er mit dieser Einschränkung gestartet wird. Zur Deaktivierung dieser Einschränkung muss in in der Datei `/lib/systemd/system/pigpiod.service` in der Zeile mit `ExecStart` der Parameter `-l` entfernt werden, sdoass sie wie folgt aussieht:
-
-```console
-ExecStart=/usr/bin/pigpiod
-```
-
-Um den Deamon beim Systemstart automatisch via `systemd` zu starten, muss folgender Befehl ausgeführt werden:
-
-```console
-$ sudo systemctl enable pigpiod
-Created symlink /etc/systemd/system/multi-user.target.wants/pigpiod.service → /lib/systemd/system/pigpiod.service.
+openjdk version "25.0.3" 2026-04-21
+OpenJDK Runtime Environment (build 25.0.3+9-2-deb13u1-Debian)
+OpenJDK 64-Bit Server VM (build 25.0.3+9-2-deb13u1-Debian, mixed mode, sharing)
 ```
 
 ## MQTT-Broker
@@ -417,7 +374,7 @@ $ sudo systemctl stop smartapplianceenabler.service
 ```
 
 #### Status
-Mit folgendem Befehl lässt sich üprüfen, ob der *Smart Appliance Enabler* läuft:
+Mit folgendem Befehl lässt sich überprüfen, ob der *Smart Appliance Enabler* läuft:
 
 ```console
 $ sudo systemctl status smartapplianceenabler.service
@@ -428,7 +385,7 @@ $ sudo systemctl status smartapplianceenabler.service
  Main PID: 24026 (sudo)
     Tasks: 48 (limit: 2063)
    CGroup: /system.slice/smartapplianceenabler.service
-           ├─24026 sudo -u sae /usr/bin/java -Djava.awt.headless=true -Xmx256m -Duser.language=de -Duser.country=DE -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=
+           ├─24026 sudo -u sae /usr/bin/java -Djava.awt.headless=true -Xmx512m -Duser.language=de -Duser.country=DE -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=
            └─24028 /usr/bin/java -Djava.awt.headless=true -Xmx256m -Duser.language=de -Duser.country=DE -Dlogging.config=/opt/sae/logback-spring.xml -Dsae.pidfile=/var/run/sae/smartapplianceenabler.pid -Dsae.home=/opt/sae -ja
 ```
 

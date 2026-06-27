@@ -22,6 +22,8 @@ export class PwmSwitch {
   }
   '@class' = PwmSwitch.TYPE;
   gpio: number;
+  pwmChip: number;
+  pwmChannel: number;
   pwmFrequency: number;
   minDutyCycle: number;
   maxDutyCycle: number;

@@ -88,13 +88,18 @@ public class WebConfig implements WebMvcConfigurer {
          * For Angular all requests have to go to index.html
          */
         registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/index.html")
+                .addResourceLocations("classpath:/static/")
                 .setCacheControl(noCache)
                 .resourceChain(true)
                 .addResolver(new PathResourceResolver() {
                     @Override
                     protected Resource getResource(String resourcePath, Resource location) throws IOException {
-                        return location.exists() && location.isReadable() ? location : null;
+                        Resource resource = super.getResource(resourcePath, location);
+                        if (resource != null) {
+                            return resource;
+                        }
+                        Resource indexHtml = new org.springframework.core.io.ClassPathResource("/static/index.html");
+                        return indexHtml.exists() ? indexHtml : null;
                     }
                 });
     }

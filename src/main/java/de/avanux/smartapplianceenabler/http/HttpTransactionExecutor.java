@@ -19,19 +19,20 @@ package de.avanux.smartapplianceenabler.http;
 
 import de.avanux.smartapplianceenabler.notification.NotificationHandler;
 import de.avanux.smartapplianceenabler.notification.NotificationType;
-import org.apache.http.HttpStatus;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.*;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.CredentialsStore;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.classic.methods.*;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +45,7 @@ public class HttpTransactionExecutor {
     private Logger logger = LoggerFactory.getLogger(HttpTransactionExecutor.class);
     private String applianceId;
     private RequestConfig requestConfig;
-    private HttpConfiguration configuration = new HttpConfiguration();
-    private NotificationHandler notificationHandler = null;
+    private HttpConfiguration configuration = new HttpConfiguration();    private NotificationHandler notificationHandler = null;
 
     public void setApplianceId(String applianceId) {
         this.applianceId = applianceId;
@@ -63,7 +63,7 @@ public class HttpTransactionExecutor {
         CloseableHttpResponse response = null;
         try {
             response = executeLeaveOpen(httpMethod, url, data);
-            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            if (response != null && response.getCode() == HttpStatus.SC_OK) {
                 return EntityUtils.toString(response.getEntity());
             }
         } catch (Exception e) {
@@ -82,10 +82,10 @@ public class HttpTransactionExecutor {
             withUsernameAndPassword(httpClientBuilder, configuration.getUsername(), configuration.getPassword());
             CloseableHttpClient client = httpClientBuilder
                     .setDefaultRequestConfig(getRequestConfig())
-                    .setRetryHandler(new DefaultHttpRequestRetryHandler(0, false))
+                    .disableAutomaticRetries()
                     .build();
             try {
-                HttpRequestBase request = null;
+                ClassicHttpRequest request = null;
                 if(httpMethod == null || httpMethod == HttpMethod.GET) {
                     request = new HttpGet(url);
                 }
@@ -102,9 +102,8 @@ public class HttpTransactionExecutor {
                     request = new HttpDelete(url);
                 }
                 if(request != null) {
-                    if(request instanceof HttpEntityEnclosingRequestBase && data != null) {
-                        ((HttpEntityEnclosingRequestBase) request)
-                                .setEntity(new StringEntity(data, configuration.getContentType()));
+                    if(data != null && (httpMethod == HttpMethod.POST || httpMethod == HttpMethod.PUT || httpMethod == HttpMethod.PATCH)) {
+                        ((HttpUriRequestBase) request).setEntity(new StringEntity(data, configuration.getContentType()));
                     }
                     response = client.execute(request);
                     logResponse(response);
@@ -127,9 +126,9 @@ public class HttpTransactionExecutor {
     protected HttpClientBuilder withUsernameAndPassword(HttpClientBuilder httpClientBuilder, String username, String password) {
         if(username != null && password != null) {
             logger.debug("{}: username={} password={}", applianceId, username, password);
-            CredentialsProvider provider = new BasicCredentialsProvider();
-            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-            provider.setCredentials(AuthScope.ANY, credentials);
+            CredentialsStore provider = new BasicCredentialsProvider();
+            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password.toCharArray());
+            provider.setCredentials(new AuthScope(null, -1), credentials);
             httpClientBuilder.setDefaultCredentialsProvider(provider);
         }
         return httpClientBuilder;
@@ -146,19 +145,19 @@ public class HttpTransactionExecutor {
     }
 
     private CloseableHttpResponse logResponse(CloseableHttpResponse response) {
-        int responseCode = response.getStatusLine().getStatusCode();
+        int responseCode = response.getCode();
         logger.debug("{}: Response code is {}", applianceId, responseCode);
         return response;
     }
 
     private RequestConfig getRequestConfig() {
         if(this.requestConfig == null) {
-            int timeout = 5; // seconds
+            int timeout = 5;
             this.requestConfig = RequestConfig.custom()
-                    .setConnectTimeout(timeout * 1000)
-                    .setConnectionRequestTimeout(timeout * 1000)
-                    .setSocketTimeout(timeout * 1000).build();
-
+                    .setConnectTimeout(Timeout.ofSeconds(timeout))
+                    .setConnectionRequestTimeout(Timeout.ofSeconds(timeout))
+                    .setResponseTimeout(Timeout.ofSeconds(timeout))
+                    .build();
         }
         return this.requestConfig;
     }

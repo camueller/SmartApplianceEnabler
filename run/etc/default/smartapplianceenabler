@@ -57,8 +57,8 @@ JAVA_OPTS="${JAVA_OPTS} -Xmx256m"
 # Set language/country from which Java derives default locale
 JAVA_OPTS="${JAVA_OPTS} -Duser.language=de -Duser.country=DE -Duser.timezone=Europe/Berlin"
 
-# Configure pigpioj to use pigpiod daemon in order to avoid forcing the Smart Appliance Enabler to run as root
-JAVA_OPTS="${JAVA_OPTS} -DPIGPIOD_HOST=localhost"
+# Required for Pi4J FFM plugin (uses Java Foreign Function & Memory API for GPIO access without native libraries)
+JAVA_OPTS="${JAVA_OPTS} --enable-native-access=ALL-UNNAMED"
 
 # Enable this line for remote debugging on port 8000
 JAVA_OPTS="${JAVA_OPTS} -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000"

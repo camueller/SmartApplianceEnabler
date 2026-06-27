@@ -33,10 +33,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -45,6 +45,7 @@ import java.util.*;
 public class SempController {
 
     private static final String BASE_URL = "/semp";
+    private static final String BASE_URL_SLASH = "/semp/";
     private static final String CROSS_ORIGIN_URL = "http://localhost:4200";
     public static final String SCHEMA_LOCATION = "http://www.sma.de/communication/schema/SEMP/v1";
     private Logger logger = LoggerFactory.getLogger(SempController.class);
@@ -88,7 +89,7 @@ public class SempController {
         });
     }
 
-    @RequestMapping(value = BASE_URL, method = RequestMethod.GET, produces = "application/xml")
+    @RequestMapping(value = {BASE_URL, BASE_URL_SLASH}, method = RequestMethod.GET, produces = "application/xml")
     public String device2EM(HttpServletResponse response) {
         try {
             LocalDateTime now = LocalDateTime.now();
@@ -290,7 +291,7 @@ public class SempController {
         }
     }
 
-    @RequestMapping(value = BASE_URL, method = RequestMethod.POST, consumes = "application/xml")
+    @RequestMapping(value = {BASE_URL, BASE_URL_SLASH}, method = RequestMethod.POST, consumes = "application/xml")
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public void em2Device(@RequestBody EM2Device em2Device) {
         try {

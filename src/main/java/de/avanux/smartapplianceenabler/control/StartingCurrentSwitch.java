@@ -30,7 +30,7 @@ import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.*;
 

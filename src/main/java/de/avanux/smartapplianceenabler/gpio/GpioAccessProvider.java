@@ -18,26 +18,33 @@
 
 package de.avanux.smartapplianceenabler.gpio;
 
+import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
+import com.pi4j.plugin.ffm.providers.gpio.FFMDigitalInputProviderImpl;
+import com.pi4j.plugin.ffm.providers.gpio.FFMDigitalOutputProviderImpl;
+import com.pi4j.plugin.ffm.providers.pwm.FFMPwmProviderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.pigpioj.PigpioInterface;
-import uk.pigpioj.PigpioJ;
 
 public class GpioAccessProvider {
     private static Logger logger = LoggerFactory.getLogger(GpioAccessProvider.class);
 
-    private static PigpioInterface pigpioInterfaceInstance = null;
+    private static Context pi4jContext = null;
 
-    public static PigpioInterface getPigpioInterface() {
+    public static Context getPi4jContext() {
         if(System.getProperty("os.arch").equals("arm") || System.getProperty("os.arch").equals("aarch64")) {
             try {
-                if(pigpioInterfaceInstance == null) {
-                    pigpioInterfaceInstance = PigpioJ.autoDetectedImplementation();
+                if(pi4jContext == null) {
+                    pi4jContext = Pi4J.newContextBuilder()
+                            .add(new FFMDigitalInputProviderImpl())
+                            .add(new FFMDigitalOutputProviderImpl())
+                            .add(new FFMPwmProviderImpl())
+                            .build();
                 }
-                return pigpioInterfaceInstance;
+                return pi4jContext;
             }
-            catch(Error e) {
-                logger.error("Error creating PigpioInterface.", e);
+            catch(Throwable e) {
+                logger.error("Error creating Pi4J context.", e);
             }
         }
         else {
@@ -45,5 +52,4 @@ public class GpioAccessProvider {
         }
         return null;
     }
-
 }

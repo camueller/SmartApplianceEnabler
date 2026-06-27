@@ -1,33 +1,55 @@
 # PWM-Schalter
-Ein PWM-Schalter ermöglicht die Steuerung von Verbrauchern mit **variabler Leistungsaufnahme** sofern sich diese über [PWM (Pulsweitenmodulation)](https://de.wikipedia.org/wiki/Pulsdauermodulation) steuern lassen. Die **GPIO-Anschlüsse** des Raspberry Pi können nicht nur ein- und ausgeschaltet werden, sondern auch ein PWM-Signal senden.
+Ein PWM-Schalter ermöglicht die Steuerung von Verbrauchern mit **variabler Leistungsaufnahme** sofern sich diese über [PWM (Pulsweitenmodulation)](https://de.wikipedia.org/wiki/Pulsdauermodulation) steuern lassen. Dazu nutzt der *Smart Appliance Enabler* den [Linuxfs Provider von Pi4J](https://www.pi4j.com/documentation/io-types/pwm/), welcher nur Hardware-PWM untersützt (ab Raspberry Pi 4 verfügbar).
 
-In den [Einstellungen für das Gerät](Appliance_DE.md) muss ein Wert für die *Min. Leistungsaufnahme* eingegeben werden. Ausserdem muss ein [Zeitplan für Überschussenergie](Schedules_DE.md) konfiguriert sein.
+Auf dem Raspberry Pi muss [PWM zunächst aktiviert werden](https://www.pi4j.com/documentation/io-types/pwm/#pwm-gpios-1).  Auf meinem Raspberry Pi 5 mit Raspberry Pi OS Trixie habe ich dazu in der Datei `/boot/firmware/config.txt` am Dateiende hinter `[all]` die Zeile  hinzugefügt, um GPIO 18 als PWM-Ausgang zu konfigurieren:
+```shell
+dtoverlay=pwm,pin=18
+```
+Die Änderung wird erst nach einem Neustart des Raspberry Pi wirksam!
 
-Die nachfolgende Abbildung zeigt die PWM-Einstellungen für ein Modellbau-Servo:
+Für die Konfiguration eines PWM-Schalters im *Smart Appliance Enabler* muss außer dem GPIO-Anschluss auch der PWM-Chip und der PWM-Kanal angegeben werden. Diese hängen von der verwendeten Hardware ab. Die Zuordnung des GPIO 18 zu PWM-Chips und -Kanälen kann man mit folgendem Befehl anzeigen:
+
+```bash
+$ pinctrl get 18
+18: a3    pd | lo // GPIO18 = PWM0_CHAN2
+```
+Auf einem Raspberry Pi 5 ist GPIO 18 dem PWM-Chip 0 und dem PWM-Kanal 2 zugeordnet.
+
+Außer GPIO-Anschluss, PWM-Chip und PWM-Kanal muss mindesten noch die PWM-Frequenz angegeben werden, die bestimmt, wie oft pro Sekunde das PWM-Signal übertragen wird. Der Umkehrwert der PWM-Frequenz ist die maximal Zeitdauer eines PWM-Signals, d.h. bei einer PWM-Frequenz von 50Hz beträgt die maximale Zeitdauer eines PWM-Signals 1/50s = 20ms.
 
 ![PWM Switch](../pics/fe/PwmSwitch_DE.png)
 
-Bei der Konfiguration des GPIO-Anschlusses sollten unbedingt die [Hinweise zum Raspberry Pi und zur Numerierung der GPIO-Anschlüsse](Raspberry_DE.md) beachtet werden!
+In den [Einstellungen für das Gerät](Appliance_DE.md) muss ein Wert für die *Min. Leistungsaufnahme* eingegeben werden. Ausserdem muss ein [Zeitplan für Überschussenergie](Schedules_DE.md) konfiguriert sein.
 
-Das nachfolgende Bild zeigt in blauer Farbe verschiedene Tastgrade (0% bis 100%), wobei der min. Tastgrad 0% und der max. Tastgrad 100% ist. In Abhängigkeit von Gerät bzw. Steuerung kann es erforderlich sein, einen min. Tastgrad nicht zu unterschreiten (rote Farbe: ca. 25%) und/oder einen max. Tastgrad nicht zu überschreiten (grüne Farbe: ca. 60%).
+Der *Smart Appliance Enabler* berechnet aus der gewünschten Leistungsaufnahme und den im *Smart Appliance Enabler* konfigurierten Werten für *Min. Leistungsaufnahme*, *Max. Leistungsaufnahme*, *min. Tastgrad* und *max. Tastgrad* den Tastgrad des PWM-Signals, welcher dann über den angegebenen GPIO-Anschluss ausgegeben wird. Je höher die gewünschte Leistungsaufnahme, desto höher der Tastgrad. Wird ein Tastgrad von 0 berechnet, wird der GPIO-Ausgang auf LOW gesetzt.
 
-![PWM signal](../pics//pwm.png)
+## Keine Angabe von min. und max. Tastgrad
+Die gewünschte Leistungsaufnahme wird vom *Smart Appliance Enabler* so übersetzt, dass ein Tastgrad von 0% der im *Smart Appliance Enabler* konfigurierten *Min. Leistungsaufnahme* entspricht und ein Tastgrad von 100% der im *Smart Appliance Enabler* konfigurierten *Max. Leistungsaufnahme*.
 
-Der für die Steuerung durch den *Smart Appliance Enabler* nutzbare Bereich beginnt beim min. Tastgrad und endet beim max. Tastgrad.
+## Angabe von min. und/oder max. Tastgrad
+Die gewünschte Leistungsaufnahme wird vom *Smart Appliance Enabler* so übersetzt, dass der min. Tastgrad der im *Smart Appliance Enabler* konfigurierten *Min. Leistungsaufnahme* entspricht und der max. Tastgrad der im *Smart Appliance Enabler* konfigurierten *Max. Leistungsaufnahme*.
 
-Im einfachsten Fall ist der min. Tastgrad 0% und der max. Tastgrad 100%. Hier kann der *Smart Appliance Enabler* den Leistungsaufnahmebereich zwischen min. Leistungsaufnahme (im einfachsten Fall 0W) und max. Leistungsaufnahme auf diese 100% mappen.
 
-Komplizierter ist es, wenn ein min. Tastgrad (rote Farbe: ca. 25%) und ein max. Tastgrad (grüne Farbe: ca. 60%) zu berücksichtigen sind. Damit stehen nur 60%-25%=35% Tastgrad zur Verfügung, um die Spanne zwischen min. Leistungsaufnahme (z.B. 1000W) und max. Leistungsaufnahme (z.B. 4000W) abzubilden. Dabei entspricht eine Leistungsaufnahme von 1000W einem Tastgrad von 25% und eine Leistungsaufnahme von 4000W einem Tastgrad von 60%. 
-
-Für die Konfiguration des PWM-Signals muss mindestens die `PWM-Frequenz` angegeben werden.
+## Beispiel: Modellbau-Servo
+Modellbau-Servos werden über PWM-Signale gesteuert, wobei die Position des Servos-Arms durch den Tastgrad des PWM-Signals bestimmt wird. Üblicherweise beträgt die PWM-Frequenz 50Hz. Der linke Anschlag hat einen Tastgrad von ca. 3% (1ms Pulsdauer), die Mittelstellung einen Tastgrad von ca. 7,25% (1,5ms Pulsdauer) und der rechte Anschlag einen Tastgrad von ca. 11,5% (2ms Pulsdauer).
 
 ## Log
-Wird ein Gerät (hier `F-00000001-000000000001-00`) mit konfiguriertem PWM-Schalter gesteuert, kann man die Steuerbefehle im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
+Wird ein Gerät (hier `F-00000001-000000000003-00`) mit konfiguriertem PWM-Schalter gesteuert, kann man die Steuerbefehle im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
 
 ```bash
-$ grep "c.PwmSwitch" /tmp/rolling-2022-03-27.log | grep F-00000001-000000000001-00
-2022-03-27 08:00:49,798 INFO [MQTT Call: F-00000001-000000000001-00-PwmSwitch] d.a.s.c.PwmSwitch [PwmSwitch.java:144] F-00000001-000000000001-00: Setting power to 2000
-2022-03-27 08:00:49,799 INFO [MQTT Call: F-00000001-000000000001-00-PwmSwitch] d.a.s.c.PwmSwitch [PwmSwitch.java:158] F-00000001-000000000001-00: Setting GPIO 17 duty cycle to 310
+$ grep "c.PwmSwitch" /tmp/rolling-2026-05-27.log | grep F-00000001-000000000003-00
+2026-05-27 14:38:15,290 DEBUG [Thread-3] d.a.s.c.PwmSwitch [PwmSwitch.java:121] F-00000001-000000000003-00: configured: minPowerConsumption=2000 maxPowerConsumption=10000
+2026-05-27 14:38:15,786 DEBUG [Thread-3] d.a.s.c.PwmSwitch [PwmSwitch.java:134] F-00000001-000000000003-00: Starting for GPIO 18
+2026-05-27 14:38:15,797 INFO [Thread-3] d.a.s.c.PwmSwitch [PwmSwitch.java:218] F-00000001-000000000003-00: Setting GPIO 18 duty cycle to 0.0% (0 ms)
+2026-05-27 14:38:15,797 DEBUG [Thread-3] d.a.s.c.PwmSwitch [PwmSwitch.java:139] F-00000001-000000000003-00: GPIO=18 pwmChip=0 pwmChannel=2 pwmFrequency=50 minDutyCycle=3.0(0 ms) maxDutyCycle=11.5(2 ms)
+[...]
+2026-05-27 15:01:28,233 INFO [MQTT Call: F-00000001-000000000003-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:194] F-00000001-000000000003-00: Setting power to 2000W
+2026-05-27 15:01:28,233 DEBUG [MQTT Call: F-00000001-000000000003-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:213] F-00000001-000000000003-00: Calculated duty cycle=3.0% from power ratio=0.0
+2026-05-27 15:01:28,233 INFO [MQTT Call: F-00000001-000000000003-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:218] F-00000001-000000000003-00: Setting GPIO 18 duty cycle to 3.0% (0 ms)
+[...]
+026-05-27 14:41:38,656 INFO [MQTT Call: F-00000001-000000000003-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:194] F-00000001-000000000003-00: Setting power to 10000W
+2026-05-27 14:41:38,656 DEBUG [MQTT Call: F-00000001-000000000003-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:213] F-00000001-000000000003-00: Calculated duty cycle=11.5% from power ratio=1.0
+2026-05-27 14:41:38,657 INFO [MQTT Call: F-00000001-000000000003-00-PwmSwitch-0] d.a.s.c.PwmSwitch [PwmSwitch.java:218] F-00000001-000000000003-00: Setting GPIO 18 duty cycle to 11.5% (2 ms)
 ```
 
 *Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` den Text `c.PwmSwitch` ein und drückt Refresh.

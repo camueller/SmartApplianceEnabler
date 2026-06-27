@@ -17,9 +17,8 @@
  */
 package de.avanux.smartapplianceenabler.meter;
 
+import com.pi4j.io.gpio.digital.DigitalState;
 import de.avanux.smartapplianceenabler.gpio.GpioControllable;
-import de.avanux.smartapplianceenabler.gpio.PinEdge;
-import de.avanux.smartapplianceenabler.gpio.PinMode;
 import de.avanux.smartapplianceenabler.gpio.PinPullResistance;
 import de.avanux.smartapplianceenabler.mqtt.MeterMessage;
 import de.avanux.smartapplianceenabler.mqtt.MqttClient;
@@ -31,15 +30,14 @@ import de.avanux.smartapplianceenabler.notification.Notifications;
 import de.avanux.smartapplianceenabler.util.GuardedTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.pigpioj.PigpioCallback;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Timer;
 
-public class S0ElectricityMeter extends GpioControllable implements Meter, NotificationProvider, PigpioCallback {
+public class S0ElectricityMeter extends GpioControllable implements Meter, NotificationProvider {
 
     private transient Logger logger = LoggerFactory.getLogger(S0ElectricityMeter.class);
     @XmlAttribute
@@ -130,11 +128,10 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
     @Override
     public void start(LocalDateTime now, Timer timer) {
         logger.debug("{}: Starting {}", getApplianceId(), getClass().getSimpleName());
-        if(isPigpioInterfaceAvailable()) {
+        if(isGpioAvailable()) {
             try {
-                setMode(PinMode.INPUT);
-                setPinPullResistance(getPinPullResistance());
-                enableListener(this, PinEdge.EITHER);
+                initializeInput(getPinPullResistance());
+                getDigitalInput().addListener(event -> onStateChange(event.state() == DigitalState.HIGH));
             }
             catch(Exception e) {
                 logger.error("{}: Error start metering using GPIO {}", getApplianceId(), getPin(), e);
@@ -173,9 +170,9 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         if(this.mqttPublishTimerTask != null) {
             this.mqttPublishTimerTask.cancel();
         }
-        if(isPigpioInterfaceAvailable()) {
+        if(isGpioAvailable()) {
             try {
-                disableListener();
+                shutdownInput();
             }
             catch(Exception e) {
                 logger.error("{}: Error stop metering using GPIO {}", getApplianceId(), getPin(), e);
@@ -189,11 +186,10 @@ public class S0ElectricityMeter extends GpioControllable implements Meter, Notif
         }
     }
 
-    @Override
-    public void callback(int pin, boolean value, long epochTime, long nanoTime) {
+    private void onStateChange(boolean high) {
         LocalDateTime now = LocalDateTime.now();
-        if((getPinPullResistance() == PinPullResistance.PULL_DOWN && value)
-                || (getPinPullResistance() == PinPullResistance.PULL_UP && !value)) {
+        if((getPinPullResistance() == PinPullResistance.PULL_DOWN && high)
+                || (getPinPullResistance() == PinPullResistance.PULL_UP && !high)) {
             pulseTimestamp = now;
         }
         else if (pulseTimestamp != null && Duration.between(pulseTimestamp, now).toMillis() > getMinPulseDuration()) {

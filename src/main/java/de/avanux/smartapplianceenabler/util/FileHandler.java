@@ -17,14 +17,13 @@
  */
 package de.avanux.smartapplianceenabler.util;
 
-import com.sun.xml.bind.marshaller.MinimumEscapeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -101,7 +100,6 @@ public class FileHandler {
             JAXBContext context = JAXBContext.newInstance(object.getClass());
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.setProperty("com.sun.xml.bind.characterEscapeHandler", MinimumEscapeHandler.theInstance);
             marshaller.marshal(object, stringWriter);
 
             // this is a hack to remove default namespace ns2 but I did not find any other way that worked :-(

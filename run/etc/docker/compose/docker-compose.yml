@@ -12,16 +12,6 @@ services:
       macvlan0:
         # diese IP-Adresse oder der Container-Name muss in den Einstellung des Smart Appliance Enabler als MQTT Host eingetragen werden
         ipv4_address: 192.168.0.201
-  pigpiod:
-    # muss entfallen, falls der Smart Appliance Enabler nicht auf einem Raspberry Pi läuft
-    image: zinen2/alpine-pigpiod
-    container_name: pigpiod
-    networks:
-      macvlan0:
-        ipv4_address: 192.168.0.202
-    devices:
-      - /dev/gpiochip0
-    privileged: true
   sae:
     image: avanux/smartapplianceenabler
     container_name: sae
@@ -29,8 +19,6 @@ services:
     depends_on:
       # entfernen, falls ein anderer MQTT-Broker verwendet wird
      - mosquitto
-      # entfernen, falls pigpiod nicht verwendet wird oder der Smart Appliance Enabler nicht auf einem Raspberry Pi läuft
-     - pigpiod
     networks:
       macvlan0:
         # diese IP-Adresse wird dem Container zugewiesen, in dem der Smart Appliance Enabler läuft
@@ -41,12 +29,16 @@ services:
       - sae:/opt/sae/data
       - /etc/localtime:/etc/localtime
       - /etc/timezone:/etc/timezone
+    devices:
+      # Raspberry Pi 1-4: /dev/gpiochip0, Raspberry Pi 5: /dev/gpiochip4
+      # nur erforderlich, wenn GPIO-Pins verwendet werden
+      - /dev/gpiochip0
+      - /dev/gpiochip4
     environment:
       # in der nachfolgenden Zeile können Konfigurationsparameter an den Smart Appliance Enabler übergeben werden
       # Für mögliche Parameter siehe mit JAVA_OPTS beginnende Zeilen in https://github.com/camueller/SmartApplianceEnabler/blob/master/run/etc/default/smartapplianceenabler
       # Beispiel: JAVA_OPTS: '-Dserver.port=9000'
-      # Bei Verwendung von pigpiod muss -DPIGPIOD_HOST auf die IP-Adresse oder den Container-Namen gesetzt sein, welche dem pigpiod-Container zugewiesen wurde
-      JAVA_OPTS: '-DPIGPIOD_HOST=pigpiod'
+      JAVA_OPTS: ''
     privileged: true
 volumes:
   sae:
