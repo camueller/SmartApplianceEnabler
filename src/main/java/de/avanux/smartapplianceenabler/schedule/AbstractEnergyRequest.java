@@ -30,44 +30,9 @@ import javax.xml.bind.annotation.XmlTransient;
 abstract public class AbstractEnergyRequest extends AbstractRequest {
 
     private transient boolean updateTimeframeIntervalEnd;
-    private transient EVChargerState evChargerState;
-    private transient boolean socScriptUsed;
 
     protected Logger getLogger() {
         return LoggerFactory.getLogger(AbstractEnergyRequest.class);
-    }
-
-    public boolean isSocScriptUsed() {
-        return socScriptUsed;
-    }
-
-    public void setSocScriptUsed(boolean socScript) {
-        this.socScriptUsed = socScript;
-    }
-
-    @Override
-    public void init() {
-        super.init();
-        getMqttClient().subscribe(MqttEventName.EVChargerStateChanged, (topic, message) -> {
-            if(message instanceof EVChargerStateChangedEvent) {
-                getLogger().debug("{} Handling event ControlStateChanged", getApplianceId());
-                EVChargerStateChangedEvent event = (EVChargerStateChangedEvent) message;
-                this.evChargerState = event.newState;
-                if(event.newState == EVChargerState.VEHICLE_CONNECTED && (!socScriptUsed || !(this instanceof SocRequest))) {
-                    setEnabled(true);
-                }
-                else if(isActive() && (event.newState == EVChargerState.VEHICLE_NOT_CONNECTED
-                        || event.newState == EVChargerState.CHARGING_COMPLETED)) {
-                    setEnabled(false);
-                }
-            }
-        });
-    }
-
-    @Override
-    public void remove() {
-        super.remove();
-        getMqttClient().unsubscribe(MqttEventName.EVChargerStateChanged);
     }
 
     public void setUpdateTimeframeIntervalEnd(boolean updateTimeframeIntervalEnd) {
@@ -77,9 +42,4 @@ abstract public class AbstractEnergyRequest extends AbstractRequest {
     public boolean isUpdateTimeframeIntervalEnd() {
         return updateTimeframeIntervalEnd;
     }
-
-    public EVChargerState getEvChargerState() {
-        return evChargerState;
-    }
-
 }

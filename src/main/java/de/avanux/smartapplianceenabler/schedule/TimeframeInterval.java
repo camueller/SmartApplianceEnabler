@@ -117,10 +117,6 @@ public class TimeframeInterval implements ApplianceIdConsumer {
             )
             && ! getRequest().isControlOn()
             && (! (getRequest() instanceof OptionalEnergySocRequest) || (getRequest().getMax(now) != null && getRequest().getMax(now) <= 0))
-        )
-        || (
-                getRequest() instanceof OptionalEnergySocRequest
-                        && ((OptionalEnergySocRequest) getRequest()).getEvChargerState() == EVChargerState.VEHICLE_NOT_CONNECTED
         );
     }
 

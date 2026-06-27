@@ -494,6 +494,39 @@ public class SaeController {
         setAcceptControlRecommendations(response, applianceId, null);
     }
 
+    /**
+     * Set the enabled flag on the active timeframe interval request.
+     * Called from the frontend when a running appliance with optional energy is stopped via the red traffic light.
+     */
+    @RequestMapping(value = CONTROLRECOMMENDATIONS_URL, method = RequestMethod.PATCH)
+    @CrossOrigin(origins = CROSS_ORIGIN_URL)
+    public void setEnabledActiveTimeframeInterval(
+            HttpServletResponse response,
+            @RequestParam(value = "id") String applianceId,
+            @RequestParam(value = "enabled") Boolean enabled) {
+        synchronized (lock) {
+            try {
+                logger.debug("{}: Set active timeframe interval request enabled={}",
+                        applianceId, enabled);
+                Appliance appliance = ApplianceManager.getInstance().findAppliance(applianceId);
+                if (appliance != null) {
+                    TimeframeIntervalHandler timeframeIntervalHandler = appliance.getTimeframeIntervalHandler();
+                    if (timeframeIntervalHandler != null) {
+                        TimeframeInterval activeTimeframeInterval = timeframeIntervalHandler.getActiveTimeframeInterval();
+                        if (activeTimeframeInterval != null) {
+                            activeTimeframeInterval.getRequest().setEnabled(enabled);
+                        }
+                    }
+                } else {
+                    logger.error("{}: Appliance not found", applianceId);
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Throwable e) {
+                logger.error("Error in " + getClass().getSimpleName(), e);
+            }
+        }
+    }
+
     @RequestMapping(value = RUNTIME_URL, method = RequestMethod.GET)
     @CrossOrigin(origins = CROSS_ORIGIN_URL)
     public Integer suggestRuntime(HttpServletResponse response, @RequestParam(value = "id") String applianceId) {

@@ -100,4 +100,9 @@ export class StatusService extends SaeService {
     const url = `${SaeService.API}/controlrecommendations?id=${id}`;
     return this.http.delete(url);
   }
+
+  enableActiveTimeframeInterval(id: string, enabled: boolean): Observable<any> {
+    const url = `${SaeService.API}/controlrecommendations?id=${id}&enabled=${enabled}`;
+    return this.http.patch(url, '');
+  }
 }

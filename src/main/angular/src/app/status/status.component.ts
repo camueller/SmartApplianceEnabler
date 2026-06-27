@@ -21,10 +21,10 @@ import {MqttSettings} from '../settings/mqtt-settings';
 import {MatDialog} from '@angular/material/dialog';
 
 @Component({
-    selector: 'app-status',
-    templateUrl: './status.component.html',
-    styleUrls: ['./status.component.scss'],
-    standalone: false
+  selector: 'app-status',
+  templateUrl: './status.component.html',
+  styleUrls: ['./status.component.scss'],
+  standalone: false
 })
 export class StatusComponent implements OnInit, OnDestroy {
 
@@ -142,18 +142,24 @@ export class StatusComponent implements OnInit, OnDestroy {
     const this_ = this;
     return {
       isRedClickable(): boolean {
-        return applianceStatus.on && ! this_.editMode && ! stateHandler.isRed();
+        return (applianceStatus.on || applianceStatus.optionalEnergy) && ! this_.editMode && ! stateHandler.isRed();
       },
 
       onRedClicked(status: Status, onActionCompleted: Subject<any>) {
         this_.applianceIdClicked = status.id;
         this_.statusService.toggleAppliance(status.id, false).subscribe(() => {
-          if(this_.isEvCharger(status)) {
+          if(this_.isEvCharger(status) && !applianceStatus.optionalEnergy) {
             this_.statusService.clearEvChargeRequest(status.id).subscribe();
-          } else {
-            this_.statusService.setAcceptControlRecommendations(status.id, false).subscribe();
           }
-          this_.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, status.id, false, () => onActionCompleted.next(true));
+          this_.statusService.setAcceptControlRecommendations(status.id, false).subscribe(() => {
+            if(!!status.optionalEnergy) {
+              this_.statusService.enableActiveTimeframeInterval(status.id, false).subscribe(() => {
+                this_.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, status.id, undefined, () => onActionCompleted.next(true));
+              });
+            } else {
+              this_.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, status.id, false, () => onActionCompleted.next(true));
+            }
+          });
         });
       },
 
@@ -163,13 +169,17 @@ export class StatusComponent implements OnInit, OnDestroy {
 
       onGreenClicked(status: Status, onActionCompleted: Subject<any>) {
         this_.applianceIdClicked = status.id;
-        // backend returns "null" if not interrupted but may return "0" right after interruption.
-        if (status.interruptedSince != null) {
-          // only switch on again
+        if (status.interruptedSince > 0 || (applianceStatus.earliestStart === undefined && !!applianceStatus.optionalEnergy)) {
           this_.statusService.resetAcceptControlRecommendations(status.id).subscribe(() => {
-            this_.statusService.toggleAppliance(status.id, true).subscribe(() => {
-              this_.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, status.id, true, () => onActionCompleted.next(true));
-            });
+            if(!!applianceStatus.optionalEnergy) {
+              this_.statusService.enableActiveTimeframeInterval(status.id, true).subscribe(() => {
+                this_.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, status.id, undefined, () => onActionCompleted.next(true));
+              });
+            } else {
+              this_.statusService.toggleAppliance(status.id, true).subscribe(() => {
+                this_.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, status.id, true, () => onActionCompleted.next(true));
+              });
+            }
           });
         } else {
           // display form to request runtime parameters
@@ -213,9 +223,9 @@ export class StatusComponent implements OnInit, OnDestroy {
     this.retryLoadApplianceStatuses(this.loadApplianceStatusesRetries, applianceIdClicked, switchOn);
   }
 
-  retryLoadApplianceStatuses(retries: number, applianceId: string, switchOn: boolean, onComplete?: () => void) {
+  retryLoadApplianceStatuses(retries: number, applianceId: string, switchOn: boolean | undefined, onComplete?: () => void) {
     this.statusService.getStatus().subscribe(applianceStatuses => {
-      const expectedSwitchOnStateMet = applianceStatuses.find(status => status.id === applianceId).on === switchOn;
+      const expectedSwitchOnStateMet = switchOn ? applianceStatuses.find(status => status.id === applianceId).on === switchOn : true;
       if (expectedSwitchOnStateMet || retries === 0) {
         this.applianceStatusesLoaded(applianceStatuses);
         this.applianceIdClicked = null;

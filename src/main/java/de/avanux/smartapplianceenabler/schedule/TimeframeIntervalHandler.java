@@ -114,7 +114,6 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
                                     event.batteryCapacity, event.defaultSocOptionalEnergy);
                             addTimeframeInterval(event.getTime(), timeframeInterval, true, true);
                             updateQueue(event.getTime());
-//                            activateTimeframeInterval(event.getTime(), timeframeInterval);
                         }
                     }
                 }
@@ -373,12 +372,6 @@ public class TimeframeIntervalHandler implements ApplianceIdConsumer {
         Request request = timeframeInterval.getRequest();
         request.setApplianceId(applianceId);
         request.init();
-        if(request instanceof EnergyRequest && control instanceof ElectricVehicleCharger) {
-            var evHandler = ((ElectricVehicleCharger) control).getElectricVehicleHandler();
-            if(evHandler.getConnectedVehicle() != null) {
-                ((EnergyRequest) request).setSocScriptUsed(evHandler.getConnectedVehicle().getSocScript() != null);
-            }
-        }
         addTimeframeIntervalChangedListener(request);
         timeframeIntervalChangedListeners.forEach(
                 listener -> listener.timeframeIntervalCreated(now, timeframeInterval));
