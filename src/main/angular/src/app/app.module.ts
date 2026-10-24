@@ -52,6 +52,7 @@ import {NotificationModule} from './notification/notification.module';
 import {VersionService} from './shared/version-service';
 import {ApplianceIdsResolver} from './appliance/appliance-ids-resolver';
 import {LanguageService} from './shared/language-service';
+import {provideTranslateHttpLoader} from '@ngx-translate/http-loader';
 import {SharedModule} from './shared/shared.module';
 
 @NgModule({ declarations: [
@@ -97,6 +98,7 @@ import {SharedModule} from './shared/shared.module';
         VersionService,
         provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideZoneChangeDetection(),
+        provideTranslateHttpLoader(),
     ] })
 export class AppModule {
 }
