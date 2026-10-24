@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Logger} from '../../log/logger';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
@@ -36,6 +36,7 @@ import {ControlMeterreportingModel} from './control-meterreporting.model';
     viewProviders: [
         { provide: ControlContainer, useExisting: FormGroupDirective }
     ],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ControlMeterreportingComponent implements OnChanges, OnInit {

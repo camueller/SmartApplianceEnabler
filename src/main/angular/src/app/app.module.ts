@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {NgModule, provideZoneChangeDetection} from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
 
 import {AppComponent} from './app.component';
@@ -28,7 +28,7 @@ import {PageNotFoundComponent} from './not-found.component';
 import {SettingsComponent} from './settings/settings.component';
 import {ApplianceResolver} from './appliance/appliance-resolver.service';
 import {AppliancesReloadService} from './appliance/appliances-reload-service';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {SettingsService} from './settings/settings-service';
 import {SettingsResolver} from './settings/settings-resolver.service';
@@ -95,7 +95,8 @@ import {SharedModule} from './shared/shared.module';
         SettingsResolver,
         SettingsDefaultsResolver,
         VersionService,
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
+        provideZoneChangeDetection(),
     ] })
 export class AppModule {
 }

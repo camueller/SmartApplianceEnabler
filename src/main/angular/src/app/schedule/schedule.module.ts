@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MaterialModule} from '../material/material.module';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import {SchedulesComponent} from './schedules/schedules.component';
@@ -37,6 +37,6 @@ import {SharedModule} from '../shared/shared.module';
         })], providers: [
         ScheduleService,
         ScheduleResolver,
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
     ] })
 export class ScheduleModule { }

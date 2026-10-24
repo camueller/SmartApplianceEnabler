@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Logger} from '../../log/logger';
 import {ListItem} from '../../shared/list-item';
@@ -28,6 +28,7 @@ import {MeterSlaveModel} from './meter-slave.model';
     selector: 'app-meter-slave',
     templateUrl: './meter-slave.component.html',
     styleUrls: ['./meter-slave.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MeterSlaveComponent implements OnChanges, OnInit {

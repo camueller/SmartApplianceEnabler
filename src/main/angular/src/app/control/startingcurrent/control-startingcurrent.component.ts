@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {ControlDefaults} from '../control-defaults';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {StartingCurrentSwitch} from './starting-current-switch';
@@ -15,6 +15,7 @@ import { isRequired } from 'src/app/shared/form-util';
     selector: 'app-control-startingcurrent',
     templateUrl: './control-startingcurrent.component.html',
     styleUrls: ['./control-startingcurrent.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ControlStartingcurrentComponent implements OnChanges, OnInit {

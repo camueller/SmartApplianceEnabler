@@ -25,7 +25,8 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
-  ViewChild
+  ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {Logger} from '../log/logger';
 import {Schedule, simpleRequestType, simpleTimeframeType} from './schedule';
@@ -52,6 +53,7 @@ import { isRequired } from '../shared/form-util';
     selector: 'app-schedule',
     templateUrl: './schedule.component.html',
     styleUrls: ['./schedule.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ScheduleComponent implements OnChanges, AfterViewInit {

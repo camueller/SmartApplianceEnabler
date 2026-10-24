@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {RuntimeRequest} from './runtime-request';
@@ -18,6 +18,7 @@ import {ScheduleRequestRuntimeModel} from './schedule-request-runtime.model';
     viewProviders: [
         { provide: ControlContainer, useExisting: FormGroupDirective }
     ],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ScheduleRequestRuntimeComponent implements OnChanges, OnInit {

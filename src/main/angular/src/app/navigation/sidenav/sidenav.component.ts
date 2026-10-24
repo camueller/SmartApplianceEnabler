@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {ApplianceHeader} from '../../appliance/appliance-header';
 import {AppliancesReloadService} from '../../appliance/appliances-reload-service';
 import {ApplianceService} from '../../appliance/appliance.service';
@@ -10,6 +10,7 @@ import {EnvPipeService} from '../../shared/env-pipe-service';
     selector: 'app-sidenav',
     templateUrl: './sidenav.component.html',
     styleUrls: ['./sidenav.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SidenavComponent implements OnInit {

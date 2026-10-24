@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
@@ -31,6 +31,7 @@ import {MeterMasterModel} from './meter-master.model';
     selector: 'app-meter-master',
     templateUrl: './meter-master.component.html',
     styleUrls: ['./meter-master.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MeterMasterComponent implements OnChanges, OnInit {

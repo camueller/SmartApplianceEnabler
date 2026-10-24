@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {AfterViewChecked, Component, Input, OnChanges, OnInit, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {UntypedFormControl, FormControlName, UntypedFormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
@@ -39,6 +39,7 @@ FormControlName.prototype.ngOnChanges = function () {
     selector: 'app-timepicker',
     templateUrl: './timepicker.component.html',
     styles: [],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TimepickerComponent implements OnChanges, OnInit, AfterViewChecked {

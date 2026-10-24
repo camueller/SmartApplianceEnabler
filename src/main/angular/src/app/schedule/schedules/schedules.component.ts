@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren} from '@angular/core';
+import {ChangeDetectorRef, Component, OnChanges, OnInit, QueryList, SimpleChanges, ViewChildren, ChangeDetectionStrategy} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {FormArray, FormGroup} from '@angular/forms';
 import {DayTimeframe} from '../timeframe/day/day-timeframe';
@@ -29,6 +29,7 @@ import {ScheduleModel} from '../schedule.model';
     selector: 'app-schedules',
     templateUrl: './schedules.component.html',
     styleUrls: ['./schedules.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SchedulesComponent  implements OnChanges, OnInit {

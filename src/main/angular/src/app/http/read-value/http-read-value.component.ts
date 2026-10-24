@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {Logger} from '../../log/logger';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
@@ -16,6 +16,7 @@ import {HttpReadValueModel} from './http-read-value.model';
     selector: 'app-http-read-value',
     templateUrl: './http-read-value.component.html',
     styleUrls: ['./http-read-value.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class HttpReadValueComponent implements OnChanges, OnInit {

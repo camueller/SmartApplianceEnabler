@@ -21,7 +21,9 @@
       "node"
     ],
     "baseUrl": "./",
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "strict": false,
+    "ignoreDeprecations": "6.0"
   },
   "files": [
     "src/main.ts",
@@ -29,5 +31,8 @@
   ],
   "include": [
     "**/*.d.ts"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "strictTemplates": false
+  }
 }

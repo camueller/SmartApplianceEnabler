@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {ErrorMessageHandler} from '../../shared/error-message-handler';
@@ -16,6 +16,7 @@ import {HttpWriteValueModel} from './http-write-value.model';
     selector: 'app-http-write-value',
     templateUrl: './http-write-value.component.html',
     styleUrls: ['./http-write-value.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class HttpWriteValueComponent implements OnChanges, OnInit {

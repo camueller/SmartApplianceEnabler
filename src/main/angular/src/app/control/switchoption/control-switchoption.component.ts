@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Logger} from '../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
@@ -32,6 +32,7 @@ import {isRequired} from 'src/app/shared/form-util';
     selector: 'app-control-switchoption',
     templateUrl: './control-switchoption.component.html',
     styleUrls: ['./control-switchoption.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ControlSwitchOptionComponent implements OnChanges, OnInit {

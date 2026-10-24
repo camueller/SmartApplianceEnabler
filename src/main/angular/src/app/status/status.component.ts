@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, OnDestroy, OnInit, QueryList, ViewChildren, ChangeDetectionStrategy} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {Status} from './status';
 import {interval, Subject, Subscription} from 'rxjs';
@@ -24,6 +24,7 @@ import {MatDialog} from '@angular/material/dialog';
   selector: 'app-status',
   templateUrl: './status.component.html',
   styleUrls: ['./status.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class StatusComponent implements OnInit, OnDestroy {

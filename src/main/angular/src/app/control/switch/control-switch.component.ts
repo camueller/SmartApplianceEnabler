@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Switch} from './switch';
 import {ErrorMessages} from '../../shared/error-messages';
@@ -18,6 +18,7 @@ import {ControlSwitchModel} from './control-switch.model';
     viewProviders: [
         { provide: ControlContainer, useExisting: FormGroupDirective }
     ],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ControlSwitchComponent implements OnChanges, OnInit {

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Logger} from '../../../log/logger';
 import {TranslateService} from '@ngx-translate/core';
@@ -20,6 +20,7 @@ import {isRequired} from 'src/app/shared/form-util';
     selector: 'app-electric-vehicle',
     templateUrl: './electric-vehicle.component.html',
     styleUrls: ['./electric-vehicle.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ElectricVehicleComponent implements OnChanges, OnInit {

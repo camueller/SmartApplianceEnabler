@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {Logger} from '../../log/logger';
 import {AbstractControl, FormGroupDirective, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
@@ -12,6 +12,7 @@ import {getValidString} from '../../shared/form-util';
     selector: 'app-filenameinput',
     templateUrl: './filename-input.component.html',
     styleUrls: ['./filename-input.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FilenameInputComponent implements OnInit {

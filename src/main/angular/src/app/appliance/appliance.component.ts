@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, OnChanges, OnInit, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {ApplianceService} from './appliance.service';
 import {ActivatedRoute, CanDeactivateFn, Router} from '@angular/router';
 import {AppliancesReloadService} from './appliances-reload-service';
@@ -40,6 +40,7 @@ import {ApplianceModel} from './appliance.model';
     selector: 'app-appliance',
     templateUrl: './appliance.component.html',
     styleUrls: ['./appliance.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ApplianceComponent  implements OnChanges, OnInit {

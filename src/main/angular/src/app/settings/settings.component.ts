@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {ChangeDetectorRef, Component, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, QueryList, ViewChild, ViewChildren, ChangeDetectionStrategy} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {SettingsService} from './settings-service';
@@ -42,6 +42,7 @@ import {SettingsModbusModel} from './modbus/settings-modbus.model';
     selector: 'app-settings',
     templateUrl: './settings.component.html',
     styleUrls: ['./settings.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SettingsComponent  implements OnInit {

@@ -16,15 +16,15 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^20.3.3",
-    "@angular/common": "^20.3.3",
-    "@angular/compiler": "^20.3.3",
-    "@angular/core": "^20.3.3",
-    "@angular/forms": "^20.3.3",
-    "@angular/material": "^20.2.7",
-    "@angular/platform-browser": "^20.3.3",
-    "@angular/platform-browser-dynamic": "^20.3.3",
-    "@angular/router": "^20.3.3",
+    "@angular/animations": "^22.2.3",
+    "@angular/common": "^22.2.3",
+    "@angular/compiler": "^22.2.3",
+    "@angular/core": "^22.2.3",
+    "@angular/forms": "^22.2.3",
+    "@angular/material": "^22.2.4",
+    "@angular/platform-browser": "^22.2.3",
+    "@angular/platform-browser-dynamic": "^22.2.3",
+    "@angular/router": "^22.2.3",
     "@ngx-translate/core": "~15.0.0",
     "@ngx-translate/http-loader": "~8.0.0",
     "@octokit/rest": "^21.1.1",
@@ -33,16 +33,17 @@
     "jquery": "^3.7.1",
     "moment": "2.29.4",
     "rxjs": "~7.8.1",
-    "tslib": "^2.6.2"
+    "tslib": "^2.6.2",
+    "zone.js": "^0.16.3"
   },
   "devDependencies": {
-    "@angular-builders/jest": "~20.0.0",
-    "@angular-devkit/build-angular": "^20.3.4",
-    "@angular/cli": "^20.3.4",
-    "@angular/compiler-cli": "^20.3.3",
+    "@angular-builders/jest": "^22.0.1",
+    "@angular-devkit/build-angular": "^22.2.4",
+    "@angular/cli": "^22.2.4",
+    "@angular/compiler-cli": "^22.2.3",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
     "ts-node": "~10.9.1",
-    "typescript": "~5.9.3"
+    "typescript": "~6.0.3"
   }
 }

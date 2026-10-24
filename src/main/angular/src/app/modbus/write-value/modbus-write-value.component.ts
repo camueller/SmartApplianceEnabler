@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusWriteValue} from './modbus-write-value';
@@ -14,6 +14,7 @@ import { isRequired } from 'src/app/shared/form-util';
     selector: 'app-modbus-write-value',
     templateUrl: './modbus-write-value.component.html',
     styleUrls: ['./modbus-write-value.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ModbusWriteValueComponent implements OnChanges, OnInit {

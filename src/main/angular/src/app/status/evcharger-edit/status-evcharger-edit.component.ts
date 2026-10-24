@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ErrorMessages} from '../../shared/error-messages';
 import {StatusService} from '../status.service';
@@ -33,6 +33,7 @@ const socValidator = (control: AbstractControl): { [key: string]: boolean } => {
     selector: 'app-status-evcharger-edit',
     templateUrl: './status-evcharger-edit.component.html',
     styleUrls: ['./status-evcharger-edit.component.scss', '../status.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class StatusEvchargerEditComponent implements OnInit {

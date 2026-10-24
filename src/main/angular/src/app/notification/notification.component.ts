@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {Logger} from '../log/logger';
 import {FormControl, FormGroup, FormGroupDirective} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
@@ -11,6 +11,7 @@ import {isRequired} from '../shared/form-util';
     selector: 'app-notification',
     templateUrl: './notification.component.html',
     styleUrls: ['./notification.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class NotificationComponent implements OnChanges {

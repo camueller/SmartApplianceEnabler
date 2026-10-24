@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {ControlContainer, FormControl, FormGroup, FormGroupDirective} from '@angular/forms';
 import {DayTimeframe} from './day-timeframe';
@@ -20,6 +20,7 @@ import {isRequired} from 'src/app/shared/form-util';
     viewProviders: [
         { provide: ControlContainer, useExisting: FormGroupDirective }
     ],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ScheduleTimeframeDayComponent implements OnChanges, OnInit {

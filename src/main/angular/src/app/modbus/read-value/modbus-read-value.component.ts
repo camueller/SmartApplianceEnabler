@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ModbusReadValue} from './modbus-read-value';
@@ -14,6 +14,7 @@ import {ModbusReadValueModel} from './modbus-read-value.model';
     selector: 'app-modbus-read-value',
     templateUrl: './modbus-read-value.component.html',
     styleUrls: ['./modbus-read-value.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ModbusReadValueComponent implements OnChanges, OnInit {

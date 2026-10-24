@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 
 export enum MessageBoxLevel {
   INFO,
@@ -10,6 +10,7 @@ export enum MessageBoxLevel {
     selector: 'messagebox',
     templateUrl: './messagebox.component.html',
     styleUrls: ['./messagebox.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MessageboxComponent implements OnInit {
