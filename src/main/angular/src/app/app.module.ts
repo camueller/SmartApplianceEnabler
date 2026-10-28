@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule, provideZoneChangeDetection} from '@angular/core';
+import {NgModule, provideNgReflectAttributes, provideZoneChangeDetection} from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
 
 import {AppComponent} from './app.component';
@@ -98,6 +98,7 @@ import {SharedModule} from './shared/shared.module';
         VersionService,
         provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideZoneChangeDetection(),
+        provideNgReflectAttributes(),
         provideTranslateHttpLoader(),
     ] })
 export class AppModule {
