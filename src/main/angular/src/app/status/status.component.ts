@@ -36,6 +36,7 @@ export class StatusComponent implements OnInit, OnDestroy {
               public dialog: MatDialog) {
   }
   applianceStatuses: Status[] = [];
+  statusLoaded = false;
   applianceIds: string[];
   typePrefix = 'ApplianceComponent.type.';
   translatedTypes = {};
@@ -95,6 +96,7 @@ export class StatusComponent implements OnInit, OnDestroy {
   }
 
   applianceStatusesLoaded(applianceStatuses: Status[]) {
+    this.statusLoaded = true;
     this.applianceIds = applianceStatuses.map(status => status.id);
     this.applianceStatuses = applianceStatuses.filter(applianceStatus => applianceStatus.controllable);
 
