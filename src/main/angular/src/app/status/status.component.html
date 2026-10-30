@@ -1,5 +1,5 @@
 <div class="StatusComponent mat-typography">
-  @if (!mqttBrokerAvailable) {
+  @if (mqttBrokerNotAvailableConfirmed) {
     <messagebox [level]="MessageBoxLevel.ERROR"
     >{{'StatusComponent.message.mqttBrokerNotAvailable' | translate}}</messagebox>
   }
