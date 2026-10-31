@@ -1,9 +1,7 @@
 import {Component, OnDestroy, OnInit, QueryList, ViewChildren, ChangeDetectionStrategy} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {Status} from './status';
-import {interval, Subject, Subscription, timer} from 'rxjs';
-import {switchMap} from 'rxjs/operators';
-import {SettingsService} from '../settings/settings-service';
+import {interval, Subject, Subscription} from 'rxjs';
 import {StatusService} from './status.service';
 import {DayOfWeek, DaysOfWeek} from '../shared/days-of-week';
 import {ControlService} from '../control/control-service';
@@ -32,7 +30,6 @@ import {MatDialog} from '@angular/material/dialog';
 export class StatusComponent implements OnInit, OnDestroy {
 
   constructor(private statusService: StatusService,
-              private settingsService: SettingsService,
               private controlService: ControlService,
               private route: ActivatedRoute,
               private translate: TranslateService,
@@ -53,8 +50,6 @@ export class StatusComponent implements OnInit, OnDestroy {
   MessageBoxLevel = MessageBoxLevel;
   electricVehicles = new Map<string, ElectricVehicle[]>();
   mqttBrokerAvailable = false;
-  mqttBrokerNotAvailableConfirmed = false;
-  private mqttBrokerRecheckSubscription: Subscription;
   mqttSettings: MqttSettings;
   nodeRedDashboardUrl: string | undefined;
 
@@ -71,31 +66,12 @@ export class StatusComponent implements OnInit, OnDestroy {
       this.mqttSettings = data.settings.mqttSettings;
       this.nodeRedDashboardUrl = data.settings.nodeRedDashboardUrl ?? data.settingsDefaults.nodeRedDashboardUrl;
       this.mqttBrokerAvailable = data.settings.mqttSettings.brokerAvailable;
-      this.confirmMqttBrokerNotAvailable();
     });
     this.startRefreshStatus();
   }
 
   ngOnDestroy() {
-    this.mqttBrokerRecheckSubscription?.unsubscribe();
     this.stopRefreshStatus();
-  }
-
-  // The broker check may fail transiently (e.g. connection still being established),
-  // so the error is only shown if a second check after a delay fails as well.
-  private confirmMqttBrokerNotAvailable() {
-    this.mqttBrokerRecheckSubscription?.unsubscribe();
-    this.mqttBrokerNotAvailableConfirmed = false;
-    if (this.mqttBrokerAvailable) {
-      return;
-    }
-    this.mqttBrokerRecheckSubscription = timer(3000)
-      .pipe(switchMap(() => this.settingsService.getSettings()))
-      .subscribe(settings => {
-        this.mqttSettings = settings.mqttSettings;
-        this.mqttBrokerAvailable = settings.mqttSettings.brokerAvailable;
-        this.mqttBrokerNotAvailableConfirmed = !this.mqttBrokerAvailable;
-      });
   }
 
   startRefreshStatus(immediateRefresh = false) {
