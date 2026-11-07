@@ -1,10 +1,11 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, ChangeDetectionStrategy} from '@angular/core';
 import {LanguageService} from '../../shared/language-service';
 
 @Component({
     selector: 'app-help',
     templateUrl: './help.component.html',
     styleUrls: ['./help.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class HelpComponent {

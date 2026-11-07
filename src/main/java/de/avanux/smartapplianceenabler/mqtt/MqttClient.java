@@ -122,6 +122,10 @@ public class MqttClient {
     }
 
     private static MqttConnectOptions getOptions(String username, String password) {
+        return getOptions(username, password, true);
+    }
+
+    private static MqttConnectOptions getOptions(String username, String password, boolean automaticReconnect) {
         MqttConnectOptions options = new MqttConnectOptions();
         if(username != null) {
             options.setUserName(username);
@@ -129,7 +133,7 @@ public class MqttClient {
         if(password != null) {
             options.setPassword(password.toCharArray());
         }
-        options.setAutomaticReconnect(true);
+        options.setAutomaticReconnect(automaticReconnect);
         options.setCleanSession(true);
         return options;
     }
@@ -230,16 +234,24 @@ public class MqttClient {
         }
     }
 
-    public static boolean isMqttBrokerAvailable(String host, Integer port, String username, String password) {
+    /**
+     * Concurrent calls are serialized because they share one client instance; parallel connect attempts
+     * would otherwise fail with "connect in progress" and report a reachable broker as unavailable.
+     */
+    public static synchronized boolean isMqttBrokerAvailable(String host, Integer port, String username, String password) {
         var brokerUri = buildBrokerUri(host, port);
         var loggerId = MqttClient.class.getSimpleName();
         try {
+            if(instance != null && ! brokerUri.equals(instance.getServerURI())) {
+                closeInstance(loggerId);
+            }
             if(instance == null) {
                 logger.debug("{}: Creating new MQTT client instance", loggerId);
                 instance = createClient(MqttClient.class.getSimpleName(), brokerUri, loggerId);
             }
             if(! instance.isConnected()) {
-                instance.connect(getOptions(username, password));
+                // no automatic reconnect: a reconnect running in the background would make connect() fail with "connect in progress"
+                instance.connect(getOptions(username, password, false));
             }
             var connected = instance.isConnected();
             logger.debug("{}: MQTT connection available: {}", loggerId, connected);
@@ -247,8 +259,22 @@ public class MqttClient {
         }
         catch(Exception e) {
             logger.error("{}: Error testing connection to MQTT broker", loggerId, e);
+            closeInstance(loggerId);
         }
         return false;
+    }
+
+    private static void closeInstance(String loggerId) {
+        if(instance != null) {
+            try {
+                instance.disconnectForcibly(0, 0);
+                instance.close();
+            }
+            catch(Exception e) {
+                logger.debug("{}: Error closing MQTT client instance: {}", loggerId, e.toString());
+            }
+            instance = null;
+        }
     }
 
     public void publish(String topic, MqttMessage message, boolean retained) {

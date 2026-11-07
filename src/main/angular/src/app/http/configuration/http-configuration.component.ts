@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import { isRequired } from 'src/app/shared/form-util';
 import {Logger} from '../../log/logger';
@@ -9,6 +9,7 @@ import {HttpConfigurationModel} from './http-configuration.model';
     selector: 'app-http-configuration',
     templateUrl: './http-configuration.component.html',
     styleUrls: ['./http-configuration.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class HttpConfigurationComponent implements OnChanges, OnInit {

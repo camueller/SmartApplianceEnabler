@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {TimeUtil} from '../../shared/time-util';
 import {Status} from '../status';
@@ -8,6 +8,7 @@ import {TrafficLightState} from '../traffic-light/traffic-light-state';
     selector: 'app-status-view',
     templateUrl: './status-view.component.html',
     styleUrls: ['./status-view.component.scss', '../status.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class StatusViewComponent implements OnInit {

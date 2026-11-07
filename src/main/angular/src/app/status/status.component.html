@@ -19,7 +19,7 @@
             [matTooltipDisabled]="'matTooltipDisabled' | env"
             ><mat-icon>open_in_new</mat-icon></a>
           </h1>
-          @if (!hasControllableAppliances) {
+          @if (statusLoaded && !hasControllableAppliances) {
             <messagebox [level]="MessageBoxLevel.INFO"
             >{{'StatusComponent.message.noControllableAppliances' | translate}}</messagebox>
           }

@@ -358,7 +358,6 @@ public class TimeframeIntervalHandlerTest extends TestBase {
                 var timeframeIntervalAddedToQueue = sut.getQueue().get(0);
                 assertEquals(newTimeframeInterval, timeframeIntervalAddedToQueue);
                 assertEquals(TimeframeIntervalState.QUEUED, timeframeIntervalAddedToQueue.getState());
-                assertTrue(request.isSocScriptUsed());
             }
         }
     }

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {TimeUtil} from '../../shared/time-util';
 import {ElectricVehicle} from '../../control/evcharger/electric-vehicle/electric-vehicle';
 import {Status} from '../status';
@@ -8,6 +8,7 @@ import {DayOfWeek} from '../../shared/days-of-week';
     selector: 'app-status-charger-view',
     templateUrl: './status-evcharger-view.component.html',
     styleUrls: ['./status-evcharger-view.component.scss', '../status.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class StatusEvchargerViewComponent implements OnInit {

@@ -14,14 +14,16 @@
       "node_modules/@types"
     ],
     "lib": [
-      "es2019",
+      "es2022",
       "dom"
     ],
     "types": [
       "node"
     ],
     "baseUrl": "./",
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "strict": false,
+    "ignoreDeprecations": "6.0"
   },
   "files": [
     "src/main.ts",
@@ -29,5 +31,8 @@
   ],
   "include": [
     "**/*.d.ts"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "strictTemplates": false
+  }
 }

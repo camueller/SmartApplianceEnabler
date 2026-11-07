@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
 import {ConsecutiveDaysTimeframe} from './consecutive-days-timeframe';
@@ -19,6 +19,7 @@ import {ScheduleTimeframeConsecutivedaysModel} from './schedule-timeframe-consec
     viewProviders: [
         { provide: ControlContainer, useExisting: FormGroupDirective }
     ],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ScheduleTimeframeConsecutivedaysComponent implements OnChanges, OnInit {

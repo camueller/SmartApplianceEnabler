@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {StatusService} from '../status.service';
 import {TimeUtil} from '../../shared/time-util';
@@ -14,6 +14,7 @@ import {StatusEditModel} from './status-edit.model';
     selector: 'app-status-edit',
     templateUrl: './status-edit.component.html',
     styleUrls: ['./status-edit.component.scss', '../status.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class StatusEditComponent implements OnInit {

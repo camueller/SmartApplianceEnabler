@@ -11,7 +11,7 @@ import {ControlEvchargerComponent} from './evcharger/control-evcharger.component
 import {ControlEvchargerHttpComponent} from './evcharger/http/control-evcharger-http.component';
 import {ControlStartingcurrentComponent} from './startingcurrent/control-startingcurrent.component';
 import {ElectricVehicleResolver} from './evcharger/electric-vehicle-resolver.service';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {ElectricVehicleComponent} from './evcharger/electric-vehicle/electric-vehicle.component';
 import {HttpModule} from '../http/http.module';
@@ -64,6 +64,6 @@ import {ControlMqttComponent} from './mqtt/control-mqtt.component';
         ControlDefaultsResolver,
         ElectricVehicleResolver,
         EvChargerTemplateResolver,
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
     ] })
 export class ControlModule { }

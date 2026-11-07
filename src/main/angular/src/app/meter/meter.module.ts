@@ -7,7 +7,7 @@ import {MeterS0Component} from './s0/meter-s0.component';
 import {MaterialModule} from '../material/material.module';
 import {HttpModule} from '../http/http.module';
 import {ModbusModule} from '../modbus/modbus.module';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MeterService} from './meter-service';
@@ -45,6 +45,6 @@ import {SharedModule} from '../shared/shared.module';
         MeterService,
         MeterResolver,
         MeterDefaultsResolver,
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
     ] })
 export class MeterModule { }

@@ -539,6 +539,8 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             if(isOn()) {
                 on(now, false, true);
             }
+            setStartChargingRequested(false);
+            setStopChargingRequested(false);
             Meter meter = appliance.getMeter();
             if(meter != null) {
                 meter.resetEnergyMeter();

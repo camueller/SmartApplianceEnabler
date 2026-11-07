@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {TrafficLightState} from './traffic-light-state';
 import {TrafficLightClick} from './traffic-light-click';
 import {Subject} from 'rxjs';
@@ -7,6 +7,7 @@ import {Subject} from 'rxjs';
     selector: 'app-traffic-light',
     templateUrl: './traffic-light.component.html',
     styleUrls: ['./traffic-light.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TrafficLightComponent implements OnChanges, OnInit {

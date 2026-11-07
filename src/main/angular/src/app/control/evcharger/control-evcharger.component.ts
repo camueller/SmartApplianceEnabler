@@ -7,7 +7,8 @@ import {
   QueryList,
   SimpleChanges,
   ViewChild,
-  ViewChildren
+  ViewChildren,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {EvCharger} from './ev-charger';
 import {Settings} from '../../settings/settings';
@@ -45,6 +46,7 @@ import {ElectricVehicleModel} from './electric-vehicle/electric-vehicle.model';
     viewProviders: [
         { provide: ControlContainer, useExisting: FormGroupDirective }
     ],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ControlEvchargerComponent implements OnChanges, OnInit {

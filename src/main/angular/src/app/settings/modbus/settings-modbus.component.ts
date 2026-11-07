@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {ModbusSetting} from './modbus-setting';
 import {TranslateService} from '@ngx-translate/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -16,6 +16,7 @@ import {SettingsModbusModel} from './settings-modbus.model';
     selector: 'app-settings-modbus',
     templateUrl: './settings-modbus.component.html',
     styleUrls: ['./settings-modbus.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SettingsModbusComponent implements OnChanges, OnInit {

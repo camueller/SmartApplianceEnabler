@@ -17,7 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {NgModule, provideNgReflectAttributes, provideZoneChangeDetection} from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
 
 import {AppComponent} from './app.component';
@@ -28,7 +28,7 @@ import {PageNotFoundComponent} from './not-found.component';
 import {SettingsComponent} from './settings/settings.component';
 import {ApplianceResolver} from './appliance/appliance-resolver.service';
 import {AppliancesReloadService} from './appliance/appliances-reload-service';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {SettingsService} from './settings/settings-service';
 import {SettingsResolver} from './settings/settings-resolver.service';
@@ -52,6 +52,7 @@ import {NotificationModule} from './notification/notification.module';
 import {VersionService} from './shared/version-service';
 import {ApplianceIdsResolver} from './appliance/appliance-ids-resolver';
 import {LanguageService} from './shared/language-service';
+import {provideTranslateHttpLoader} from '@ngx-translate/http-loader';
 import {SharedModule} from './shared/shared.module';
 
 @NgModule({ declarations: [
@@ -95,7 +96,10 @@ import {SharedModule} from './shared/shared.module';
         SettingsResolver,
         SettingsDefaultsResolver,
         VersionService,
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
+        provideZoneChangeDetection(),
+        provideNgReflectAttributes(),
+        provideTranslateHttpLoader(),
     ] })
 export class AppModule {
 }

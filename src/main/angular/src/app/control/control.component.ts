@@ -16,7 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {ControlFactory} from './control-factory';
 import {TranslateService} from '@ngx-translate/core';
@@ -66,6 +66,7 @@ import {isRequired} from '../shared/form-util';
     selector: 'app-control',
     templateUrl: './control.component.html',
     styleUrls: ['./control.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ControlComponent  implements OnInit {

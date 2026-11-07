@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {S0ElectricityMeter} from './s0-electricity-meter';
 import {TranslateService} from '@ngx-translate/core';
@@ -20,6 +20,7 @@ import { isRequired } from 'src/app/shared/form-util';
     viewProviders: [
         { provide: ControlContainer, useExisting: FormGroupDirective }
     ],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MeterS0Component implements OnChanges, OnInit {
