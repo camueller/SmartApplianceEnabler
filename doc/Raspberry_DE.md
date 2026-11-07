@@ -11,7 +11,7 @@ Demzufolge muss im *Smart Appliance Enabler* diese Nummer als *GPIO-Anschluss* e
 
 ![Raspberry Pi Pinout](../pics/raspberry-pi-15b.jpg)
 
-Die aktuell Konfiguration der GPIO-Pins kann man sich mit dem Befehl `pinctrl` anschauen:
+Die aktuelle Konfiguration der GPIO-Pins kann man sich mit dem Befehl `pinctrl` anschauen:
 
 ```shell
 $ pinctrl

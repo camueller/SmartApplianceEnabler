@@ -7,19 +7,25 @@ Configuring a GPIO switch involves specifying the GPIO port number and whether t
 ![GPIO Switch](../pics/fe/GPIOSwitch_EN.png)
 
 ## Log
-If a device (here `F-00000001-000000000013-00`) is switched using a GPIO switch, you can display the control request in [Log](Logging_EN.md) with the following command:
+If a device (in this case, `F-00000001-000000000001-00`) is toggled via a GPIO-based switch, the switching command can be viewed in the [log](Logging_DE.md) using the following command:
 
-```console
-sae@raspi2:~ $ grep "c.Switch" /tmp/rolling-2020-12-30.log | grep F-00000001-000000000013-00
-2020-12-30 11:02:24,686 INFO [pi4j-gpio-event-executor-39] d.a.s.c.Switch [Switch.java:101] F-00000001-000000000013-00: Switching off GPIO 3
-2020-12-30 11:05:59,820 INFO [http-nio-8080-exec-6] d.a.s.c.Switch [Switch.java:101] F-00000001-000000000013-00: Switching on GPIO 3
+```bash
+$ grep "c.Switch" /tmp/rolling-2026-11-07.log | grep F-00000001-000000000001-00
+2026-11-07 07:39:33,658 INFO [MQTT Call: F-00000001-000000000001-00-Switch-1] d.a.s.c.Switch [Switch.java:153] F-00000001-000000000001-00: Switching on GPIO 21
 ```
 
-*Webmin*: In [View Logfile](Logging_EN.md#user-content-webmin-logs) enter `c.Switch` after `Only show lines with text` and press refresh.
+*Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs), enter `c.Switch` in the field labeled `Only show lines with text` and click Refresh.
+
+The status of the corresponding GPIO pin can be checked as follows:
+
+```shell
+$ pinctrl get 21
+21: op -- pn | hi // GPIO21 = output
+```
 
 ## Solid state relais
 
-[**Solid State Relays**](https://de.wikipedia.org/wiki/Relais#Solid State Relays) are suitable for switching 240V devices.
+[**Solid State Relays**](https://de.wikipedia.org/wiki/Relais#Solid State Relays) are suitable for switching 230V devices.
 
 Originally I had bought several SSRs from Fotek, type SSR-40 DA, two of them (dishwasher and washing machine) I had to replace after 3 years after they had burned out. These SSRs have a metal plate on the back that allows you to mount them on a heatsink, which I didn't do. Some of the SSRs I bought were defective from the start and after the two SSRs recently burned through, I did some research. [There seem to be counterfeits in circulation](https://www.mikrocontroller.net/topic/444199) of the Fotek SSRs, which can only cope with lower currents than specified.
 

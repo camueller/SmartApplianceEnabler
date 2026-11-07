@@ -8,19 +8,25 @@ Zur Konfiguration eines GPIO-Schalters gehört die Nummer des GPIO-Anschlusses u
 
 ## Log
 
-Wird ein Gerät (hier `F-00000001-000000000013-00`) mittels GPIO-basiertem Schalter geschaltet, kann man den Schaltbefehl im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
+Wird ein Gerät (hier `F-00000001-000000000001-00`) mittels GPIO-basiertem Schalter geschaltet, kann man den Schaltbefehl im [Log](Logging_DE.md) mit folgendem Befehl anzeigen:
 
 ```bash
-$ grep "c.Switch" /tmp/rolling-2020-12-30.log | grep F-00000001-000000000013-00
-2020-12-30 11:02:24,686 INFO [pi4j-gpio-event-executor-39] d.a.s.c.Switch [Switch.java:101] F-00000001-000000000013-00: Switching off GPIO 3
-2020-12-30 11:05:59,820 INFO [http-nio-8080-exec-6] d.a.s.c.Switch [Switch.java:101] F-00000001-000000000013-00: Switching on GPIO 3
+$ grep "c.Switch" /tmp/rolling-2026-11-07.log | grep F-00000001-000000000001-00
+2026-11-07 07:39:33,658 INFO [MQTT Call: F-00000001-000000000001-00-Switch-1] d.a.s.c.Switch [Switch.java:153] F-00000001-000000000001-00: Switching on GPIO 21
 ```
 
 *Webmin*: In [View Logfile](Logging_DE.md#user-content-webmin-logs) gibt man hinter `Only show lines with text` ein `c.Switch` und drückt Refresh.
 
+Den Status des korrespondierenden GPIO-Pins kann man wie folgt prüfen:  
+
+```shell
+$ pinctrl get 21
+21: op -- pn | hi // GPIO21 = output
+```
+
 ## Solid-State-Relais
 
-Zum Schalten von 240V-Geräten eignen sich [**Solid-State-Relais**](https://de.wikipedia.org/wiki/Relais#Halbleiterrelais).
+Zum Schalten von 230V-Geräten eignen sich [**Solid-State-Relais**](https://de.wikipedia.org/wiki/Relais#Halbleiterrelais).
 
 Ursprünglich hatte ich mehrere SSRs von Fotek, Typ SSR-40 DA, gekauft, zwei davon (Geschirrspüler und Waschmaschine) musste ich nach 3 Jahren ersetzen, nachdem diese durchgeschmort waren. Diese SSRs haben auf der Rückseite eine Metallplatte, mit der man sie auf einen Kühlkürper montieren kann, was ich allerdings nicht getan hatte. Von den gekaufen SSRs waren einige von Anfang an defekt und nachdem kürzlich die beiden SSRs durchgeschmort waren, habe ich etwas recheriert. Von den Fotek-SSRs scheinen wohl [Fälschungen im Umlauf zu sein](https://www.mikrocontroller.net/topic/444199), die nur mit geringeren Stromstärken klarkommen als angegeben.
 
