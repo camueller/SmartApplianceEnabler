@@ -65,7 +65,19 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
        return gpio;
     }
 
+    // IO instances survive appliance restarts, so release a previous instance with the same id first
+    private void releaseExisting(String id) {
+        try {
+            if (pi4jContext.registry().exists(id)) {
+                pi4jContext.registry().remove(id);
+            }
+        } catch (Exception e) {
+            logger.error("{}: Error releasing existing IO {}", applianceId, id, e);
+        }
+    }
+
     protected void initializeOutput() {
+        releaseExisting("output-" + gpio);
         digitalOutput = pi4jContext.create(DigitalOutput.newConfigBuilder(pi4jContext)
                 .id("output-" + gpio)
                 .address(gpio)
@@ -76,6 +88,7 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
     }
 
     protected void initializeInput(PinPullResistance pinPullResistance) {
+        releaseExisting("input-" + gpio);
         digitalInput = pi4jContext.create(DigitalInput.newConfigBuilder(pi4jContext)
                 .id("input-" + gpio)
                 .address(gpio)
@@ -85,6 +98,7 @@ abstract public class GpioControllable implements ApplianceIdConsumer, Validatea
     }
 
     protected void initializePwm(int chip, int channel, int frequency) {
+        releaseExisting("pwm-" + gpio);
         pwm = pi4jContext.create(Pwm.newConfigBuilder(pi4jContext)
                 .id("pwm-" + gpio)
                 .chip(chip)
