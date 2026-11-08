@@ -174,31 +174,35 @@ Angesichts dieser Probleme stoppe ich hier erstmal den Versuch, die automatische
       git restore docker/sae-amd64/Dockerfile
       export VERSION=`ls docker/sae-amd64/*.war | awk -F '-' '{print $3}' | awk -F '.war' '{print $1}'` 
       sed -i 's#@project.version@#'\"$VERSION\"'#' docker/sae-amd64/Dockerfile
-      docker build --tag=avanux/smartapplianceenabler:amd64 --no-cache ./docker/sae-amd64
-      docker push avanux/smartapplianceenabler:amd64      
+      docker build --tag=avanux/smartapplianceenabler:$VERSION-amd64 --no-cache ./docker/sae-amd64
+      docker push avanux/smartapplianceenabler:$VERSION-amd64
       ```
    1. Bauen des Docker-Images für ARM32
-      1. Kopieren des WAR-Files auf den Raspberry Pi
-         ```bash
-         scp target/SmartApplianceEnabler-2.5.0.war sae@raspi2:/opt/sae/SmartApplianceEnabler/docker/sae-arm32/
-         ```
-      1. Bauen des Images auf dem Raspberry Pi
+      1. Vorbereitung für Bauen des Images auf dem Raspberry Pi
          ```bash
          cd /opt/sae/SmartApplianceEnabler
          rm -f docker/sae-arm32/*.war
+         ```
+      1. Kopieren des WAR-Files auf den Raspberry Pi
+         ```bash
+         scp target/SmartApplianceEnabler-2.5.1.war sae@raspi2:/opt/sae/SmartApplianceEnabler/docker/sae-arm32/
+         ```
+      1. Bauen des Images auf dem Raspberry Pi in derselben Shell, in der bereits die Vorbereitung für Bauen durchgeführt wurde
+         ```bash
          git pull
          git restore docker/sae-amd64/Dockerfile
          VERSION=`ls docker/sae-arm32/*.war | awk -F '-' '{print $3}' | awk -F '.war' '{print $1}'`;sed -i 's#@project.version@#'\"$VERSION\"'#' docker/sae-arm32/Dockerfile
-         docker build --tag=avanux/smartapplianceenabler:arm --no-cache ./docker/sae-arm32
-         docker push avanux/smartapplianceenabler:arm
+         sed -i 's#@project.version@#'\"$VERSION\"'#' docker/sae-arm32/Dockerfile
+         docker build --tag=avanux/smartapplianceenabler:$VERSION-arm32 --no-cache ./docker/sae-arm32
+         docker push avanux/smartapplianceenabler:$VERSION-arm32
          ```
    1. Erzeugen des Docker-Manifests und der Latest-Tags
       ```bash
-      docker manifest create avanux/smartapplianceenabler:$VERSION --amend avanux/smartapplianceenabler:amd64 --amend avanux/smartapplianceenabler:arm
+      docker manifest create avanux/smartapplianceenabler:$VERSION --amend avanux/smartapplianceenabler:$VERSION-amd64 --amend avanux/smartapplianceenabler:$VERSION-arm32
       docker manifest annotate avanux/smartapplianceenabler:$VERSION avanux/smartapplianceenabler:arm --variant v7
       docker manifest push avanux/smartapplianceenabler:$VERSION
       
-      docker manifest create avanux/smartapplianceenabler:latest --amend avanux/smartapplianceenabler:amd64 --amend avanux/smartapplianceenabler:arm
+      docker manifest create avanux/smartapplianceenabler:latest --amend avanux/smartapplianceenabler:$VERSION-amd64 --amend avanux/smartapplianceenabler:$VERSION-arm32
       docker manifest annotate avanux/smartapplianceenabler:latest avanux/smartapplianceenabler:arm --variant v7
       docker manifest push avanux/smartapplianceenabler:latest
       ```
