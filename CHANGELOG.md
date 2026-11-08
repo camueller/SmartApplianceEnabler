@@ -12,6 +12,18 @@ und das Projekt folgt den Leitlinien des [Semantic Versioning](https://semver.or
 | SAE         | Smart Appliance Enabler |
 | SHM         | Sunny Home Manager |
 
+
+## [2.5.1](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.5.1) - 08.11.2026
+
+### Neu
+- Zeitplan-Interval nur Überschuß-Energie kann deaktiviert bzw. aktiviert werden durch Klick auf rotes bzw. gelbes Ampellicht 
+
+### Gefixt
+- Meldungen für "Aktuell ist kein MQTT-Broker konfiguriert" und "Keine steuerbaren Geräte vorhanden" wurden manchmal fälschlicherweise angezeigt
+- Zeitplan-Intervalle wurden nicht erstellt, wenn der nächste Zeitplan-Intervall mehr als 48 Stunden in der Zukunft liegt 
+- nach Speichern eines Wallbox-Zeitplans mit der Anforderungsart "Soll-SOC" startet der SAE nicht mehr vollständig [#701](https://github.com/camueller/SmartApplianceEnabler/issues/701)
+- diverse kleinere Fixes für Wallboxen 
+
 ## [2.5.0](https://github.com/camueller/SmartApplianceEnabler/releases/tag/2.5.0) - 25.01.2026
 
 ### Gefixt
