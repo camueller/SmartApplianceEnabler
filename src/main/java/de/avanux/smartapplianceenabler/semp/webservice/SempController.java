@@ -444,7 +444,7 @@ public class SempController {
                 = new de.avanux.smartapplianceenabler.semp.webservice.Timeframe();
         timeFrame.setDeviceId(deviceId);
         timeFrame.setEarliestStart(earliestStartSeconds);
-        timeFrame.setLatestEnd(latestEndSeconds);
+        timeFrame.setLatestEnd(latestEndSeconds - 1);
         if (timeframeInterval.getRequest() instanceof AbstractEnergyRequest) {
             timeFrame.setMinEnergy(min);
             timeFrame.setMaxEnergy(max);

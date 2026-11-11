@@ -64,19 +64,19 @@ public class SempControllerTest extends TestBase {
 
         List<Timeframe> timeframes = planningRequests.get(0).getTimeframes();
         assertEquals(1, timeframes.size());
-        assertTimeframe(timeframes.get(0), 4 * 3600,  8 * 3600, 3599, 3600, false);
+        assertTimeframe(timeframes.get(0), 4 * 3600,  8 * 3600 - 1, 3599, 3600, false);
 
         timeframes = planningRequests.get(1).getTimeframes();
         assertEquals(1, timeframes.size());
-        assertTimeframe(timeframes.get(0), 2 * 3600,  6 * 3600, 1000, 1800, false);
+        assertTimeframe(timeframes.get(0), 2 * 3600,  6 * 3600 - 1, 1000, 1800, false);
 
         timeframes = planningRequests.get(2).getTimeframes();
         assertEquals(1, timeframes.size());
-        assertTimeframe(timeframes.get(0), 1 * 3600,  8 * 3600, 9999, 10000, true);
+        assertTimeframe(timeframes.get(0), 1 * 3600,  8 * 3600 - 1, 9999, 10000, true);
 
         timeframes = planningRequests.get(3).getTimeframes();
         assertEquals(1, timeframes.size());
-        assertTimeframe(timeframes.get(0), 2 * 3600,  10 * 3600, 6000, 10000, true);
+        assertTimeframe(timeframes.get(0), 2 * 3600,  10 * 3600 - 1, 6000, 10000, true);
     }
 
     private void assertTimeframe(Timeframe timeframe, Integer earliestStart, Integer latestEnd, Integer min, Integer max, boolean energyRequest) {
