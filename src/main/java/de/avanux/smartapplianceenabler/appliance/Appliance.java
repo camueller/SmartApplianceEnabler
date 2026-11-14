@@ -404,8 +404,8 @@ public class Appliance implements Validateable, TimeframeIntervalChangedListener
         LocalDateTime now = LocalDateTime.now();
         if(schedules != null) {
             return schedules.stream().anyMatch(schedule -> {
-                int min = schedule.getRequest().getMin(now) != null ? schedule.getRequest().getMin(now) : 0;
-                return min < schedule.getRequest().getMax(now);
+                Integer min = schedule.getRequest().getMin(now);
+                return min != null && min < schedule.getRequest().getMax(now);
             });
         }
         return false;
